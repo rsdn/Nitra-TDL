@@ -23,13 +23,13 @@ namespace Tdl
     public NoLocation : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile     : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan     : NSpan              = NSpan(0);
-    public MetodScopeFactory : ScopeFactory = MetodScopeFactoryImpl;
+    public MethodScopeFactory : ScopeFactory = MethodScopeFactoryImpl;
 
-    _metodScopeFactoryCache : Dictionary[int, bool] = Dictionary();
+    _methodScopeFactoryCache : Dictionary[int, bool] = Dictionary();
 
-    public ResetMetodScopeFactoryCach() : void
+    public ResetMethodScopeFactoryCache() : void
     {
-      _metodScopeFactoryCache.Clear();
+      _methodScopeFactoryCache.Clear();
     }
 
     public PlatformMakeHint(symbolCache : ISymbolCache, symbol : Platform.SetSymbol) : string
@@ -310,12 +310,12 @@ namespace Tdl
         builder.ToImmutable()
     }
 
-    MetodScopeFactoryImpl(scope : Scope) : Scope
+    MethodScopeFactoryImpl(scope : Scope) : Scope
     {
       def filter(symbol : DeclarationSymbol) : bool
       {
         mutable result;
-        when (_metodScopeFactoryCache.TryGetValue(symbol.Id, out result))
+        when (_methodScopeFactoryCache.TryGetValue(symbol.Id, out result))
           return result;
         
         def isTestMethod(m : Member.MethodSymbol) : bool
@@ -356,7 +356,7 @@ namespace Tdl
             | _                                                                 => false
           };
 
-        _metodScopeFactoryCache[symbol.Id] = result;
+        _methodScopeFactoryCache[symbol.Id] = result;
         
         result
       }

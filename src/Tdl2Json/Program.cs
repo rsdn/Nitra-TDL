@@ -7,9 +7,20 @@ using Tdl2JsonLib;
 
 namespace Tdl2Json
 {
-    static class Program
+    public static class Program
     {
-        static int Main(string[] args)
+        /// <summary>
+        /// Generates JSON from source files <paramref name="sourceFileNames"/>. Throws <see cref="Exception"/> when error occures.
+        /// </summary>
+        public static string GenerateJson(string workingDirectory, IEnumerable<string> sourceFileNames, IEnumerable<string> references, bool validateMethodNames)
+        {
+            return JsonGenerator.Generate(workingDirectory, sourceFileNames.ToArray(), references.ToArray(), validateMethodNames);
+        }
+
+        /// <summary>
+        /// Application entry point. Returns 0 for success.
+        /// </summary>
+        public static int Main(string[] args)
         {
             try
             {
@@ -31,7 +42,7 @@ namespace Tdl2Json
                 }
                 var workingDirectory = workingDirectories.SingleOrDefault() ?? Directory.GetCurrentDirectory();
                 var outPath = outputs.SingleOrDefault() ?? Path.Combine(workingDirectory, "out.json");
-                var contents = JsonGenerator.Generate(workingDirectory, tdls, refs);
+                var contents = JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true);
                 File.WriteAllText(outPath, contents, Encoding.UTF8);
                 Print($"The JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
                 return 0;
