@@ -1,0 +1,35 @@
+﻿using Nemerle;
+using Nemerle.Assertions;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+using Nitra;
+using Nitra.Declarations;
+using Nitra.ProjectSystem;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl2JsonLib
+{
+     public class FsFileWithId[TAst] : FsFile[TAst]
+        where TAst: IAst
+    {
+        public override Id : int { get { _id.Value }}
+
+        public this([NotNull] filePath : string, [NotNull] language : Language, fsProject : FsProject[TAst] = null, statistics : FileStatistics = null)
+        {
+            base(filePath, language, fsProject, statistics)
+        }
+
+        private _id : Lazy[int] = Lazy.[int](GetId);
+
+        private static GetId() : int
+        {
+            ++_counter;
+            _counter
+        }
+        private static mutable _counter : int;
+    }
+}

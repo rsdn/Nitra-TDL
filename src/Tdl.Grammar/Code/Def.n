@@ -1,0 +1,13 @@
+﻿using DotNet;
+
+namespace Tdl
+{
+  [Record]
+  public struct Def
+  {
+    public Symbol : TypedDeclarationSymbol;
+    public Expr   : Expr;
+
+    public override ToString() : string { Symbol?.Name + " = " + Expr }
+  }
+}
