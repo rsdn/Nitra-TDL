@@ -1,0 +1,36 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl
+{
+  public variant Expr
+  {
+    | Error     { Location : Utils.Location; }
+    | String    { Value : string; }
+    | True      { }
+    | False     { }
+    | Real      { Value : double; }
+    | Integerl  { Value : int; }
+    | Reference { Name  : string; }
+
+    public override ToString() : string
+    {
+      match (this)
+      {
+        | Error          => "<Error>"
+        | String(value)  => "@\"" + value + '"'
+        | True           => "true"
+        | False          => "false"
+        | Real      as x => x.Value.ToString()
+        | Integerl  as x => x.Value.ToString()
+        | Reference as x => x.Name 
+      }
+    }
+  }
+}

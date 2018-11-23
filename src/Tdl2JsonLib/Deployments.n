@@ -1,0 +1,85 @@
+﻿using DotNet;
+
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+using Nemerle.Utility.Pair;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+
+using Nemerle;
+using Nemerle.Extensions;
+
+using Nitra.Declarations;
+
+using Tdl;
+using QuickType;
+using Tdl2JsonLib.ExceptionHelper;
+
+namespace Tdl2JsonLib
+{
+  public module Deployments
+  {
+    public Generate(symbols : IEnumerable[DeclarationSymbol]) : Dictionary[string, QuickType.Deployment]
+    {
+      symbols.OfType.[DeploymentSymbol]().Select(GenerateDeployment).ToDictionary()
+    }
+
+    private GenerateDeployment(deploymentSymbol : DeploymentSymbol) : string * QuickType.Deployment
+    {
+      def getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
+      {
+        match (parameter.Default)
+        {
+          | None           => "$(" + parameter.Name + ")"
+          | Reference as r => "#(" + r.name + ")"
+          | String    as s => s.Value
+          | Bool      as b => b.Value
+          | Number    as n => n.Value
+          | Decimal   as d => d.Value
+          | Double    as d => d.Value
+          | Single    as s => s.Value
+          | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
+        }
+      }
+
+      match (deploymentSymbol)
+      {
+        | Deployment.ScriptSymbol as script => 
+          def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
+          def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
+          def parameters = script.Parameters.Select(p => (p.Name, getParameterValue(p)));
+          def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
+          (script.Name, 
+            Deployment() <- 
+            { 
+                Type        = TypeEnum.Script;
+                ScriptPath  = script.Path.Value; 
+                ReturnValue = script.Expected.ValueOrDefault;
+                ScriptArgs  = scriptArgs;
+            })
+
+        | Deployment.SetSymbol as set =>
+          def deployments = set.Deployments.Select(d => d.Name).ToArray();
+          (set.Name, 
+            Deployment() <- 
+            { 
+                Type        = TypeEnum.Sequence;
+                Deployments = deployments;
+            })
+        | Deployment.CurryingSymbol as currying => 
+          def deployments = Dictionary();
+          deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
+          (currying.Name, Deployment() <-
+          {
+              Type        = TypeEnum.Sequence;
+              Deployments = array[deployments];
+          })
+        | _ => ThrowNotSupportedSymbol(deploymentSymbol) 
+      }
+    }
+  } // module
+} // namespace

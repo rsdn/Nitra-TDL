@@ -1,0 +1,13 @@
+{
+  "$schema": "../schema.v3.json",
+
+  "Products": {
+    "PURE 2020": {
+    "Name": "PURE",
+    "ReleaseName": "20",
+    "Parameters": {
+        "ProductConfigPath": "\\\\sdfs\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ProductConfiguration\\2020.MP0\\PURE.xml"
+      }
+    }
+  }
+}

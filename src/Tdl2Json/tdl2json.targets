@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="TdlTask" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <ToolsPath        ParameterType="System.String"                         Required="false" />
+      <WorkingDirectory ParameterType="System.String"                         Required="false" />
+      <InputSources     ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <References       ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <OutputFullName   ParameterType="System.String"                         Required="true" />
+      <Result           ParameterType="System.String"                         Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="mscorlib" />
+      <Using Namespace="System" />
+      <Using Namespace="System.Diagnostics" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            var count = 0;
+            try
+            {
+                var sources    = InputSources.Select(s => s.GetMetadata("FullPath"));
+                var references = References.Select(r => r.GetMetadata("FullPath"));
+                var files      =  sources.Concat(references).Select(f => '"' + f + '"');
+                var cmdLine    = string.Join(" ", files) + " /out:\"" + OutputFullName + '"';
+
+                //Log.LogMessage(MessageImportance.High, "references:");
+                //foreach (var item in references)
+                //    Log.LogMessage(MessageImportance.High, "    " + item);
+                //Log.LogMessage(MessageImportance.High, "sources:");
+                //foreach (var item in sources)
+                //    Log.LogMessage(MessageImportance.High, "    " + item);
+
+                var process = new Process();
+                process.StartInfo.UseShellExecute       = false;
+                process.StartInfo.CreateNoWindow        = true;
+                process.StartInfo.FileName              = Path.Combine(ToolsPath, "Tdl2Json.exe");
+                process.StartInfo.Arguments             = cmdLine;
+                process.StartInfo.RedirectStandardError = true;
+                if (!string.IsNullOrEmpty(WorkingDirectory))
+                {
+                    cmdLine += " /wd:\"" + WorkingDirectory + '"';
+                    process.StartInfo.WorkingDirectory = WorkingDirectory;
+                }
+                
+                //Log.LogMessage(MessageImportance.High, "Executing: {0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
+
+                process.Start();
+                
+                string standardError = "";
+              
+                // Обходим баг связанный с переполнением буфера 
+                do
+                {
+                  count++;
+                  
+                  if (process.StandardError.Peek() > -1)
+                      standardError += process.StandardError.ReadToEnd() ?? "";
+                }
+                while (!process.HasExited);
+                
+                if (process.ExitCode == -3)
+                {
+                    var regex = new Regex(@"(.*?)\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\:\s*(\w*)\:\s*(.*)");
+                    var matches = regex.Matches(standardError);
+                    foreach (Match m in matches)
+                    {
+                        switch (m.Groups[6].Value)
+                        {
+                            case "error":
+                                Log.LogError("", "", "", m.Groups[1].Value,
+                                    int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value),
+                                    int.Parse(m.Groups[4].Value), int.Parse(m.Groups[5].Value),
+                                    m.Groups[7].Value);
+                                break;
+                            case "warning":
+                                Log.LogWarning("", "", "", m.Groups[1].Value,
+                                    int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value),
+                                    int.Parse(m.Groups[4].Value), int.Parse(m.Groups[5].Value),
+                                    m.Groups[7].Value);
+                                break;
+                            default:
+                                Log.LogMessage("", "", "", m.Groups[1].Value,
+                                    int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value),
+                                    int.Parse(m.Groups[4].Value), int.Parse(m.Groups[5].Value),
+                                    m.Groups[7].Value);
+                                break;
+                        }
+                    }
+                    return false;
+                }
+                else if (process.ExitCode != 0)
+                    throw new InvalidOperationException(string.Format("Unexpected return code at wrapper generation: {0}. \r\n{1)", 
+                        process.ExitCode, process.StandardOutput.ReadToEnd()));
+                else
+                {
+                  Result = OutputFullName;
+                  Log.LogMessage(MessageImportance.High, "TDLs -> " + OutputFullName);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.LogErrorFromException(e);
+                return false;
+            }
+            finally
+            {
+                if (count > 1)
+                  Log.LogMessage(MessageImportance.High, "count = {0}", count);
+            }
+            return true;
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="CoreCompile" DependsOnTargets="$(CoreCompileDependsOn)">
+    <PropertyGroup>
+      <TdlOutputPath Condition=" '$(TdlOutputPath)' == '' ">$(IntermediateOutputPath)$(TargetName).json</TdlOutputPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <TdlCompile Include="@(Nitra)"   Condition=" '%(Extension)' == '.tdl' " />
+      <TdlCompile Include="@(None)"    Condition=" '%(Extension)' == '.tdl' " />
+      <TdlCompile Include="@(Content)" Condition=" '%(Extension)' == '.tdl' " />
+    </ItemGroup>
+    <TdlTask Condition=" '$(BuildingProject)' != 'false' "
+            ToolsPath        = "$(MSBuildThisFileDirectory)..\tools"
+            WorkingDirectory = "$(MSBuildProjectDirectory)"
+            References       = "@(ReferencePath)"
+            InputSources     = "@(TdlCompile)"
+            OutputFullName   = "$(TdlOutputPath)">
+      <Output TaskParameter="Result" ItemName="TdlOutput" />
+    </TdlTask>
+  </Target>
+
+  <Target Name="CopyFilesToOutputDirectory">
+    <Copy SourceFiles="@(TdlOutput)" DestinationFolder="$(OutDir)">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+    </Copy>
+  </Target>
+</Project>

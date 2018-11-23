@@ -1,0 +1,574 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "version": 1,
+  "type": "object",
+  "description": "Объект конфигурации",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$include": {
+      "description": "Добавляет в конфигурацию объекты из других конфигов",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ParameterValue"
+      }
+    },
+    "Parameters": {
+      "description": "Значения параметров",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/ParameterValue"
+      }
+    },
+    "Platforms": {
+      "description": "Описания платформ",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions/Platform"
+          },
+          {
+            "$ref": "#/definitions/PlatformSet"
+          }
+        ]
+      }
+    },
+    "Products": {
+      "description": "Описания продуктов",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions/Product"
+          },
+          {
+            "$ref": "#/definitions/ProductSet"
+          }
+        ]
+      }
+    },
+    "Deployments": {
+      "description": "Описания деплоев",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Deployment"
+      }
+    },
+    "TestScenarios": {
+      "description": "Описания тестов и групп",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions/TestGroup"
+          },
+          {
+            "$ref": "#/definitions/TestCase"
+          }
+        ]
+      }
+    },
+    "Suites": {
+      "description": "Описания тестов и групп",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/TestSuite"
+      }
+    }
+  },
+  "definitions": {
+    "ParameterValue": {
+      "description": "Строка в которой возможны подстановки значений параметров $(VarName)",
+      "type": "string"
+    },
+    "PlatformName": {
+      "description": "Идентификатор платформы (ключ в объекте #/Platforms конфига)",
+      "type": "string"
+    },
+    "Platform": {
+      "description": "Описание конкретной версии ОС",
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "PlatformSet": {
+      "description": "Группа платформ для зависимостей тестов и деплоев",
+      "$comment": "KIS'у хватит пяти наборов: 'Windows', 'Windows >= 7', 'Windows < 10', 'Windows x86' и 'Windows x64'. В тестах обновляемых модулей можно это количество сократить до 27, или даже еще меньше",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/PlatformName"
+      }
+    },
+    "ProductName": {
+      "description": "Идентификатор продукта (ключ в объекте #/Products конфига) чтобы в тестах и деплоях можно было указывать поддерживаемые",
+      "type": "string"
+    },
+    "Product": {
+      "description": "Описание версии продукта",
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "ReleaseName": {
+          "type": "string"
+        },
+        "Parameters": {
+          "description": "Определения переменных, которые могут быть использованы в общих деплоях. Например, путь к инсталлятору и скрипту установки для деплоя 'Install Product'",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ParameterValue"
+          }
+        }
+      },
+      "required": [
+        "Name",
+        "ReleaseName"
+      ],
+      "additionalProperties": false
+    },
+    "ProductSet": {
+      "description": "Линейка продуктов, чтобы в тестах и деплоях не надо было писать все версии",
+      "$comment": "'KIS <= 19', 'PURE', 'SDK', 'KES', 'KES11+' и т.п.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ProductName"
+      }
+    },
+    "DeploymentName": {
+      "description": "Идентификатор деплоя (ключ в объекте #/Deployments конфига)",
+      "type": "string",
+      "additionalProperties": false
+    },
+    "Deployment": {
+      "description": "Описание одного шага для подготовки тестового окружения. Может выполнять простые действия или вызывать другие шаги с определенными переменными",
+      "examples": [
+        {
+          "Install KAVKIS": {
+            "Type": "Script",
+            "ScriptPath": "$(ScriptsRoot)/Pure2019.dpl",
+            "ScriptArgs": {
+              "Installer-Dir": "$(KisBinariesFolder)\\startup.exe"
+            }
+          },
+          "Install Product": {
+            "Type": "Select",
+            "Condition": "$(ProductFamily)",
+            "Values": {
+              "KAVKIS": {
+                "Deployment": "Install KAVKIS",
+                "Parameters": {
+                  "ProductBinariesPath": "$(KisBinariesPath)"
+                }
+              },
+              "KES": {
+                "Deployment": "Install KES",
+                "Parameters": {
+                  "InstallerPath": "$(KesBinariesPath)"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "Type": {
+          "enum": [
+            "Script",
+            "Select",
+            "Sequence"
+          ]
+        }
+      },
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "Type": {
+              "enum": [
+                "Script"
+              ]
+            },
+            "ScriptPath": {
+              "$ref": "#/definitions/ParameterValue"
+            },
+            "ScriptArgs": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/ParameterValue"
+              }
+            },
+            "ReturnValue": {
+              "type": "integer",
+              "default": 0
+            },
+            "Timeout": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Type",
+            "ScriptPath",
+            "ScriptArgs"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "Type": {
+              "enum": [
+                "Select"
+              ],
+              "description": "Выбор деплоя в зависимости от значения параметра",
+              "$comment": "Для тестов модулей, которым надо ставить множество разных продуктов"
+            },
+            "SkipInvalidCondition": {
+              "type": "boolean",
+              "description": "Должен ли выполняться тест, если значения параметра нет в списке? (для хотфиксов)"
+            },
+            "Condition": {
+              "$ref": "#/definitions/ParameterValue"
+            },
+            "Values": {
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/DeploymentName"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "additionalProperties": {
+                        "$ref": "#/definitions/ParameterValue"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": [
+            "Type",
+            "Condition",
+            "Values"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "Type": {
+              "enum": [
+                "Sequence"
+              ],
+              "description": "Последовательность деплоев (для тестов compatibility)"
+            },
+            "Deployments": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/DeploymentName"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "additionalProperties": {
+                        "$ref": "#/definitions/ParameterValue"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": [
+            "Type",
+            "Deployments"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "required": [
+        "Type"
+      ]
+    },
+    "TestMethodQualifier": {
+      "properties": {
+        "AssemblyName": {
+          "type": "string"
+        },
+        "MethodName": {
+          "type": "string"
+        },
+        "ContinueOnError": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "AssemblyName",
+        "MethodName"
+      ],
+      "additionalProperties": false
+    },
+    "TestMethodSequence": {
+      "type": "object",
+      "properties": {
+        "AllowReboot": {
+          "type": "boolean"
+        },
+        "TestSequence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestMethodQualifier"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "TestSequence"
+      ],
+      "additionalProperties": false
+    },
+    "RebootTestStep": {
+      "description": "Перезагрузка машины в качестве шага теста.",
+      "type": "object",
+      "properties": {
+        "ForceReboot": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "ForceReboot"
+      ],
+      "additionalProperties": false
+    },
+    "WaitForRebootTestStep": {
+      "description": "Ожидание перезагрузки машины в качестве шага теста.",
+      "type": "object",
+      "properties": {
+        "WaitForReboot": {
+          "type": "object",
+          "properties": {
+            "RebootTimeout": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "WaitForReboot"
+      ],
+      "additionalProperties": false
+    },
+    "GTestProgram": {
+      "type": "object",
+      "properties": {
+        "ProgramName": {
+          "type": "string"
+          }
+        },
+        "Arguments": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+      "required": [
+        "ProgramName"
+      ],
+      "additionalProperties": false
+    },
+    "TestBot": {
+      "properties": {
+        "ConfigName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ConfigName"
+      ],
+      "additionalProperties": false
+    },
+    "TestCase": {
+      "description": "Описание тестового метода",
+      "properties": {
+        "Deployments": {
+          "description": "Необходимые тесту деплои. Будут выполнены в указанном порядке",
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/DeploymentName"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/ParameterValue"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "Environments": {
+          "type": "array",
+          "description": "Сочетания {продукты} x {платформы}, для которых поддерживается тест. Например, kes11 на серверах.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Products": {
+                "type": "array",
+                "description": "Список продуктов (название отдельного продукта или заготовленного списка)",
+                "items": {
+                  "$ref": "#/definitions/ProductName"
+                }
+              },
+              "Platforms": {
+                "type": "array",
+                "description": "Список платформ (название отдельной платформы или заготовленного списка)",
+                "items": {
+                  "$ref": "#/definitions/PlatformName"
+                }
+              }
+            },
+            "required": [
+              "Products",
+              "Platforms"
+            ]
+          }
+        },
+        "TestMethod": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/TestMethodQualifier"
+            },
+            {
+              "$ref": "#/definitions/TestMethodSequence"
+            },
+            {
+              "$ref": "#/definitions/GTestProgram"
+            },
+            {
+              "$ref": "#/definitions/RebootTestStep"
+            },
+            {
+              "$ref": "#/definitions/WaitForRebootTestStep"
+            },
+            {
+              "$ref": "#/definitions/TestBot"
+            }
+          ]
+        },
+        "Responsible": {
+          "type": "string"
+        },
+        "NeedUnsignedAgent": {
+          "description": "Аналог параметра сессии/деплоев unsignedAgent в Hive, отвечающий за то, нужен ли неподписанный агент для выполнения теста",
+          "type": "boolean"
+        },
+        "RequireInternet": {
+          "description": "Аналог WaitForNetwork - флаг, нужно ли тесту сначала дождаться установления соединения с интернетом",
+          "type": "boolean"
+        },
+        "TfsId": {
+          "type": "integer"
+        },
+        "RevertAgentAfter": {
+          "type": "boolean"
+        },
+        "RevertAgentBefore": {
+          "type": "boolean"
+        },
+        "RerunCountOnTestFailure": {
+          "description": "Сколько раз перезапускать красный тест",
+          "type": "integer"
+        },
+        "RerunCountOnTestSuccess": {
+          "description": "Сколько раз перезапускать зеленый тест",
+          "type": "integer"
+        },
+        "Timeout": {
+          "description": "Таймаут выполнения теста",
+          "type": "integer"
+        },
+        "Area": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Deployments",
+        "TestMethod",
+        "Environments"
+      ],
+      "additionalProperties": false
+    },
+    "TestGroup": {
+      "type": "object",
+      "properties": {
+        "Sequential": {
+          "type": "boolean",
+          "default": false,
+          "description": "Следующий тест/группа из массива TestScenarios запускается, если предыдущий завершился успешно"
+        },
+        "TestScenarios": {
+          "type": "array",
+          "$comment": "Название TestCase или другой TestGroup",
+          "items": {
+            "$ref": "#/definitions/TestScenarioName"
+          }
+        }
+      },
+      "required": [
+        "TestScenarios"
+      ],
+      "additionalProperties": false
+    },
+    "TestScenarioName": {
+      "description": "Идентификатор теста или группы тестов (ключ в объекте #/TestScenarios конфига)",
+      "type": "string"
+    },
+    "TestSuite": {
+      "description": "Набор тестов, который можно запустить. Вычисляется декартово произведение {Platform} X {Product} Х {TestGroup}. Если тест или его деплой не поддерживают продукт и/или платформу то такие тесты будут пропущены с результатом Skipped. AdditionalDeployments выполняются перед всеми тестами",
+      "type": "object",
+      "properties": {
+        "Platforms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PlatformName"
+          }
+        },
+        "Products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ProductName"
+          }
+        },
+        "TestScenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TestScenarioName"
+          }
+        },
+        "Parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ParameterValue"
+          }
+        }
+      },
+      "required": [
+        "Platforms",
+        "Products",
+        "TestScenarios"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

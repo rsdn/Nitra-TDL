@@ -1,0 +1,35 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+namespace Tdl
+{
+  abstract ast DefExpr : BindableAst
+  {
+  stage 2:
+    in  ExpectedType : TypeSymbol;
+    out Type         : TypeSymbol;
+
+    unless (Type.IsSubtypeOf(ExpectedType))
+      Error(context, $"Expected $(self.ExpectedType), got $(self.Type)");
+
+    | String                    { Type = context.GetStringType(); Value : CSharp.StringLiteral; }
+    | True                      { Type = context.GetBooleanType(); }
+    | False                     { Type = context.GetBooleanType(); }
+    | RealLiteral               { Type = context.GetDoubleType(); }
+    | DecimalIntegerLiteral     { Type = context.GetInt32Type(); }
+    | HexadecimalIntegerLiteral { Type = context.GetDoubleType(); }
+    | Reference
+      {
+        out TypedRef : Ref[TypedDeclarationSymbol];
+        
+        PatameterName.Scope = Scope;
+        TypedRef            = PatameterName.Ref.Resolve();
+        Type                = TypedRef.Symbol.Type;
+
+        PatameterName : Declarations.Reference;
+      }
+  }
+}

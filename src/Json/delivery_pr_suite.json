@@ -1,0 +1,83 @@
+{
+  "$schema": "../schema.v3.json",
+  "$include": [
+    "delivery_pr_products.json",
+    "delivery_pr_platforms.json",
+    "delivery_pr_deployments.json"
+  ],
+  "TestScenarios": {
+    "FacadeProductStopStart": {
+      "Deployments": [
+        "DeployWithDeployer_NoReboot"
+      ],
+      "UniqueId": "c5e33360-e3f1-40e2-a11b-cce562bfc87d",
+      "TestMethod": {
+        "AssemblyName": "Autotest.Common.Components.Suites.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+      },
+      "Environments": [
+        {
+          "Platforms": [
+            "win10"
+          ],
+          "Products": [
+            "PURE 2020"
+          ]
+        }
+      ],
+	  "TfsId": 3020065
+    },
+    "ExclusiveTestGroup": {
+      "TestScenarios": [
+        "FacadeProductStopStart"
+      ]
+    }
+  },
+
+  "Suites": {
+    "Pure.2020.MP0.Ext.PullRequest": {
+      "Platforms": [
+        "win10"
+      ],
+      "Products": [
+        "PURE 2020"
+      ],
+      "Parameters": {
+        "ComponentConfigurationPath": "\\\\tis-dfs\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ComponentConfiguration\\2020.MP0\\Delivery.xml",
+        "AutotestAssemblies": "\\\\sdfs.avp.ru\\Autotests\\Components\\Delivery\\BlackBox\\AutotestAssemblies",
+        "DeployIsNeeded": "True",
+        "UpdateSourceAddress": "",
+        "UseSecondaryUpdateSource": "False",
+        "SecondaryUpdateSource": "",
+        "SuiteName": "Pure.2020.MP0.Ext.PullRequest",
+        "DeploymentConditions": "/KSDE",
+        "BugsRobotStatus": "0"
+      },
+      "TestScenarios": [
+        "ExclusiveTestGroup"
+      ]
+    },
+	"Pure.2020.MP0.Ext.Delivery": {
+      "Platforms": [
+        "win10"
+      ],
+      "Products": [
+        "PURE 2020"
+      ],
+      "Parameters": {
+        "ComponentConfigurationPath": "\\\\tis-dfs\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ComponentConfiguration\\2020.MP0\\Delivery.xml",
+        "AutotestAssemblies": "\\\\sdfs.avp.ru\\Autotests\\Components\\Delivery\\BlackBox\\AutotestAssemblies",
+        "DeployIsNeeded": "True",
+        "UpdateSourceAddress": "",
+        "UseSecondaryUpdateSource": "False",
+        "SecondaryUpdateSource": "",
+        "SuiteName": "Pure.2020.MP0.Ext.PullRequest",
+        "DeploymentConditions": "/KSDE",
+        "BugsRobotStatus": "0"
+      },
+      "TestScenarios": [
+        "ExclusiveTestGroup"
+      ]
+    }
+  }
+}

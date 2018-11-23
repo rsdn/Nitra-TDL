@@ -1,0 +1,280 @@
+﻿using DotNet;
+
+using JSonDal;
+
+using Microsoft.Cci.MetadataReader.ObjectModelImplementation;
+
+using Nemerle;
+using Nemerle.Assertions;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+using Nemerle.Utility.Pair;
+
+using Newtonsoft.Json;
+
+using Nitra;
+using Nitra.BackEnd.Cci;
+using Nitra.Declarations;
+using Nitra.ProjectSystem;
+
+using Microsoft.Cci;
+
+using QuickType;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using System.Threading;
+
+using Tdl;
+using Tdl2JsonLib.ExceptionHelper;
+
+namespace Tdl2JsonLib
+{
+  public module JsonGenerator
+  {
+    static _jsonVersion = 5;
+    
+    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string]) : string
+    {
+      def absolutePaths = sourceFiles.Select(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f)).ToArray();
+
+      def CheckFilesExists(files, messageformatter : string -> string)
+      {
+        def notFoundFiles = files.Where(f => !File.Exists(f)).ToList();
+        when (notFoundFiles.Any())
+        {
+          def messages = notFoundFiles.Select(messageformatter).ToArray();
+          throw ConfigurationException(string.Join("\r\n", messages));
+        }
+      }
+
+      CheckFilesExists(absolutePaths, m => $"File not found: $m");
+
+      GenerateJson(Compile(workingDirectory, absolutePaths, references));
+    }
+
+    private Compile(directory : string, files : array[string], refs : array[string]) : NamespaceSymbol
+    {
+      def solution = FsSolution();
+      def project  = FsProject(solution, 
+                               directory, 
+                               files.Map(FsFileWithId(_, TdlLang.Instance)),
+                               [FullNameLibReference("mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")  : LibReference,
+                                 FullNameLibReference("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"),
+                                 FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+                                 .Concat(refs.Select(r => FileLibReference(r) : LibReference)).ToArray());
+
+      def projectSupport = ProjectSupport();
+      def data           = projectSupport.RefreshReferences(CancellationToken.None, project);
+      project.Data       = data;
+      def files          = project.Files.Select(_.GetEvalPropertiesData()).ToImmutableArray();
+      projectSupport.RefreshProject(CancellationToken.None, files, data);
+
+      def messages = List();
+
+      foreach (msg in project.CompilerMessages :> CompilerMessageList)
+        messages.Add(msg);
+
+      foreach (file when file.HasCompilerMessage in files)
+      foreach (msg  in file.GetCompilerMessage())
+        messages.Add(msg);
+
+      foreach (file in project.Files)
+      foreach (msg  in file.GetCompilerMessages())
+        messages.Add(msg);
+
+      ProcessCompilerMessages(messages);
+
+      def (_, _, namespaceSymbol) = data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol;
+      namespaceSymbol
+    }
+
+    private ProcessCompilerMessages(messages : IEnumerable[CompilerMessage]) : void
+    {
+      when(messages.Any())
+        throw CompilerErrorException(string.Join(Environment.NewLine, messages.Select(m => m.ToString())), messages)
+    }
+
+    private GenerateJson(root : NamespaceSymbol) : string
+    {
+      def symbols = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
+      def coordinate = Root() <-
+      {
+        Version       = _jsonVersion;
+        Schema        = $"http://auto-reports.avp.ru/starter-schema/v$_jsonVersion/schema.json";
+        Deployments   = Deployments.Generate(symbols);
+        Products      = symbols.OfType.[ProductSymbol     ]().Select(GenerateProduct) .ToDictionary();
+        Platforms     = symbols.OfType.[PlatformSymbol    ]().Select(GeneratePlatform).ToDictionary();
+        Suites        = symbols.OfType.[SuiteSymbol       ]().Select(GenerateSuite)   .ToDictionary();
+        TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol]().Select(GenerateScenario).ToDictionary();
+      };
+
+      def settings = ConverterSettings.Settings;
+      settings.Formatting = Formatting.Indented;
+      Newtonsoft.Json.JsonConvert.SerializeObject(coordinate, settings);
+    }
+
+    private GeneratePlatform(platformSymbol : PlatformSymbol) : string * PlatformValue
+    {
+      | Platform.DefSymbol as Def => (Def.Name, PlatformValue() <- { Platform    = Platform() })
+      | Platform.SetSymbol as Set => (Set.Name, PlatformValue() <- { StringArray = Set.Platforms.Select(_.Name).ToArray(); });
+      | _                         => ThrowNotSupportedSymbol(platformSymbol)
+    }
+
+    private CollectDefs(defs : Seq[Def]) : Seq[string * object]
+    {
+      foreach(@def in defs)
+      {
+        def name = @def.Symbol.Name;
+        match(@def.Expr)
+        {
+          | Tdl.Expr.String as str => yield (name, str.Value)
+          | Tdl.Expr.False         => yield (name, false)
+          | Tdl.Expr.True          => yield (name, true)
+          | Real            as x   => yield (name, x.Value)
+          | Integerl        as x   => yield (name, x.Value)
+          | Reference       as x   => yield (name, "#(" + x.Name + ")")
+          | Error           as e   => throw NotSupportedException("Error at: " + e.Location);
+          | x                      => throw NotSupportedException("The '" + x + "' is not supported");
+        }
+      }
+    }
+
+    private GenerateProduct(productSymbol : ProductSymbol) : string * ProductValue
+    {
+      | Product.DefSymbol as Def => 
+        def parameters = CollectDefs(Def.Defs).ToDictionary();
+        def useAsFixedParameter(name : string) : string
+        {
+          mutable value;
+          if (parameters.TryGetValue(name, out value))
+          {
+            _ = parameters.Remove(name);
+            value :> string
+          }
+          else
+            null
+        }
+        (Def.Name, 
+          ProductValue() <- 
+          {
+            Product = Product() <- { 
+              Name        = useAsFixedParameter("Name");
+              ReleaseName = useAsFixedParameter("ReleaseName");
+              Version     = useAsFixedParameter("Version");
+              Parameters  = parameters;
+            }
+          })
+      | Product.SetSymbol as Set => (Set.Name, ProductValue() <- { StringArray = Set.AllProducts.Select(p => p.Name).ToArray(); })   
+      | _ => ThrowNotSupportedSymbol(productSymbol)
+    }
+
+    private GetAssemblyAndMethodName(symbol: Tdl.Scenario.DefSymbol) : string * string
+    {
+      def decl         = symbol.Method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
+      def method       = decl.First().Method;
+      def type         = method.ContainingType :> ITypeDefinition;
+      def unit         = TypeHelper.GetDefiningUnit(type);
+      def assemblyName = unit.Name.Value + ".dll";
+      def methodName   = method.ContainingType + "." + method.Name.Value;
+
+      (assemblyName, methodName)
+    }
+
+    private GenerateScenario(scenarioSymbol : ScenarioSymbol) : string * TestCase
+    {
+      (scenarioSymbol.Name, 
+        TestCase() <- {
+          TestGroup = 
+          match(scenarioSymbol)
+          {
+            | Tdl.Scenario.DefSymbol as Def => 
+              def (assemblyName, methodName) = GetAssemblyAndMethodName(Def);
+
+              def getString(name : string) : string
+              {
+                Def.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+              }
+              def getBool(name : string) : bool?
+              {
+                Def.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
+                  .Map(fun(expr)
+                    {
+                      | Tdl.Expr.True  =>  Nullable(true)
+                      | Tdl.Expr.False => Nullable(false)
+                      | _              => throw NotSupportedException()
+                    })
+                  .WithDefault(null);
+              }
+              def getLong(name : string) : long?
+              {
+                  Def.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
+              }
+              def getTestMethod() : TestMethodSequence
+              {
+                def allowRebootOpt = getBool("AllowReboot");
+                when (allowRebootOpt == null)
+                  return TestMethodSequence() <- 
+                  {
+                    AssemblyName = assemblyName;
+                    MethodName   = methodName;
+                  };
+                TestMethodSequence() <-
+                {
+                  TestSequence = array[TestMethodQualifier() <-
+                  {
+                    TestMethodQualifierClass = TestMethodQualifierClass() <-
+                    {
+                      AssemblyName = assemblyName;
+                      MethodName   = methodName;
+                    }
+                  }];
+                  AllowReboot  = getBool("AllowReboot");
+                }
+              }
+
+              TestGroup() <- 
+              {
+                  Deployments             = [Def.Deployment.Name].MapToArray(n   => TestGroupDeployment() <- String = n);
+                  Environments            = Def.Environments     .MapToArray(env => Environment()         <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
+                  TestMethod              = getTestMethod();
+                  Area                    = getString("Area");
+                  NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
+                  RequireInternet         = getBool  ("RequireInternet");
+                  RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
+                  RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
+                  Responsible             = getString("Responsible");
+                  RevertAgentAfter        = getBool  ("RevertAgentAfter");
+                  RevertAgentBefore       = getBool  ("RevertAgentBefore");
+                  TfsId                   = getLong  ("TfsId");
+                  Timeout                 = getString("Timeout");
+                  UniqueId                = getString("UniqueId");
+              }
+
+            | Tdl.Scenario.SetSymbol as Set => TestGroup() <- { TestScenarios = Set.Scenarios.Select(_.Name).ToArray() }
+            | _                             => ThrowNotSupportedSymbol(scenarioSymbol) 
+        }
+      })
+    }
+
+    private GenerateSuite(suiteSymbol : SuiteSymbol) : string * TestSuite
+    {
+      def parameters = CollectDefs(suiteSymbol.Defs).ToDictionary();
+      def suite = TestSuite() <- 
+      {
+        Platforms     = array[suiteSymbol.Platform.Name];
+        Products      = array[suiteSymbol.Product.Name];
+        TestScenarios = suiteSymbol.Statements.OfType.[Tdl.SuiteStatement.CallScenario]().Select(s => s.Reference.Name).ToArray();
+        Parameters    = parameters;
+      };
+
+      (suiteSymbol.Name, suite)
+    }
+  } // module
+} // namespace

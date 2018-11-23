@@ -1,0 +1,91 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  abstract declaration Deployment : NamespaceMember
+  {
+    symbol
+    {
+    stage 2:
+      in AggregateParametersScope : Scope;
+    }
+
+    | Script : Parameterizable
+      {
+        symbol
+        {
+          in Path     : ParsedValue[string];
+          in Expected : ParsedValue[int];
+          in Defs     : ImmutableArray[Def2];
+
+          Kind      = "deployment";
+          SpanClass = TdlLang.DeploymentSpanClass;
+        }
+
+
+        //Definitions.DefinitionScope = parameters scope from script
+        Symbol.AggregateParametersScope = Symbol.ParameterScope;
+        Definitions.Scope               = Symbol.ParameterScope;
+        Symbol.Path                     = TdlUtils.ConvertStringLiteral(Path);
+        Symbol.Expected                 = TdlUtils.MakeExpected(Expected);
+        Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
+        Parameters.Scope                = Scope;
+
+        Path : CSharp.StringLiteral;
+        Definitions : Definition*;
+        Expected : IntLiteral;
+      }
+    | Set
+      {
+        symbol
+        {
+        stage 1:
+          in Deployments : ImmutableArray[DeploymentSymbol];
+
+          Kind      = "deployment set";
+          SpanClass = TdlLang.DeploymentSpanClass;
+        }
+
+        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Deployments);
+        Symbol.Deployments = TdlUtils.MakeDeployments(Deployments.Ref);
+
+        Deployments.Scope = Scope;
+        Deployments : Reference*;
+      }
+
+    | Currying
+      {
+        symbol
+        {
+          in BaseDeployment  : DeploymentSymbol;
+          in ExcludedParams  : ImmutableArray[FormalParameterSymbol];
+          in ParameterValues : ImmutableArray[Def];
+
+          Kind      = "deployment";
+          SpanClass = TdlLang.DeploymentSpanClass;
+        }
+
+        out BaseDeploymentRef : Ref[DeploymentSymbol];
+
+        BaseDeployment.Scope  = Scope;
+        BaseDeploymentRef     = BaseDeployment.Ref.Resolve();
+        Symbol.BaseDeployment = BaseDeploymentRef.Symbol;
+
+        CurredParameters.Scope           = Scope;
+        CurredParameters.DefinitionScope = BaseDeploymentRef.Symbol.AggregateParametersScope;
+        Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
+        Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams);
+
+        Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, CurredParameters.SymbolRef);
+
+        BaseDeployment   : Reference;
+        CurredParameters : Definition*;
+      }
+  } // Deployment
+}

@@ -1,0 +1,33 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl2JsonLib
+{
+    module Expressions
+    {
+        public ToObject(this expression : Tdl.Expr) : object
+        {
+            | Error     => "<error>";
+            | False     => false
+            | True      => true
+            | Integerl  as i => i.Value
+            | Real      as r => r.Value
+            | Reference as r => "$(" + r.Name + ")"
+            | String    as s => s.Value
+        }
+        
+        public ToDictionary[TKey, TValue](this seq : Seq[TKey * TValue]) : Dictionary[TKey, TValue]
+        {
+          def dictionary = Dictionary();
+          foreach ((k, v) in seq)
+            dictionary.Add(k, v);
+          dictionary
+        }
+    }
+}

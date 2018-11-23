@@ -1,0 +1,26 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+namespace Tdl
+{
+  ast EnvironmentAst : BindableAst
+  {
+    out Environment : Environment;
+    out PlatformRef : Ref[PlatformSymbol];
+    out ProductRef  : Ref[ProductSymbol];
+
+    Platform.Scope  = Scope;
+    PlatformRef     = Platform.Ref.Resolve();
+
+    Product.Scope  = Scope;
+    ProductRef     = Product.Ref.Resolve();
+
+    Environment    = Environment(PlatformRef.Symbol, ProductRef.Symbol);
+
+    Platform : Reference;
+    Product  : Reference;
+  }
+}
