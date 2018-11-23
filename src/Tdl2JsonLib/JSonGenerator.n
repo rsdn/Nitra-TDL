@@ -40,7 +40,7 @@ namespace Tdl2JsonLib
   {
     static _jsonVersion = 5;
     
-    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string]) : string
+    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string], isMethodTypingEnabled : bool) : string
     {
       def absolutePaths = sourceFiles.Select(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f)).ToArray();
 
@@ -56,11 +56,13 @@ namespace Tdl2JsonLib
 
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
-      GenerateJson(Compile(workingDirectory, absolutePaths, references));
+      GenerateJson(Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled));
     }
 
-    private Compile(directory : string, files : array[string], refs : array[string]) : NamespaceSymbol
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol
     {
+      TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
+
       def solution = FsSolution();
       def project  = FsProject(solution, 
                                directory, 
@@ -177,14 +179,22 @@ namespace Tdl2JsonLib
 
     private GetAssemblyAndMethodName(symbol: Tdl.Scenario.DefSymbol) : string * string
     {
-      def decl         = symbol.Method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
-      def method       = decl.First().Method;
-      def type         = method.ContainingType :> ITypeDefinition;
-      def unit         = TypeHelper.GetDefiningUnit(type);
-      def assemblyName = unit.Name.Value + ".dll";
-      def methodName   = method.ContainingType + "." + method.Name.Value;
+      if (TdlTypingSettings.IsMethodTypingEnabled)
+      {
+        def decl         = symbol.Method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
+        def method       = decl.First().Method;
+        def type         = method.ContainingType :> ITypeDefinition;
+        def unit         = TypeHelper.GetDefiningUnit(type);
+        def assemblyName = unit.Name.Value + ".dll";
+        def methodName   = method.ContainingType + "." + method.Name.Value;
 
-      (assemblyName, methodName)
+        (assemblyName, methodName)
+      }
+      else
+      {
+        def ast = symbol.Declarations.OfType.[Scenario.Def]().FirstOrDefault();
+        ("", if (ast != null) ast.Method.Location.GetText() else "")
+      }
     }
 
     private GenerateScenario(scenarioSymbol : ScenarioSymbol) : string * TestCase

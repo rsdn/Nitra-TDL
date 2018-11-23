@@ -124,6 +124,9 @@
     <Compile Include="Code\TdlProjectEvalPropertiesHost.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\TdlTypingSettings.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\TdlUtils.n">
       <SubType>Code</SubType>
     </Compile>

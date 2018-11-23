@@ -12,6 +12,7 @@
     <NoWarn>1591</NoWarn>
     <OutputPath>..\bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>..\obj\$(Configuration)\</IntermediateOutputPath>
+    <Version>1.0.2</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>

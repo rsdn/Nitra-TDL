@@ -31,11 +31,12 @@ namespace Tdl
       stage 1:
         out MethodRef      : Ref[Member.MethodSymbol];
         out DeploymentRef  : Ref[DeploymentSymbol];
+        out MethodConditionalScope : ValueOption[Scope] = if (TdlTypingSettings.IsMethodTypingEnabled) VSome(Scope) else VNone();
 
         Symbol.AggregateParametersScope = Symbol.Deployment.AggregateParametersScope;
 
-        Method.NameScopeFactory         = TdlUtils.MetodScopeFactory;
-        Method.Scope                    = Scope;
+        Method.NameScopeFactory         = TdlUtils.MethodScopeFactory;
+        Method.Scope                    = MethodConditionalScope.Value;
         MethodRef                       = Method.Ref.Resolve();
         Symbol.Method                   = MethodRef.Symbol;
 
