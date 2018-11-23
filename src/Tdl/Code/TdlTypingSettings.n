@@ -11,6 +11,6 @@ namespace Tdl
 {
   public module TdlTypingSettings
   {
-    public IsMethodTypingEnabled : bool { get; set; }
+    public IsMethodTypingEnabled : bool { get; set; default true; }
   }
 }
