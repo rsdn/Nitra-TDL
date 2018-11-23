@@ -78,9 +78,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <MacroReference Include="Nemerle.Linq">
-      <HintPath>$(Nemerle)\Nemerle.Linq.dll</HintPath>
-    </MacroReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompilerErrorException.n">
@@ -113,8 +110,8 @@
       <Project>{e35348e5-1931-4eb8-802c-dc29ba93f82d}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\Tdl.Grammar\Tdl.Grammar.nproj">
-      <Name>Tdl.Grammar</Name>
+    <ProjectReference Include="..\Tdl\Tdl.nproj">
+      <Name>Tdl</Name>
       <Project>{82c32d2d-8e24-4975-b606-b2c7be54c340}</Project>
       <Private>True</Private>
     </ProjectReference>
