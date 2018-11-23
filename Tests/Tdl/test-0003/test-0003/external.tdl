@@ -1,0 +1,8 @@
+﻿external
+{
+  string ProductVersion;
+  string KisDistributivePath;
+  string KisModulesPath;
+  string KesDistributivePath;
+  string KesModulesPath;
+}

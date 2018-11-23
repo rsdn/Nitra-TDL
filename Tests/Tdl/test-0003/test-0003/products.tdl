@@ -1,0 +1,35 @@
+product type Kavkis
+{
+    string Name;
+    string ReleaseName;
+    string ProductConfigurationPath;
+    string ComponentConfigurationPath;
+    string DeploymentConditions;
+    string DistributiveOriginalPath;
+    string ModulesPath;
+    string SuiteName;
+}
+
+product "PURE 2020.MP0" : Kavkis 
+{
+    Name = @"PURE";
+    ReleaseName = @"20.MP0";
+    ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\2020.MP0\PURE.xml";
+    ComponentConfigurationPath = @"\\tis-dfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ComponentConfiguration\2020.MP0\Delivery.xml";
+    DeploymentConditions = @"/KSDE";
+    DistributiveOriginalPath = KisDistributivePath;
+    ModulesPath = KisModulesPath;
+    SuiteName = @"Pure.2020.MP0.Ext.PullRequest";
+}
+
+product "KES 11.1" : Kavkis 
+{
+    Name = @"KES";
+    ReleaseName = @"11.1";
+    ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\KES11.1.xml";
+    ComponentConfigurationPath = @"\\tis-dfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ComponentConfiguration\KES\Delivery.Kes.xml";
+    DeploymentConditions = @"/EncryptionEnabled";
+    DistributiveOriginalPath = KesDistributivePath;
+    ModulesPath = KesModulesPath;
+    SuiteName = @"Kes11.1.Ext.PullRequest";
+}

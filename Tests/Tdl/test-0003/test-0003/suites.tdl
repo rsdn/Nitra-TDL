@@ -1,0 +1,26 @@
+﻿
+suite "Ext.PullRequest"
+{
+    platform win10;
+    product "KES 11.1__PURE 2020.MP0";
+    AutotestAssemblies = @"\\sdfs.avp.ru\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
+    DeployIsNeeded = @"True";
+    UpdateSourceAddress = @"";
+    UseSecondaryUpdateSource = @"False";
+    SecondaryUpdateSource = @"";
+    BugsRobotStatus = @"0";
+    ExclusiveTestGroup();
+}
+
+suite "Ext.Delivery"
+{
+    platform win10;
+    product "KES 11.1__PURE 2020.MP0";
+    AutotestAssemblies = @"\\sdfs.avp.ru\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
+    DeployIsNeeded = @"True";
+    UpdateSourceAddress = @"";
+    UseSecondaryUpdateSource = @"False";
+    SecondaryUpdateSource = @"";
+    BugsRobotStatus = @"0";
+    ExclusiveTestGroup();
+}

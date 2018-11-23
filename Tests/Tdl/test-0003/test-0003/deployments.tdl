@@ -1,0 +1,21 @@
+
+deployment DeployWithDeployer(
+    string BuildName,
+    string DeployIsNeeded,
+    string DeploymentConditions,
+    string InternalTestSettingsDirectory,
+    string DeployerTimeoutSec = @"900"
+)
+    script @"\\tis-dfs\Autotests\Components\DeploymentScripts\Hive\Deploy.ps1"
+{
+    DeployerFlags = DeploymentConditions;
+    TestSettingsDirectory = InternalTestSettingsDirectory;
+    expected 2;
+}
+
+deployment DeployCollectors()
+    script @"\\tis-dfs\Autotests\Components\DeploymentScripts\Hive\DeployDataCollectors.ps1"
+{
+}
+
+deployment DeployWithDeployer_NoReboot = DeployWithDeployer, DeployCollectors;

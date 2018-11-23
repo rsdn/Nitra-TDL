@@ -1,0 +1,24 @@
+﻿product "KES 11.1__PURE 2020.MP0" : Kavkis  = "KES 11.1", "PURE 2020.MP0";
+
+scenario FacadeProductStopStart
+{
+    deployment DeployWithDeployer_NoReboot;
+    environments (win10, "KES 11.1__PURE 2020.MP0");
+    method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart;
+    UniqueId = @"c5e33360-e3f1-40e2-a11b-cce562bfc87d";
+    Timeout = @"00:20:00";
+    TfsId = 3020065;
+}
+
+scenario S1
+{
+    deployment DeployWithDeployer_NoReboot;
+    environments (win10, "KES 11.1__PURE 2020.MP0");
+    method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart;
+    UniqueId = @"c5e33360-e3f1-40e2-a11b-cce562bfc87d";
+    Timeout = @"00:20:00";
+    TfsId = 3020065;
+}
+
+scenario ExclusiveTestGroup = FacadeProductStopStart;
+
