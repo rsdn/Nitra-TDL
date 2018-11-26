@@ -20,7 +20,7 @@ namespace Tdl
     | False                     { Type = context.GetBooleanType(); }
     | RealLiteral               { Type = context.GetDoubleType(); }
     | DecimalIntegerLiteral     { Type = context.GetInt32Type(); }
-    | HexadecimalIntegerLiteral { Type = context.GetDoubleType(); }
+    | HexadecimalIntegerLiteral { Type = context.GetInt32Type(); }
     | Reference
       {
         out TypedRef : Ref[TypedDeclarationSymbol];
