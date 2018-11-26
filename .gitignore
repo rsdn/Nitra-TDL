@@ -324,3 +324,6 @@ ASALocalRun/
 
 # KL.VisualStudio.RemoteDebugPlugin
 !KL.MM.csproj
+
+
+/src/TdlLangVsPackage/*
