@@ -2,13 +2,11 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <NitraRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\nitra'))</NitraRoot>
     <NemerleVersion>Net-4.0</NemerleVersion>
     <NemerleBinPathRoot Condition=" '$(NemerleBinPathRoot)' == '' ">$(ProgramFiles)\Nemerle</NemerleBinPathRoot>
     <Nemerle Condition=" '$(Nemerle)' == '' ">$(NemerleBinPathRoot)\$(NemerleVersion)</Nemerle>
-    <CommonFilesPath Condition=" '$(CommonFilesPath)' == '' ">$(MSBuildProjectDirectory)\..\..\Common</CommonFilesPath>
-    <ExternalToolsPath Condition=" '$(ExternalToolsPath)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\ExternalTools'))</ExternalToolsPath>
-    <NugetPackagesPath Condition=" '$(NugetPackagesPath)' == '' ">$(MSBuildProjectDirectory)\..\..\packages</NugetPackagesPath>
-    <SolutionRoot Condition=" '$(SolutionRoot)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..'))</SolutionRoot>
+    <ExternalToolsPath Condition=" '$(ExternalToolsPath)' == '' ">$(NitraRoot)\ExternalTools</ExternalToolsPath>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8351EF37-7F0C-494B-B6CF-ED5CA3193FD8}</ProjectGuid>
@@ -18,6 +16,7 @@
     <AssemblyName>Tdl.VisualStudio.Plugin</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Version>1.0.0</Version>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,7 +24,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,41 +33,41 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Grammars\CSharp\CSharp.Grammar\CSharp.Grammar.nproj">
+    <ProjectReference Include="$(NitraRoot)\Grammars\CSharp\CSharp.Grammar\CSharp.Grammar.nproj">
       <Project>{249928bb-c446-42b3-bff3-ca98dabb9609}</Project>
       <Name>CSharp.Grammar</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Grammars\DSLs\TDL\Tdl.nproj">
+    <ProjectReference Include="..\Tdl\Tdl.nproj">
       <Project>{82c32d2d-8e24-4975-b606-b2c7be54c340}</Project>
       <Name>Tdl</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Nitra.LanguageCompiler\Nitra.LanguageCompiler.nproj">
+    <ProjectReference Include="$(NitraRoot)\Nitra.LanguageCompiler\Nitra.LanguageCompiler.nproj">
       <Project>{5b187ce9-5655-4d43-bfec-0d77b5c63818}</Project>
       <Name>Nitra.LanguageCompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Nitra\ClientServer\Nitra.ClientServer.Server\Nitra.ClientServer.Server.nproj">
+    <ProjectReference Include="$(NitraRoot)\Nitra\ClientServer\Nitra.ClientServer.Server\Nitra.ClientServer.Server.nproj">
       <Project>{705d1c4f-0ac8-4bdc-80cd-e3d26cfa5397}</Project>
       <Name>Nitra.ClientServer.Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Nitra\Nitra.Runtime\Nitra.Runtime.nproj">
+    <ProjectReference Include="$(NitraRoot)\Nitra\Nitra.Runtime\Nitra.Runtime.nproj">
       <Project>{9db13eb2-28e3-432b-8c8f-0e39ef5bcc38}</Project>
       <Name>Nitra.Runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\System.Collections.Immutable.Light\System.Collections.Immutable.Light.csproj">
+    <ProjectReference Include="$(NitraRoot)\System.Collections.Immutable.Light\System.Collections.Immutable.Light.csproj">
       <Project>{46f78a78-93ff-4e51-b221-8e5fffe8806d}</Project>
       <Name>System.Collections.Immutable.Light</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NitraCommonIde\NitraCommonIde.csproj">
+    <ProjectReference Include="$(NitraRoot)\Ide\NitraCommonIde\NitraCommonIde.csproj">
       <Project>{dcf35834-4ac6-4925-a7bc-a1dcf849b4e0}</Project>
       <Name>NitraCommonIde</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NitraCommonVSIX\NitraCommonVSIX.csproj">
+    <ProjectReference Include="$(NitraRoot)\Ide\NitraCommonVSIX\NitraCommonVSIX.csproj">
       <Project>{1dc85bbe-138a-4bce-9e25-b076bd4d2dbe}</Project>
       <Name>NitraCommonVSIX</Name>
     </ProjectReference>
@@ -89,13 +88,12 @@
     <ProjectSupport>TdlLang</ProjectSupport>
     <LanguageName>TdlLang</LanguageName>
     <VsPackageName>$(LanguageName)VsPackage</VsPackageName>
-    <VsPackagePath>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)..\..\$(VsPackageName)'))</VsPackagePath>
+    <VsPackagePath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\$(VsPackageName)'))</VsPackagePath>
     <VsPackageProjectPath>$(VsPackagePath)\$(VsPackageName).csproj</VsPackageProjectPath>
     <NuGetSource>https://www.nuget.org/api/v2</NuGetSource>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(CommonFilesPath)\NitraBuild.targets" />
-  <Target Name="AfterBuild" DependsOnTargets="GetNitraBuildVersion">
+  <Target Name="AfterBuild">
     <ItemGroup>
       <!-- Add links to the necessary assembly in this project. It will be copied to the Templates\XXLanguageFullNameXXVsPackage\Languages -->
       <Languages Include="$(TargetDir)*.*" Exclude="$(TargetDir)$(TargetName).*;$(TargetDir)Nitra.LanguageCompiler.*" />
@@ -105,8 +103,8 @@
     <Message Text="Copy references: '@(Languages)' -&gt; '$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages'" Importance="high" />
     <RemoveDir Directories="$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages" />
     <Copy SourceFiles="@(Languages)" DestinationFolder="$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages" />
-    <Exec Command="$(TargetDir)Nitra.LanguageCompiler.exe /proj:&quot;$(ProjectSupport)&quot; /ver:&quot;$(NitraBuildVersion)&quot; /lang:$(LanguageName) /ns:$(Namespace) /out:..\..\..\ .\$(Assembly)" WorkingDirectory="$(TargetDir)" />
-    <Exec Command="$(SolutionRoot)\NuGet\RestoreNuGetPkgs.cmd &quot;$(VsPackagePath)&quot; &quot;$(NuGetSource)&quot;" WorkingDirectory="$(VsPackagePath)" />
+    <Exec Command="$(TargetDir)Nitra.LanguageCompiler.exe /proj:&quot;$(ProjectSupport)&quot; /ver:&quot;$(Version)&quot; /lang:$(LanguageName) /ns:$(Namespace) /out:$(MSBuildThisFileDirectory).. .\$(Assembly)" WorkingDirectory="$(TargetDir)" />
+    <Exec Command="$(NitraRoot)\NuGet\RestoreNuGetPkgs.cmd &quot;$(VsPackagePath)&quot; &quot;$(NuGetSource)&quot;" WorkingDirectory="$(VsPackagePath)" />
     <MSBuild Projects="$(VsPackageProjectPath)" Properties="Platform=x86; Configuration=$(Configuration); UseNitraFrom=ProjectReferences" />
   </Target>
 </Project>
