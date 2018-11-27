@@ -1,0 +1,29 @@
+﻿platform gated_platforms = w10rs3-x64, win7-x64, win2012r2;
+platform gated_workstation_platforms = w10rs3-x64, win7-x64, win2012r2;
+
+scenario GatedChain1
+{
+    deployment Deploy_Gated;
+    environments (gated_platforms, KES);
+    method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
+    Area = @"GatedTestsChain1";
+    UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8C";
+    TfsId = 0;
+    RevertAgentAfter = true;
+    Timeout = "00:00:10";
+}
+
+scenario GatedChain2
+{
+    deployment Deploy_Gated;
+    environments (gated_platforms, KES);
+    method Autotest.Products.KES_Dev.Suites.Common.GatedChain2.GatedTestsChain2.Gated2_S01_Installation;
+    Area = @"GatedTestsChain2";
+    UniqueId = @"C3E98F14-10D5-4118-8DC9-103DC5A67C4F";
+    TfsId = 0;
+    RevertAgentAfter = true;
+    Timeout = "00:00:10";
+}
+
+scenario GateTests_KES =
+    GatedChain1, GatedChain2;

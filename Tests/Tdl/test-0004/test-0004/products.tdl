@@ -1,0 +1,24 @@
+product type Kes
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+}
+
+product Kes11_1 : Kes 
+{
+    Name = @"KES";
+    ReleaseName = @"Main";
+    Version = "11.1";
+}
+
+product Kes11_0 : Kes 
+{
+    Name = @"KES";
+    ReleaseName = @"Main";
+    Version = "11.0";
+}
+
+product KES : Kes  =
+    Kes11_1,
+    Kes11_0;

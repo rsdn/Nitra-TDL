@@ -1,0 +1,13 @@
+
+deployment Execute_Deploy(
+    string ProductDistributivePath,
+    string ProductModulesPath,
+    string AutotestsPath,
+    string DeploymentSequenceName
+)
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\CSharp_Deployer\executeDeploy.ps1"
+{
+    expected 42;
+}
+
+deployment Deploy_Gated = Execute_Deploy(DeploymentSequenceName: @"gated");

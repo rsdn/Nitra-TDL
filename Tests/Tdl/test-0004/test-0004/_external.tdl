@@ -1,0 +1,6 @@
+﻿external
+{
+  string ProductDistributivePath;
+  string ProductModulesPath;
+  string AutotestsPath;
+}
