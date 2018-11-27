@@ -25,6 +25,15 @@ namespace Tdl
     public NoFile     : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan     : NSpan              = NSpan(0);
     public MethodScopeFactory : ScopeFactory = MethodScopeFactoryImpl;
+    
+    _testClassesAttributes : list[string] = [
+        "TestClass", 
+        "TestClassAttribute", 
+        "TestClassKisExtended",
+        "TestClassExtension",
+        "TestClassKisExtendedAttribute",
+        "TestClassExtensionAttribute"
+        ];
 
     _methodScopeFactoryCache : Dictionary[int, bool] = Dictionary();
 
@@ -335,7 +344,7 @@ namespace Tdl
           foreach (a in c.CustomAttributes)
           {
             def name = a.Name;
-            when (name == "TestClassKisExtended" || name == "TestClassExtension" || name == "TestClassKisExtendedAttribute" || name == "TestClassExtensionAttribute")
+            when (_testClassesAttributes.Contains(name))
               return true;
           }
           false
