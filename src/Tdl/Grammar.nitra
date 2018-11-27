@@ -42,12 +42,14 @@
       | DeploymentScript = "deployment" sm Name outline_begin_before "(" (FormalParameter; ","sm)* ")" outline_end_before sm "script" ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
       | DeploymentSet    = "deployment" sm Name sm "=" sm Deployments=(Reference; "," sm)+ ";" nl
       | Currying         = "deployment" sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
-      | ProductType      = "product" sm "type" sm Name nl ProductTypeBody;
+      | ProductType      = "product" sm "type" sm Name nl TypeBody;
       | Product          = "product"  sm Name sm ":" Type=Reference nl ProductBody;
       | ProductSet       = "product"  sm Name sm ":" Type=Reference sm "=" sm Products=(Reference; "," sm)+ ";" nl;
       | Scenario         = "scenario" sm Name sm ScenarioBody;
       | ScenarioSet      = "scenario" sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
-      | Suite            = "suite"    sm Name sm SuiteBody;
+      | SuiteType        = "suite" sm "type" sm Name nl TypeBody;
+      | Suite            = "suite"    sm Name nl SuiteBody;
+      | SuiteTyped       = "suite"    sm Name sm ":" Type=Reference nl SuiteBody;
       | External         = "external" sm ExternalBody;
     }
 
@@ -73,7 +75,7 @@
 
     syntax ProductBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
 
-    syntax ProductTypeBody = outline_begin_before "{" inl Field* d "}" nl outline_end_before;
+    syntax TypeBody = outline_begin_before "{" inl Field* d "}" nl outline_end_before;
 
     syntax ExternalBody = outline_begin_before "{" inl Field* d "}" nl outline_end_before;
 

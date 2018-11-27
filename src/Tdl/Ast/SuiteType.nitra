@@ -6,12 +6,12 @@ using Nitra.Declarations;
 
 namespace Tdl
 {
-  declaration ProductType : NamespaceMember, Container
+  declaration SuiteType : NamespaceMember, Container
   {
     symbol
     {
       Scope     = MemberTable;
-      Kind      = "product type";
+      Kind      = "scenario type";
       SpanClass = TdlLang.TdlTypeSpanClass;
     }
 
