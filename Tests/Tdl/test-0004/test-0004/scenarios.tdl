@@ -6,7 +6,7 @@ scenario GatedChain1
     deployment Deploy_Gated;
     environments (gated_platforms, KES);
     method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
-    Area = @"GatedTestsChain1";
+    Area = "GatedTestsChain1";
     UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8C";
     TfsId = 0;
     RevertAgentAfter = true;
