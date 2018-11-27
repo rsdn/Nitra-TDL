@@ -45,7 +45,7 @@ namespace Tdl
       }
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Deployments.Item1 -> Deployments; }
     | Currying         -> Deployment.Currying { Name -> Name; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
-    | ProductType      -> ProductType         { Name -> Name; ProductTypeBody.Fields -> Fields; }
+    | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; }
     | Product          -> Product.Def         { Name -> Name; Type -> Type; ProductBody.DefDeclarations -> Definitions; }
     | ProductSet       -> Product.Set         { Name -> Name; Type -> Type; Products.Item1 -> Products; }
     | Scenario         -> Scenario.Def
@@ -57,9 +57,20 @@ namespace Tdl
         ScenarioBody.DefDeclarations            -> Definitions;
       }
     | ScenarioSet      -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; }
+    | SuiteType        -> SuiteType    { Name -> Name; TypeBody.Fields -> Fields; }
     | Suite            -> Suite
       {
         Name                         -> Name;
+        None()                       -> TypeOpt;
+        SuiteBody.Platform.Reference -> Platform;
+        SuiteBody.Product.Reference  -> Product;
+        SuiteBody.DefDeclarations    -> Definitions;
+        SuiteBody.SuiteStatements    -> Statements;
+      }
+    | SuiteTyped       -> Suite
+      {
+        Name                         -> Name;
+        Some(Type)                   -> TypeOpt;
         SuiteBody.Platform.Reference -> Platform;
         SuiteBody.Product.Reference  -> Product;
         SuiteBody.DefDeclarations    -> Definitions;

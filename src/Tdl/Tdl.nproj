@@ -95,6 +95,9 @@
     <Compile Include="Ast\Scenario.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\SuiteType.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ast\Suite.nitra">
       <SubType>Code</SubType>
     </Compile>

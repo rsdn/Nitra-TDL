@@ -16,6 +16,7 @@ namespace Tdl
       in Platform   : PlatformSymbol;
       in Product    : ProductSymbol;
       in Statements : ImmutableArray[SuiteStatement];
+      in Type       : SuiteTypeSymbol;
 
       Kind      = "suite";
       SpanClass = TdlLang.SuiteSpanClass;
@@ -23,6 +24,7 @@ namespace Tdl
 
     out PlatformRef : Ref[PlatformSymbol];
     out ProductRef  : Ref[ProductSymbol];
+    out TypeRef     : Ref[DeclarationSymbol];
 
     Platform.Scope              = Scope;
     PlatformRef                 = Platform.Ref.Resolve();
@@ -36,10 +38,15 @@ namespace Tdl
     Statements.ScopeIn          = EmptyScope.Instance;
     Symbol.Statements           = Statements.Statement;
 
-    Definitions.DefinitionScope = Statements.ScopeOut;
+    Definitions.DefinitionScope = Statements.ScopeOut.UnionWith(Symbol.Type.Scope);
     Definitions.Scope           = ProjectSupport.ExternalSymbolTable;
     Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
 
+    TypeOpt.Scope               = Scope;
+    TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
+    Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
+
+    TypeOpt     : Reference?;
     Platform    : Reference;
     Product     : Reference;
     Definitions : Definition*;
