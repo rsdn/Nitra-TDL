@@ -1,4 +1,4 @@
-
+﻿
 deployment Execute_Deploy(
     string ProductDistributivePath,
     string ProductModulesPath,
@@ -10,4 +10,4 @@ deployment Execute_Deploy(
     expected 42;
 }
 
-deployment Deploy_Gated = Execute_Deploy(DeploymentSequenceName: @"gated");
+deployment Deploy_Gated = Execute_Deploy(DeploymentSequenceName: "gated");

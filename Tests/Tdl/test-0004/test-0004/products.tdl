@@ -1,4 +1,4 @@
-product type Kes
+﻿product type Kes
 {
     string Name;
     string ReleaseName;

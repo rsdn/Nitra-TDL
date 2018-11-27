@@ -1,7 +1,7 @@
-
+﻿
 deployment DeployWithDeployer(
     string BuildName,
-    string DeployIsNeeded,
+    bool   DeployIsNeeded,
     string DeploymentConditions,
     string InternalTestSettingsDirectory,
     string DeployerTimeoutSec = @"900"
