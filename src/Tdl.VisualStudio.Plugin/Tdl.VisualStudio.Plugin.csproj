@@ -102,7 +102,7 @@
     <Message Text="Copy references: '@(Languages)' -&gt; '$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages'" Importance="high" />
     <RemoveDir Directories="$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages" />
     <Copy SourceFiles="@(Languages)" DestinationFolder="$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages" />
-    <Exec Command="$(TargetDir)Nitra.LanguageCompiler.exe /proj:&quot;$(ProjectSupport)&quot; /ver:&quot;$(Version)&quot; /lang:$(LanguageName) /ns:$(Namespace) /out:$(MSBuildThisFileDirectory).. .\$(Assembly)" WorkingDirectory="$(TargetDir)" />
+    <Exec Command="$(TargetDir)Nitra.LanguageCompiler.exe /proj:&quot;$(ProjectSupport)&quot; /ver:&quot;$(Version)&quot; /lang:$(LanguageName) /ns:$(Namespace) /projectOutput:..\..\ /out:$(MSBuildThisFileDirectory).. .\$(Assembly)" WorkingDirectory="$(TargetDir)" />
     <Exec Command="$(NitraRoot)\NuGet\RestoreNuGetPkgs.cmd &quot;$(VsPackagePath)&quot; &quot;$(NuGetSource)&quot;" WorkingDirectory="$(VsPackagePath)" />
     <MSBuild Projects="$(VsPackageProjectPath)" Properties="Platform=x86; Configuration=$(Configuration); UseNitraFrom=ProjectReferences" />
   </Target>
