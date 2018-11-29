@@ -5,4 +5,6 @@
   string KisModulesPath;
   string KesDistributivePath;
   string KesModulesPath;
+  string KisFullVersion;
+  string KesFullVersion;
 }

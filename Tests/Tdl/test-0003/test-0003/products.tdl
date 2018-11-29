@@ -2,6 +2,7 @@ product type Kavkis
 {
     string Name;
     string ReleaseName;
+    string Version;
     string ProductConfigurationPath;
     string ComponentConfigurationPath;
     string DeploymentConditions;
@@ -14,6 +15,7 @@ product "PURE 2020.MP0" : Kavkis
 {
     Name = @"PURE";
     ReleaseName = @"20.MP0";
+    Version = KisFullVersion;
     ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\2020.MP0\PURE.xml";
     ComponentConfigurationPath = @"\\tis-dfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ComponentConfiguration\2020.MP0\Delivery.xml";
     DeploymentConditions = @"/KSDE";
@@ -26,6 +28,7 @@ product "KES 11.1" : Kavkis
 {
     Name = @"KES";
     ReleaseName = @"11.1";
+    Version = KesFullVersion;
     ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\KES11.1.xml";
     ComponentConfigurationPath = @"\\tis-dfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ComponentConfiguration\KES\Delivery.Kes.xml";
     DeploymentConditions = @"/EncryptionEnabled";

@@ -1,10 +1,9 @@
-﻿
-deployment DeployWithDeployer(
+﻿deployment DeployWithDeployer(
     string BuildName,
     bool   DeployIsNeeded,
     string DeploymentConditions,
     string InternalTestSettingsDirectory,
-    string DeployerTimeoutSec = @"900"
+    int    DeployerTimeoutSec = 900
 )
     script @"\\tis-dfs\Autotests\Components\DeploymentScripts\Hive\Deploy.ps1"
 {
