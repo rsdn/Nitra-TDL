@@ -26,15 +26,6 @@ namespace Tdl
     public NoSpan             : NSpan              = NSpan(0);
     public MethodScopeFactory : ScopeFactory       = MethodScopeFactoryImpl;
     
-    _testClassesAttributes : list[string] = [
-        "TestClass", 
-        "TestClassAttribute", 
-        "TestClassKisExtended",
-        "TestClassExtension",
-        "TestClassKisExtendedAttribute",
-        "TestClassExtensionAttribute"
-        ];
-
     _methodScopeFactoryCache : Dictionary[int, bool] = Dictionary();
 
     public ResetMethodScopeFactoryCache() : void
@@ -338,13 +329,18 @@ namespace Tdl
           }
           false
         }
+        def isTestMember(m : DeclarationSymbol) : bool
+        {
+          | method is Member.MethodSymbol => isTestMethod(method)
+          | _                             => false
+        }
 
         def isTestClass(c : TopClassSymbol) : bool
         {
           foreach (a in c.CustomAttributes)
           {
             def name = a.Name;
-            when (_testClassesAttributes.Contains(name))
+            when (name.Contains("Test") && c.Scope.GetAllSymbols().Any(isTestMember))
               return true;
           }
           false
@@ -352,7 +348,7 @@ namespace Tdl
 
         def isNamespaceContainsTestClasses(ns : NamespaceSymbol) : bool
         {
-          foreach (m when filter(m) in ns.MemberTable.Symbols.SelectMany(x => x))
+          foreach (m when filter(m) in ns.MemberTable.GetAllSymbols())
             return true;
           false
         }
