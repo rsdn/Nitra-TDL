@@ -109,7 +109,7 @@ namespace Tdl2JsonLib
       def coordinate = Root() <-
       {
         Version       = _jsonVersion;
-        Schema        = $"http://auto-reports.avp.ru/starter-schema/v$_jsonVersion/schema.json";
+        Schema        = $"http://auto-reports.avp.ru/starter-schema/v$_jsonVersion/dev/schema.json";
         Deployments   = Deployments.Generate(symbols);
         Products      = symbols.OfType.[ProductSymbol     ]().Select(GenerateProduct) .ToDictionary();
         Platforms     = symbols.OfType.[PlatformSymbol    ]().Select(GeneratePlatform).ToDictionary();
