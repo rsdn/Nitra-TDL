@@ -1,0 +1,12 @@
+﻿using DotNet;
+using System;
+
+namespace Tdl
+{
+  public variant ScenarioAction
+  {
+    | Method        { method : Member.MethodSymbol; }
+    | Reboot        { }
+    | WaitForReboot { TimeSpan : string; }
+  }
+}

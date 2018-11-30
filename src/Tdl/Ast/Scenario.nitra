@@ -21,7 +21,7 @@ namespace Tdl
         {
           in Defs         : ImmutableArray[Def];
         stage 1:
-          in Method       : Member.MethodSymbol;
+          in Actions      : ImmutableArray[ScenarioAction];
           in Deployment   : DeploymentSymbol;
           in Environments : ImmutableArray[Environment];
 
@@ -29,16 +29,13 @@ namespace Tdl
           SpanClass = TdlLang.ScenarioSpanClass;
         }
       stage 1:
-        out MethodRef              : Ref[Member.MethodSymbol];
         out DeploymentRef          : Ref[DeploymentSymbol];
         out MethodConditionalScope : ValueOption[Scope] = if (TdlTypingSettings.IsMethodTypingEnabled) VSome(Scope) else VNone();
 
         Symbol.AggregateParametersScope = Symbol.Deployment.AggregateParametersScope;
 
-        Method.NameScopeFactory         = TdlUtils.MethodScopeFactory;
-        Method.Scope                    = MethodConditionalScope.Value;
-        MethodRef                       = Method.Ref.Resolve();
-        Symbol.Method                   = MethodRef.Symbol;
+        Actions.Scope                   = MethodConditionalScope.Value;
+        Symbol.Actions                  = Actions.ScenarioActions;
 
         Deployment.Scope                = Scope;
         DeploymentRef                   = Deployment.Ref.Resolve();
@@ -55,9 +52,9 @@ namespace Tdl
           Name.Error(context, $"Missing required option: $(TdlUtils.GetMissingRequiredOptionMessage(Definitions.SymbolRef))");
 
         Deployment   : Reference;
-        Method       : QualifiedReference;
         Environments : EnvironmentAst*;
         Definitions  : Definition*;
+        Actions      : Action*;
       }
     | Set
       {

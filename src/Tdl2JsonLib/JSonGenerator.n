@@ -34,6 +34,7 @@ using System.Threading;
 using Tdl;
 using Tdl2JsonLib.ExceptionHelper;
 
+// Сгенерированно с помощью: https://app.quicktype.io/
 namespace Tdl2JsonLib
 {
   public module JsonGenerator
@@ -177,24 +178,16 @@ namespace Tdl2JsonLib
       | _ => ThrowNotSupportedSymbol(productSymbol)
     }
 
-    private GetAssemblyAndMethodName(symbol: Tdl.Scenario.DefSymbol) : string * string
+    private GetAssemblyAndMethodName(symbol : Tdl.ScenarioAction.Method) : string * string
     {
-      if (TdlTypingSettings.IsMethodTypingEnabled)
-      {
-        def decl         = symbol.Method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
-        def method       = decl.First().Method;
-        def type         = method.ContainingType :> ITypeDefinition;
-        def unit         = TypeHelper.GetDefiningUnit(type);
-        def assemblyName = unit.Name.Value + ".dll";
-        def methodName   = method.ContainingType + "." + method.Name.Value;
+      def decl         = symbol.method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
+      def method       = decl.First().Method;
+      def type         = method.ContainingType :> ITypeDefinition;
+      def unit         = TypeHelper.GetDefiningUnit(type);
+      def assemblyName = unit.Name.Value + ".dll";
+      def methodName   = method.ContainingType + "." + method.Name.Value;
 
-        (assemblyName, methodName)
-      }
-      else
-      {
-        def ast = symbol.Declarations.OfType.[Scenario.Def]().FirstOrDefault();
-        ("", if (ast != null) ast.Method.Location.GetText() else "")
-      }
+      (assemblyName, methodName)
     }
 
     private GenerateScenario(scenarioSymbol : ScenarioSymbol) : string * TestCase
@@ -204,16 +197,14 @@ namespace Tdl2JsonLib
           TestGroup = 
           match(scenarioSymbol)
           {
-            | Tdl.Scenario.DefSymbol as Def => 
-              def (assemblyName, methodName) = GetAssemblyAndMethodName(Def);
-
+            | Tdl.Scenario.DefSymbol as r => 
               def getString(name : string) : string
               {
-                Def.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+                r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
               }
               def getBool(name : string) : bool?
               {
-                Def.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
+                r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
                   .Map(fun(expr)
                     {
                       | Tdl.Expr.True  =>  Nullable(true)
@@ -224,35 +215,52 @@ namespace Tdl2JsonLib
               }
               def getLong(name : string) : long?
               {
-                  Def.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
+                  r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
               }
               def getTestMethod() : TestMethodSequence
               {
                 def allowRebootOpt = getBool("AllowReboot");
-                when (allowRebootOpt == null)
+                when (allowRebootOpt == null && r.Actions.Length == 1)
+                when (r.Actions[0] is ScenarioAction.Method as method)
+                {
+                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method);
                   return TestMethodSequence() <- 
                   {
                     AssemblyName = assemblyName;
                     MethodName   = methodName;
                   };
+                }
+                def makeAction(action : ScenarioAction) : object
+                {
+                  | Method        as x => 
+                    def (assemblyName, methodName) = GetAssemblyAndMethodName(x);
+                    TestMethodSequence() <- { AssemblyName = assemblyName; MethodName = methodName; }
+                  | Reboot             => 
+                    TestMethodQualifier() <- { RebootTestStep = RebootTestStep() <- { ForceReboot = Dictionary() } }
+                  | WaitForReboot as x =>                   
+                    TestMethodSequence() <- 
+                    { WaitForReboot = 
+                      WaitForReboot() <-
+                      {
+                        RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
+                      };
+                  }
+                }
+                def actions = r.Actions.Select(makeAction).ToArray();
                 TestMethodSequence() <-
                 {
                   TestSequence = array[TestMethodQualifier() <-
                   {
-                    TestMethodQualifierClass = TestMethodQualifierClass() <-
-                    {
-                      AssemblyName = assemblyName;
-                      MethodName   = methodName;
-                    }
+                    AnythingArray = actions;
                   }];
-                  AllowReboot  = getBool("AllowReboot");
+                  AllowReboot  = allowRebootOpt;
                 }
               }
 
               TestGroup() <- 
               {
-                  Deployments             = [Def.Deployment.Name].MapToArray(n   => TestGroupDeployment() <- String = n);
-                  Environments            = Def.Environments     .MapToArray(env => Environment()         <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
+                  Deployments             = [r.Deployment.Name].MapToArray(n   => TestGroupDeployment() <- String = n);
+                  Environments            = r.Environments     .MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
                   TestMethod              = getTestMethod();
                   Area                    = getString("Area");
                   NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");

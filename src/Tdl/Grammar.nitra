@@ -9,6 +9,8 @@
     using CSharp.TopDeclarations;
     using CSharp.Types;
 
+    keyword regex ['A'..'Z', 'a'..'z', '_'..'_', '-'..'-']+ rule S;
+
     [StartRule]
     syntax Module = MemberDeclaration*;
 
@@ -65,12 +67,25 @@
       }
     }
 
-    syntax ScenarioBody = outline_begin_before "{" inl Deployment Environments Method DefDeclaration* d "}" nl outline_end_before
+    syntax ScenarioBody = outline_begin_before "{" inl Deployment Environments Action DefDeclaration* d "}" nl outline_end_before
     {
       syntax Deployment   = "deployment" sm Reference ";" nl;
-      syntax Method       = "method" sm QualifiedIdentifier ";" nl;
       syntax Environments = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
       syntax Environment  = "(" Platform=Reference "," sm Product=Reference ")";
+      syntax Method       = "method" sm QualifiedIdentifier ";" nl;
+      syntax Action
+      {
+        | Method
+        | Sequence = "sequence" sm  "{" inl SequenceAction* d "}" nl outline_end_before
+      }
+      regex TimeSpan = DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit | "";
+      syntax SequenceAction
+      {
+        | Method
+        | Reboot = "reboot" ";"
+        | WaitForReboot1 = "wait" sm  "for" sm  "reboot" TimeSpan ";"
+        | WaitForReboot2 = "wait-for-reboot" sm TimeSpan ";"
+      }
     }
 
     syntax ProductBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;

@@ -1,0 +1,35 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  abstract ast Action : BindableAst
+  {
+    out ScenarioActions : ScenarioAction;
+
+    | Method
+      {
+      stage 1:
+        out MethodRef : Ref[Member.MethodSymbol];
+
+        Method.NameScopeFactory = TdlUtils.MethodScopeFactory;
+        Method.Scope            = Scope;
+        MethodRef               = Method.Ref.Resolve();
+        ScenarioActions         = ScenarioAction.Method(MethodRef.Symbol);
+
+        Method : QualifiedReference;
+      }
+    | Reboot        { ScenarioActions = ScenarioAction.Reboot(); }
+    | WaitForReboot
+    {
+      ScenarioActions = ScenarioAction.WaitForReboot(TimeSpan.Value);
+
+      TimeSpan : ParsedValue[string];
+    }
+  }
+}
