@@ -64,6 +64,12 @@ namespace QuickType
         /// </summary>
         [JsonProperty("TestScenarios", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, TestCase> TestScenarios { get; set; }
+
+        /// <summary>
+        /// Номер версии Starter/Warden, с которыми совместим конфиг
+        /// </summary>
+        [JsonProperty("version")]
+        public long Version { get; set; }
     }
 
     /// <summary>
@@ -175,13 +181,6 @@ namespace QuickType
 
     public partial class TestGroup
     {
-        /// <summary>
-        /// Следующий тест/группа из массива TestScenarios запускается, если предыдущий завершился
-        /// успешно
-        /// </summary>
-        [JsonProperty("Sequential", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Sequential { get; set; }
-
         [JsonProperty("TestScenarios", NullValueHandling = NullValueHandling.Ignore)]
         public string[] TestScenarios { get; set; }
 
@@ -199,13 +198,13 @@ namespace QuickType
         /// серверах.
         /// </summary>
         [JsonProperty("Environments", NullValueHandling = NullValueHandling.Ignore)]
-        public Environment[] Environments { get; set; }
+        public EnvironmentElement[] Environments { get; set; }
 
         /// <summary>
         /// Если true, то виндовый агент ставиться не будет
         /// </summary>
-        [JsonProperty("NeedMacTestBotAgent", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? NeedMacTestBotAgent { get; set; }
+        [JsonProperty("NeedPythonAgent", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? NeedPythonAgent { get; set; }
 
         /// <summary>
         /// Аналог параметра сессии/деплоев unsignedAgent в Hive, отвечающий за то, нужен ли
@@ -264,7 +263,7 @@ namespace QuickType
         public string AdditionalProperties { get; set; }
     }
 
-    public partial class Environment
+    public partial class EnvironmentElement
     {
         /// <summary>
         /// Список платформ (название отдельной платформы или заготовленного списка)
@@ -301,6 +300,9 @@ namespace QuickType
         [JsonProperty("TestSequence", NullValueHandling = NullValueHandling.Ignore)]
         public TestMethodQualifier[] TestSequence { get; set; }
 
+        [JsonProperty("Arguments", NullValueHandling = NullValueHandling.Ignore)]
+        public string[] Arguments { get; set; }
+
         [JsonProperty("ProgramName", NullValueHandling = NullValueHandling.Ignore)]
         public string ProgramName { get; set; }
 
@@ -312,18 +314,44 @@ namespace QuickType
 
         [JsonProperty("TestConfigName", NullValueHandling = NullValueHandling.Ignore)]
         public string TestConfigName { get; set; }
+
+        [JsonProperty("Environment", NullValueHandling = NullValueHandling.Ignore)]
+        public TestMethodEnvironment Environment { get; set; }
+
+        [JsonProperty("TestScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
+        public string TestScriptArgs { get; set; }
+
+        [JsonProperty("TestScriptName", NullValueHandling = NullValueHandling.Ignore)]
+        public string TestScriptName { get; set; }
     }
 
-    public partial class TestMethodQualifierClass
+    public partial class TestMethodEnvironment
     {
-        [JsonProperty("AssemblyName")]
+        [JsonProperty("additionalProperties", NullValueHandling = NullValueHandling.Ignore)]
+        public string AdditionalProperties { get; set; }
+    }
+
+    /// <summary>
+    /// Перезагрузка машины в качестве шага теста.
+    ///
+    /// Ожидание перезагрузки машины в качестве шага теста.
+    /// </summary>
+    public partial class RebootTestStep
+    {
+        [JsonProperty("AssemblyName", NullValueHandling = NullValueHandling.Ignore)]
         public string AssemblyName { get; set; }
 
         [JsonProperty("ContinueOnError", NullValueHandling = NullValueHandling.Ignore)]
         public bool? ContinueOnError { get; set; }
 
-        [JsonProperty("MethodName")]
+        [JsonProperty("MethodName", NullValueHandling = NullValueHandling.Ignore)]
         public string MethodName { get; set; }
+
+        [JsonProperty("ForceReboot", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> ForceReboot { get; set; }
+
+        [JsonProperty("WaitForReboot", NullValueHandling = NullValueHandling.Ignore)]
+        public WaitForReboot WaitForReboot { get; set; }
     }
 
     public partial class WaitForReboot
@@ -384,23 +412,22 @@ namespace QuickType
         public static implicit operator TestGroupDeployment(string String) => new TestGroupDeployment { String = String };
     }
 
-    public partial struct 
-        TestMethodQualifier
+    public partial struct TestMethodQualifier
     {
         public object[] AnythingArray;
         public bool? Bool;
         public double? Double;
         public long? Integer;
+        public RebootTestStep RebootTestStep;
         public string String;
-        public TestMethodQualifierClass TestMethodQualifierClass;
 
         public static implicit operator TestMethodQualifier(object[] AnythingArray) => new TestMethodQualifier { AnythingArray = AnythingArray };
         public static implicit operator TestMethodQualifier(bool Bool) => new TestMethodQualifier { Bool = Bool };
         public static implicit operator TestMethodQualifier(double Double) => new TestMethodQualifier { Double = Double };
         public static implicit operator TestMethodQualifier(long Integer) => new TestMethodQualifier { Integer = Integer };
+        public static implicit operator TestMethodQualifier(RebootTestStep RebootTestStep) => new TestMethodQualifier { RebootTestStep = RebootTestStep };
         public static implicit operator TestMethodQualifier(string String) => new TestMethodQualifier { String = String };
-        public static implicit operator TestMethodQualifier(TestMethodQualifierClass TestMethodQualifierClass) => new TestMethodQualifier { TestMethodQualifierClass = TestMethodQualifierClass };
-        public bool IsNull => AnythingArray == null && Bool == null && TestMethodQualifierClass == null && Double == null && Integer == null && String == null;
+        public bool IsNull => AnythingArray == null && Bool == null && RebootTestStep == null && Double == null && Integer == null && String == null;
     }
 
     public partial struct TestCase
@@ -437,7 +464,8 @@ namespace QuickType
         {
             MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
             DateParseHandling = DateParseHandling.None,
-            Converters = {
+            Converters =
+            {
                 DeploymentDeploymentUnionConverter.Singleton,
                 TypeEnumConverter.Singleton,
                 ValueValueConverter.Singleton,
@@ -786,8 +814,8 @@ namespace QuickType
                     var stringValue = serializer.Deserialize<string>(reader);
                     return new TestMethodQualifier { String = stringValue };
                 case JsonToken.StartObject:
-                    var objectValue = serializer.Deserialize<TestMethodQualifierClass>(reader);
-                    return new TestMethodQualifier { TestMethodQualifierClass = objectValue };
+                    var objectValue = serializer.Deserialize<RebootTestStep>(reader);
+                    return new TestMethodQualifier { RebootTestStep = objectValue };
                 case JsonToken.StartArray:
                     var arrayValue = serializer.Deserialize<object[]>(reader);
                     return new TestMethodQualifier { AnythingArray = arrayValue };
@@ -828,9 +856,9 @@ namespace QuickType
                 serializer.Serialize(writer, value.AnythingArray);
                 return;
             }
-            if (value.TestMethodQualifierClass != null)
+            if (value.RebootTestStep != null)
             {
-                serializer.Serialize(writer, value.TestMethodQualifierClass);
+                serializer.Serialize(writer, value.RebootTestStep);
                 return;
             }
             throw new Exception("Cannot marshal type TestMethodQualifier");
