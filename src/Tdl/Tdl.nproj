@@ -56,6 +56,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ast\Action.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ast\External.nitra">
       <SubType>Code</SubType>
     </Compile>
@@ -120,6 +123,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\ProjectSupport.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\ScenarioAction.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\SuiteStatement.n">
