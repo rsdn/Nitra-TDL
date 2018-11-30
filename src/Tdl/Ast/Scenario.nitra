@@ -29,8 +29,8 @@ namespace Tdl
           SpanClass = TdlLang.ScenarioSpanClass;
         }
       stage 1:
-        out MethodRef      : Ref[Member.MethodSymbol];
-        out DeploymentRef  : Ref[DeploymentSymbol];
+        out MethodRef              : Ref[Member.MethodSymbol];
+        out DeploymentRef          : Ref[DeploymentSymbol];
         out MethodConditionalScope : ValueOption[Scope] = if (TdlTypingSettings.IsMethodTypingEnabled) VSome(Scope) else VNone();
 
         Symbol.AggregateParametersScope = Symbol.Deployment.AggregateParametersScope;
