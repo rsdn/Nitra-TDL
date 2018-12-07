@@ -56,6 +56,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyVersion.n">
+      <Link>Properties\AssemblyVersion.n</Link>
+    </Compile>
     <Compile Include="Ast\Action.nitra">
       <SubType>Code</SubType>
     </Compile>
@@ -153,5 +156,13 @@
   <ItemGroup>
     <Folder Include="Code" />
     <Folder Include="Ast" />
+    <Folder Include="Properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tdl.VersionInfo\Tdl.VersionInfo.csproj">
+      <Name>Tdl.VersionInfo</Name>
+      <Project>{ed94b486-ebb3-49b3-aa7d-3d9ac3d0a2ef}</Project>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

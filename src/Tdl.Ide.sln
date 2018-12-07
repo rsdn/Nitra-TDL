@@ -7,10 +7,14 @@ Project("{EDCC3B85-0BAD-11DB-BC1A-00112FDE8B61}") = "Tdl", "Tdl\Tdl.nproj", "{82
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A0EEDB3-84C5-47D8-9D16-DFBFBD4545A5}"
 	ProjectSection(SolutionItems) = preProject
+		AssemblyVersion.cs = AssemblyVersion.cs
+		AssemblyVersion.n = AssemblyVersion.n
 		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tdl.VisualStudio.Plugin", "Tdl.VisualStudio.Plugin\Tdl.VisualStudio.Plugin.csproj", "{8351EF37-7F0C-494B-B6CF-ED5CA3193FD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tdl.VersionInfo", "Tdl.VersionInfo\Tdl.VersionInfo.csproj", "{ED94B486-EBB3-49B3-AA7D-3D9AC3D0A2EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +30,10 @@ Global
 		{8351EF37-7F0C-494B-B6CF-ED5CA3193FD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8351EF37-7F0C-494B-B6CF-ED5CA3193FD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8351EF37-7F0C-494B-B6CF-ED5CA3193FD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED94B486-EBB3-49B3-AA7D-3D9AC3D0A2EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED94B486-EBB3-49B3-AA7D-3D9AC3D0A2EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED94B486-EBB3-49B3-AA7D-3D9AC3D0A2EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED94B486-EBB3-49B3-AA7D-3D9AC3D0A2EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
