@@ -1,0 +1,8 @@
+﻿[assembly: System.Reflection.AssemblyVersion(ThisAssembly.Version)]
+[assembly: System.Reflection.AssemblyFileVersion(ThisAssembly.SimpleVersion)]
+[assembly: System.Reflection.AssemblyInformationalVersion(ThisAssembly.InformationalVersion)]
+[assembly: System.Reflection.AssemblyCompany("")]
+[assembly: System.Reflection.AssemblyProduct("TDL Compiler")]
+[assembly: System.Reflection.AssemblyCopyright("Copyright ©  2018")]
+[assembly: System.Reflection.AssemblyTrademark("")]
+[assembly: System.Reflection.AssemblyCulture("")]

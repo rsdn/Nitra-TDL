@@ -12,7 +12,8 @@
     <NoWarn>1591</NoWarn>
     <OutputPath>..\..\bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>..\..\obj\$(Configuration)\</IntermediateOutputPath>
-    <Version>1.0.7</Version>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -21,11 +22,17 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyVersion.cs" Link="Properties\AssemblyVersion.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Tdl.VersionInfo\Tdl.VersionInfo.csproj">
+      <Private>false</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Tdl2JsonLib\Tdl2JsonLib.nproj">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
@@ -36,4 +43,13 @@
       <PackagePath>build</PackagePath>
     </Content>
   </ItemGroup>
+
+  <Target Name="ReadPackageVersionFromOutputAssembly" DependsOnTargets="Build">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="PackAssembly" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <PackageVersion>%(PackAssembly.Version)</PackageVersion>
+    </PropertyGroup>
+  </Target>
 </Project>

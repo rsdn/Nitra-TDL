@@ -16,9 +16,8 @@
     <AssemblyName>Tdl.VisualStudio.Plugin</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <Version>1.0.0</Version>
-    <OutputPath>..\..\bin\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>..\..\obj\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\..\ide-bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\..\ide-obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,6 +40,11 @@
     <ProjectReference Include="$(NitraRoot)\Grammars\CSharp\CSharp.Grammar\CSharp.Grammar.nproj">
       <Project>{249928bb-c446-42b3-bff3-ca98dabb9609}</Project>
       <Name>CSharp.Grammar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tdl.VersionInfo\Tdl.VersionInfo.csproj">
+      <Project>{ed94b486-ebb3-49b3-aa7d-3d9ac3d0a2ef}</Project>
+      <Name>Tdl.VersionInfo</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Tdl\Tdl.nproj">
       <Project>{82c32d2d-8e24-4975-b606-b2c7be54c340}</Project>
@@ -79,6 +83,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
     <Compile Include="CodeFile1.cs" />
   </ItemGroup>
   <PropertyGroup>
@@ -93,6 +100,12 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="OutputAssembly" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <VsPackageVersion>%(OutputAssembly.Version)</VsPackageVersion>
+    </PropertyGroup>
     <ItemGroup>
       <!-- Add links to the necessary assembly in this project. It will be copied to the Templates\XXLanguageFullNameXXVsPackage\Languages -->
       <Languages Include="$(TargetDir)*.*" Exclude="$(TargetDir)$(TargetName).*;$(TargetDir)Nitra.LanguageCompiler.*" />
@@ -102,7 +115,7 @@
     <Message Text="Copy references: '@(Languages)' -&gt; '$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages'" Importance="high" />
     <RemoveDir Directories="$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages" />
     <Copy SourceFiles="@(Languages)" DestinationFolder="$(TargetDir)Templates\XXLanguageFullNameXXVsPackage\Languages" />
-    <Exec Command="$(TargetDir)Nitra.LanguageCompiler.exe /proj:&quot;$(ProjectSupport)&quot; /ver:&quot;$(Version)&quot; /lang:$(LanguageName) /ns:$(Namespace) /projectOutput:..\..\ /out:$(MSBuildThisFileDirectory).. .\$(Assembly)" WorkingDirectory="$(TargetDir)" />
+    <Exec Command="$(TargetDir)Nitra.LanguageCompiler.exe /proj:&quot;$(ProjectSupport)&quot; /ver:&quot;$(VsPackageVersion)&quot; /lang:$(LanguageName) /ns:$(Namespace) /projectOutput:..\..\ide- /out:$(MSBuildThisFileDirectory).. .\$(Assembly)" WorkingDirectory="$(TargetDir)" />
     <Exec Command="$(NitraRoot)\NuGet\RestoreNuGetPkgs.cmd &quot;$(VsPackagePath)&quot; &quot;$(NuGetSource)&quot;" WorkingDirectory="$(VsPackagePath)" />
     <MSBuild Projects="$(VsPackageProjectPath)" Properties="Platform=x86; Configuration=$(Configuration); UseNitraFrom=ProjectReferences" />
   </Target>
