@@ -56,10 +56,11 @@ namespace Tdl2JsonLib
           (script.Name, 
             Deployment() <- 
             { 
-                Type        = TypeEnum.Script;
-                ScriptPath  = script.Path.Value; 
-                ReturnValue = script.Expected.ValueOrDefault;
-                ScriptArgs  = scriptArgs;
+                Type           = TypeEnum.Script;
+                ScriptPath     = script.Path.Value; 
+                ReturnValue    = if (script.Expected.HasValue)  script.Expected.Value  else null;
+                RebootExitCode = if (script.ForReboot.HasValue) script.ForReboot.Value else null;
+                ScriptArgs     = scriptArgs;
             })
 
         | Deployment.SetSymbol as set =>
