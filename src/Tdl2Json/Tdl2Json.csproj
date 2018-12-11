@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Tdl.VersionInfo\Tdl.VersionInfo.csproj">
       <Private>false</Private>
+      <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
     <ProjectReference Include="..\Tdl2JsonLib\Tdl2JsonLib.nproj">
       <PrivateAssets>all</PrivateAssets>
