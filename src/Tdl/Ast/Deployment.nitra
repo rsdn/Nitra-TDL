@@ -20,9 +20,10 @@ namespace Tdl
       {
         symbol
         {
-          in Path     : ParsedValue[string];
-          in Expected : ParsedValue[int];
-          in Defs     : ImmutableArray[Def2];
+          in Path      : ParsedValue[string];
+          in Expected  : ParsedValue[int];
+          in ForReboot : ParsedValue[int];
+          in Defs      : ImmutableArray[Def2];
 
           Kind      = "deployment";
           SpanClass = TdlLang.DeploymentSpanClass;
@@ -33,13 +34,21 @@ namespace Tdl
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
         Symbol.Path                     = TdlUtils.ConvertStringLiteral(Path);
-        Symbol.Expected                 = TdlUtils.MakeExpected(Expected);
+        Symbol.Expected                 = TdlUtils.MakeExpected(Success);
+        Symbol.ForReboot                = TdlUtils.MakeForReboot(ForReboot);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
         Parameters.Scope                = Scope;
 
         Path : CSharp.StringLiteral;
         Definitions : Definition*;
-        Expected : IntLiteral;
+        //Expected : IntLiteral;
+        Expected : Expected*;
+
+        decompose Expected
+        {
+          Success   : Expected.Success?;
+          ForReboot : Expected.ForReboot?;
+        }
       }
     | Set
       {

@@ -7,4 +7,5 @@
   string KesModulesPath;
   string KisFullVersion;
   string KesFullVersion;
+  string TestBinariesFolder;
 }

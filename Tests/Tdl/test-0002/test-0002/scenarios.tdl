@@ -1,4 +1,7 @@
-﻿product KSOS__PURE__PURE_Webpack : Kavkis  = KSOS, PURE, PURE_Webpack;
+﻿using Autotest.Kis.Suites;
+using Autotest.Kis.Suites.AntiBanner.BannerCheckBlockingTests;
+
+product KSOS__PURE__PURE_Webpack : Kavkis  = KSOS, PURE, PURE_Webpack;
 platform all_pc__win2012r2 = all_pc, win2012r2;
 platform win7-x64__win811-x86 = win7-x64, win811-x86;
 platform w10rs4-x64__win7-x64__win811-x86 = w10rs4-x64, win7-x64, win811-x86;
@@ -19,7 +22,7 @@ scenario CheckBlockBannerByUrl
 {
     deployment Deploy_Backdoor;
     environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiBanner.BannerCheckBlockingTests.CheckBlockBannerByUrl;
+    method AntiBanner.BannerCheckBlockingTests.CheckBlockBannerByUrl;
     Area = @"AntiBanner";
     UniqueId = @"9365B31B-28BA-4D40-A116-304B022A2946";
     TfsId = 1638532;
@@ -30,7 +33,7 @@ scenario CheckBlockingBannerOnHttps
 {
     deployment Deploy_Backdoor;
     environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiBanner.BannerCheckBlockingTests.CheckBlockingBannerOnHttps;
+    method CheckBlockingBannerOnHttps;
     Area = @"AntiBanner";
     UniqueId = @"E3CA10BC-5C2A-4391-9FC3-A8DC08CDC25C";
     TfsId = 1651464;
