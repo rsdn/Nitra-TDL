@@ -298,16 +298,13 @@ namespace QuickType
         public bool? AllowReboot { get; set; }
 
         [JsonProperty("TestSequence", NullValueHandling = NullValueHandling.Ignore)]
-        public TestMethodQualifier[] TestSequence { get; set; }
+        public TestSequence[] TestSequence { get; set; }
 
         [JsonProperty("Arguments", NullValueHandling = NullValueHandling.Ignore)]
         public string[] Arguments { get; set; }
 
         [JsonProperty("ProgramName", NullValueHandling = NullValueHandling.Ignore)]
         public string ProgramName { get; set; }
-
-        [JsonProperty("ForceReboot", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> ForceReboot { get; set; }
 
         [JsonProperty("WaitForReboot", NullValueHandling = NullValueHandling.Ignore)]
         public WaitForReboot WaitForReboot { get; set; }
@@ -329,29 +326,6 @@ namespace QuickType
     {
         [JsonProperty("additionalProperties", NullValueHandling = NullValueHandling.Ignore)]
         public string AdditionalProperties { get; set; }
-    }
-
-    /// <summary>
-    /// Перезагрузка машины в качестве шага теста.
-    ///
-    /// Ожидание перезагрузки машины в качестве шага теста.
-    /// </summary>
-    public partial class RebootTestStep
-    {
-        [JsonProperty("AssemblyName", NullValueHandling = NullValueHandling.Ignore)]
-        public string AssemblyName { get; set; }
-
-        [JsonProperty("ContinueOnError", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? ContinueOnError { get; set; }
-
-        [JsonProperty("MethodName", NullValueHandling = NullValueHandling.Ignore)]
-        public string MethodName { get; set; }
-
-        [JsonProperty("ForceReboot", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> ForceReboot { get; set; }
-
-        [JsonProperty("WaitForReboot", NullValueHandling = NullValueHandling.Ignore)]
-        public WaitForReboot WaitForReboot { get; set; }
     }
 
     public partial class WaitForReboot
@@ -418,16 +392,14 @@ namespace QuickType
         public bool? Bool;
         public double? Double;
         public long? Integer;
-        public RebootTestStep RebootTestStep;
         public string String;
 
         public static implicit operator TestMethodQualifier(object[] AnythingArray) => new TestMethodQualifier { AnythingArray = AnythingArray };
         public static implicit operator TestMethodQualifier(bool Bool) => new TestMethodQualifier { Bool = Bool };
         public static implicit operator TestMethodQualifier(double Double) => new TestMethodQualifier { Double = Double };
         public static implicit operator TestMethodQualifier(long Integer) => new TestMethodQualifier { Integer = Integer };
-        public static implicit operator TestMethodQualifier(RebootTestStep RebootTestStep) => new TestMethodQualifier { RebootTestStep = RebootTestStep };
         public static implicit operator TestMethodQualifier(string String) => new TestMethodQualifier { String = String };
-        public bool IsNull => AnythingArray == null && Bool == null && RebootTestStep == null && Double == null && Integer == null && String == null;
+        public bool IsNull => AnythingArray == null && Bool == null &&  Double == null && Integer == null && String == null;
     }
 
     public partial struct TestCase
@@ -813,9 +785,6 @@ namespace QuickType
                 case JsonToken.Date:
                     var stringValue = serializer.Deserialize<string>(reader);
                     return new TestMethodQualifier { String = stringValue };
-                case JsonToken.StartObject:
-                    var objectValue = serializer.Deserialize<RebootTestStep>(reader);
-                    return new TestMethodQualifier { RebootTestStep = objectValue };
                 case JsonToken.StartArray:
                     var arrayValue = serializer.Deserialize<object[]>(reader);
                     return new TestMethodQualifier { AnythingArray = arrayValue };
@@ -854,11 +823,6 @@ namespace QuickType
             if (value.AnythingArray != null)
             {
                 serializer.Serialize(writer, value.AnythingArray);
-                return;
-            }
-            if (value.RebootTestStep != null)
-            {
-                serializer.Serialize(writer, value.RebootTestStep);
                 return;
             }
             throw new Exception("Cannot marshal type TestMethodQualifier");
