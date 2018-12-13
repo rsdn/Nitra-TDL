@@ -1,4 +1,4 @@
-product type Kavkis
+﻿product type Kavkis
 {
     string Name;
     string ReleaseName;
@@ -11,7 +11,7 @@ product type Kavkis
     string SuiteName;
 }
 
-product "PURE 2020.MP0" : Kavkis 
+product "PURE 2020.MP0" : Kavkis
 {
     Name = @"PURE";
     ReleaseName = @"20.MP0";
