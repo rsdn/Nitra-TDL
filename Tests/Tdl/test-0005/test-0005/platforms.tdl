@@ -1,0 +1,11 @@
+platform platform_group_1 = w10rs4-x64, w10rs4-x86, w10rs5-x64, w10rs5-x86, win7-x64, win7-x86, win811-x64, win811-x86;
+platform platform_group_2 = win7-x64, win7-x86, win811-x64, win811-x86;
+
+platform w10rs4-x64;
+platform w10rs4-x86;
+platform w10rs5-x64;
+platform w10rs5-x86;
+platform win7-x64;
+platform win7-x86;
+platform win811-x64;
+platform win811-x86;

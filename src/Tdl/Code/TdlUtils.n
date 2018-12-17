@@ -287,6 +287,11 @@ namespace Tdl
       FilteringScope(scope, predicate)
     }
     
+    public MakeParameterScope(scope : Scope) : Scope
+    {
+      FilteringScope(scope, HashSet(ParameterComparer()).Add)
+    }
+    
     public IsMissingRequiredOptions(options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : bool
     {
       GetMissingRequiredOptionNames(options).Any()

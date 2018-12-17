@@ -1,0 +1,17 @@
+﻿
+product type Kavkis
+{
+}
+
+product KIS : Kavkis { }
+
+suite "Kis.Main.BvtPvt.Ipm"
+{
+    platform platform_group_1;
+    product KIS;
+    BuildPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Binaries\Kis.Main.BvtPvt.Ipm\20181214.1\ProductBuild"; /*"BuildBinariesFolder";*/
+    DataCollectorsPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Binaries\Kis.Main.BvtPvt.Ipm\20181214.1\Autotests"; /*"TestBinariesFolder";*/
+    DumpFolder = @"\\tis-dfs.avp.ru\Autotests\KIS\Temp\Bashchuk\TDL_Temp"; /* "DropFolder_ProductDumps";*/
+    TestArtefactsFolder = @"\\tis-dfs.avp.ru\Autotests\KIS\Temp\Bashchuk\TDL_Temp"; /* "DropFolder_Artefacts";*/
+    Kis-Main-BvtPvt-Ipm-scenarios();
+}

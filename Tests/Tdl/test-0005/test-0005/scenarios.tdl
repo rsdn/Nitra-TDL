@@ -1,0 +1,1397 @@
+scenario Kis-Main-BvtPvt-Ipm-scenarios = IpmRequestAgreementsEula, IpmRequestAgreementsEulaGdpr, IpmRequestAgreementsEulaKsn,
+    IpmRequestAgreementsEulaKsnGdpr, IpmRequestAgreementsEulaMarketingGdpr, IpmRequestAgreementsEulaMarketingKsnGdpr,
+    SendingRequestDuringHipsSystemAnalysis, SendingRequestAfterLoadProduct, SendingRequestAfterSpecifiedSeconds,
+    SendingRequestAfterTrialActivation, SendingRequestAfterTrialExpiration, SendingRequestAfterCommercialLicenseChanges,
+    SendingRequestEvery3Hours, SendingRequestAfterCommercialActivationWithPatch, SendingRequestWhenReceiveAfterExpiryDisabled,
+    IpmRequestAgreementsLicenseNotExpired, DefaultWelcomeTour, GetCustomizationOptions, IpmContentLoadingTests_FakeGroup,
+    ContentWithWrongSignatureNotLoaded, CustomContentUsage, CheckCustomContentDeletedWhenNewContentIsEmpty,
+    MoreProductsCustomContent, MoreProductsDefaultContent, RankingMessageOnlyOneContentIsChosen, BuyButtonCustomizationNoLicense,
+    BuyButtonCustomizationTrial, BuyButtonCustomizationCommercial, DefaultLicenseMessage_13DaysBefore,
+    DefaultLicenseMessage_14DaysBefore, DefaultLicenseMessage_1DayBefore, DefaultLicenseMessage_29DaysBefore, DefaultEolPage,
+    NewsCustomization, K2BLinksInterceptionIE, K2BLinksInterceptionFirefox, K2BLinksInterceptionChrome,
+    CustomizationOfEndOfLicensePage, ShowRegretPageDuringUninstallDestructive, PartnerNameMacroSubstitutionTest,
+    LocalizationMacroSubstitutionTest, LicenseExpirationDateMacroSubstitutionTest, LicenseLegalStatusMacroSubstitutionTest,
+    LicenseDaysAfterExpiryMacroSubstitutionTest, LicVolumeMacroSubstitutionTest, LicenseDaysToExpirationMacroSubstitutionTest,
+    PartnerContryMacroSubstitutionTest, MaliciousCountMacroSubstitutionTest, ThreatsCountMacroSubstitutionTest,
+    LicenseTermMacroSubstitutionTestTrial, LicenseTermMacroSubstitutionTestCommercial,
+    LicenseDaysSinceSubscriptionExpirationTestAfterActivation, LicenseDaysSinceSubscriptionExpirationTestAfterExpiration,
+    LicenseActivationDateMacroSubstitutionTestTrial, LicenseActivationDateMacroSubstitutionTestSubscription,
+    LicenseActivationDateMacroSubstitutionTestSubscriptionLimit, LicenseActivationDateMacroSubstitutionTestNoLicense,
+    LicenseTypeMacroSubstitutionTestCommercial, LicenseTypeMacroSubstitutionTestTrial,
+    LicenseTypeMacroSubstitutionTestSubscription, LicenseTypeMacroSubstitutionTestSubscriptionLimit,
+    LicenseDaysAfterExpiryMacroSubstitutionTestSubscription, LicenseDaysAfterExpiryMacroSubstitutionTestSubscriptionLimit,
+    LicenseDaysAfterExpiryMacroSubstitutionTestTrial, LicenseExpirationDateMacroSubstitutionTestSubscription,
+    LicenseExpirationDateMacroSubstitutionTestSubscriptionLimit, LicenseExpirationDateMacroSubstitutionTestTrial,
+    CustomerNameMacroSubstitutionTest, LicenseDaysToSubscriptionExpirationTest, LicenseDaysToSubscriptionLimitExpirationTest,
+    LicenseDaysSinceActivationMacroSubstitutionTest, LicenseDaysSinceActivationMacroSubstitutionTestSubscription,
+    LicenseDaysSinceActivationMacroSubstitutionTestSubscriptionLimit, LicenseDaysSinceActivationMacroSubstitutionTestTrial,
+    LicenseDaysToExpirationMacroSubstitutionTestSubscription, LicenseDaysToExpirationMacroSubstitutionTestSubscriptionLimit,
+    LicenseDaysToExpirationMacroSubstitutionTestTrial, LicDaysSinceKeyCreationMacroSubstitutionTest,
+    FilesCountMacroSubstitutionTest, SubscriptionStateAndSubscriptionReasonTest, RebraindingCodeMacroSubstitutionTest,
+    VulnerabilitiesCountMacroSubstitutionTest, LicenseDaysAfterExpiryMacroSubstitutionTestNoLicense,
+    LicenseDaysToExpirationMacroSubstitutionTestNoLicense, LicenseExpirationDateMacroSubstitutionTestNoLicense,
+    UrlCountMacroSubstitutionTest, ProductParametersMacroSubstitutionTest, KasperskyIdMacroSubstitutionTest,
+    LicenseIllegalStatusMacroSubstitutionTest, GlobalProductHotfixMacroSubstitutionTest,
+    /*ApplicationTypePpcsIdPartNumberMacroSubstitutionTest,*/ KisAdvertsForPure, StatisticForDownloadingContentWhenMarketingAccepted,
+    StatisticForBuyButtonInLicenseManagerWhenMarketingAccepted, StatisticForBuyButtonInMainWindowWhenMarketingAccepted,
+    StatisticForRenewButtonInLicenseManagerWhenMarketingAccepted, StatisticForRenewButtonInMainWindowWhenMarketingAccepted,
+    StatisticForClickingLicenseNotificationInLicenseManagerWhenMarketingAccepted,
+    StatisticForShowingLicenseNotificationInBalloonWhenMarketingAccepted,
+    StatisticForShowingLicenseNotificationInLicenseManagerWhenMarketingAccepted,
+    StatisticForShowingLicenseNotificationInMainWindowWhenMarketingAccepted,
+    StatisticForShowingLicenseNotificationInProblemListWhenMarketingAccepted, StatisticForDownloadingContentWhenMarketingDeclined,
+    StatisticForBuyButtonInLicenseManagerWhenMarketingDeclined, StatisticForBuyButtonInMainWindowWhenMarketingDeclined,
+    StatisticForRenewButtonInLicenseManagerWhenMarketingDeclined, StatisticForRenewButtonInMainWindowWhenMarketingDeclined,
+    StatisticForClickingLicenseNotificationInLicenseManagerWhenMarketingDeclined,
+    StatisticForShowingLicenseNotificationInBalloonWhenMarketingDeclined,
+    StatisticForShowingLicenseNotificationInLicenseManagerWhenMarketingDeclined,
+    StatisticForShowingLicenseNotificationInMainWindowWhenMarketingDeclined,
+    StatisticForShowingLicenseNotificationInProblemListWhenMarketingDeclined;
+
+scenario IpmRequestAgreementsEula
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product Eula";
+    environments (platform_group_1, KIS);
+    // method guid: 648bdd16-d231-4b4a-9b22-2cc4cf5b77a5
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestAgreementsTests.IpmRequestAgreementsEula;
+    UniqueId = "3854cb6f-a862-4a9a-8f68-578fa72ea100";
+    Timeout = "00:15:00";
+    TfsId = 2537671;
+}
+
+scenario IpmRequestAgreementsEulaGdpr
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR Eula";
+    environments (platform_group_1, KIS);
+    // method guid: 709a65d2-486e-4a93-9696-705d5b694691
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestAgreementsTests.IpmRequestAgreementsEulaGdpr;
+    UniqueId = "3cedb4c4-3941-4f99-b0ed-529013830511";
+    Timeout = "00:15:00";
+    TfsId = 2537669;
+}
+
+scenario IpmRequestAgreementsEulaKsn
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 8365de8b-b01e-4325-9881-2e2130b86be6
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestAgreementsTests.IpmRequestAgreementsEulaKsn;
+    UniqueId = "9887099d-06b9-4ec0-a247-e6fc6b134085";
+    Timeout = "00:15:00";
+    TfsId = 2537696;
+}
+
+scenario IpmRequestAgreementsEulaKsnGdpr
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 4b1b7ed1-c704-45eb-8ed5-786a84760d59
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestAgreementsTests.IpmRequestAgreementsEulaKsnGdpr;
+    UniqueId = "3207cf82-0f6f-4b7d-a243-87fde00065fd";
+    Timeout = "00:15:00";
+    TfsId = 2537684;
+}
+
+scenario IpmRequestAgreementsEulaMarketingGdpr
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketing";
+    environments (platform_group_1, KIS);
+    // method guid: a2435a4b-67b8-474f-91a7-30ad57d56494
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestAgreementsTests.IpmRequestAgreementsEulaMarketingGdpr;
+    UniqueId = "cdc45389-7d86-412e-97be-8f7f3a92e991";
+    Timeout = "00:15:00";
+    TfsId = 2537692;
+}
+
+scenario IpmRequestAgreementsEulaMarketingKsnGdpr
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: d02f88fe-4bab-42c0-be61-a2e55345b669
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestAgreementsTests.IpmRequestAgreementsEulaMarketingKsnGdpr;
+    UniqueId = "f496dfc8-e416-4ea1-b696-d6c0a5f74c9e";
+    Timeout = "00:15:00";
+    TfsId = 2537694;
+}
+
+scenario SendingRequestDuringHipsSystemAnalysis
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 8a2f9b68-750b-44c5-84e5-96d7bbb10ed4
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestDuringHipsSystemAnalysis;
+    UniqueId = "880e3360-262a-49eb-8ab4-f28f606c5376";
+    RevertAgentBefore  = true;
+    Timeout = "00:15:00";
+    TfsId = 182043;
+}
+
+scenario SendingRequestAfterLoadProduct
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 9b922a98-7b76-49dc-bf37-69b01c9b14bc
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestAfterLoadProduct;
+    UniqueId = "2b7b8cbc-bce2-4a1b-94ba-5b62f747e780";
+    RevertAgentBefore  = true;
+    Timeout = "00:15:00";
+    TfsId = 182067;
+}
+
+scenario SendingRequestAfterSpecifiedSeconds
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 78fa59fc-fb3e-4d12-8d1c-3490d9ff7d4c
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestAfterSpecifiedSeconds;
+    UniqueId = "6ce6bb2f-80fc-4dd5-84c3-f893bf20a941";
+    RevertAgentBefore  = true;
+    Timeout = "00:15:00";
+    TfsId = 182066;
+}
+
+scenario SendingRequestAfterTrialActivation
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: a5ee311f-4cae-40c0-b022-685740c1022c
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestAfterTrialActivation;
+    UniqueId = "7e9d42fb-8138-4939-9d50-127c74fa0004";
+    Timeout = "00:10:00";
+    TfsId = 182058;
+}
+
+scenario SendingRequestAfterTrialExpiration
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 4891d2a1-980d-4f02-b1c0-a94724d5beb0
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestAfterTrialExpiration;
+    UniqueId = "f4c17593-9ba6-4e7a-bfd1-e7828de2673b";
+    RevertAgentAfter  = true;
+    Timeout = "00:10:00";
+    TfsId = 181626;
+}
+
+scenario SendingRequestAfterCommercialLicenseChanges
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 2230a98e-5d3c-4d5e-b7f5-2ef20489b08a
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestAfterCommercialLicenseChanges;
+    UniqueId = "d27985b4-b847-4cbc-a759-6f075e1df747";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 181626;
+}
+
+scenario SendingRequestEvery3Hours
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 44a22238-c083-4e47-a1b5-44665aae6bfa
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestEvery3Hours;
+    UniqueId = "0c1b3b70-8458-4881-9200-c193fa4688ea";
+    RevertAgentBefore  = true;
+    Timeout = "00:15:00";
+    TfsId = 180885;
+}
+
+scenario SendingRequestAfterCommercialActivationWithPatch
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 697b8681-a08b-4e7e-9c92-9a0e45956b09
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestAfterCommercialActivationWithPatch;
+    UniqueId = "c6d50d40-632e-4c48-b147-902d58b0b2af";
+    RevertAgentAfter  = true;
+    Timeout = "00:10:00";
+    TfsId = 1893384;
+}
+
+scenario SendingRequestWhenReceiveAfterExpiryDisabled
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: c445c3f4-0e10-40af-af34-c8fb70a3cf45
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestTests.SendingRequestWhenReceiveAfterExpiryDisabled;
+    UniqueId = "7ab4c64f-c345-4b21-a404-84309f454bc0";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 804415;
+}
+
+scenario IpmRequestAgreementsLicenseNotExpired
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 5679da4f-c074-44b3-8cea-896abf0635ac
+    method Autotest.Kis.Suites.Ipm.IpmSendingRequestAgreementsTests.IpmRequestAgreementsLicenseNotExpired;
+    UniqueId = "4606ccc1-309d-44e2-8ec6-87f7b28f015b";
+    RevertAgentAfter  = true;
+    Timeout = "00:20:00";
+    TfsId = 2547027;
+}
+
+scenario DefaultWelcomeTour
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 9715c783-2043-4c50-b380-6dc5f8367570
+    method Autotest.Kis.Suites.Ipm.IpmWelcomeTourTests.DefaultWelcomeTour;
+    UniqueId = "17b6a223-ab9f-4d65-8755-8573029b866d";
+    RevertAgentBefore  = true;
+    Timeout = "00:10:00";
+    TfsId = 1703714;
+}
+
+scenario GetCustomizationOptions
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 162f13c2-db45-4a13-9298-7bd47c8970f3
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.GetCustomizationOptions;
+    UniqueId = "ad39c0f6-8282-43b8-8dd1-622c619e4277";
+    Timeout = "00:10:00";
+    TfsId = 182672;
+}
+
+scenario IpmContentLoadingTests_FakeGroup
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    sequence
+    {
+        // method guid: 5a547e22-279b-481d-9efd-aaa4631b243e
+        method Autotest.Kis.Suites.Ipm.IpmContentLoadingTests.PartialContentLoading;
+        // method guid: 6010bce8-85a3-48d8-aa70-57486615710c
+        method Autotest.Kis.Suites.Ipm.IpmContentLoadingTests.ParametersInIndexFile;
+            reboot;
+        // method guid: 9b263317-0ba0-4767-8d55-e5dbf710ada5
+        method Autotest.Kis.Suites.Ipm.IpmContentLoadingTests.NegativeResponseDoesNotDeleteContent;
+    }
+
+    UniqueId = "c598916b-d326-4f86-a390-5373fee36ae6";
+    RevertAgentAfter  = true;
+    Timeout = "00:45:00";
+    TfsId = 182232;
+}
+
+scenario ContentWithWrongSignatureNotLoaded
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 4893e673-00d5-4291-9460-a96e5bd71c75
+    method Autotest.Kis.Suites.Ipm.IpmContentLoadingTests.ContentWithWrongSignatureNotLoaded;
+    UniqueId = "814195f9-27d6-455a-aa56-2bd55f8de3e0";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 182231;
+}
+
+scenario CustomContentUsage
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 07689f09-7b72-4bb2-bc3d-f4a3d7786f64
+    method Autotest.Kis.Suites.Ipm.IpmCustomContentUsageTests.CustomContentUsage;
+    UniqueId = "3ebb9944-8a1e-406a-9234-9fc0b2c2be7f";
+    RevertAgentAfter  = true;
+    Timeout = "00:10:00";
+    TfsId = 181705;
+}
+
+scenario CheckCustomContentDeletedWhenNewContentIsEmpty
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 9fcc8392-6a47-4dbe-aac5-0f72af378996
+    method Autotest.Kis.Suites.Ipm.IpmContentLoadingTests.CheckCustomContentDeletedWhenNewContentIsEmpty;
+    UniqueId = "fcb74380-2346-4d3c-9e91-265e1214a54b";
+    Timeout = "00:15:00";
+    TfsId = 182234;
+}
+
+scenario MoreProductsCustomContent
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 25805faf-3db5-4435-854e-ac6cabdf13b5
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.MoreProductsCustomContent;
+    UniqueId = "5873e1cf-6001-41ff-b0ec-2aa91063977d";
+    Timeout = "00:10:00";
+    TfsId = 1085119;
+}
+
+scenario MoreProductsDefaultContent
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 032d4d13-9e1c-4cbb-998e-6d3ff3e818a0
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.MoreProductsDefaultContent;
+    UniqueId = "234f377e-5d3b-49a5-8e30-65082d9d3871";
+    Timeout = "00:10:00";
+    TfsId = 1085001;
+}
+
+scenario RankingMessageOnlyOneContentIsChosen
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 16f78050-1d6d-4330-89c4-ce083c800966
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.RankingMessageOnlyOneContentIsChosen;
+    UniqueId = "03d369db-e97e-47ad-8198-d38e7a33752c";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 181816;
+}
+
+scenario BuyButtonCustomizationNoLicense
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 8e8725e5-a76a-4163-9080-c739ba4854ff
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationBuyButtonTests.BuyButtonCustomizationNoLicense;
+    UniqueId = "045c02fb-62c7-4681-abc8-3c2be6140f85";
+    Timeout = "00:07:00";
+    TfsId = 181707;
+}
+
+scenario BuyButtonCustomizationTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 94ad44fe-ab1e-4ebf-abc4-df8394d05baa
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationBuyButtonTests.BuyButtonCustomizationTrial;
+    UniqueId = "f3fd5c62-6883-4893-a17a-ae9ef9e1b0b0";
+    RevertAgentAfter  = true;
+    Timeout = "00:19:00";
+    TfsId = 181707;
+}
+
+scenario BuyButtonCustomizationCommercial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 9d42d98f-f6d6-4f10-a94f-dafc871f54c7
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationBuyButtonTests.BuyButtonCustomizationCommercial;
+    UniqueId = "ca8ddcec-6eb4-441d-b1f5-e52df9173144";
+    RevertAgentAfter  = true;
+    Timeout = "00:19:00";
+    TfsId = 181707;
+}
+
+scenario DefaultLicenseMessage_13DaysBefore
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: d11bd76e-fdad-459f-aed9-e6532794f089
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.DefaultLicenseMessage_13DaysBefore;
+    UniqueId = "157b226e-47f9-497a-86ce-b010605ce668";
+    RevertAgentAfter  = true;
+    Timeout = "00:19:00";
+    TfsId = 181990;
+}
+
+scenario DefaultLicenseMessage_14DaysBefore
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 392f23b2-3bc9-4a1d-bd47-c291b93609de
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.DefaultLicenseMessage_14DaysBefore;
+    UniqueId = "9d255b75-86d4-458b-833b-21c47844373f";
+    RevertAgentAfter  = true;
+    Timeout = "00:19:00";
+    TfsId = 181990;
+}
+
+scenario DefaultLicenseMessage_1DayBefore
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_2, KIS);
+    // method guid: 86d06f0c-e963-412b-b29c-a6f92fe998a3
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.DefaultLicenseMessage_1DayBefore;
+    UniqueId = "681dce65-c9d3-4bf4-b360-903e12b02810";
+    RevertAgentAfter  = true;
+    Timeout = "00:19:00";
+    TfsId = 181990;
+}
+
+scenario DefaultLicenseMessage_29DaysBefore
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 71e964ea-5622-4c4b-860f-d2c7a6cb5b3d
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.DefaultLicenseMessage_29DaysBefore;
+    UniqueId = "637b17ba-aefe-492d-87cd-837ee3f5d39c";
+    RevertAgentAfter  = true;
+    Timeout = "00:19:00";
+    TfsId = 181990;
+}
+
+scenario DefaultEolPage
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_2, KIS);
+    // method guid: 327382b8-c55d-4ced-8184-c548e34a9c22
+    method Autotest.Kis.Suites.Ipm.IpmDefaultEolPageContentTests.DefaultEolPage;
+    UniqueId = "920213a4-179b-4ad9-849e-990e179da5e6";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 183159;
+}
+
+scenario NewsCustomization
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: e14acc4a-9550-4840-a111-1488911ed4b5
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.NewsCustomization;
+    UniqueId = "14862370-5822-4a1d-a3ba-0dc00cd1a844";
+    Timeout = "00:10:00";
+    TfsId = 181704;
+}
+
+scenario K2BLinksInterceptionIE
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 5544a393-3449-48e4-9a28-e2523ba528a5
+    method Autotest.Kis.Suites.Ipm.IpmK2BTests.K2BLinksInterceptionIE;
+    UniqueId = "cdb4c33a-0d75-4d14-ae25-bcdeb5701862";
+    Timeout = "00:10:00";
+    TfsId = 244850;
+}
+
+scenario K2BLinksInterceptionFirefox
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: d31f9e90-0687-4a19-8c81-1599f5318897
+    method Autotest.Kis.Suites.Ipm.IpmK2BTests.K2BLinksInterceptionFirefox;
+    UniqueId = "db268c8f-f602-4ff2-9c88-acf125ed5546";
+    Timeout = "00:10:00";
+    TfsId = 244850;
+}
+
+scenario K2BLinksInterceptionChrome
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: c728f50a-c0ab-4651-b3bf-2252aee7fb6d
+    method Autotest.Kis.Suites.Ipm.IpmK2BTests.K2BLinksInterceptionChrome;
+    UniqueId = "1db1508e-83e5-45a5-b375-10944ee00efd";
+    Timeout = "00:10:00";
+    TfsId = 244850;
+}
+
+scenario CustomizationOfEndOfLicensePage
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_2, KIS);
+    // method guid: 3f049559-8c5c-41f2-a3cb-b02719a3ed51
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.CustomizationOfEndOfLicensePage;
+    UniqueId = "ae74c6d8-de63-4b99-9a5e-909e85c75590";
+    Timeout = "00:15:00";
+    TfsId = 181706;
+}
+
+scenario ShowRegretPageDuringUninstallDestructive
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 1f7f97ca-8407-4181-a44f-eb2ad208d9be
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationUninstallTests.ShowRegretPageDuringUninstallDestructive;
+    UniqueId = "205e5bd8-b55b-4228-ac51-0e493930a3b2";
+    RevertAgentAfter  = true;
+    Timeout = "00:19:00";
+    TfsId = 181703;
+}
+
+scenario PartnerNameMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: fadf5816-2cd0-4b87-8914-2655032b34bc
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.PartnerNameMacroSubstitutionTest;
+    UniqueId = "040e1e0b-a261-4d4f-83be-fc391ba94fe0";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183101;
+}
+
+scenario LocalizationMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: a770db9a-4270-4a81-ba50-fc718e61b27a
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.LocalizationMacroSubstitutionTest;
+    UniqueId = "294fea17-0b86-4dd7-a1b1-0ff3bebe3a16";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183107;
+}
+
+scenario LicenseExpirationDateMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 13aab547-1417-48c8-83cc-98ae9b967661
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseExpirationDateMacroSubstitutionTest;
+    UniqueId = "1d29767b-95d1-458b-ad2c-c1f19890b6ca";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183106;
+}
+
+scenario LicenseLegalStatusMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 52a63db6-0cca-49e8-9811-92f2f6e3e809
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.LicenseLegalStatusMacroSubstitutionTest;
+    UniqueId = "5025f214-5adf-4cbd-aaba-32ff1bc1285f";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182256;
+}
+
+scenario LicenseDaysAfterExpiryMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: bd488cf0-e307-4499-864f-2c8903cdc1ae
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysAfterExpiryMacroSubstitutionTest;
+    UniqueId = "aaa76316-c030-46fb-a676-3e74d08f67b1";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182247;
+}
+
+scenario LicVolumeMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 4bf38e87-35c8-4426-876b-44b657105c85
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.LicVolumeMacroSubstitutionTest;
+    UniqueId = "bdd9e43e-0019-4b76-84d9-0548ff0c0f5f";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183105;
+}
+
+scenario LicenseDaysToExpirationMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 5c880d34-457d-4cf3-be66-7cc09165e926
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysToExpirationMacroSubstitutionTest;
+    UniqueId = "ac1b0757-5e01-4026-b975-6c85662a7816";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182248;
+}
+
+scenario PartnerContryMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: d535cd95-2410-417f-b48b-12e732368757
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.PartnerContryMacroSubstitutionTest;
+    UniqueId = "fd6747f4-94d2-4bed-8ede-da30fb0b61cb";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183104;
+}
+
+scenario MaliciousCountMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 0ae6a876-c071-4ce0-a084-18640df50578
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.MaliciousCountMacroSubstitutionTest;
+    UniqueId = "16eba1fe-4d3e-4487-afd6-48ebc24553cc";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182242;
+}
+
+scenario ThreatsCountMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 39acbc73-efc4-4e4f-adf8-c351e37e9462
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.ThreatsCountMacroSubstitutionTest;
+    UniqueId = "2e4fd2b0-d1a1-4354-8fc8-84bbaf53cb79";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182243;
+}
+
+scenario LicenseTermMacroSubstitutionTestTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 55793d5f-2550-489e-849a-255ff0ac4fcc
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseTermMacroSubstitutionTestTrial;
+    UniqueId = "926daec1-8ea3-499c-a2ff-e8de3c2cc222";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183108;
+}
+
+scenario LicenseTermMacroSubstitutionTestCommercial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 0165682d-c59a-416e-a04b-a0bd46f2c303
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseTermMacroSubstitutionTestCommercial;
+    UniqueId = "6c9f546f-d2b3-4c4f-b50e-d27eefcfaeb9";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183108;
+}
+
+scenario LicenseDaysSinceSubscriptionExpirationTestAfterActivation
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 68616a5a-cce7-42fe-9a8d-bdbcbe0b65ea
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysSinceSubscriptionExpirationTestAfterActivation;
+    UniqueId = "d16a1702-3098-45da-99a6-022d86b8540f";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183098;
+}
+
+scenario LicenseDaysSinceSubscriptionExpirationTestAfterExpiration
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 96f15f3f-0535-4dd7-9147-1c294a1f0c34
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysSinceSubscriptionExpirationTestAfterExpiration;
+    UniqueId = "03a16988-fb10-4e7d-a7f9-490f989d870d";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183098;
+}
+
+scenario LicenseActivationDateMacroSubstitutionTestTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: ca37b260-16d5-496c-95f8-e58cb24d3ef6
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseActivationDateMacroSubstitutionTestTrial;
+    UniqueId = "ff1ff111-9193-4445-ac6d-481ae2c64ae4";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182249;
+}
+
+scenario LicenseActivationDateMacroSubstitutionTestSubscription
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 0f209be0-19a4-4af6-9bf7-fd6a9ed4d3f5
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseActivationDateMacroSubstitutionTestSubscription;
+    UniqueId = "5dea2a13-72ef-43ee-b3f0-69368b87508e";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182249;
+}
+
+scenario LicenseActivationDateMacroSubstitutionTestSubscriptionLimit
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 99d46cd0-dd81-4550-8bca-a1aeab61d13e
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseActivationDateMacroSubstitutionTestSubscriptionLimit;
+    UniqueId = "9f0a1637-c911-49b5-9358-2f48510ef7aa";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182249;
+}
+
+scenario LicenseActivationDateMacroSubstitutionTestNoLicense
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 1c7c3947-1af3-43be-9921-8f576c151738
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseActivationDateMacroSubstitutionTestNoLicense;
+    UniqueId = "cfd4bad5-754e-4774-bf43-583d99da4bec";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182249;
+}
+
+scenario LicenseTypeMacroSubstitutionTestCommercial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 989b702d-62d6-46eb-9bb4-785ed461a52c
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseTypeMacroSubstitutionTestCommercial;
+    UniqueId = "d9f92a72-5553-4e79-adef-ee2368f9fe79";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182254;
+}
+
+scenario LicenseTypeMacroSubstitutionTestTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 4090c8ee-04fe-4cea-a8ec-53a0522c4927
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseTypeMacroSubstitutionTestTrial;
+    UniqueId = "81e74ed6-4737-4f3f-9148-75811ce3635e";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182254;
+}
+
+scenario LicenseTypeMacroSubstitutionTestSubscription
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 87d94810-4338-4675-bfa4-fa13cb080e79
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseTypeMacroSubstitutionTestSubscription;
+    UniqueId = "6b32edd5-268d-4250-93a1-1cb2d49bc087";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182254;
+}
+
+scenario LicenseTypeMacroSubstitutionTestSubscriptionLimit
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 4227977e-4f5c-4bb3-82bf-0c48e00ccb7f
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseTypeMacroSubstitutionTestSubscriptionLimit;
+    UniqueId = "d8170c52-48f4-4746-bdf3-f5eff07c4be3";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182254;
+}
+
+scenario LicenseDaysAfterExpiryMacroSubstitutionTestSubscription
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: a293a010-ccec-4f65-9b0c-40168ef0d81c
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysAfterExpiryMacroSubstitutionTestSubscription;
+    UniqueId = "8e3e29d2-49b7-4f1b-91fa-e409fb5b68b1";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182247;
+}
+
+scenario LicenseDaysAfterExpiryMacroSubstitutionTestSubscriptionLimit
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 2db13585-f531-4db7-bc49-473c9549d3de
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysAfterExpiryMacroSubstitutionTestSubscriptionLimit;
+    UniqueId = "7db3f017-19b1-4c41-b014-c7f1b6d2fea1";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182247;
+}
+
+scenario LicenseDaysAfterExpiryMacroSubstitutionTestTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 0c01f961-8871-4b0b-87ee-9bf23aa596c7
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysAfterExpiryMacroSubstitutionTestTrial;
+    UniqueId = "9213319e-51b5-4947-a92d-8a5b2e10720e";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182247;
+}
+
+scenario LicenseExpirationDateMacroSubstitutionTestSubscription
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 46a0e0d4-dd18-49d9-88eb-0816f7ca0054
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseExpirationDateMacroSubstitutionTestSubscription;
+    UniqueId = "c4a916df-e379-4e26-9583-8f182c38ef3f";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183106;
+}
+
+scenario LicenseExpirationDateMacroSubstitutionTestSubscriptionLimit
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: ee3126f1-66e9-4741-827a-51c9c0aea157
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseExpirationDateMacroSubstitutionTestSubscriptionLimit;
+    UniqueId = "4b5c9407-2385-4f37-891b-665cc1c8d6ec";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183106;
+}
+
+scenario LicenseExpirationDateMacroSubstitutionTestTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: b73db02b-7a2d-40d5-a906-1129265b1e02
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseExpirationDateMacroSubstitutionTestTrial;
+    UniqueId = "fe141652-df6b-43c1-9c2f-ec00083d0aa3";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183106;
+}
+
+scenario CustomerNameMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: f81ab3d6-71a9-42fd-8fc2-a858f68ab769
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.CustomerNameMacroSubstitutionTest;
+    UniqueId = "604c738c-5b2a-43fb-ae36-4a9591ca3426";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183102;
+}
+
+scenario LicenseDaysToSubscriptionExpirationTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 1ca96279-30b9-4021-bc02-9559aabbad80
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysToSubscriptionExpirationTest;
+    UniqueId = "a8b093a0-9d64-4902-b915-beccb54f26c9";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183099;
+}
+
+scenario LicenseDaysToSubscriptionLimitExpirationTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 4dc5cfcf-ef7c-4f87-93d2-d3325b03b42c
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysToSubscriptionLimitExpirationTest;
+    UniqueId = "4b36f15d-3042-4c46-ae41-58bfaa416e37";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183099;
+}
+
+scenario LicenseDaysSinceActivationMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 8fd5c323-960e-4a33-b458-aa0a7b424e3b
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysSinceActivationMacroSubstitutionTest;
+    UniqueId = "077d3e90-9ace-4da2-82b9-df6ff68d5d4e";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182246;
+}
+
+scenario LicenseDaysSinceActivationMacroSubstitutionTestSubscription
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: f7ba48fa-e057-405f-a1e7-55648542590b
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysSinceActivationMacroSubstitutionTestSubscription;
+    UniqueId = "41b30ab0-1677-415a-ad1d-fb3edf2ed36e";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182246;
+}
+
+scenario LicenseDaysSinceActivationMacroSubstitutionTestSubscriptionLimit
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 1254e4c7-f144-4d90-82c4-ca0a1efbe7d4
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysSinceActivationMacroSubstitutionTestSubscriptionLimit;
+    UniqueId = "a04252ea-3a2f-4d9e-b9b1-5d0ac4958c33";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182246;
+}
+
+scenario LicenseDaysSinceActivationMacroSubstitutionTestTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 39a564d5-8abc-40c1-8838-94c65917fcd6
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysSinceActivationMacroSubstitutionTestTrial;
+    UniqueId = "70e8a1dd-be9f-4822-afdc-265391a6c140";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182246;
+}
+
+scenario LicenseDaysToExpirationMacroSubstitutionTestSubscription
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: d7a739db-88f3-40b0-be7f-1761febb039d
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysToExpirationMacroSubstitutionTestSubscription;
+    UniqueId = "a79995e8-014f-4a01-af51-43f47d19d110";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182248;
+}
+
+scenario LicenseDaysToExpirationMacroSubstitutionTestSubscriptionLimit
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 87c334c0-4a1d-4d47-9e1d-8938754927a3
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysToExpirationMacroSubstitutionTestSubscriptionLimit;
+    UniqueId = "edef1757-9865-471b-8df0-cdb049cb343f";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182248;
+}
+
+scenario LicenseDaysToExpirationMacroSubstitutionTestTrial
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 1b54566f-5aa3-4c1f-9764-7c811e663826
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysToExpirationMacroSubstitutionTestTrial;
+    UniqueId = "2d1b12ad-2aa7-4cf0-a0f8-f023780cadef";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182248;
+}
+
+scenario LicDaysSinceKeyCreationMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: c2b912e9-0f42-433f-b133-e7886743d6ac
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.LicDaysSinceKeyCreationMacroSubstitutionTest;
+    UniqueId = "00c11b4d-f9a6-4a60-a940-4478bab4817e";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183097;
+}
+
+scenario FilesCountMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 26d7954d-8fe2-4312-9041-11fcd283b5bb
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.FilesCountMacroSubstitutionTest;
+    UniqueId = "56e2bc29-750d-4df1-9dd1-0d1c22214863";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182245;
+}
+
+scenario SubscriptionStateAndSubscriptionReasonTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 1461c8cc-ef45-4278-a761-b4b28b9c456b
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.SubscriptionStateAndSubscriptionReasonTest;
+    UniqueId = "d0026b9d-45b5-4eee-a624-569664c6268a";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 181137;
+}
+
+scenario RebraindingCodeMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: fac09c32-9bd0-45ea-bbdf-fff1f984bb9d
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.RebraindingCodeMacroSubstitutionTest;
+    UniqueId = "22f7eac3-cc75-4332-ad02-106707b302d7";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183100;
+}
+
+scenario VulnerabilitiesCountMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 29b31678-11e8-45e6-b40c-02f9c8e117a0
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.VulnerabilitiesCountMacroSubstitutionTest;
+    UniqueId = "207885af-7c9e-4f8c-a807-7dcdebd61066";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182241;
+}
+
+scenario LicenseDaysAfterExpiryMacroSubstitutionTestNoLicense
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 8a297e7d-839e-4605-95c7-21655304b0cd
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysAfterExpiryMacroSubstitutionTestNoLicense;
+    UniqueId = "4980fea2-1ccb-46a2-945d-72c94c7f8852";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182247;
+}
+
+scenario LicenseDaysToExpirationMacroSubstitutionTestNoLicense
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 940b66f6-ff5e-46a2-ae87-4a2e7f26ea99
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseDaysToExpirationMacroSubstitutionTestNoLicense;
+    UniqueId = "5cb0a65d-3ebd-4543-a593-12e06f4d7564";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182248;
+}
+
+scenario LicenseExpirationDateMacroSubstitutionTestNoLicense
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 1e814091-be5c-4eed-947b-8f35271e17c2
+    method Autotest.Kis.Suites.Ipm.IpmLicensingMacroTests.LicenseExpirationDateMacroSubstitutionTestNoLicense;
+    UniqueId = "57b3ea67-69a4-472a-b8b1-d9f546c977d4";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 183106;
+}
+
+scenario UrlCountMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 4f17dc1b-6af5-45e6-a611-f8798c2f740a
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.UrlCountMacroSubstitutionTest;
+    UniqueId = "4e74ce07-9a95-4b26-ad6e-181a22d9ec09";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182244;
+}
+
+scenario ProductParametersMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 17149390-88cc-4e8e-9e90-496f4d462f94
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.ProductParametersMacroSubstitutionTest;
+    UniqueId = "2541038d-e7c7-49d0-8081-e799c2b092e6";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 181856;
+}
+
+scenario KasperskyIdMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 66372e78-627c-4647-9eae-9a3d2f938be5
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.KasperskyIdMacroSubstitutionTest;
+    UniqueId = "a50bff83-3af9-4692-a286-b377a69ae266";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182255;
+}
+
+scenario LicenseIllegalStatusMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 9e9dcd65-afe7-45d8-931a-122e7365f28c
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.LicenseIllegalStatusMacroSubstitutionTest;
+    UniqueId = "89757fed-dd0d-47fa-a56b-5ec912021a11";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 182257;
+}
+
+scenario GlobalProductHotfixMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 8d62e900-b8e1-4911-9aa0-04dd9a920fd2
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.GlobalProductHotfixMacroSubstitutionTest;
+    UniqueId = "05da96bf-bf0b-4000-867f-79bfea5f1086";
+    RevertAgentBefore  = true;
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 805990;
+}
+
+/*
+scenario ApplicationTypePpcsIdPartNumberMacroSubstitutionTest
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: e40ccade-5473-4de9-ab39-09e33563b5f1
+    method Autotest.Kis.Suites.Ipm.IpmMacroSubstitutionTests.KsnParticipantAndPcIdMacroSubstitutionTest;
+    UniqueId = "7c67aa53-45da-4a0b-b754-6b58e41b7e3e";
+    RevertAgentAfter  = true;
+    Timeout = "00:31:00";
+    TfsId = 237596;
+}*/
+
+scenario KisAdvertsForPure
+{
+    deployment "[Kis.Main] Install product";
+    environments (platform_group_1, KIS);
+    // method guid: 3665492c-1a32-445f-9968-ae4add23b703
+    method Autotest.Kis.Suites.Ipm.IpmCustomizationTestsMock.KisAdvertsForPure;
+    UniqueId = "8dba2d6d-b179-4d2f-b919-7463d9e055ee";
+    RevertAgentAfter  = true;
+    Timeout = "00:10:00";
+    TfsId = 932996;
+}
+
+scenario StatisticForDownloadingContentWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 9b991b0b-9432-4447-9ba4-35b2eadf1516
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForDownloadingContentWhenMarketingAccepted;
+    UniqueId = "b6c1b981-6cf3-4c25-aad6-206c1fd58923";
+    Timeout = "00:15:00";
+    TfsId = 2544884;
+}
+
+scenario StatisticForBuyButtonInLicenseManagerWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 5e2e6afd-f5a9-413c-b14f-d3cf9a73de13
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForBuyButtonInLicenseManagerWhenMarketingAccepted;
+    UniqueId = "0305679e-0d21-43a7-a75a-dcd0f4c4e7be";
+    Timeout = "00:15:00";
+    TfsId = 2544887;
+}
+
+scenario StatisticForBuyButtonInMainWindowWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 384bba78-3b4f-46b0-b3ac-ef5985feda4f
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForBuyButtonInMainWindowWhenMarketingAccepted;
+    UniqueId = "aec53d4c-b222-4b14-a093-59f6b9d78bda";
+    Timeout = "00:15:00";
+    TfsId = 2544887;
+}
+
+scenario StatisticForRenewButtonInLicenseManagerWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 5776dd31-ce9f-42ea-92f2-2989a9d10f05
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForRenewButtonInLicenseManagerWhenMarketingAccepted;
+    UniqueId = "769daa15-4e87-4496-abfe-0e86751c76dc";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544888;
+}
+
+scenario StatisticForRenewButtonInMainWindowWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 51856afc-f08c-4f01-8f13-afa790dfc914
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForRenewButtonInMainWindowWhenMarketingAccepted;
+    UniqueId = "eed64aa3-235f-4bd8-b645-50e574001f53";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544888;
+}
+
+scenario StatisticForClickingLicenseNotificationInLicenseManagerWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: ee4a8559-84e3-4e2c-86ff-72f399504073
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForClickingLicenseNotificationInLicenseManagerWhenMarketingAccepted;
+    UniqueId = "d2be2567-388e-4eee-ad8f-c9cdbf0cb0fe";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544893;
+}
+
+scenario StatisticForShowingLicenseNotificationInBalloonWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 85310313-ec2c-4e36-95ef-ae0d6c14a998
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInBalloonWhenMarketingAccepted;
+    UniqueId = "7090ba07-8a8e-4e99-8810-2da39fd057ff";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544890;
+}
+
+scenario StatisticForShowingLicenseNotificationInLicenseManagerWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 22fc801e-f57d-4ea1-a530-18a44cca6388
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInLicenseManagerWhenMarketingAccepted;
+    UniqueId = "d49d1e1e-8a78-4b81-9b69-25edd3488edd";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544890;
+}
+
+scenario StatisticForShowingLicenseNotificationInMainWindowWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 1e1a53fa-c207-456f-bbe3-1e8f98adbdb5
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInMainWindowWhenMarketingAccepted;
+    UniqueId = "bb2ad72c-176d-4c8e-bc3d-d888a95ae3ee";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544890;
+}
+
+scenario StatisticForShowingLicenseNotificationInProblemListWhenMarketingAccepted
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn";
+    environments (platform_group_1, KIS);
+    // method guid: ee36fcd9-9e29-4591-937e-a63424e8ce24
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInProblemListWhenMarketingAccepted;
+    UniqueId = "d490a29a-5f8a-46a7-8d1f-4b4f58366416";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544890;
+}
+
+scenario StatisticForDownloadingContentWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 4ad4583f-33e4-44d7-ad5a-94aa8b511178
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForDownloadingContentWhenMarketingDeclined;
+    UniqueId = "e721e311-42ef-4a2d-a331-9ffc46c84d9b";
+    Timeout = "00:15:00";
+    TfsId = 2544807;
+}
+
+scenario StatisticForBuyButtonInLicenseManagerWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 0d22a84b-10bd-438c-b2bb-4c41cf4304c1
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForBuyButtonInLicenseManagerWhenMarketingDeclined;
+    UniqueId = "1d3ba6bc-4613-4cb1-8a56-ab8de3ee773a";
+    Timeout = "00:15:00";
+    TfsId = 2544813;
+}
+
+scenario StatisticForBuyButtonInMainWindowWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: d2d40270-c021-4102-bcdc-419e46548aa7
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForBuyButtonInMainWindowWhenMarketingDeclined;
+    UniqueId = "f4d130f6-ff53-407b-ab25-686f834dcf60";
+    Timeout = "00:15:00";
+    TfsId = 2544813;
+}
+
+scenario StatisticForRenewButtonInLicenseManagerWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 5af3ec81-5ce7-4924-9fd5-38170b89f5f2
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForRenewButtonInLicenseManagerWhenMarketingDeclined;
+    UniqueId = "29acdc78-e99a-467f-ad1d-5364888f605d";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544814;
+}
+
+scenario StatisticForRenewButtonInMainWindowWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: c625cb48-61eb-4501-9b4f-ef2cb5959ae6
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForRenewButtonInMainWindowWhenMarketingDeclined;
+    UniqueId = "701af7e4-705c-4c9d-8e97-1c5c94d8c362";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544814;
+}
+
+scenario StatisticForClickingLicenseNotificationInLicenseManagerWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 8d8b75af-b8e9-491a-8c5d-b881dfc2caad
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForClickingLicenseNotificationInLicenseManagerWhenMarketingDeclined;
+    UniqueId = "28937edd-85bd-4079-9f8e-baae7592a9ca";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544863;
+}
+
+scenario StatisticForShowingLicenseNotificationInBalloonWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 7ada38fd-2e92-41df-9987-ed05cb8ac73f
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInBalloonWhenMarketingDeclined;
+    UniqueId = "0bc6ffdd-db35-49ab-8802-0aa2f0e3f719";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544862;
+}
+
+scenario StatisticForShowingLicenseNotificationInLicenseManagerWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: 6a8d7a4c-dde8-4953-b6c2-b684ee19401d
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInLicenseManagerWhenMarketingDeclined;
+    UniqueId = "6f6a722b-2772-4521-b46c-d6cb86f32925";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544862;
+}
+
+scenario StatisticForShowingLicenseNotificationInMainWindowWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: f8cf5a3b-c9a6-4ff0-9b93-63dfc274954a
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInMainWindowWhenMarketingDeclined;
+    UniqueId = "051d411c-4bf3-4ee9-9b50-90f1ab26523f";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544862;
+}
+
+scenario StatisticForShowingLicenseNotificationInProblemListWhenMarketingDeclined
+{
+    deployment "[Kis.Main.Signed.Agreements] Install product GDPR EulaKsn";
+    environments (platform_group_1, KIS);
+    // method guid: acb68b16-3f73-4a82-8b7c-718f89b38e6c
+    method Autotest.Kis.Suites.Ipm.IpmStatisticTests.StatisticForShowingLicenseNotificationInProblemListWhenMarketingDeclined;
+    UniqueId = "86d7472a-f596-41cc-a69b-7e114e9ebc38";
+    RevertAgentAfter  = true;
+    Timeout = "00:15:00";
+    TfsId = 2544862;
+}
