@@ -114,8 +114,8 @@
             finally
             {
                 Log.LogMessage(MessageImportance.High, "cmdLineFile = {0}", cmdLineFile);
-                //if (File.Exists(cmdLineFile))
-                //    File.Delete(cmdLineFile);
+                if (File.Exists(cmdLineFile))
+                    File.Delete(cmdLineFile);
                 if (count > 1)
                   Log.LogMessage(MessageImportance.High, "count = {0}", count);
             }
