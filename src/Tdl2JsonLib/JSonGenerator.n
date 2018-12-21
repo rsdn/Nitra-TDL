@@ -40,6 +40,7 @@ namespace Tdl2JsonLib
   public module JsonGenerator
   {
     static _jsonVersion = 5;
+    public event OnMessage : Action[string];
     
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string], isMethodTypingEnabled : bool) : string
     {
@@ -74,12 +75,16 @@ namespace Tdl2JsonLib
                                  .Concat(refs.Select(r => FileLibReference(r) : LibReference)).ToArray());
 
       def projectSupport = ProjectSupport();
+      JsonGenerator.ReportMessage("Loading types from referenced assemblies...");
       def data           = projectSupport.RefreshReferences(CancellationToken.None, project);
+      JsonGenerator.ReportMessage("Patsing TDLs...");
       project.Data       = data;
       def files          = project.Files.Select(_.GetEvalPropertiesData()).ToImmutableArray();
+      JsonGenerator.ReportMessage("Semantic analysis...");
       projectSupport.RefreshProject(CancellationToken.None, files, data);
 
       def messages = List();
+      JsonGenerator.ReportMessage("Done.");
 
       foreach (msg in project.CompilerMessages :> CompilerMessageList)
         messages.Add(msg);
@@ -98,6 +103,11 @@ namespace Tdl2JsonLib
       namespaceSymbol
     }
 
+    internal ReportMessage(msg : string) : void
+    {
+      OnMessage?.Invoke(msg);
+    }
+    
     private ProcessCompilerMessages(messages : IEnumerable[CompilerMessage]) : void
     {
       when(messages.Any())

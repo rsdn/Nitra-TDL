@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -22,8 +23,16 @@ namespace Tdl2Json
         /// </summary>
         public static int Main(string[] args)
         {
+            var timer = Stopwatch.StartNew();
             try
             {
+                if (args.Length == 1 && args[0].StartsWith("/from-file:", "-from-file:"))
+                {
+                    var arg = args[0];
+                    int index = arg.IndexOf(':') + 1;
+                    var comandOptionsFile = arg.Substring(index, arg.Length - index);
+                    args = File.ReadAllLines(comandOptionsFile);
+                }
                 var outputs            = FilterOption(args, "/out:", "-out:");
                 var workingDirectories = FilterOption(args, "/wd:", "-wd:", "/WorkingDirectory:", "-WorkingDirectory:");
                 var files              = ExpandFilePaths(args.Where(a => !a.StartsWith("-", "/"))).ToArray();
@@ -42,9 +51,13 @@ namespace Tdl2Json
                 }
                 var workingDirectory = workingDirectories.SingleOrDefault() ?? Directory.GetCurrentDirectory();
                 var outPath = outputs.SingleOrDefault() ?? Path.Combine(workingDirectory, "out.json");
+                if (tdls.Length > 10 || tdls.Sum(f => new FileInfo(f).Length) > 1024 * 1024)
+                    JsonGenerator.OnMessage += JsonGenerator_OnMessage;
                 var contents = JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true);
                 File.WriteAllText(outPath, contents, Encoding.UTF8);
                 Print($"The JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
+
+                Console.WriteLine("Took: " + timer.Elapsed);
                 return 0;
             }
             catch (CompilerErrorException e)
@@ -65,6 +78,11 @@ namespace Tdl2Json
                 Console.Error.Write($"Unhandled exception(1,1,1,1): error: {e.Message}", ConsoleColor.Red);
                 return -3;
             }
+        }
+
+        private static void JsonGenerator_OnMessage(string message)
+        {
+            Print(message, ConsoleColor.DarkGray);
         }
 
         private static string[] FilterOption(string[] args, params string[] samples)
@@ -98,6 +116,11 @@ namespace Tdl2Json
 
                     foreach (var filepath in Directory.GetFiles(dirPart, filePart))
                         fileList.Add(filepath);
+
+                    var dirs = Directory.GetDirectories(dirPart, "*.*", SearchOption.AllDirectories);
+                    foreach (var dir in dirs)
+                        foreach (var filepath in Directory.GetFiles(dir, filePart))
+                            fileList.Add(filepath);
                 }
                 else
                     fileList.Add(substitutedArg);
