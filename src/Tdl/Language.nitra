@@ -3,8 +3,8 @@
 
   extension = .tdl;
 
-  company     = NitraTeam;
-  description = Nitra driven Tdl plugin for Visual Studio;
+  company     = Kaspersky Lab.;
+  description = Tdl plug-in for Visual Studio. https://confluence.kaspersky.com/display/CTD/TDL;
   authors     = Vlad Chistyakov;
   copyright   = NitraTeam;
 
