@@ -17,19 +17,28 @@ namespace Tdl2JsonLib
         where TAst: IAst
     {
         public override Id : int { get { _id.Value }}
+        private static mutable _counter : int;
+        private _id : Lazy[int] = Lazy.[int](GetId);
 
         public this([NotNull] filePath : string, [NotNull] language : Language, fsProject : FsProject[TAst] = null, statistics : FileStatistics = null)
         {
             base(filePath, language, fsProject, statistics)
         }
 
-        private _id : Lazy[int] = Lazy.[int](GetId);
-
         private static GetId() : int
         {
             ++_counter;
             _counter
         }
-        private static mutable _counter : int;
+        
+        
+      public override ReParse()         : void
+      {
+        JsonGenerator.ReportMessage(FullName);
+        base.ReParse();
+      }
+      public override UpdateAst()       : void { base.UpdateAst(); }
+      public override UpdateParseTree() : void { base.UpdateParseTree(); }
+      
     }
 }

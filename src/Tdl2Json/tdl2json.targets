@@ -17,12 +17,20 @@
       <Code Type="Fragment" Language="cs">
         <![CDATA[
             var count = 0;
+            var cmdLineFile = Path.GetTempFileName();
             try
             {
                 var sources    = InputSources.Select(s => s.GetMetadata("FullPath"));
                 var references = References.Select(r => r.GetMetadata("FullPath"));
-                var files      =  sources.Concat(references).Select(f => '"' + f + '"');
-                var cmdLine    = string.Join(" ", files) + " /out:\"" + OutputFullName + '"';
+                //var files      = sources.Concat(references).Select(f => '"' + f + '"');
+                //var files      = sources.Concat(references).Select(f => '"' + f + '"');
+                //var cmdLine    = string.Join(" ", files) + " /out:\"" + OutputFullName + '"';
+                var lines = new List<string>();
+                lines.AddRange(references);
+                lines.AddRange(sources);
+                lines.Add("/out:" + OutputFullName);
+                File.WriteAllLines(cmdLineFile, lines);
+                var cmdLine = "\"-from-file:" + cmdLineFile + '"';
 
                 //Log.LogMessage(MessageImportance.High, "references:");
                 //foreach (var item in references)
@@ -105,6 +113,9 @@
             }
             finally
             {
+                Log.LogMessage(MessageImportance.High, "cmdLineFile = {0}", cmdLineFile);
+                //if (File.Exists(cmdLineFile))
+                //    File.Delete(cmdLineFile);
                 if (count > 1)
                   Log.LogMessage(MessageImportance.High, "count = {0}", count);
             }
