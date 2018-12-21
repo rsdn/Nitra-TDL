@@ -5,25 +5,26 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <_NitraOutputPath>nitra\bin\Debug\Stage1</_NitraOutputPath>
+    <_NitraGrammarsOutputPath>nitra\Grammars\bin\Debug</_NitraGrammarsOutputPath>
+    <_NitraLanguageCompilerOutputPath>nitra\Nitra.LanguageCompiler\bin\Debug</_NitraLanguageCompilerOutputPath>
+    <_NitraCommonIdeOutputPath>nitra\Ide\NitraCommonIde\bin\Debug</_NitraCommonIdeOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <_NitraUserFile>Nitra.user</_NitraUserFile>
     <_NitraUserBasePath>$(MSBuildThisFileDirectory)</_NitraUserBasePath>
     <NitraUserPath>$([System.IO.Path]::Combine('$(_NitraUserBasePath)', '$(_NitraUserFile)'))</NitraUserPath>
   </PropertyGroup>
 
   <Import Condition=" Exists('$(NitraUserPath)') " Project="$(NitraUserPath)" />
-  
-  <PropertyGroup>
-    <_NitraOutputPath>nitra\bin\Debug\Stage1</_NitraOutputPath>
-    <_NitraGrammarsOutputPath>nitra\Grammars\bin\Debug</_NitraGrammarsOutputPath>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition=" '$(NitraAndNemerleSourcesPath)' == '' ">
-    <NitraPath Condition=" '$(NitraPath)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\$(_NitraOutputPath)'))</NitraPath>
-    <NitraGrammarsPath Condition=" '$(NitraGrammarsPath)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\$(_NitraGrammarsOutputPath)'))</NitraGrammarsPath>
-  </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(NitraAndNemerleSourcesPath)' != '' ">
-    <NitraPath>$([System.IO.Path]::GetFullPath('$(NitraAndNemerleSourcesPath)\$(_NitraOutputPath)'))</NitraPath>
-    <NitraGrammarsPath>$([System.IO.Path]::GetFullPath('$(NitraAndNemerleSourcesPath)\$(_NitraGrammarsOutputPath)'))</NitraGrammarsPath>
+  <PropertyGroup>
+    <NitraAndNemerleSourcesPath Condition=" '$(NitraAndNemerleSourcesPath)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</NitraAndNemerleSourcesPath>
+    <NitraPath Condition=" '$(NitraPath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraOutputPath)'))</NitraPath>
+    <NitraGrammarsPath Condition=" '$(NitraGrammarsPath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraGrammarsOutputPath)'))</NitraGrammarsPath>
+    <NitraLanguageCompilerPath Condition=" '$(NitraLanguageCompilerPath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraLanguageCompilerOutputPath)'))</NitraLanguageCompilerPath>
+    <NitraCommonIdePath Condition=" '$(NitraCommonIdePath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraCommonIdeOutputPath)'))</NitraCommonIdePath>
+    <NugetExePath Condition=" '$(NugetExePath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', 'nitra\ExternalTools\Nuget.exe'))</NugetExePath>
   </PropertyGroup>
 </Project>
