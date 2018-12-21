@@ -17,7 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		AssemblyVersion.cs = AssemblyVersion.cs
 		AssemblyVersion.n = AssemblyVersion.n
-		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tdl.VersionInfo", "Tdl.VersionInfo\Tdl.VersionInfo.csproj", "{ED94B486-EBB3-49B3-AA7D-3D9AC3D0A2EF}"
