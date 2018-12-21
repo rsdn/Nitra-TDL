@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Nitra.MSBuild.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -17,6 +17,7 @@
     <Nemerle Condition=" '$(Nemerle)' == '' ">$(NemerleBinPathRoot)\$(NemerleVersion)</Nemerle>
     <OutputPath>..\..\bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>..\..\obj\$(Configuration)\</IntermediateOutputPath>
+    <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -78,6 +79,21 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Nemerle">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(Nemerle)\Nemerle.dll</HintPath>
+    </Reference>
+    <Reference Include="Nitra.Runtime">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\Nitra.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable.Light">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\System.Collections.Immutable.Light.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyVersion.n">
@@ -129,4 +145,5 @@
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
+  <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" /> 
 </Project>
