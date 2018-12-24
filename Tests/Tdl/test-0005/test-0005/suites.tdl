@@ -1,17 +1,10 @@
-﻿
-product type Kavkis
-{
-}
 
-product KIS : Kavkis { }
-
-suite "Kis.Main.BvtPvt.Ipm"
+suite "Kav.Main.AfterSmoke.Fedko" : SessionParameters
 {
-    platform platform_group_1;
-    product KIS;
-    BuildPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Binaries\Kis.Main.BvtPvt.Ipm\20181214.1\ProductBuild"; /*"BuildBinariesFolder";*/
-    DataCollectorsPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Binaries\Kis.Main.BvtPvt.Ipm\20181214.1\Autotests"; /*"TestBinariesFolder";*/
-    DumpFolder = @"\\tis-dfs.avp.ru\Autotests\KIS\Temp\Bashchuk\TDL_Temp"; /* "DropFolder_ProductDumps";*/
-    TestArtefactsFolder = @"\\tis-dfs.avp.ru\Autotests\KIS\Temp\Bashchuk\TDL_Temp"; /* "DropFolder_Artefacts";*/
-    Kis-Main-BvtPvt-Ipm-scenarios();
+    platform win7-x86;
+    product KAV;
+    ExcludeMasks = @"*full.exe,*.iso,dotNetFx40*.exe,NDP*.exe,*.vhd";
+    DistribFiles = DistribFiles;
+    DistribTestModules = DistribTestModules;
+    Kav-Main-AfterSmoke-Fedko-scenarios();
 }

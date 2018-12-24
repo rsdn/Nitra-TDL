@@ -1,0 +1,7 @@
+
+suite type SessionParameters
+{
+    string DistribFiles;
+    string DistribTestModules;
+    string ExcludeMasks;
+}

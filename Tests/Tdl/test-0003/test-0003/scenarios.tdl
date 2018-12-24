@@ -3,7 +3,7 @@
 scenario FacadeProductStopStart
 {
     deployment DeployWithDeployer_NoReboot;
-    environments (win10, "KES 11.1__PURE 2020.MP0");
+    environments (win10, "KES 11.1__PURE 2020.MP0"), (w10rs4-x64, "PURE 2020.MP0");
     sequence
     {
       method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart;
