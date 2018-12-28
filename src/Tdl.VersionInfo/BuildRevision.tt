@@ -1,0 +1,6 @@
+﻿<#@template language="c#" hostspecific="true" #>
+<#@ parameter type="System.String" name="BuildRevision" #>
+partial class ThisAssembly
+{
+    public const string BuildRevision = "<#= BuildRevision #>";
+}

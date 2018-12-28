@@ -328,3 +328,5 @@ ASALocalRun/
 
 /src/TdlLangVsPackage/*
 FodyWeavers.xsd
+
+/src/Tdl.VersionInfo/BuildRevision.cs
