@@ -35,7 +35,7 @@ namespace Tdl2Json
                 }
                 var outputs            = FilterOption(args, "/out:", "-out:");
                 var workingDirectories = FilterOption(args, "/wd:", "-wd:", "/WorkingDirectory:", "-WorkingDirectory:");
-                var files              = ExpandFilePaths(args.Where(a => !a.StartsWith("-", "/"))).ToArray();
+                var files              = ExpandFilePaths(args.Where(a => !a.StartsWith("-", "/out:", "/wd:", "/h", "/?", "/from-file:"))).ToArray();
                 var tdls               = files.Where(a => a.EndsWith(".tdl", StringComparison.InvariantCultureIgnoreCase)).ToArray();
                 var refs               = files.Where(a => a.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase)).ToArray();
                 var needHelp           = args.Contains("/?", "/h", "-?", "-h");
