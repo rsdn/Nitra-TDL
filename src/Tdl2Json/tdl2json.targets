@@ -127,7 +127,7 @@
 
   <Target Name="CoreCompile" DependsOnTargets="$(CoreCompileDependsOn)">
     <PropertyGroup>
-      <TdlOutputPath Condition=" '$(TdlOutputPath)' == '' ">$(IntermediateOutputPath)$(TargetName).json</TdlOutputPath>
+      <TdlOutputPath Condition=" '$(TdlOutputPath)' == '' ">$(OutDir)$(TargetName).json</TdlOutputPath>
     </PropertyGroup>
     <ItemGroup>
       <TdlCompile Include="@(Nitra)"   Condition=" '%(Extension)' == '.tdl' " />
@@ -141,12 +141,9 @@
             InputSources     = "@(TdlCompile)"
             OutputFullName   = "$(TdlOutputPath)">
       <Output TaskParameter="Result" ItemName="TdlOutput" />
+      <Output TaskParameter="Result" ItemName="FileWrites"/>
     </TdlTask>
   </Target>
 
-  <Target Name="CopyFilesToOutputDirectory">
-    <Copy SourceFiles="@(TdlOutput)" DestinationFolder="$(OutDir)">
-      <Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
-    </Copy>
-  </Target>
+  <Target Name="CopyFilesToOutputDirectory" />
 </Project>
