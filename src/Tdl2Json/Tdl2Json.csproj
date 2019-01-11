@@ -28,6 +28,7 @@
     <PackageReference Include="Costura.Fody" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tdl.VersionInfo\Tdl.VersionInfo.csproj">
@@ -37,6 +38,16 @@
     <ProjectReference Include="..\Tdl2JsonLib\Tdl2JsonLib.nproj">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
+    <Reference Include="Nitra.Runtime">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\Nitra.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetLang">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\DotNetLang.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="tdl2json.targets">
