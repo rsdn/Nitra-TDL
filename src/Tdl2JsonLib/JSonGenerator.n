@@ -42,7 +42,7 @@ namespace Tdl2JsonLib
     static _jsonVersion = 5;
     public event OnMessage : Action[string];
     
-    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string], isMethodTypingEnabled : bool) : string
+    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string], [NotNull] output : string, isMethodTypingEnabled : bool, transformatorOpt : Func[NamespaceSymbol, string, List[CompilerMessage]]) : string
     {
       def absolutePaths = sourceFiles.Select(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f)).ToArray();
 
@@ -58,7 +58,15 @@ namespace Tdl2JsonLib
 
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
-      GenerateJson(Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled));
+      def rootNamespace = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled);
+      if (transformatorOpt != null)
+      {
+        def messages = transformatorOpt(rootNamespace, output);
+        ProcessCompilerMessages(messages);
+        ""
+      }
+      else
+        GenerateJson(rootNamespace);
     }
 
     private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol
