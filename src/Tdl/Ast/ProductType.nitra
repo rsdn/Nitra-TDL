@@ -15,6 +15,9 @@ namespace Tdl
       SpanClass = TdlLang.TdlTypeSpanClass;
     }
 
+    when (TdlUtils.IsMissingRequiredProductTypeFields(Fields.Symbol))
+      Name.Error(context, TdlUtils.GetMissingRequiredProductTypeFieldsMessage(Fields.Symbol));
+
     Fields.ContainingTable = Symbol.MemberTable;
     Fields.Scope = Scope;
     
