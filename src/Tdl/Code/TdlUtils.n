@@ -21,6 +21,8 @@ namespace Tdl
 {
   module TdlUtils
   {
+    static RequiredProductTypeFields : list[string] = ["Name", "ReleaseName", "Version"];
+    
     public NoLocation         : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan             : NSpan              = NSpan(0);
@@ -418,6 +420,24 @@ namespace Tdl
         else
           result.Symbol
       }
+    }
+    
+    
+    public IsMissingRequiredProductTypeFields(fields : ImmutableArray[Tdl.FieldSymbol]) : bool
+    {
+      def set = HashSet(RequiredProductTypeFields);
+      foreach (field in fields)
+        _ = set.Remove(field.Name);
+      set.Count > 0
+    }
+    
+    public GetMissingRequiredProductTypeFieldsMessage(fields : ImmutableArray[Tdl.FieldSymbol]) : string
+    {
+      def set = HashSet(RequiredProductTypeFields);
+      foreach (field in fields)
+        _ = set.Remove(field.Name);
+      
+      $"Missing required fields: ..$set"
     }
   } // module
 } // namespace
