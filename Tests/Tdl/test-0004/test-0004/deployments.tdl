@@ -7,6 +7,7 @@ deployment Execute_Deploy(
 )
     script @"\\tis-dfs.avp.ru\Autotests\KIS\CSharp_Deployer\executeDeploy.ps1"
 {
+    timeout "01:00:00";
     expected 42;
 }
 
