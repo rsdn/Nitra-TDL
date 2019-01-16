@@ -83,7 +83,7 @@
     <Compile Include="Ast\Action.nitra">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Ast\Expected.nitra">
+    <Compile Include="Ast\DeploymentOption.nitra">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ast\External.nitra">

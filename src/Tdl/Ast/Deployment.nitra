@@ -23,6 +23,7 @@ namespace Tdl
           in Path      : ParsedValue[string];
           in Expected  : ParsedValue[int];
           in ForReboot : ParsedValue[int];
+          in Timeout   : ParsedValue[string];
           in Defs      : ImmutableArray[Def2];
 
           Kind      = "deployment";
@@ -30,24 +31,25 @@ namespace Tdl
         }
 
 
-        //Definitions.DefinitionScope = parameters scope from script
+        //Definitions.DefinitionScope   = parameters scope from script
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
         Symbol.Path                     = TdlUtils.ConvertStringLiteral(Path);
         Symbol.Expected                 = TdlUtils.MakeExpected(Success);
         Symbol.ForReboot                = TdlUtils.MakeForReboot(ForReboot);
+        Symbol.Timeout                  = TdlUtils.MakeTimeout(Timeout);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
         Parameters.Scope                = Scope;
 
-        Path : CSharp.StringLiteral;
+        Path        : CSharp.StringLiteral;
         Definitions : Definition*;
-        //Expected : IntLiteral;
-        Expected : Expected*;
+        Options     : DeploymentOption*;
 
-        decompose Expected
+        decompose Options
         {
-          Success   : Expected.Success?;
-          ForReboot : Expected.ForReboot?;
+          Success   : DeploymentOption.Success?;
+          ForReboot : DeploymentOption.ForReboot?;
+          Timeout   : DeploymentOption.Timeout?;
         }
       }
     | Set
@@ -62,9 +64,10 @@ namespace Tdl
         }
 
         Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Deployments);
-        Symbol.Deployments = TdlUtils.MakeDeployments(Deployments.Ref);
+        Symbol.Deployments              = TdlUtils.MakeDeployments(Deployments.Ref);
 
-        Deployments.Scope = Scope;
+        Deployments.Scope               = Scope;
+
         Deployments : Reference*;
       }
 

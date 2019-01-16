@@ -6,7 +6,7 @@ using Nitra.Declarations;
 
 namespace Tdl
 {
-  abstract ast Expected : BindableAst
+  abstract ast DeploymentOption : BindableAst
   {
     | Success
       {
@@ -16,6 +16,11 @@ namespace Tdl
     | ForReboot
       {
         Value : ParsedValue[int];
+      }
+
+    | Timeout
+      {
+        Value : CSharp.StringLiteral;
       }
   }
 }

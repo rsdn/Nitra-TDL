@@ -168,16 +168,21 @@ namespace Tdl
       }
     }
 
-    public MakeExpected(valueOpt : Expected.Success.IAstOption) : ParsedValue[int]
+    public MakeExpected(valueOpt : DeploymentOption.Success.IAstOption) : ParsedValue[int]
     {
       if (valueOpt.HasValue) valueOpt.Value.Value else ParsedValue(valueOpt.Span.StartPos)
     }
     
-    public MakeForReboot(valueOpt : Expected.ForReboot.IAstOption) : ParsedValue[int]
+    public MakeForReboot(valueOpt : DeploymentOption.ForReboot.IAstOption) : ParsedValue[int]
     {
       if (valueOpt.HasValue) valueOpt.Value.Value else ParsedValue(valueOpt.Span.StartPos)
     }
-    
+
+    public MakeTimeout(valueOpt : DeploymentOption.Timeout.IAstOption) : ParsedValue[string]
+    {
+      if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value.Value) else ParsedValue(valueOpt.Span.StartPos)
+    }
+
     public ConvertStringLiteral(str : CSharp.StringLiteral) : ParsedValue[string]
     {
       def builder = Text.StringBuilder();

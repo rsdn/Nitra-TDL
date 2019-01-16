@@ -96,13 +96,14 @@
 
     syntax Field = AnyType sm Name ";" nl;
     
-    syntax DeploymentScriptBody = outline_begin_before "{" inl DefDeclaration* Expected=Expected* d "}" nl outline_end_before;
+    syntax DeploymentScriptBody = outline_begin_before "{" inl DefDeclaration* Options=DeploymentOption* d "}" nl outline_end_before;
 
-    syntax Expected
+    syntax DeploymentOption
     {
       | Success    = "expected"                      sm Value=DecimalIntegerLiteral ";" nl;
       | ForReboot1 = "expected" sm "for" sm "reboot" sm Value=DecimalIntegerLiteral ";" nl;
       | ForReboot2 = "expected-for-reboot"           sm Value=DecimalIntegerLiteral ";" nl;
+      | Timeout    = "timeout"                       sm Value=StringLiteral ";" nl;
     }
 
     syntax DefDeclaration = Reference sm "=" sm DefExpr ";" nl;

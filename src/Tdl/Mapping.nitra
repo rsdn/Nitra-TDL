@@ -37,7 +37,7 @@ namespace Tdl
         ScriptPath                           -> Path;
         FormalParameters.Item1               -> Parameters;
         DeploymentScriptBody.DefDeclarations -> Definitions;
-        DeploymentScriptBody.Expected        -> Expected;
+        DeploymentScriptBody.Options         -> Options;
       }
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Deployments.Item1 -> Deployments; }
     | Currying         -> Deployment.Currying { Name -> Name; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
@@ -89,11 +89,12 @@ namespace Tdl
     | WaitForReboot2 -> WaitForReboot { TimeSpan = ParsedValue(TimeSpan, GetText(TimeSpan)); }
   }
 
-  map syntax Grammar.Expected -> Expected
+  map syntax Grammar.DeploymentOption -> DeploymentOption
   {
     | Success    -> Success   { Value = ParsedValue(Value.Span, int.Parse(Value.GetText())); }
     | ForReboot1 -> ForReboot { Value = ParsedValue(Value.Span, int.Parse(Value.GetText())); }
     | ForReboot2 -> ForReboot { Value = ParsedValue(Value.Span, int.Parse(Value.GetText())); }
+    | Timeout    -> Timeout   { Value -> Value; }
   }
 
   map syntax Grammar.DefDeclaration -> Definition
