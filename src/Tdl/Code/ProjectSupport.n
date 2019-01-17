@@ -129,7 +129,10 @@ namespace Tdl
 
       def removeParsedSymbols(tableScope : TableScope)
       {
-        tableScope.Undefine(x => x.IsParsed);
+        when (cancellationToken.IsCancellationRequested)
+          return;
+        
+        tableScope.Undefine(x => { cancellationToken.ThrowIfCancellationRequested(); x.IsParsed });
         foreach (symbols in tableScope.Symbols)
         foreach (symbol is NamespaceSymbol in symbols)
           removeParsedSymbols(symbol.MemberTable);
