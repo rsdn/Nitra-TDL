@@ -88,7 +88,7 @@ namespace Tdl2JsonLib
             Deployment() <-
             {
                 Type    = TypeEnum.Reboot;
-                Timeout = if (reboot.Timeout.HasValue) reboot.Timeout.ValueOrDefault else "00:30:00";
+                RebootTimeout = if (reboot.Timeout.HasValue) reboot.Timeout.ValueOrDefault else "00:30:00";
             }
           )
         

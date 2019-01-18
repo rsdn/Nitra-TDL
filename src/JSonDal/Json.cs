@@ -101,6 +101,9 @@ namespace QuickType
         [JsonProperty("Timeout", NullValueHandling = NullValueHandling.Ignore)]
         public string Timeout { get; set; }
 
+        [JsonProperty("RebootTimeout", NullValueHandling = NullValueHandling.Ignore)]
+        public string RebootTimeout { get; set; }
+
         [JsonProperty("Condition", NullValueHandling = NullValueHandling.Ignore)]
         public string Condition { get; set; }
 
