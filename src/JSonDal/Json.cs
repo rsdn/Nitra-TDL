@@ -339,7 +339,7 @@ namespace QuickType
     ///
     /// Последовательность деплоев (для тестов compatibility)
     /// </summary>
-    public enum TypeEnum { Script, Select, Sequence };
+    public enum TypeEnum { Script, Select, Sequence, Reboot };
 
     public partial struct DeploymentDeploymentUnion
     {
@@ -527,6 +527,9 @@ namespace QuickType
                     return;
                 case TypeEnum.Sequence:
                     serializer.Serialize(writer, "Sequence");
+                    return;
+                case TypeEnum.Reboot:
+                    serializer.Serialize(writer, "Reboot");
                     return;
             }
             throw new Exception("Cannot marshal type TypeEnum");

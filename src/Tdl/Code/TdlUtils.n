@@ -56,12 +56,11 @@ namespace Tdl
       builder.ToString()
     }
     
-    public MakeDeployments(deploymentRefs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[DeploymentSymbol]
+    public MakeDeployments(deploymentRefs : ImmutableArray[Ref[DeploymentSymbol]]) : ImmutableArray[DeploymentSymbol]
     {
       def builder = ImmutableArray.CreateBuilder();
-      foreach (deploymentRef in deploymentRefs)
+      foreach (r in deploymentRefs)
       {
-        def r = deploymentRef.Resolve();
         when (r.IsSymbolEvaluated)
           builder.Add(r.Symbol);
       }

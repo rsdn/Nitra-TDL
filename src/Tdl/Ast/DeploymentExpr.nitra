@@ -1,0 +1,37 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+namespace Tdl
+{
+  abstract ast DeploymentExpr : BindableAst, ScopedAst
+  {
+    out Ref : Ref[DeploymentSymbol];
+  }
+
+  ast DeploymentReference : DeploymentExpr
+  {
+    Ref             = Reference.Ref.Resolve();
+    Reference.Scope = Scope;
+
+    Reference : Reference;
+  }
+
+  declaration DeploymentReboot : Deployment, DeploymentExpr
+  {
+    symbol
+    {
+      in Timeout : ParsedValue[string];
+
+      CanMerge = candidate is DeploymentReboot;
+    }
+
+    Ref                             = Ref.CreateBind(Location, Symbol);
+    Symbol.Timeout                  = TdlUtils.ConvertStringLiteral(Timeout);
+    Symbol.AggregateParametersScope = EmptyScope.Instance;
+
+    Timeout : CSharp.StringLiteral;
+  }
+}

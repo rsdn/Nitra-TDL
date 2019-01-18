@@ -75,11 +75,24 @@ namespace Tdl
     | External -> ExternalAst { ExternalBody.Fields -> Fields; }
   }
 
+  map syntax Grammar.DeploymentExpr -> DeploymentExpr
+  {
+    | Reference -> DeploymentReference { Reference -> Reference; }
+    | Reboot    ->
+      let timeout : CSharp.StringLiteral = Timeout in
+      DeploymentReboot
+      {
+          Name = Name(Location, "Reboot-" + TdlUtils.ConvertStringLiteral(timeout));
+          timeout -> Timeout;
+      }
+  }
+
   map syntax Grammar.ScenarioBody.Action -> Action*
   {
     | Method   -> [ Action.Method { Method.QualifiedIdentifier -> Method; } ]
     | Sequence -> SequenceActions
   }
+
 
   map syntax Grammar.ScenarioBody.SequenceAction -> Action
   {

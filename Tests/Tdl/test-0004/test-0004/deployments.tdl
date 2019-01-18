@@ -1,4 +1,4 @@
-﻿
+
 deployment Execute_Deploy(
     string ProductDistributivePath,
     string ProductModulesPath,
@@ -11,4 +11,15 @@ deployment Execute_Deploy(
     expected 42;
 }
 
-deployment Deploy_Gated = Execute_Deploy(DeploymentSequenceName: "gated");
+deployment Deploy_Gated  = Execute_Deploy(DeploymentSequenceName: "gated");
+deployment Deploy_Middle = Execute_Deploy(DeploymentSequenceName: "middle");
+deployment Deploy_Finish = Execute_Deploy(DeploymentSequenceName: "finish");
+
+deployment DeploymentList =
+  Execute_Deploy,
+  reboot "00:20:00",
+  Deploy_Gated,
+  reboot "00:40:00",
+  Deploy_Middle,
+  reboot "00:20:00",
+  Deploy_Finish;
