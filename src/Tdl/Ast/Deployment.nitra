@@ -67,8 +67,9 @@ namespace Tdl
         Symbol.Deployments              = TdlUtils.MakeDeployments(Deployments.Ref);
 
         Deployments.Scope               = Scope;
+        Deployments.ContainingTable     = ContainingTable;
 
-        Deployments : Reference*;
+        Deployments : DeploymentExpr*;
       }
 
     | Currying

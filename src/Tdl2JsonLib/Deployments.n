@@ -75,11 +75,23 @@ namespace Tdl2JsonLib
         | Deployment.CurryingSymbol as currying => 
           def deployments = Dictionary();
           deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
-          (currying.Name, Deployment() <-
-          {
-              Type        = TypeEnum.Sequence;
-              Deployments = array[deployments];
-          })
+          (currying.Name,
+            Deployment() <-
+            {
+                Type        = TypeEnum.Sequence;
+                Deployments = array[deployments];
+            }
+          )
+
+        | DeploymentRebootSymbol as reboot => 
+          (reboot.Name, 
+            Deployment() <-
+            {
+                Type    = TypeEnum.Reboot;
+                Timeout = if (reboot.Timeout.HasValue) reboot.Timeout.ValueOrDefault else "00:30:00";
+            }
+          )
+        
         | _ => ThrowNotSupportedSymbol(deploymentSymbol) 
       }
     }
