@@ -254,13 +254,13 @@ namespace Tdl2JsonLib
                 }
                 def makeAction(action : ScenarioAction) : TestSequence
                 {
-                  | Reboot             => TestSequence() <- { ForceReboot = ForceReboot() }
+                  | Reboot             => RebootTestStep() <- { ForceReboot = ForceReboot() }
                   | Method        as x => 
                     def (assemblyName, methodName) = GetAssemblyAndMethodName(x);
-                    TestSequence() <- { AssemblyName = assemblyName; MethodName = methodName; }
+                    TestMethodQualifier() <- { AssemblyName = assemblyName; MethodName = methodName; }
 
                   | WaitForReboot as x =>                   
-                    TestSequence() <- 
+                    WaitForRebootTestStep() <- 
                     {
                       WaitForReboot = 
                         WaitForReboot() <-

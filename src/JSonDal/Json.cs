@@ -389,22 +389,6 @@ namespace QuickType
         public static implicit operator TestGroupDeployment(string String) => new TestGroupDeployment { String = String };
     }
 
-    public partial struct TestMethodQualifier
-    {
-        public object[] AnythingArray;
-        public bool? Bool;
-        public double? Double;
-        public long? Integer;
-        public string String;
-
-        public static implicit operator TestMethodQualifier(object[] AnythingArray) => new TestMethodQualifier { AnythingArray = AnythingArray };
-        public static implicit operator TestMethodQualifier(bool Bool) => new TestMethodQualifier { Bool = Bool };
-        public static implicit operator TestMethodQualifier(double Double) => new TestMethodQualifier { Double = Double };
-        public static implicit operator TestMethodQualifier(long Integer) => new TestMethodQualifier { Integer = Integer };
-        public static implicit operator TestMethodQualifier(string String) => new TestMethodQualifier { String = String };
-        public bool IsNull => AnythingArray == null && Bool == null &&  Double == null && Integer == null && String == null;
-    }
-
     public partial struct TestCase
     {
         public object[] AnythingArray;
@@ -448,7 +432,6 @@ namespace QuickType
                 ProductValueConverter.Singleton,
                 TestCaseConverter.Singleton,
                 TestGroupDeploymentConverter.Singleton,
-                TestMethodQualifierConverter.Singleton,
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
         };
@@ -766,74 +749,5 @@ namespace QuickType
         }
 
         public static readonly TestGroupDeploymentConverter Singleton = new TestGroupDeploymentConverter();
-    }
-
-    internal class TestMethodQualifierConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(TestMethodQualifier) || t == typeof(TestMethodQualifier?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            switch (reader.TokenType)
-            {
-                case JsonToken.Null:
-                    return new TestMethodQualifier { };
-                case JsonToken.Integer:
-                    var integerValue = serializer.Deserialize<long>(reader);
-                    return new TestMethodQualifier { Integer = integerValue };
-                case JsonToken.Float:
-                    var doubleValue = serializer.Deserialize<double>(reader);
-                    return new TestMethodQualifier { Double = doubleValue };
-                case JsonToken.Boolean:
-                    var boolValue = serializer.Deserialize<bool>(reader);
-                    return new TestMethodQualifier { Bool = boolValue };
-                case JsonToken.String:
-                case JsonToken.Date:
-                    var stringValue = serializer.Deserialize<string>(reader);
-                    return new TestMethodQualifier { String = stringValue };
-                case JsonToken.StartArray:
-                    var arrayValue = serializer.Deserialize<object[]>(reader);
-                    return new TestMethodQualifier { AnythingArray = arrayValue };
-            }
-            throw new Exception("Cannot unmarshal type TestMethodQualifier");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (TestMethodQualifier)untypedValue;
-            if (value.IsNull)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            if (value.Integer != null)
-            {
-                serializer.Serialize(writer, value.Integer.Value);
-                return;
-            }
-            if (value.Double != null)
-            {
-                serializer.Serialize(writer, value.Double.Value);
-                return;
-            }
-            if (value.Bool != null)
-            {
-                serializer.Serialize(writer, value.Bool.Value);
-                return;
-            }
-            if (value.String != null)
-            {
-                serializer.Serialize(writer, value.String);
-                return;
-            }
-            if (value.AnythingArray != null)
-            {
-                serializer.Serialize(writer, value.AnythingArray);
-                return;
-            }
-            throw new Exception("Cannot marshal type TestMethodQualifier");
-        }
-
-        public static readonly TestMethodQualifierConverter Singleton = new TestMethodQualifierConverter();
     }
 }
