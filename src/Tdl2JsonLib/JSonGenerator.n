@@ -125,6 +125,7 @@ namespace Tdl2JsonLib
     private GenerateJson(root : NamespaceSymbol) : string
     {
       def symbols = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
+      def barriersMap = symbols.OfType.[BarrierSymbol]().ToDictionary(b => b.Guid);
       def coordinate = Root() <-
       {
         Version       = _jsonVersion;
@@ -220,6 +221,9 @@ namespace Tdl2JsonLib
               {
                 assert2(true);
               }
+              def parallelSetOpt = if (r.IsParallelSetOptEvaluated) r.ParallelSetOpt else null;
+              def barriersCount  = if (parallelSetOpt == null) Dictionary() 
+                                   else parallelSetOpt.BarriersCount.ToDictionary();
               def getString(name : string) : string
               {
                 r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
@@ -267,7 +271,19 @@ namespace Tdl2JsonLib
                         {
                           RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
                         };
-                  }
+                    }
+                  | Barrier as barrier =>
+                    def b = barrier.barrier;
+                    WaitForBarrierTestStep() <-
+                    {
+                      WaitForBarrier = 
+                        WaitForBarrier() <- 
+                        {
+                          Id      = b.Guid;
+                          Timeout = TimeSpan.Parse(b.Timeout.Value);
+                          Count   = barriersCount[b];
+                        }
+                    }
                 }
                 TestMethodSequence() <-
                 {
@@ -275,7 +291,7 @@ namespace Tdl2JsonLib
                   AllowReboot  = allowRebootOpt;
                 }
               }
-
+              
               TestGroup() <- 
               {
                   Deployments             = [r.Deployment.Name].MapToArray(n   => TestGroupDeployment() <- String = n);
@@ -292,9 +308,11 @@ namespace Tdl2JsonLib
                   TfsId                   = getLong  ("TfsId");
                   Timeout                 = getString("Timeout");
                   UniqueId                = getString("UniqueId");
+                  MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
               }
 
-            | Tdl.Scenario.SetSymbol as Set => TestGroup() <- { TestScenarios = Set.Scenarios.Select(_.Name).ToArray() }
+            | Tdl.Scenario.SetSymbol as Set =>
+              TestGroup() <- { TestScenarios = Set.Scenarios.Select(_.Name).ToArray() }
             | _                             => ThrowNotSupportedSymbol(scenarioSymbol) 
         }
       })

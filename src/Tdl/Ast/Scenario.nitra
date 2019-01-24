@@ -4,6 +4,7 @@ using DotNet.AstUtils;
 using Nitra;
 using Nitra.Declarations;
 
+using System;
 using System.Collections.Immutable;
 
 namespace Tdl
@@ -19,11 +20,12 @@ namespace Tdl
       {
         symbol
         {
-          in Defs         : ImmutableArray[Def];
-        stage 1:
-          in Actions      : ImmutableArray[ScenarioAction];
-          in Deployment   : DeploymentSymbol;
-          in Environments : ImmutableArray[Environment];
+          in Defs           : ImmutableArray[Def];
+        stage 1:            
+          in Actions        : ImmutableArray[ScenarioAction];
+          in Deployment     : DeploymentSymbol;
+          in Environments   : ImmutableArray[Environment];
+          in ParallelSetOpt : Scenario.SetSymbol;
 
           Kind      = "scenario";
           SpanClass = TdlLang.ScenarioSpanClass;
@@ -48,6 +50,8 @@ namespace Tdl
         Definitions.DefinitionScope     = ProjectSupport.ScenarioParameterScope;
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
 
+        ReportDuplicateBarrier(context, Symbol.Actions);
+
         when (TdlUtils.IsMissingRequiredOptions(Definitions.SymbolRef))
           Name.Error(context, $"Missing required option: $(TdlUtils.GetMissingRequiredOptionMessage(Definitions.SymbolRef))");
 
@@ -61,17 +65,26 @@ namespace Tdl
         symbol
         {
         stage 1:
-          in Scenarios : ImmutableArray[ScenarioSymbol];
+          in Scenarios      : ImmutableArray[ScenarioSymbol];
+          in IsMultiMachine : bool;
+          in MultiMachineId : Guid;
+          in BarriersCount  : list[BarrierSymbol * int];
 
           Kind      = "scenario set";
           SpanClass = TdlLang.ScenarioSpanClass;
         }
 
-        Symbol.Scenarios = TdlUtils.MakeScenarios(Scenarios.Ref);
+        Scenarios.Scope                 = Scope;
+        Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
         Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios);
+        Symbol.MultiMachineId           = if (MultiMachineId.HasValue) MultiMachineId.Value else Guid.Empty;
+        Symbol.IsMultiMachine           = Symbol.MultiMachineId != Guid.Empty;
 
-        Scenarios.Scope = Scope;
-        Scenarios : Reference*;
+        when (MultiMachineId.HasValue)
+          CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
+
+        MultiMachineId : Guid;
+        Scenarios      : Reference*;
       }
   } // Scenario
 }

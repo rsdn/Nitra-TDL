@@ -258,6 +258,9 @@ namespace QuickType
 
         [JsonProperty("UniqueId", NullValueHandling = NullValueHandling.Ignore)]
         public string UniqueId { get; set; }
+
+        [JsonProperty("MultiMachineId", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Guid? MultiMachineId { get; set; }
     }
 
     public partial class FluffyDeployment
