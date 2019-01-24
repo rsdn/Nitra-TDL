@@ -3,6 +3,7 @@ using DotNet.AstUtils;
 
 using Nitra;
 using Nitra.Declarations;
+using Nitra.Runtime.GraphUtils;
 
 using Nemerle;
 using Nemerle.Collections;
@@ -13,6 +14,7 @@ using Nemerle.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -426,7 +428,6 @@ namespace Tdl
       }
     }
     
-    
     public IsMissingRequiredProductTypeFields(fields : ImmutableArray[Tdl.FieldSymbol]) : bool
     {
       def set = HashSet(RequiredProductTypeFields);
@@ -442,6 +443,107 @@ namespace Tdl
         _ = set.Remove(field.Name);
       
       $"Missing required fields: ..$set"
+    }
+    
+    public ReportDuplicateBarrier(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
+    {
+      def set = HashSet();
+      foreach (b is ScenarioAction.Barrier when !set.Add(b.barrier.Id) in actions)
+      {
+        def loc = Location(ast.Location.Source, b.Location.StartPos, b.Location.EndPos);
+        def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+        msgs.ReportMessage(CompilerMessageType.Error, loc, "Multiple usage of barrier " + b.barrier.InitialName, 0);
+      }
+    }
+    
+    [Record]
+    struct Edge
+    {
+      public From : ScenarioAction.Barrier;
+      public To   : ScenarioAction.Barrier;
+    }
+    
+    [Record]
+    class Node : IGraphNode[Node]
+    {
+      public Barrier : BarrierSymbol;
+      [RecordIgnore]
+      public Connections : List[Node] implements IGraphNode[Node].Connections { get; default List(); }
+    }
+    
+    public CheckMultiMachineScenario(this ast : IAst, context : DependentPropertyEvalContext, scenarios : ImmutableArray[ScenarioSymbol], _depend : object) : void
+    {
+      def edges = List();
+      def nodesMap = Dictionary();
+      def loop(scenario : ScenarioSymbol) : void
+      {
+        | Scenario.DefSymbol as d =>
+          unless (d.IsActionsEvaluated)
+            return;
+            
+          mutable prev;
+          foreach (action is ScenarioAction.Barrier in d.Actions)
+          {
+            mutable node;
+            unless (nodesMap.TryGetValue(action.barrier, out node))
+            {
+              node = Node(action.barrier);
+              nodesMap.Add(action.barrier, node);
+            }
+            
+            when (prev != null)
+            {
+              nodesMap[prev.barrier].Connections.Add(node);
+              edges.Add(Edge(prev, action));
+            }
+            
+            prev = action;
+          }
+        
+        | Scenario.SetSymbol as s =>
+          unless (s.IsScenariosEvaluated)
+            return;
+          foreach (scenario in s.Scenarios)
+            loop(scenario);
+        | _ => assert(false)
+      }
+      foreach (scenario in scenarios)
+        loop(scenario);
+        
+      def groups = GraphAlgorithms.FindStronglyConnectedComponents(nodesMap.Values);
+      
+      foreach (group in groups)
+        when (group.Nodes.Count > 1)
+        {
+          def symbols = HashSet();
+          foreach (node in group.Nodes)
+            _ = symbols.Add(node.Barrier);
+            
+          def barrierUsages = HashSet();
+          foreach (edge in edges)
+          {
+            when (symbols.Contains(edge.From.barrier) && symbols.Contains(edge.To.barrier))
+            {
+              _ = barrierUsages.Add(edge.From);
+              _ = barrierUsages.Add(edge.To);
+            }
+          }
+          
+          def filesMap           = context.Files.ToDictionary(d => d.FullName);
+          def msgs               = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+          def dadeLockedBarriers = group.Nodes.ToArray().Select(n => n.Barrier.Name);
+          foreach (usage in barrierUsages.OrderBy(u => u.Location.File).ThenBy(u => u.Location.StartPos))
+          {
+            def fileData = filesMap[usage.Location.File];
+            def loc      = Location(fileData.Ast.Location.Source, usage.Location.StartPos, usage.Location.EndPos);
+            msgs.ReportMessage(CompilerMessageType.Error, loc, $"Barriers dadelock detected: ..$dadeLockedBarriers", 0);
+          }
+        }
+    }
+
+    public Convert(this location : Nitra.Location) : Tdl.Utils.Location
+    {
+        Tdl.Utils.Location(location.Source.File.FullName, location.StartPos, location.EndPos)
     }
   } // module
 } // namespace

@@ -1,12 +1,19 @@
 ﻿using DotNet;
+using Nitra;
 using System;
+
+using Location = Tdl.Utils.Location;
 
 namespace Tdl
 {
+  [Record]
   public variant ScenarioAction
   {
+    public Location : Location { get; }
+    
     | Method        { method : Member.MethodSymbol; }
     | Reboot        { }
     | WaitForReboot { TimeSpan : string; }
+    | Barrier       { barrier : BarrierSymbol; }
   }
 }

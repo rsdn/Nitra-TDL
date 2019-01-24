@@ -148,7 +148,87 @@ namespace Tdl
       evalHost.EvalProperties(context, "Scopes", 1);
       evalHost.EvalProperties(context, "Stage 2", 2);
       evalHost.EvalProperties(context, "Stage 3", 3);
+      CheckParallelScenarios(context, rootNamespace.MemberTable);
     }
+
+    public CheckParallelScenarios(context : DependentPropertyEvalContext, root : TableScope) : void
+    {
+      def scenarioSets = root.AllSymbols.OfType.[Scenario.SetSymbol]().Where(s => s.IsIsMultiMachineEvaluated && s.IsMultiMachine);
+      def groups       = scenarioSets.Where(s => s.IsScenariosEvaluated)
+                                     .SelectMany(mms => mms.Scenarios.Select(s => (mms, s)))
+                                     .GroupBy((_, s) => s);
+
+      // Данная проверка нужна так как в текущем API Hive-а нельзя включать сценарий в несколько многомашинных сценариев.
+      foreach (group when group.Count() > 1 in groups)
+      {
+        def scenario = group.Key;
+        def sets     = group.Select(((set, _), _) => set).ToArray();
+        def names    = string.Join(", ", sets.Select(s => s.Name));
+        foreach (set in sets)
+        {
+          def decl1 = set.FirstDeclarationOrDefault :> Scenario.Set;
+          def r1    = decl1.Scenarios.FirstOrDefault(d => d.IsRefEvaluated && d.Ref.IsSymbolEvaluated && d.Ref.Symbol.Id == scenario.Id);
+          when (r1 == null)
+            continue;
+          def msgs  = context.GetFileData(r1.Location.Source.File.Id).GetCompilerMessage();
+          using (rootMsg = msgs.RootError(r1, $"Scenario $(scenario.Name) is included in several parallel scenarios: $names.", 0))
+          {
+            foreach (s when s.Id != set.Id in sets)
+            {
+              def decl2 = s.FirstDeclarationOrDefault :> Scenario.Set;
+              def r2    = decl2.Scenarios.FirstOrDefault(d => d.IsRefEvaluated  && d.Ref.IsSymbolEvaluated && d.Ref.Symbol.Id == scenario.Id);
+              when (r2 == null)
+                continue;
+              rootMsg.Warning(r2.Location, "Other entry", 0);
+            }
+          }
+        }
+      }
+      
+      foreach (set in scenarioSets)
+      {
+        def scenarios        = GetScenarioOfParallelSet(set);
+        def barriersCountMap = Dictionary();
+        foreach (scenario in scenarios)
+        {
+          scenario.ParallelSetOpt = set;
+
+          def inc(barrier : BarrierSymbol) : void
+          {
+            mutable value;
+            _ = barriersCountMap.TryGetValue(barrier, out value);
+            barriersCountMap[barrier] = value + 1;
+          }
+          when (scenario.IsActionsEvaluated)
+            foreach (b is ScenarioAction.Barrier in scenario.Actions)
+              inc(b.barrier);
+        }
+        set.BarriersCount = barriersCountMap.Map(x => (x.Key, x.Value));
+      }
+    }
+    
+    GetScenarioOfParallelSet(scenarioSet : Scenario.SetSymbol) : List[Scenario.DefSymbol]
+    {
+      def result  = List();
+      def visited = HashSet();
+      def loop(set : Scenario.SetSymbol) : void
+      {
+        unless (visited.Add(set))
+          return;
+        unless (set.IsScenariosEvaluated)
+          return;
+        foreach (scenario in set.Scenarios)
+        {
+          | Scenario.SetSymbol as subSet                => loop(subSet)
+          | Scenario.DefSymbol as d when visited.Add(d) => result.Add(d);
+          | Scenario.DefSymbol                          => ()
+          | _ => assert(false)
+        }
+      }
+      loop(scenarioSet);
+      result
+    }
+
 
     public GetSymbolById(data : object, symbolId : int) : ValueOption[DeclarationSymbol]
     {

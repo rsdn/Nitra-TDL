@@ -1,0 +1,28 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  declaration Barrier : NamespaceMember
+  {
+    symbol
+    {
+      in Timeout : ParsedValue[string];
+      in Guid    : Guid;
+
+      Kind      = "barrier";
+      SpanClass = TdlLang.BarrierSpanClass;
+    }
+
+    Symbol.Guid    = Guid.NewGuid();
+    Symbol.Timeout = TdlUtils.ConvertStringLiteral(Timeout);
+
+    Timeout : CSharp.StringLiteral;
+  }
+}

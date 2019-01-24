@@ -20,16 +20,25 @@ namespace Tdl
         Method.NameScopeFactory = TdlUtils.MethodScopeFactory;
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = ScenarioAction.Method(MethodRef.Symbol);
+        ScenarioActions         = ScenarioAction.Method(Method.Location.Convert(), MethodRef.Symbol);
 
         Method : QualifiedReference;
       }
-    | Reboot        { ScenarioActions = ScenarioAction.Reboot(); }
+    | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location.Convert()); }
     | WaitForReboot
-    {
-      ScenarioActions = ScenarioAction.WaitForReboot(TimeSpan.Value);
+      {
+        ScenarioActions = ScenarioAction.WaitForReboot(this.Location.Convert(), TimeSpan.Value);
 
-      TimeSpan : ParsedValue[string];
-    }
+        TimeSpan : ParsedValue[string];
+      }
+    | Barrier
+      {
+        out BarrierRef : Ref[BarrierSymbol] = Reference.Ref.Resolve();
+
+        Reference.Scope = Scope;
+        ScenarioActions = ScenarioAction.Barrier(Reference.Location.Convert(), BarrierRef.Symbol);
+
+        Reference : Reference;
+      }
   }
 }

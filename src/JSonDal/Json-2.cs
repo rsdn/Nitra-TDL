@@ -34,7 +34,7 @@
         public WaitForBarrier WaitForBarrier { get; set; }
     }
 
-    public sealed class WaitForBarrier
+    public sealed class WaitForBarrier : TestSequence
     {
         [JsonProperty("Id", Required = Required.Always)]
         public Guid Id { get; set; }
