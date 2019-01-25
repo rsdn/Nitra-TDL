@@ -125,7 +125,6 @@ namespace Tdl2JsonLib
     private GenerateJson(root : NamespaceSymbol) : string
     {
       def symbols = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
-      def barriersMap = symbols.OfType.[BarrierSymbol]().ToDictionary(b => b.Guid);
       def coordinate = Root() <-
       {
         Version       = _jsonVersion;
@@ -233,7 +232,7 @@ namespace Tdl2JsonLib
                 r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
                   .Map(fun(expr)
                     {
-                      | Tdl.Expr.True  =>  Nullable(true)
+                      | Tdl.Expr.True  => Nullable(true)
                       | Tdl.Expr.False => Nullable(false)
                       | _              => throw NotSupportedException()
                     })
