@@ -2,8 +2,8 @@
 deployment Execute_Deploy(
     string ProductDistributivePath,
     string ProductModulesPath,
-    string AutotestsPath,
-    string DeploymentSequenceName
+    string AutotestsPath = "xyz",
+    string DeploymentSequenceName = "abc"
 )
     script @"\\tis-dfs.avp.ru\Autotests\KIS\CSharp_Deployer\executeDeploy.ps1"
 {
@@ -13,7 +13,7 @@ deployment Execute_Deploy(
 
 deployment Deploy_Gated  = Execute_Deploy(DeploymentSequenceName: "gated");
 deployment Deploy_Middle = Execute_Deploy(DeploymentSequenceName: "middle");
-deployment Deploy_Finish = Execute_Deploy(DeploymentSequenceName: "finish");
+deployment Deploy_Finish = Deploy_Middle(AutotestsPath: "finish");
 
 deployment DeploymentList =
   Execute_Deploy,

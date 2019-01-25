@@ -97,6 +97,9 @@ namespace Tdl
 
         Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, CurredParameters.SymbolRef);
 
+        when (Symbol.BaseDeployment is Deployment.SetSymbol)
+          BaseDeployment.Error(context, "The deployment group is not allowed source for base deployment.");
+
         BaseDeployment   : Reference;
         CurredParameters : Definition*;
       }
