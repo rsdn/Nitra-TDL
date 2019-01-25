@@ -28,67 +28,90 @@ namespace Tdl2JsonLib
       symbols.OfType.[DeploymentSymbol]().Select(GenerateDeployment).ToDictionary()
     }
 
+    private getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
+    {
+      match (parameter.Default)
+      {
+        | None           => "$(" + parameter.Name + ")"
+        | Reference as r => "#(" + r.name + ")"
+        | String    as s => s.Value
+        | Bool      as b => b.Value
+        | Number    as n => n.Value
+        | Decimal   as d => d.Value
+        | Double    as d => d.Value
+        | Single    as s => s.Value
+        | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
+      }
+    }
+    
+    private GenerateDeploymentScript(script : Deployment.ScriptSymbol) : string * QuickType.Deployment
+    {
+      def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
+      def parameters = script.Parameters.Select(p => (p.Name, getParameterValue(p)));
+      def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
+      def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
+      (script.Name, 
+        Deployment() <- 
+        { 
+            Type           = TypeEnum.Script;
+            ScriptPath     = script.Path.Value; 
+            ReturnValue    = if (script.Expected.HasValue)  script.Expected.Value  else null;
+            RebootExitCode = if (script.ForReboot.HasValue) script.ForReboot.Value else null;
+            Timeout        = if (script.Timeout.HasValue)   script.Timeout.Value   else null;
+            ScriptArgs     = scriptArgs;
+        })
+    }
+    
+    private GenerateDeploymentCurrying1(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
+    {
+      def deployments = Dictionary();
+      deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
+      (currying.Name,
+        Deployment() <-
+        {
+            Type        = TypeEnum.Sequence;
+            Deployments = array[deployments];
+        }
+      )
+    }
+    
+    private GenerateDeploymentCurrying2(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
+    {
+      def parametersMap = currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject());
+      def replaceParams(_oldName, deployment)
+      {
+        foreach (arg in parametersMap)
+          deployment.ScriptArgs[arg.Key] = arg.Value;
+        (currying.Name, deployment)
+      }
+      match (currying.BaseDeployment)
+      {
+        | Deployment.ScriptSymbol   as script   => replaceParams(GenerateDeploymentScript(script));
+        | Deployment.CurryingSymbol as currying => replaceParams(GenerateDeploymentCurrying2(currying))
+        | x => assert(false, $"The $(x.GetType().Name) not supporned as base deployment in currying deployment.")
+      }
+    }
+
     private GenerateDeployment(deploymentSymbol : DeploymentSymbol) : string * QuickType.Deployment
     {
-      def getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
-      {
-        match (parameter.Default)
-        {
-          | None           => "$(" + parameter.Name + ")"
-          | Reference as r => "#(" + r.name + ")"
-          | String    as s => s.Value
-          | Bool      as b => b.Value
-          | Number    as n => n.Value
-          | Decimal   as d => d.Value
-          | Double    as d => d.Value
-          | Single    as s => s.Value
-          | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
-        }
-      }
-
       match (deploymentSymbol)
       {
-        | Deployment.ScriptSymbol as script => 
-          def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
-          def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
-          def parameters = script.Parameters.Select(p => (p.Name, getParameterValue(p)));
-          def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
-          (script.Name, 
-            Deployment() <- 
-            { 
-                Type           = TypeEnum.Script;
-                ScriptPath     = script.Path.Value; 
-                ReturnValue    = if (script.Expected.HasValue)  script.Expected.Value  else null;
-                RebootExitCode = if (script.ForReboot.HasValue) script.ForReboot.Value else null;
-                Timeout        = if (script.Timeout.HasValue)   script.Timeout.Value   else null;
-                ScriptArgs     = scriptArgs;
-            })
-
+        | Deployment.ScriptSymbol   as script   => GenerateDeploymentScript(script)
+        | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying2(currying)
         | Deployment.SetSymbol as set =>
           def deployments = set.Deployments.Select(d => d.Name).ToArray();
           (set.Name, 
             Deployment() <- 
             { 
-                Type        = TypeEnum.Sequence;
-                Deployments = deployments;
+              Type        = TypeEnum.Sequence;
+              Deployments = deployments;
             })
-        | Deployment.CurryingSymbol as currying => 
-          def deployments = Dictionary();
-          deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
-          (currying.Name,
-            Deployment() <-
-            {
-                Type        = TypeEnum.Sequence;
-                Deployments = array[deployments];
-            }
-          )
-
         | DeploymentRebootSymbol as reboot => 
           (reboot.Name, 
             Deployment() <-
             {
-                Type    = TypeEnum.Reboot;
-                RebootTimeout = if (reboot.Timeout.HasValue) reboot.Timeout.ValueOrDefault else "00:30:00";
+              Type          = TypeEnum.Reboot;
+              RebootTimeout = if (reboot.Timeout.HasValue) reboot.Timeout.ValueOrDefault else "00:30:00";
             }
           )
         
