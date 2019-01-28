@@ -336,18 +336,20 @@ namespace Tdl
 
       def platformType = backEnd.PlatformType;
       
-      defineParameter(context, "AllowReboot",             platformType.Boolean, required=false);
-      defineParameter(context, "Area",                    platformType.String,  required=false);
-      defineParameter(context, "NeedUnsignedAgent",       platformType.Boolean, required=false);
-      defineParameter(context, "RequireInternet",         platformType.Boolean, required=false);
-      defineParameter(context, "RerunCountOnTestFailure", platformType.Int32,   required=false);
-      defineParameter(context, "RerunCountOnTestSuccess", platformType.Int32,   required=false);
-      defineParameter(context, "Responsible",             platformType.String,  required=false);
-      defineParameter(context, "RevertAgentAfter",        platformType.Boolean, required=false);
-      defineParameter(context, "RevertAgentBefore",       platformType.Boolean, required=false);
-      defineParameter(context, "TfsId",                   platformType.Int32,   required=false);
-      defineParameter(context, "Timeout",                 platformType.String,  required=true);
-      defineParameter(context, "UniqueId",                platformType.String,  required=true);
+      defineParameter(context, "AllowReboot",                     platformType.Boolean, required=false);
+      defineParameter(context, "Area",                            platformType.String,  required=false);
+      defineParameter(context, "EnforceBinariesFolderUniqueness", platformType.Boolean, required=false);
+      defineParameter(context, "LocalTestBinariesFolder",         platformType.String,  required=false);
+      defineParameter(context, "NeedUnsignedAgent",               platformType.Boolean, required=false);
+      defineParameter(context, "RequireInternet",                 platformType.Boolean, required=false);
+      defineParameter(context, "RerunCountOnTestFailure",         platformType.Int32,   required=false);
+      defineParameter(context, "RerunCountOnTestSuccess",         platformType.Int32,   required=false);
+      defineParameter(context, "Responsible",                     platformType.String,  required=false);
+      defineParameter(context, "RevertAgentAfter",                platformType.Boolean, required=false);
+      defineParameter(context, "RevertAgentBefore",               platformType.Boolean, required=false);
+      defineParameter(context, "TfsId",                           platformType.Int32,   required=false);
+      defineParameter(context, "Timeout",                         platformType.String,  required=true);
+      defineParameter(context, "UniqueId",                        platformType.String,  required=true);
 
       _requiredScenarioParameters = requiredScenarioParametersBuilder.ToImmutable();
     }
