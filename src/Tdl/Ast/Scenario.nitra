@@ -83,6 +83,8 @@ namespace Tdl
         when (MultiMachineId.HasValue)
           CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
 
+        CheckUniquenessOfScenarios(context, Symbol, Symbol.AggregateParametersScope);
+
         MultiMachineId : Guid;
         Scenarios      : Reference*;
       }
