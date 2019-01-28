@@ -148,12 +148,41 @@ namespace Tdl
       evalHost.EvalProperties(context, "Scopes", 1);
       evalHost.EvalProperties(context, "Stage 2", 2);
       evalHost.EvalProperties(context, "Stage 3", 3);
-      CheckParallelScenarios(context, rootNamespace.MemberTable);
+      CheckScenarios(context, rootNamespace.MemberTable);
     }
 
-    public CheckParallelScenarios(context : DependentPropertyEvalContext, root : TableScope) : void
+    public CheckScenarios(context : DependentPropertyEvalContext, root : TableScope) : void
     {
-      def scenarioSets = root.AllSymbols.OfType.[Scenario.SetSymbol]().Where(s => s.IsIsMultiMachineEvaluated && s.IsMultiMachine);
+      def scenarios = root.AllSymbols.OfType.[ScenarioSymbol]().ToArray();
+      CheckParallelScenarios(context, scenarios);
+      
+      def uniqueIds = scenarios.OfType.[Scenario.DefSymbol]()
+        .Where(sd => sd.Defs.Any(d => d.Symbol.Name == "UniqueId"))
+        .Select(sd => (sd, sd.Defs.Single(d => d.Symbol.Name == "UniqueId")));
+      def groupedByDef = uniqueIds.GroupBy((_, d) => d.Expr.ToString());
+      
+      foreach (group when group.Count() > 1 in groupedByDef)
+      {
+        def names = string.Join(", ", group.Select((sd, _) => sd.Name));
+        foreach ((scenario, d) in group)
+        {
+          def value = d.Expr;
+          def decl = scenario.FirstDeclarationOrDefault :> Scenario.Def;
+          def id = d.Symbol.Id;
+          foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in decl.Definitions)
+          {
+            when (definition.SymbolRef.Symbol.Id == d.Symbol.Id)
+            {
+              definition.Reference.Error(context, $"Scenarios $names have the same UniqueId value ($value).", 0);
+            }
+          }
+        }
+      }
+    }
+
+    public CheckParallelScenarios(context : DependentPropertyEvalContext, scenarios : array[ScenarioSymbol]) : void
+    {
+      def scenarioSets = scenarios.OfType.[Scenario.SetSymbol]().Where(s => s.IsIsMultiMachineEvaluated && s.IsMultiMachine);
       def groups       = scenarioSets.Where(s => s.IsScenariosEvaluated)
                                      .SelectMany(mms => mms.Scenarios.Select(s => (mms, s)))
                                      .GroupBy((_, s) => s);
@@ -187,12 +216,13 @@ namespace Tdl
       
       foreach (set in scenarioSets)
       {
-        def scenarios        = GetScenarioOfParallelSet(set);
+        def scenarios        = TdlUtils.GetSetScenarios(set);
         def barriersCountMap = Dictionary();
         foreach (scenario in scenarios)
         {
           scenario.ParallelSetOpt = set;
 
+          // Claculate count of barrier usages.
           def inc(barrier : BarrierSymbol) : void
           {
             mutable value;
@@ -207,29 +237,6 @@ namespace Tdl
       }
     }
     
-    GetScenarioOfParallelSet(scenarioSet : Scenario.SetSymbol) : List[Scenario.DefSymbol]
-    {
-      def result  = List();
-      def visited = HashSet();
-      def loop(set : Scenario.SetSymbol) : void
-      {
-        unless (visited.Add(set))
-          return;
-        unless (set.IsScenariosEvaluated)
-          return;
-        foreach (scenario in set.Scenarios)
-        {
-          | Scenario.SetSymbol as subSet                => loop(subSet)
-          | Scenario.DefSymbol as d when visited.Add(d) => result.Add(d);
-          | Scenario.DefSymbol                          => ()
-          | _ => assert(false)
-        }
-      }
-      loop(scenarioSet);
-      result
-    }
-
-
     public GetSymbolById(data : object, symbolId : int) : ValueOption[DeclarationSymbol]
     {
       def (_, _, rootNamespace) = DecomposeData(data);

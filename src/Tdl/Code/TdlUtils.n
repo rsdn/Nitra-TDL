@@ -108,6 +108,8 @@ namespace Tdl
       builder.ToImmutable()
     }
 
+    // TODO: Пороверить, что все UniqueId у всех обрабатываемых сценариев был уникальны.
+    
     public MakeScenarios(scenariosRefs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[ScenarioSymbol]
     {
       def builder = ImmutableArray.CreateBuilder();
@@ -544,6 +546,57 @@ namespace Tdl
     public Convert(this location : Nitra.Location) : Tdl.Utils.Location
     {
         Tdl.Utils.Location(location.Source.File.FullName, location.StartPos, location.EndPos)
+    }
+
+    public GetSetScenarios(scenarioSet : Scenario.SetSymbol) : List[Scenario.DefSymbol]
+    {
+      GetSetScenarios(scenarioSet, null)
+    }
+    
+    public GetSetScenarios(scenarioSet : Scenario.SetSymbol, duplicates : HashSet[Scenario.SetSymbol * Scenario.DefSymbol]) : List[Scenario.DefSymbol]
+    {
+      def result  = List();
+      def visited = HashSet();
+      def loop(set : Scenario.SetSymbol) : void
+      {
+        unless (visited.Add(set))
+          return;
+        unless (set.IsScenariosEvaluated)
+          return;
+        foreach (scenario in set.Scenarios)
+        {
+          | Scenario.SetSymbol as subSet                => loop(subSet)
+          | Scenario.DefSymbol as d when visited.Add(d) => result.Add(d);
+          | Scenario.DefSymbol as d                     => when (duplicates != null) _ = duplicates.Add((set, d))
+          | _ => assert(false)
+        }
+      }
+      loop(scenarioSet);
+      result
+    }
+    
+    public CheckUniquenessOfScenarios(this ast : IAst, context : DependentPropertyEvalContext, set : Scenario.SetSymbol, _depend : object) : void
+    {
+      def duplicates = HashSet();
+      _ = GetSetScenarios(set, duplicates);
+      when (duplicates.Count > 0)
+      {
+        def group = duplicates.GroupBy((set, _) => set);
+        foreach (x in group)
+        {
+          foreach ((_, d) in x)
+          {
+            def decl = x.Key.FirstDeclarationOrDefault :> Scenario.Set;
+            foreach (scenarioDecl when scenarioDecl.IsRefEvaluated && scenarioDecl.Ref.IsSymbolEvaluated in decl.Scenarios)
+            {
+              when (scenarioDecl.Ref.Symbol.Id == d.Id)
+              {
+                scenarioDecl.Error(context, "Duplicate scenario in group.");
+              }
+            }
+          }
+        }
+      }
     }
   } // module
 } // namespace
