@@ -122,28 +122,46 @@ namespace Tdl
       builder.ToImmutable()
     }
 
-    public MakeAggregateParametersScope(deployments : ImmutableArray[DeploymentSymbol]) : Scope
+    public MakeAggregateParametersScope(deployments : ImmutableArray[DeploymentSymbol]) : ValueOption[Scope]
     {
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
-      CollectDeployments(visited, ref builder, deployments);
-      builder.ToScope()
+      if (CollectDeployments(visited, ref builder, deployments))
+        VSome(builder.ToScope())
+      else
+        VNone()
     }
 
-    private CollectDeployments(visited : HashSet[int], builder : ref UnionScopeBuilder, deployments : ImmutableArray[DeploymentSymbol]) : void
+    private CollectDeployments(visited : HashSet[int], builder : ref UnionScopeBuilder, deployments : ImmutableArray[DeploymentSymbol]) : bool
     {
       foreach (deployment in deployments)
       {
         unless (visited.Add(deployment.Id))
-          return;
+          continue;
 
         match (deployment)
         {
-          | s is Deployment.ScriptSymbol => UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-          | s is Deployment.SetSymbol => CollectDeployments(visited, ref builder, s.Deployments);
-          | _ => ()
+          | s is Deployment.ScriptSymbol   =>
+            unless (s.IsParameterScopeEvaluated)
+              return false;
+            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
+            
+          | s is Deployment.SetSymbol      =>
+            unless (CollectDeployments(visited, ref builder, s.Deployments))
+              return false;
+
+          | s is Deployment.CurryingSymbol =>
+            unless (s.IsAggregateParametersScopeEvaluated)
+              return false;
+            UnionScopeBuilder.Add(s.AggregateParametersScope, ref builder);
+          
+          | _ is DeploymentRebootSymbol => ()
+            
+          | null => assert(false, "The deployment can't be null.")
+          | _    => assert(false, "Not supported deployment type: " + deployment.GetType().Name)
         }
       }
+      true
     }
 
     public MakeAggregateParametersScope(scenarios : ImmutableArray[ScenarioSymbol]) : Scope
