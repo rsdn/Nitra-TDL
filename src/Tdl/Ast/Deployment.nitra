@@ -63,7 +63,7 @@ namespace Tdl
           SpanClass = TdlLang.DeploymentSpanClass;
         }
 
-        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Deployments);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployments);
         Symbol.Deployments              = TdlUtils.MakeDeployments(Deployments.Ref);
 
         Deployments.Scope               = Scope;
