@@ -1,0 +1,22 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+
+namespace Tdl.Code
+{
+  [Record]
+  public class From
+  {
+    public Vars  : ImmutableArray[VarSymbol];
+    public Elems : ImmutableArray[ImmutableArray[DeclarationSymbol]];
+  }
+}

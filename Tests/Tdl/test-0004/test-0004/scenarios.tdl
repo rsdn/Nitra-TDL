@@ -1,3 +1,18 @@
+using Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1;
+
+scenario SbSTestScenario1 =
+    from (Deployment , Platform) in (Deploy_Gated, w10rs4-x64), (Deploy_Middle, w10rs4-x86), (Deploy_Finish, win_10_rs3) 
+    from Method in Gated1_S01_Installation, Gated1_S02_CheckFilesAndRegistry, Gated1_S03_CheckDrivers
+    select
+    {
+        deployment Deployment;
+        environments (Platform, KES);
+        method Method;
+        UniqueId = "BDA24CAF-BF05-49EC-9884-129A48C42FFF";
+        Timeout = "02:30:00";
+        ProductGroupName = "SbSProductGroup-1";
+    };
+
 platform gated_platforms = w10rs3-x64, win7-x64, win2012r2;
 platform gated_workstation_platforms = w10rs3-x64, win7-x64, win2012r2;
 
