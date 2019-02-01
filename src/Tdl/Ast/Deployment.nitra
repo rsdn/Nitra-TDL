@@ -8,10 +8,12 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Deployment : NamespaceMember
+  abstract declaration Deployment : NamespaceMember, Typed
   {
     symbol
     {
+      Type = context.ToTdlContext().DeploymentType;
+
     stage 2:
       in AggregateParametersScope : Scope;
     }

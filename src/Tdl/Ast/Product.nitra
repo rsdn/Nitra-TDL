@@ -8,22 +8,24 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Product : NamespaceMember
+  abstract declaration Product : NamespaceMember, Typed
   {
     symbol
     {
+      Type = context.ToTdlContext().ProductType;
+
     stage 1:
-      in Type : ProductTypeSymbol;
+      in ProductType : ProductTypeSymbol;
       SpanClass = TdlLang.ProductSpanClass;
     }
   stage 1:
-    out TypeRef : Ref[ProductTypeSymbol];
+    out ProductTypeRef : Ref[ProductTypeSymbol];
 
-    Type.Scope  = Scope;
-    TypeRef     = Type.Ref.Resolve();
-    Symbol.Type = TypeRef.Symbol;
+    ProductType.Scope  = Scope;
+    ProductTypeRef     = ProductType.Ref.Resolve();
+    Symbol.ProductType = ProductTypeRef.Symbol;
 
-    Type : Reference;
+    ProductType : Reference;
 
     | Def
       {
@@ -33,12 +35,12 @@ namespace Tdl
           Kind = "product";
         }
 
-        Definitions.DefinitionScope = Symbol.Type.Scope;
+        Definitions.DefinitionScope = Symbol.ProductType.Scope;
         Definitions.Scope           = ProjectSupport.ExternalSymbolTable;
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
 
-        when (TdlUtils.HasUndefinedFieldsInProduct(Symbol.Type, Symbol.Defs))
-          Name.Error(context, TdlUtils.ReportProduct(Symbol.Type, Symbol.Defs));
+        when (TdlUtils.HasUndefinedFieldsInProduct(Symbol.ProductType, Symbol.Defs))
+          Name.Error(context, TdlUtils.ReportProduct(Symbol.ProductType, Symbol.Defs));
 
         Definitions : Definition*;
       }

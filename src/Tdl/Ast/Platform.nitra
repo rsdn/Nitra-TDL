@@ -8,8 +8,13 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Platform : NamespaceMember
+  abstract declaration Platform : NamespaceMember, Typed
   {
+    symbol
+    {
+      Type = context.ToTdlContext().PlatformType;
+    }
+
     | Def
       {
         symbol

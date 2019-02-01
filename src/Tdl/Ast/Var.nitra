@@ -1,0 +1,25 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  declaration Var : Typed
+  {
+    symbol
+    {
+      Kind      = "var";
+      SpanClass = TdlLang.VarSpanClass;
+    }
+
+    out Type : TypeSymbol;
+
+    Type        = context.CreateFreeTypeVar();
+    Symbol.Type = Type;
+  }
+}

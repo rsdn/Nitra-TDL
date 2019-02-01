@@ -43,8 +43,8 @@ namespace Tdl
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Deployments.Item1 -> Deployments; }
     | Currying         -> Deployment.Currying { Name -> Name; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
     | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; }
-    | Product          -> Product.Def         { Name -> Name; Type -> Type; ProductBody.DefDeclarations -> Definitions; }
-    | ProductSet       -> Product.Set         { Name -> Name; Type -> Type; Products.Item1 -> Products; }
+    | Product          -> Product.Def         { Name -> Name; Type -> ProductType; ProductBody.DefDeclarations -> Definitions; }
+    | ProductSet       -> Product.Set         { Name -> Name; Type -> ProductType; Products.Item1 -> Products; }
     | Scenario         -> Scenario.Def
       {
         Name                                    -> Name;
@@ -53,10 +53,20 @@ namespace Tdl
         ScenarioBody.Environments.Elems.Item1   -> Environments;
         ScenarioBody.DefDeclarations            -> Definitions;
       }
-    | ScenarioSet      -> Scenario.Set { Name -> Name; MultiMachineId = ParsedValue(0);                        Scenarios.Item1 -> Scenarios; }
-    | ParallelScenario -> Scenario.Set { Name -> Name; MultiMachineId = ParsedValue(Parallel, Guid.NewGuid()); Scenarios.Item1 -> Scenarios; }
-    | SuiteType        -> SuiteType    { Name -> Name; TypeBody.Fields -> Fields; }
-    | Suite            -> Suite
+    | ScenarioGenerator -> Scenario.Generator
+      {
+        Name                                      -> Name;
+        Froms                                     -> Froms;
+        SelectScenario.Deployment.Reference       -> Deployment;
+        SelectScenario.Method.QualifiedIdentifier -> Method;
+        SelectScenario.Platform                   -> Platform;
+        SelectScenario.Product                    -> Product;
+        SelectScenario.DefDeclarations            -> Definitions;
+      }
+    | ScenarioSet       -> Scenario.Set { Name -> Name; MultiMachineId = ParsedValue(0);                        Scenarios.Item1 -> Scenarios; }
+    | ParallelScenario  -> Scenario.Set { Name -> Name; MultiMachineId = ParsedValue(Parallel, Guid.NewGuid()); Scenarios.Item1 -> Scenarios; }
+    | SuiteType         -> SuiteType    { Name -> Name; TypeBody.Fields -> Fields; }
+    | Suite             -> Suite
       {
         Name                         -> Name;
         None()                       -> TypeOpt;
@@ -78,6 +88,38 @@ namespace Tdl
     | Barrier  -> Barrier     { Name -> Name; Timeout -> Timeout; }
   }
 
+  map syntax Grammar.From -> From
+  {
+    VarDecl    -> Vars;
+    List.Item1 -> List;
+  }
+  
+  map syntax Grammar.From.VarDecl -> Var*
+  {
+    | Name  -> [Var { Name -> Name; }]
+    | Tuple -> this(Names.Item1)
+  }
+
+  //HACK: отсутствует оператор map! маппинг Tuple написан инлайновым кодом
+  map syntax Grammar.From.VarDecl(names : Name*) -> Var*
+  {
+    | Name -> this
+  }
+
+  map syntax Grammar.From.VarDecl.Tuple(names : Name*) -> Var* =
+  {
+    def items = array(names.Count);
+    foreach (n in names with index)
+      items[index] = Var(n.Location, n);
+    Var.AstList(names.Location, items);
+  }
+
+  map syntax Grammar.From.VarRef -> Elem
+  {
+    | Ref   -> Elem.Simple { QualifiedIdentifier -> Reference; }
+    | Tuple -> Elem.Tuple  { Refs.Item1          -> Items; }
+  }
+
   map syntax Grammar.DeploymentExpr -> DeploymentExpr
   {
     | Reference -> DeploymentReference { Reference -> Reference; }
@@ -90,14 +132,13 @@ namespace Tdl
       }
   }
 
-  map syntax Grammar.ScenarioBody.Action -> Action*
+  map syntax Grammar.Action -> Action*
   {
     | Method   -> [ Action.Method { Method.QualifiedIdentifier -> Method; } ]
     | Sequence -> SequenceActions
   }
 
-
-  map syntax Grammar.ScenarioBody.SequenceAction -> Action
+  map syntax Grammar.SequenceAction -> Action
   {
     | Method         -> Method { Method.QualifiedIdentifier -> Method; }
     | Reboot         -> Reboot { }
@@ -149,7 +190,15 @@ namespace Tdl
   }
 
 
-  map syntax Grammar.ScenarioBody.Environment -> EnvironmentAst
+  map syntax Grammar.Environment -> EnvironmentAst
+  {
+    Platform -> Platform;
+    Product  -> Product;
+  }
+
+  ast GenTag {}
+
+  map syntax Grammar.Environment(_ : GenTag) -> Generation.Scenario.EnvironmentAst
   {
     Platform -> Platform;
     Product  -> Product;
