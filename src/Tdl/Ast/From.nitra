@@ -11,12 +11,12 @@ namespace Tdl
 {
   ast From : ScopedAst, BindableAst
   {
-    Vars.ContainingTable = ContainingTable;
-    List.Scope           = Scope;
     out Type : TypeSymbol;
     
-    Type              = context.MakeTuple(Vars.Type);
-    List.ExpectedType = Type;
+    Vars.ContainingTable = ContainingTable;
+    List.Scope           = Scope;
+    Type                 = context.MakeTuple(Vars.Type);
+    List.ExpectedType    = Type;
 
     Vars : Var*;
     List : Elem*;

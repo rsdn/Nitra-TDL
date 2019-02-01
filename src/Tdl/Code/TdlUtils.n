@@ -672,7 +672,7 @@ namespace Tdl
       }
     }
     
-    public MakeTuple(this context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : TypeSymbol
+    public MakeTupleType(this context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : TypeSymbol
     {
       def builder = ImmutableArray.CreateBuilder(items.Length);
       foreach (item in items)
@@ -714,5 +714,25 @@ namespace Tdl
       tuple.EvalProperties(context);
       tuple
     }
-} // module
+    
+    public MakeFroms(froms : From.IAstList) : ValueOption[ImmutableArray[Code.From]]
+    {
+      def builder = ImmutableArray.CreateBuilder(froms.Count);
+      foreach (from in froms)
+      {
+        when (!from.Vars.IsSymbolEvaluated || !from.List.IsSymbolsEvaluated)
+          return VNone();
+          
+        def result = Code.From(from.Vars.Symbol, from.List.Symbols);
+        builder.Add(result);
+      }
+      
+      VSome(builder.MoveToImmutable())
+    }
+
+    public MakeTuple(this _context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[DeclarationSymbol]
+    {
+       items.Select(x => if (x.IsSymbolEvaluated) x.Symbol else null).ToImmutableArray();
+    }
+  } // module
 } // namespace

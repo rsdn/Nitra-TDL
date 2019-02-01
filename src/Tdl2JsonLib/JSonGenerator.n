@@ -133,7 +133,7 @@ namespace Tdl2JsonLib
         Products      = symbols.OfType.[ProductSymbol     ]().Select(GenerateProduct) .ToDictionary();
         Platforms     = symbols.OfType.[PlatformSymbol    ]().Select(GeneratePlatform).ToDictionary();
         Suites        = symbols.OfType.[SuiteSymbol       ]().Select(GenerateSuite)   .ToDictionary();
-        TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol]().Select(GenerateScenario).ToDictionary();
+        TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol]().SelectMany(GenerateScenarios).ToDictionary();
       };
 
       def settings = ConverterSettings.Settings;
@@ -196,9 +196,9 @@ namespace Tdl2JsonLib
       | _ => ThrowNotSupportedSymbol(productSymbol)
     }
 
-    private GetAssemblyAndMethodName(symbol : Tdl.ScenarioAction.Method) : string * string
+    private GetAssemblyAndMethodName(method : Member.MethodSymbol) : string * string
     {
-      def decl         = symbol.method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
+      def decl         = method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
       def method       = decl.First().Method;
       def type         = method.ContainingType :> ITypeDefinition;
       def unit         = TypeHelper.GetDefiningUnit(type);
@@ -208,6 +208,124 @@ namespace Tdl2JsonLib
       (assemblyName, methodName)
     }
 
+    private SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedSymbol, DeclarationSymbol]]
+    {
+      if (index < froms.Length)
+      {
+        def from = froms[index];
+        foreach (dictionary in SubstituteVariables(froms, index + 1))
+        {
+          foreach (values in from.Elems)
+          {
+            foreach (var in from.Vars with i)
+              dictionary[var] = values[i];
+
+            yield dictionary
+          }
+        }
+      }
+      else
+        yield Dictionary()
+    }
+    
+    TryResolveVar[T](dic : Dictionary[TypedSymbol, DeclarationSymbol], varOrSymbol : TypedSymbol) :  T
+      where T: DeclarationSymbol
+    {
+      mutable result;
+      if (dic.TryGetValue(varOrSymbol, out result))
+        result :> T
+      else
+        varOrSymbol :> T
+    }
+    
+    private GenerateScenarios(scenarioSymbol : ScenarioSymbol) : Seq[string * TestCase]
+    {
+      mutable counter : uint = 0;
+      match(scenarioSymbol)
+      {
+            | Tdl.Scenario.GeneratorSymbol as g =>
+              def getString(name : string) : string
+              {
+                g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+              }
+              def getBool(name : string) : bool?
+              {
+                g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
+                  .Map(fun(expr)
+                    {
+                      | Tdl.Expr.True  => Nullable(true)
+                      | Tdl.Expr.False => Nullable(false)
+                      | _              => throw NotSupportedException()
+                    })
+                  .WithDefault(null);
+              }
+              def getLong(name : string) : long?
+              {
+                  g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
+              }
+              def incGuid(guid : Guid) : Guid
+              {
+                def bytes1   = guid.ToByteArray();
+                def version  = BitConverter.ToUInt32(bytes1, 0) + counter;
+                def bytes2   = BitConverter.GetBytes(version);
+                bytes1[0] = bytes2[0];
+                bytes1[1] = bytes2[1];
+                bytes1[2] = bytes2[2];
+                bytes1[3] = bytes2[3];
+                Guid(bytes1)
+              }
+              mutable uniqueId = Guid.Parse(getString("UniqueId"));
+              def names = List();
+              foreach (dic in SubstituteVariables(g.Froms, 0))
+              {
+                counter++;
+                def deployment = TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
+                def method     = TryResolveVar(dic, g.Method)     : Member.MethodSymbol;
+                def platform   = TryResolveVar(dic, g.Platform)   : PlatformSymbol;
+                def product    = TryResolveVar(dic, g.Product)    : ProductSymbol;
+                def getTestMethod() : TestMethodSequence
+                {
+                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method);
+                  TestMethodSequence() <- 
+                  {
+                    AssemblyName = assemblyName;
+                    MethodName   = methodName;
+                  }
+                }
+                def name = scenarioSymbol.Name + "-" + counter;
+                
+                names.Add(name);
+                
+                def testGroup =
+                  TestGroup() <- 
+                  {
+                    Deployments             = array[TestGroupDeployment() <- String = deployment.Name];
+                    Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
+                    TestMethod              = getTestMethod();
+                    Area                    = getString("Area");
+                    NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
+                    RequireInternet         = getBool  ("RequireInternet");
+                    RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
+                    RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
+                    Responsible             = getString("Responsible");
+                    RevertAgentAfter        = getBool  ("RevertAgentAfter");
+                    RevertAgentBefore       = getBool  ("RevertAgentBefore");
+                    TfsId                   = getLong  ("TfsId");
+                    Timeout                 = getString("Timeout");
+                    UniqueId                = uniqueId.ToString();
+                    ProductGroupName        = getString("ProductGroupName");
+                  };
+
+                yield (name, TestCase() <- { TestGroup = testGroup; });
+                uniqueId = incGuid(uniqueId);
+              }
+              
+              yield (scenarioSymbol.Name, TestCase() <- { TestGroup = TestGroup() <- { TestScenarios = names.ToArray() }; });
+
+        | _ => yield GenerateScenario(scenarioSymbol);
+      }
+    }
+    
     private GenerateScenario(scenarioSymbol : ScenarioSymbol) : string * TestCase
     {
       (scenarioSymbol.Name, 
@@ -216,10 +334,6 @@ namespace Tdl2JsonLib
           match(scenarioSymbol)
           {
             | Tdl.Scenario.DefSymbol as r =>
-              when (r.Name == "FacadeProductStopStart")
-              {
-                assert2(true);
-              }
               def parallelSetOpt = if (r.IsParallelSetOptEvaluated) r.ParallelSetOpt else null;
               def barriersCount  = if (parallelSetOpt == null) Dictionary() 
                                    else parallelSetOpt.BarriersCount.ToDictionary();
@@ -248,7 +362,7 @@ namespace Tdl2JsonLib
                 when (allowRebootOpt == null && r.Actions.Length == 1)
                 when (r.Actions[0] is ScenarioAction.Method as method)
                 {
-                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method);
+                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
                   return TestMethodSequence() <- 
                   {
                     AssemblyName = assemblyName;
@@ -259,7 +373,7 @@ namespace Tdl2JsonLib
                 {
                   | Reboot             => RebootTestStep() <- { ForceReboot = ForceReboot() }
                   | Method        as x => 
-                    def (assemblyName, methodName) = GetAssemblyAndMethodName(x);
+                    def (assemblyName, methodName) = GetAssemblyAndMethodName(x.method);
                     TestMethodQualifier() <- { AssemblyName = assemblyName; MethodName = methodName; }
 
                   | WaitForReboot as x =>                   
@@ -293,8 +407,8 @@ namespace Tdl2JsonLib
               
               TestGroup() <- 
               {
-                  Deployments             = [r.Deployment.Name].MapToArray(n   => TestGroupDeployment() <- String = n);
-                  Environments            = r.Environments     .MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
+                  Deployments             = array[TestGroupDeployment() <- String = r.Deployment.Name];
+                  Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
                   TestMethod              = getTestMethod();
                   Area                    = getString("Area");
                   NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
@@ -310,10 +424,9 @@ namespace Tdl2JsonLib
                   MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
               }
 
-            | Tdl.Scenario.SetSymbol as Set =>
-              TestGroup() <- { TestScenarios = Set.Scenarios.Select(_.Name).ToArray() }
-            | _                             => ThrowNotSupportedSymbol(scenarioSymbol) 
-        }
+            | Tdl.Scenario.SetSymbol as Set => TestGroup() <- { TestScenarios = Set.Scenarios.Select(_.Name).ToArray() }
+            | _                             => ThrowNotSupportedSymbol(scenarioSymbol)
+          }
       })
     }
 

@@ -92,6 +92,14 @@ namespace Tdl
       {
         symbol
         {
+          in Defs       : ImmutableArray[Def];
+          in Deployment : TypedSymbol;
+          in Method     : TypedSymbol;
+          in Platform   : TypedSymbol;
+          in Product    : TypedSymbol;
+        stage 3:
+          in Froms      : ImmutableArray[Code.From];
+
           Scope     = MemberTable;
           Kind      = "scenario generator";
           SpanClass = TdlLang.ScenarioSpanClass;
@@ -111,10 +119,17 @@ namespace Tdl
         Method.Scope                = Deployment.Scope;
         Definitions.DefinitionScope = ProjectSupport.ScenarioParameterScope;
 
-        DeploymentRef = Deployment.Ref.Resolve();
-        MethodRef     = Method.Ref.Resolve();
-        PlatformRef   = Platform.Ref.Resolve();
-        ProductRef    = Product.Ref.Resolve();
+        DeploymentRef               = Deployment.Ref.Resolve();
+        MethodRef                   = Method.Ref.Resolve();
+        PlatformRef                 = Platform.Ref.Resolve();
+        ProductRef                  = Product.Ref.Resolve();
+
+        Symbol.Deployment           = DeploymentRef.Symbol;
+        Symbol.Method               = MethodRef    .Symbol;
+        Symbol.Platform             = PlatformRef  .Symbol;
+        Symbol.Product              = ProductRef   .Symbol;
+        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
+        Symbol.Froms                = await TdlUtils.MakeFroms(Froms);
         
         Deployment.CheckExpected(context, context.ToTdlContext().DeploymentType, DeploymentRef.Symbol.Type);
         Method.    CheckExpected(context, context.ToTdlContext().MethodType,     MethodRef.Symbol.Type);

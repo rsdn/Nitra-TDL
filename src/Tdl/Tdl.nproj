@@ -161,6 +161,9 @@
     <Compile Include="Code\Expr.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\From.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\Location.n">
       <SubType>Code</SubType>
     </Compile>
