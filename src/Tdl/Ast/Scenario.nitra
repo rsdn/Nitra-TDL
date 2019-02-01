@@ -88,5 +88,45 @@ namespace Tdl
         MultiMachineId : Guid;
         Scenarios      : Reference*;
       }
+    | Generator : Container
+      {
+        symbol
+        {
+          Scope     = MemberTable;
+          Kind      = "scenario generator";
+          SpanClass = TdlLang.ScenarioSpanClass;
+        }
+
+      stage 1:
+        out DeploymentRef : Ref[TypedSymbol];
+        out MethodRef     : Ref[TypedSymbol];
+        out PlatformRef   : Ref[TypedSymbol];
+        out ProductRef    : Ref[TypedSymbol];
+
+        Froms.Scope                 = Scope;
+        Froms.ContainingTable       = Symbol.MemberTable;
+        Deployment.Scope            = Scope.HideWith(Symbol.MemberTable);
+        Platform.Scope              = Deployment.Scope;
+        Product.Scope               = Deployment.Scope;
+        Method.Scope                = Deployment.Scope;
+        Definitions.DefinitionScope = ProjectSupport.ScenarioParameterScope;
+
+        DeploymentRef = Deployment.Ref.Resolve();
+        MethodRef     = Method.Ref.Resolve();
+        PlatformRef   = Platform.Ref.Resolve();
+        ProductRef    = Product.Ref.Resolve();
+        
+        Deployment.CheckExpected(context, context.ToTdlContext().DeploymentType, DeploymentRef.Symbol.Type);
+        Method.    CheckExpected(context, context.ToTdlContext().MethodType,     MethodRef.Symbol.Type);
+        Platform.  CheckExpected(context, context.ToTdlContext().PlatformType,   PlatformRef.Symbol.Type);
+        Product.   CheckExpected(context, context.ToTdlContext().ProductType,    ProductRef.Symbol.Type);
+
+        Froms        : From*;
+        Deployment   : Reference;
+        Platform     : Reference;
+        Product      : Reference;
+        Definitions  : Definition*;
+        Method       : QualifiedReference;
+      }
   } // Scenario
 }

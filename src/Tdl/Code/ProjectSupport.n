@@ -1,10 +1,10 @@
-﻿using Nitra;
+﻿using DotNet;
+
+using Nitra;
 using Nitra.BackEnd.Cci;
 using Nitra.Declarations;
 using Nitra.Internal;
 using Nitra.ProjectSystem;
-
-using DotNet;
 
 using Nemerle;
 using Nemerle.Collections;
@@ -47,7 +47,7 @@ namespace Tdl
 
     public RefreshReferences(cancellationToken : CancellationToken, project : Project) : object
     {
-      TypeUnifier.InitInstance();
+      TdlTypeUnifier.InitInstance();
       TdlUtils.ResetMethodScopeFactoryCache();
 
       def bindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
@@ -90,9 +90,13 @@ namespace Tdl
       def backEnd = CciBackEnd();
       _backEnd = backEnd;
       backEnd.CancellationToken = cancellationToken;
-      def context = DependentPropertyEvalContext(project);
+      def deploymentType        = TdlType.DeploymentSymbol();
+      def platformType          = TdlType.PlatformSymbol();
+      def productType           = TdlType.ProductSymbol();
+      def methodType            = FunctionTypeSymbol();
+      def context               = TdlDependentPropertyEvalContext(project, deploymentType, platformType, productType, methodType);
       def rootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
-      def systemNsRef = bindNs(rootNamespace.Scope, "System");
+      def systemNsRef   = bindNs(rootNamespace.Scope, "System");
       when (systemNsRef.IsSymbolEvaluated)
       {
         def systemNs = systemNsRef.Symbol;
@@ -113,12 +117,27 @@ namespace Tdl
         defineAlias(context, systemNs, rootNamespace, "Double",  "double");
         defineAlias(context, systemNs, rootNamespace, "Decimal", "decimal");
         defineAlias(context, systemNs, rootNamespace, "Char",    "char");
+
+        methodType.Parameters = ImmutableArray.Empty;
+        def symbolRef  = bindType(systemNsRef.Scope, "Void");
+        when (symbolRef.IsSymbolEvaluated)
+          methodType.Return = symbolRef.Symbol;
       }
 
+      def initTypeSymbol(type : TypeSymbol) : void
+      {
+        type.EvalProperties(context);
+      }
+      initTypeSymbol(deploymentType);
+      initTypeSymbol(platformType);
+      initTypeSymbol(methodType);
+      initTypeSymbol(productType);
+
+      
       MakeExternalSymbol(context, rootNamespace);
       MakeScenarioParametersScope(backEnd, context);
       
-      (backEnd : IDotNetBackEnd, context, rootNamespace)
+      (backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace)
     }
 
     public RefreshProject(cancellationToken : CancellationToken, files : ImmutableArray[FileEvalPropertiesData], data : object) : void
@@ -167,8 +186,7 @@ namespace Tdl
         foreach ((scenario, d) in group)
         {
           def value = d.Expr;
-          def decl = scenario.FirstDeclarationOrDefault :> Scenario.Def;
-          def id = d.Symbol.Id;
+          def decl  = scenario.FirstDeclarationOrDefault :> Scenario.Def;
           foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in decl.Definitions)
           {
             when (definition.SymbolRef.Symbol.Id == d.Symbol.Id)
@@ -341,6 +359,7 @@ namespace Tdl
       defineParameter(context, "EnforceBinariesFolderUniqueness", platformType.Boolean, required=false);
       defineParameter(context, "LocalTestBinariesFolder",         platformType.String,  required=false);
       defineParameter(context, "NeedUnsignedAgent",               platformType.Boolean, required=false);
+      defineParameter(context, "ProductGroupName",                platformType.String,  required=false);
       defineParameter(context, "RequireInternet",                 platformType.Boolean, required=false);
       defineParameter(context, "RerunCountOnTestFailure",         platformType.Int32,   required=false);
       defineParameter(context, "RerunCountOnTestSuccess",         platformType.Int32,   required=false);

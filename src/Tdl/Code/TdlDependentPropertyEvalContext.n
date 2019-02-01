@@ -1,0 +1,23 @@
+﻿using DotNet;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Utility;
+
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl
+{
+  [Record]
+  class TdlDependentPropertyEvalContext : DependentPropertyEvalContext
+  {
+    public DeploymentType : TdlType.DeploymentSymbol;
+    public PlatformType   : TdlType.PlatformSymbol;
+    public ProductType    : TdlType.ProductSymbol;
+    public MethodType     : FunctionTypeSymbol;
+  }
+}

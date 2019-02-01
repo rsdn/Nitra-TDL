@@ -616,5 +616,103 @@ namespace Tdl
         }
       }
     }
-  } // module
+    
+    public ToTdlContext(this context : DependentPropertyEvalContext) : TdlDependentPropertyEvalContext
+    {
+      context :> TdlDependentPropertyEvalContext
+    }
+    
+    public CreateTupleOrFreeTypeVar(this context : DependentPropertyEvalContext, count : int) : TypeSymbol
+    {
+      if (count == 1)
+        context.CreateFreeTypeVar()
+      else
+      {
+        def tupleType = TdlType.TupleSymbol();
+        def builder = ImmutableArray.CreateBuilder(count);
+        for (mutable i = 0; i < count; i++)
+          builder.Add(context.CreateFreeTypeVar());
+        tupleType.Args = builder.MoveToImmutable();
+        tupleType.EvalProperties(context);
+        tupleType
+      }
+    }
+
+    public CheckExpected(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, type2 : TypeSymbol) : void
+    {
+      if (TdlTypeUnifier.Instance.TryUnify(type1, type2))
+        _ = TdlTypeUnifier.Instance.Unify(type1, type2);
+      else
+        ast.Error(context, $"Expected '$(TypeToString(type1))' but got '$(TypeToString(type2))'.", 0);
+    }
+
+    public CheckExpectedForTuple(this ast : IAst, context : DependentPropertyEvalContext, items : QualifiedReference.IAstList, type1 : TypeSymbol, type2 : TypeSymbol) : void
+    {
+      match (type1, type2)
+      {
+        | _ when (items.Count < 2) => ast.Error(context, "A tuple must have more than one elements.", 0);
+        | (tuple1 is TdlType.TupleSymbol, tuple2 is TdlType.TupleSymbol) =>
+          def args1 = tuple1.Args;
+          def args2 = tuple2.Args;
+          assert2(args1.Length == items.Count);
+          assert2(args1.Length == args2.Length);
+          for (mutable i = 0; i < args1.Length; i++)
+          {
+            def t1   = args1[i];
+            def t2   = args2[i];
+            def item = items[i];
+            if (TdlTypeUnifier.Instance.TryUnify(t1, t2))
+              _ = TdlTypeUnifier.Instance.Unify(t1, t2);
+            else
+              item.Error(context, $"Expected '$(TypeToString(type1))' but got '$(TypeToString(type2))'.", 0);
+          }
+          
+        | _ when TdlTypeUnifier.Instance.TryUnify(type1, type2) => _ = TdlTypeUnifier.Instance.Unify(type1, type2);
+        | _ => ast.Error(context, $"Expected $(TypeToString(type1)) but got $(TypeToString(type2)).", 0);
+      }
+    }
+    
+    public MakeTuple(this context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : TypeSymbol
+    {
+      def builder = ImmutableArray.CreateBuilder(items.Length);
+      foreach (item in items)
+      {
+        def t =
+          if (item.IsAmbiguous || item.IsUnresolved)
+            context.CreateFreeTypeVar()
+          else
+          {
+            def typed = item.Resolve() : Ref[TypedSymbol];
+            if (typed.IsSymbolEvaluated)
+              typed.Symbol.Type
+            else
+              context.CreateFreeTypeVar()
+          };
+        builder.Add(t);
+      }
+      
+      def tuple = TdlType.TupleSymbol();
+      tuple.Args = builder.MoveToImmutable();
+      tuple.EvalProperties(context);
+      tuple
+    }
+    
+    TypeToString(type : TypeSymbol) : string
+    {
+      | f is FunctionTypeSymbol when f.IsParametersEvaluated && f.IsReturnEvaluated && f.Parameters.Length == 0 
+                                  && f.Return.Name.Equals("void", StringComparison.OrdinalIgnoreCase)           => "Test method"
+      | _ => type.ToString()
+    }
+
+    public MakeTuple(this context : DependentPropertyEvalContext, items : ImmutableArray[TypeSymbol]) : TypeSymbol
+    {
+      when (items.Length == 1)
+        return items[0];
+        
+      def tuple = TdlType.TupleSymbol();
+      tuple.Args = items;
+      tuple.EvalProperties(context);
+      tuple
+    }
+} // module
 } // namespace
