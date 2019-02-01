@@ -198,12 +198,6 @@ namespace Tdl
 
   ast GenTag {}
 
-  map syntax Grammar.Environment(_ : GenTag) -> Generation.Scenario.EnvironmentAst
-  {
-    Platform -> Platform;
-    Product  -> Product;
-  }
-
   map syntax Grammar.StringLiteral -> CSharp.StringLiteral {}
 
   map syntax Grammar.StringLiteral.RegularStringLiteral -> CSharp.StringLiteral { Lit }
