@@ -55,6 +55,8 @@ namespace Tdl
         when (TdlUtils.IsMissingRequiredOptions(Definitions.SymbolRef))
           Name.Error(context, $"Missing required option: $(TdlUtils.GetMissingRequiredOptionMessage(Definitions.SymbolRef))");
 
+        CheckOptionForDuplicates(context, Definitions.SymbolRef);
+
         Deployment   : Reference;
         Environments : EnvironmentAst*;
         Definitions  : Definition*;

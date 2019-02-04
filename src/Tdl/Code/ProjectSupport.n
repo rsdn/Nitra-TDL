@@ -341,13 +341,13 @@ namespace Tdl
       
       def defineParameter(context : DependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
-        def parameterName = Name(NoLocation, name); // TODO: type.Name.UniqueKey
-        def parameter = ScenarioParameterDeclaration(parameterName).DefineSymbol(_scenarioParameterScope);
+        def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
+        def parameter      = ScenarioParameterDeclaration(parameterName).DefineSymbol(_scenarioParameterScope);
         when (required)
-          _ = requiredScenarioParametersBuilder.Add(parameter);
-        parameter.Type = type;
+          _                = requiredScenarioParametersBuilder.Add(parameter);
+        parameter.Type     = type;
         parameter.Modifier = ParameterModifier.None;
-        parameter.Index = index;
+        parameter.Index    = index;
         index++;
         parameter.EvalProperties(context);
       }
