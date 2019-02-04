@@ -734,5 +734,24 @@ namespace Tdl
     {
        items.Select(x => if (x.IsSymbolEvaluated) x.Symbol else null).ToImmutableArray();
     }
+
+    public CheckOptionForDuplicates(this ast : IAst, context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : void
+    {
+      def duplicateSet = HashSet();
+      foreach (option when option.IsSymbolEvaluated in options)
+      {
+        def id = option.Symbol.Id;
+        unless (duplicateSet.Add(id))
+        {
+          option.Location.Error(context, "Duplicate option.");
+        }
+      }
+    }
+    
+    public Error(this location : Location, context : DependentPropertyEvalContext, message : string) : void
+    {
+        def msgs = context.GetFileData(location.Source.File.Id).GetCompilerMessage();
+        msgs.ReportMessage(CompilerMessageType.Error, location, message, 0);
+    }
   } // module
 } // namespace
