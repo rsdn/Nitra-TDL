@@ -134,6 +134,7 @@ namespace Tdl
 
   map syntax Grammar.Action -> Action*
   {
+    | Config   -> [ Action.Config { Path                       -> Path; } ]
     | Method   -> [ Action.Method { Method.QualifiedIdentifier -> Method; } ]
     | Sequence -> SequenceActions
   }

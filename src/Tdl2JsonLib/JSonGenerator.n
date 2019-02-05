@@ -283,10 +283,10 @@ namespace Tdl2JsonLib
                 def method     = TryResolveVar(dic, g.Method)     : Member.MethodSymbol;
                 def platform   = TryResolveVar(dic, g.Platform)   : PlatformSymbol;
                 def product    = TryResolveVar(dic, g.Product)    : ProductSymbol;
-                def getTestMethod() : TestMethodSequence
+                def getTestMethod() : TestMethod
                 {
                   def (assemblyName, methodName) = GetAssemblyAndMethodName(method);
-                  TestMethodSequence() <- 
+                  TestMethodQualifier() <- 
                   {
                     AssemblyName = assemblyName;
                     MethodName   = methodName;
@@ -356,26 +356,28 @@ namespace Tdl2JsonLib
               {
                   r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
               }
-              def getTestMethod() : TestMethodSequence
+              def getTestMethod() : TestMethod
               {
                 def allowRebootOpt = getBool("AllowReboot");
                 when (allowRebootOpt == null && r.Actions.Length == 1)
                 when (r.Actions[0] is ScenarioAction.Method as method)
                 {
                   def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
-                  return TestMethodSequence() <- 
+                  return TestMethodQualifier() <- 
                   {
                     AssemblyName = assemblyName;
                     MethodName   = methodName;
                   };
                 }
-                def makeAction(action : ScenarioAction) : TestSequence
+                def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
+                {
+                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
+                  TestMethodQualifier() <- { AssemblyName = assemblyName; MethodName = methodName; }
+                }
+                def makeAction(action : ScenarioAction) : TestSequenceItem
                 {
                   | Reboot             => RebootTestStep() <- { ForceReboot = ForceReboot() }
-                  | Method        as x => 
-                    def (assemblyName, methodName) = GetAssemblyAndMethodName(x.method);
-                    TestMethodQualifier() <- { AssemblyName = assemblyName; MethodName = methodName; }
-
+                  | Method        as m => makeMethodAction(m)
                   | WaitForReboot as x =>                   
                     WaitForRebootTestStep() <- 
                     {
@@ -397,12 +399,22 @@ namespace Tdl2JsonLib
                           Count   = barriersCount[b];
                         }
                     }
+                  | _ => assert(false, "Unsupported ScenarioAction: " + action)
                 }
-                TestMethodSequence() <-
-                {
-                  TestSequence = r.Actions.Select(makeAction).ToArray();
-                  AllowReboot  = allowRebootOpt;
-                }
+                
+                if (r.Actions.Length == 1)
+                  match (r.Actions[0])
+                  {
+                    | Config as c => TestBot() <- TestConfigName = c.path.Value
+                    | Method as m => makeMethodAction(m)
+                    | a => assert(false, "Unsupported ScenarioAction: " + a)
+                  }
+                else
+                  TestMethodSequence() <-
+                  {
+                    TestSequence = r.Actions.Select(makeAction).ToArray();
+                    AllowReboot  = allowRebootOpt;
+                  }
               }
               
               TestGroup() <- 

@@ -11,6 +11,7 @@ namespace Tdl
   {
     public Location : Location { get; }
     
+    | Config        { path   : ParsedValue[string]; }
     | Method        { method : Member.MethodSymbol; }
     | Reboot        { }
     | WaitForReboot { TimeSpan : string; }

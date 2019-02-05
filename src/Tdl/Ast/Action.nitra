@@ -12,6 +12,13 @@ namespace Tdl
   {
     out ScenarioActions : ScenarioAction;
 
+    | Config
+      {
+        ScenarioActions = ScenarioAction.Config(Path.Location.Convert(), TdlUtils.ConvertStringLiteral(Path));
+
+        Path : CSharp.StringLiteral;
+      }
+
     | Method
       {
       stage 1:
