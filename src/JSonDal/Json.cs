@@ -245,7 +245,7 @@ namespace QuickType
         public bool? RevertAgentBefore { get; set; }
 
         [JsonProperty("TestMethod", NullValueHandling = NullValueHandling.Ignore)]
-        public TestMethodSequence TestMethod { get; set; }
+        public TestMethod TestMethod { get; set; }
 
         [JsonProperty("TfsId", NullValueHandling = NullValueHandling.Ignore)]
         public long? TfsId { get; set; }
@@ -285,50 +285,6 @@ namespace QuickType
         /// </summary>
         [JsonProperty("Products")]
         public string[] Products { get; set; }
-    }
-
-    /// <summary>
-    /// Перезагрузка машины в качестве шага теста.
-    ///
-    /// Ожидание перезагрузки машины в качестве шага теста.
-    /// </summary>
-    public partial class TestMethodSequence
-    {
-        [JsonProperty("AssemblyName", NullValueHandling = NullValueHandling.Ignore)]
-        public string AssemblyName { get; set; }
-
-        [JsonProperty("ContinueOnError", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? ContinueOnError { get; set; }
-
-        [JsonProperty("MethodName", NullValueHandling = NullValueHandling.Ignore)]
-        public string MethodName { get; set; }
-
-        [JsonProperty("AllowReboot", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? AllowReboot { get; set; }
-
-        [JsonProperty("TestSequence", NullValueHandling = NullValueHandling.Ignore)]
-        public TestSequence[] TestSequence { get; set; }
-
-        [JsonProperty("Arguments", NullValueHandling = NullValueHandling.Ignore)]
-        public string[] Arguments { get; set; }
-
-        [JsonProperty("ProgramName", NullValueHandling = NullValueHandling.Ignore)]
-        public string ProgramName { get; set; }
-
-        [JsonProperty("WaitForReboot", NullValueHandling = NullValueHandling.Ignore)]
-        public WaitForReboot WaitForReboot { get; set; }
-
-        [JsonProperty("TestConfigName", NullValueHandling = NullValueHandling.Ignore)]
-        public string TestConfigName { get; set; }
-
-        [JsonProperty("Environment", NullValueHandling = NullValueHandling.Ignore)]
-        public TestMethodEnvironment Environment { get; set; }
-
-        [JsonProperty("TestScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
-        public string TestScriptArgs { get; set; }
-
-        [JsonProperty("TestScriptName", NullValueHandling = NullValueHandling.Ignore)]
-        public string TestScriptName { get; set; }
     }
 
     public partial class TestMethodEnvironment
