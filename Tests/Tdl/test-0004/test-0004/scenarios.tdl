@@ -23,20 +23,12 @@ scenario GatedChain1
 {
     deployment Deploy_Gated;
     environments (gated_platforms, KES);
-    sequence
-    {
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
-      wait-for-reboot 00:00:56;
-      barrier Barrier1;
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
-      reboot;
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
-      barrier Barrier2;
-    }
+    config @"um/interprecz/interprecz_smoke.json";
     Area = "GatedTestsChain1";
-    UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8C";
+    UniqueId = "BDA24CAF-BF05-49EC-9884-129A48C42F8C";
     TfsId = 0;
     RevertAgentAfter = true;
+    RevertAgentBefore = true;
     Timeout = "00:00:10";
 }
 
@@ -47,16 +39,46 @@ scenario GatedChain2
     sequence
     {
       method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
-      barrier Barrier1;
       method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
       method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
-      barrier Barrier2;
     }
     Area = @"GatedTestsChain2";
-    UniqueId = @"C3E98F14-10D5-4118-8DC9-103DC5A67C4F";
+    UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8D";
+    TfsId = 0;
+    RevertAgentAfter = true;
+    Timeout = "00:00:10";
+}
+
+scenario GatedChain3
+{
+    deployment Deploy_Gated;
+    environments (gated_platforms, KES);
+    sequence
+    {
+      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
+      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
+      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    }
+    Area = @"GatedTestsChain2";
+    UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8F";
     TfsId = 0;
     RevertAgentAfter = true;
     Timeout = "00:00:10";
 }
 
 parallel scenario GateTests_KES = GatedChain1, GatedChain2;
+
+scenario GateTests_KES2 = GatedChain3;
+
+scenario GateTests = GateTests_KES, GateTests_KES2;
+
+suite Gate_2
+{
+    platform gated_platforms;
+    product KES;
+    ProductDistributivePath = ProductDistributivePath;
+    ProductModulesPath = ProductModulesPath;
+    AutotestsPath = AutotestsPath;
+    BaseDistribTestModules = BaseDistribTestModules;
+    GateTests();
+}

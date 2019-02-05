@@ -1,9 +1,10 @@
-suite Gate_KFA
+﻿suite Gate_KFA
 {
     platform gated_platforms;
     product KES;
     ProductDistributivePath = ProductDistributivePath;
     ProductModulesPath = ProductModulesPath;
     AutotestsPath = AutotestsPath;
+    BaseDistribTestModules = BaseDistribTestModules;
     GateTests_KES();
 }

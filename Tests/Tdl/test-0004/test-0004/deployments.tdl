@@ -1,7 +1,8 @@
-
+﻿
 deployment Execute_Deploy(
     string ProductDistributivePath,
     string ProductModulesPath,
+    string BaseDistribTestModules,
     string AutotestsPath = "xyz",
     string DeploymentSequenceName = "abc"
 )
