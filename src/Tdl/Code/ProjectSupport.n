@@ -176,7 +176,7 @@ namespace Tdl
       CheckParallelScenarios(context, scenarios);
       
       def uniqueIds = scenarios.OfType.[Scenario.DefSymbol]()
-        .Where(sd => sd.Defs.Any(d => d.Symbol.Name == "UniqueId"))
+        .Where(sd => sd.IsDefsEvaluated && sd.Defs.Any(d => d.Symbol.Name == "UniqueId"))
         .Select(sd => (sd, sd.Defs.Single(d => d.Symbol.Name == "UniqueId")));
       def groupedByDef = uniqueIds.GroupBy((_, d) => d.Expr.ToString());
       
