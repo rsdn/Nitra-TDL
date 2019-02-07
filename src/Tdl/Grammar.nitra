@@ -90,7 +90,7 @@
     syntax Action
     {
       | Method
-      | Config = "config" sm Path=StringLiteral ";" nl
+      | Config = "config" sm Path=StringLiteral TimeSpan ";" nl
       | Sequence = "sequence" sm  "{" inl SequenceAction* d "}" nl outline_end_before
     }
     regex TimeSpan = DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit | "";

@@ -65,6 +65,9 @@
     {
         [JsonProperty("TestConfigName", Required = Required.Always)]
         public string TestConfigName { get; set; }
+
+        [JsonProperty("ArtifactsCollectionTimeout", NullValueHandling = NullValueHandling.Ignore)]
+        public TimeSpan? ArtifactsCollectionTimeout { get; set; }
     }
 
     public sealed class ForceReboot { }

@@ -237,14 +237,14 @@ namespace JsonToTdl
                 var parms = args.OrderBy(a => a.c != null)
                                 .ThenByDescending(a => a.t)
                                 .ThenBy(a => a.n)
-                                .Select(a => "    " + a.t + a.n + (a.c == null ? "" : " = " + a.c))
+                                .Select(a => "    " + a.t + AsName(a.n) + (a.c == null ? "" : " = " + a.c))
                                 .ToArray();
                 _builder.AppendLine(string.Join(",\r\n", parms));
                 _builder.AppendLine(")");
                 _builder.Append("    script ");
                 _builder.AppendLine("@\"" + scriptPath + "\"");
                 _builder.AppendLine("{");
-                var defsStrs = defs.Select(d => "    " + d.n + " = " + d.c + ";");
+                var defsStrs = defs.Select(d => "    " + AsName(d.n) + " = " + d.c + ";");
                 foreach (var def in defsStrs)
                     _builder.AppendLine(def);
 
@@ -258,17 +258,31 @@ namespace JsonToTdl
                 _builder.AppendLine("{");
             }
 
-            if (AcceptProperty("ReturnValue"))
+            while (!Accept(JsonToken.EndObject))
             {
-                _builder.Append("    expected ");
-                Expect(JsonToken.Integer, out var expected);
-                _builder.Append(expected);
-                _builder.AppendLine(";");
+                if (AcceptProperty("ReturnValue"))
+                {
+                    _builder.Append("    expected ");
+                    Expect(JsonToken.Integer, out var expected);
+                    _builder.Append(expected);
+                    _builder.AppendLine(";");
+                }
+                if (AcceptProperty("Timeout"))
+                {
+                    _builder.Append("    timeout ");
+                    ExpectString(out var timeout);
+                    _builder.Append('"' + timeout + '"');
+                    _builder.AppendLine(";");
+                }
+                if (AcceptProperty("RebootExitCode"))
+                {
+                    _builder.Append("    expected for reboot ");
+                    Expect(JsonToken.Integer, out var expected);
+                    _builder.Append(expected);
+                    _builder.AppendLine(";");
+                }
             }
-
             _builder.AppendLine("}");
-
-            Expect(JsonToken.EndObject);
         }
 
         private static string GetValue()
@@ -442,7 +456,7 @@ namespace JsonToTdl
             Expect(JsonToken.StartArray);
             var scenarios = new List<string>();
             while (Accept(JsonToken.String, out var value))
-                scenarios.Add((string)value);
+                scenarios.Add(AsName((string)value));
             _builder.Append(" =\r\n    ");
             _builder.Append(string.Join(",\r\n    ", scenarios));
             _builder.AppendLine(";");
@@ -490,11 +504,28 @@ namespace JsonToTdl
             Expect(JsonToken.StartObject);
             void expectMethod()
             {
-                ExpectProperty("AssemblyName");
-                Expect(JsonToken.String);
-                ExpectProperty("MethodName");
-                Expect(JsonToken.String, out var value);
-                methods.Add("    method " + value + ";");
+                if (AcceptProperty("AssemblyName"))
+                {
+                    Expect(JsonToken.String);
+                    ExpectProperty("MethodName");
+                    Expect(JsonToken.String, out var value);
+                    methods.Add("    method " + value + ";");
+                }
+                else
+                {
+                    ExpectProperty("TestConfigName");
+                    Expect(JsonToken.String, out var value);
+                    string artifactsCollectionTimeout = null;
+                    if (AcceptProperty("ArtifactsCollectionTimeout"))
+                    {
+                        ExpectString(out var artifactsCollectionTimeoutStr);
+                        if (artifactsCollectionTimeoutStr != null)
+                            artifactsCollectionTimeout = " " + TimeSpan.Parse(artifactsCollectionTimeoutStr);
+
+                    }
+
+                    methods.Add("    config @\"" + value + '"' + artifactsCollectionTimeout + ";");
+                }
             }
 
             if (AcceptProperty("TestSequence"))

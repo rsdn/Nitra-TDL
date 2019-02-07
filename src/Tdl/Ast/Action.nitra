@@ -4,6 +4,7 @@ using DotNet.AstUtils;
 using Nitra;
 using Nitra.Declarations;
 
+using System;
 using System.Collections.Immutable;
 
 namespace Tdl
@@ -14,9 +15,11 @@ namespace Tdl
 
     | Config
       {
-        ScenarioActions = ScenarioAction.Config(Path.Location.Convert(), TdlUtils.ConvertStringLiteral(Path));
+        ScenarioActions = ScenarioAction.Config(Path.Location.Convert(), TdlUtils.ConvertStringLiteral(Path), 
+          if (ArtifactsCollectionTimeout.HasValue) ArtifactsCollectionTimeout.Value else null);
 
-        Path : CSharp.StringLiteral;
+        Path                       : CSharp.StringLiteral;
+        ArtifactsCollectionTimeout : ParsedValue[TimeSpan];
       }
 
     | Method
