@@ -593,7 +593,7 @@ namespace Tdl
       result
     }
     
-    public CheckUniquenessOfScenarios(this ast : IAst, context : DependentPropertyEvalContext, set : Scenario.SetSymbol, _depend : object) : void
+    public CheckUniquenessOfScenarios(this _ast : IAst, context : DependentPropertyEvalContext, set : Scenario.SetSymbol, _depend : object) : void
     {
       def duplicates = HashSet();
       _ = GetSetScenarios(set, duplicates);
@@ -735,7 +735,7 @@ namespace Tdl
        items.Select(x => if (x.IsSymbolEvaluated) x.Symbol else null).ToImmutableArray();
     }
 
-    public CheckOptionForDuplicates(this ast : IAst, context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : void
+    public CheckOptionForDuplicates(this _ast : IAst, context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : void
     {
       def duplicateSet = HashSet();
       foreach (option when option.IsSymbolEvaluated in options)
@@ -752,6 +752,14 @@ namespace Tdl
     {
         def msgs = context.GetFileData(location.Source.File.Id).GetCompilerMessage();
         msgs.ReportMessage(CompilerMessageType.Error, location, message, 0);
+    }
+    
+    public MakeTimeSpan(span : NSpan, text : string) : ParsedValue[TimeSpan]
+    {
+      if (string.IsNullOrWhiteSpace(text))
+        ParsedValue(span.StartPos)
+      else
+        ParsedValue(span, TimeSpan.Parse(text))
     }
   } // module
 } // namespace

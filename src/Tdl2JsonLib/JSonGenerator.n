@@ -405,7 +405,7 @@ namespace Tdl2JsonLib
                 if (r.Actions.Length == 1)
                   match (r.Actions[0])
                   {
-                    | Config as c => TestBot() <- TestConfigName = c.path.Value
+                    | Config as c => TestBot() <- { TestConfigName = c.path.Value; ArtifactsCollectionTimeout = c.ArtifactsCollectionTimeout; }
                     | Method as m => makeMethodAction(m)
                     | a => assert(false, "Unsupported ScenarioAction: " + a)
                   }

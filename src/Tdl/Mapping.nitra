@@ -134,7 +134,7 @@ namespace Tdl
 
   map syntax Grammar.Action -> Action*
   {
-    | Config   -> [ Action.Config { Path                       -> Path; } ]
+    | Config   -> [ Action.Config { Path -> Path; ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(TimeSpan, GetText(TimeSpan)); } ]
     | Method   -> [ Action.Method { Method.QualifiedIdentifier -> Method; } ]
     | Sequence -> SequenceActions
   }

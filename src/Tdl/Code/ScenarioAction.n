@@ -11,7 +11,7 @@ namespace Tdl
   {
     public Location : Location { get; }
     
-    | Config        { path   : ParsedValue[string]; }
+    | Config        { path   : ParsedValue[string]; ArtifactsCollectionTimeout : TimeSpan?; }
     | Method        { method : Member.MethodSymbol; }
     | Reboot        { }
     | WaitForReboot { TimeSpan : string; }
