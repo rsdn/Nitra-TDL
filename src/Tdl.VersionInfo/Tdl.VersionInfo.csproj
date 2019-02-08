@@ -69,4 +69,13 @@
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="BuildRevision = $(BuildRevision)" />
   </Target>
+  <Target Name="AfterBuild">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="OutputAssembly" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <TdlVersion>%(OutputAssembly.Version)</TdlVersion>
+    </PropertyGroup>
+    <Message Text="##vso[task.setvariable variable=TdlVersion]$(TdlVersion)" Importance="High" />
+  </Target>
 </Project>

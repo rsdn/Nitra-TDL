@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Tdl</id>
+    <version>$version$</version>
+    <authors>tdl</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Набор библиотек для работы с TDL</description>
+  </metadata>
+  <files>
+    <file target="lib\net461" src="..\bin\$configuration$\*.exe" />
+    <file target="lib\net461" src="..\bin\$configuration$\*.config" />
+    <file target="lib\net461" src="..\bin\$configuration$\*.dll" exclude="**\Tdl.VersionInfo.dll" />
+  </files>
+</package>
