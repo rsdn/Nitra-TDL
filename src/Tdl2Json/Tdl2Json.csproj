@@ -22,6 +22,9 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="TdlTask.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\AssemblyVersion.cs" Link="Properties\AssemblyVersion.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +56,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="tdl2json.targets">
+      <Pack>true</Pack>
+      <PackagePath>build</PackagePath>
+    </Content>
+    <Content Include="TdlTask.cs">
       <Pack>true</Pack>
       <PackagePath>build</PackagePath>
     </Content>
