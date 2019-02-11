@@ -85,7 +85,7 @@ namespace Tdl2JsonLib
       def projectSupport = ProjectSupport();
       JsonGenerator.ReportMessage("Loading types from referenced assemblies...");
       def data           = projectSupport.RefreshReferences(CancellationToken.None, project);
-      JsonGenerator.ReportMessage("Patsing TDLs...");
+      JsonGenerator.ReportMessage("Parsing TDLs...");
       project.Data       = data;
       def files          = project.Files.Select(_.GetEvalPropertiesData()).ToImmutableArray();
       JsonGenerator.ReportMessage("Semantic analysis...");
