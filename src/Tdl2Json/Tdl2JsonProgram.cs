@@ -80,20 +80,18 @@ namespace Tdl2Json
             }
             catch (CompilerErrorException e)
             {
-                Print($"Compilation failed: {e.Message}", ConsoleColor.Red);
-                Console.Error.Write(e.Message);
+                Print($"Compilation failed:", ConsoleColor.Red);
+                Console.Error.Write(e.Message, ConsoleColor.Red);
                 return -3;
             }
             catch (ConfigurationException e)
             {
-                Print($"Configuration error: {e.Message}", ConsoleColor.Red);
-                Console.Error.Write($"Configuration error(1,1,1,1): error: {e.Message}", ConsoleColor.Red);
+                Console.Error.Write($"Configuration error: {e.Message}", ConsoleColor.Red);
                 return -3;
             }
             catch (Exception e)
             {
-                Print($"Unhandled exception: {e}", ConsoleColor.Red);
-                Console.Error.Write($"Unhandled exception(1,1,1,1): error: {e.Message}", ConsoleColor.Red);
+                Console.Error.Write($"Unhandled exception: {e}", ConsoleColor.Red);
                 return -3;
             }
         }
