@@ -40,6 +40,7 @@ namespace Tdl2JsonLib
   public module JsonGenerator
   {
     static _jsonVersion = 5;
+    static _maxErrorsOrWarningsToDisplay = 30;
     public event OnMessage : Action[string];
     
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string], [NotNull] output : string, isMethodTypingEnabled : bool, transformatorOpt : Func[NamespaceSymbol, string, List[CompilerMessage]]) : string
@@ -105,7 +106,7 @@ namespace Tdl2JsonLib
       foreach (msg  in file.GetCompilerMessages())
         _ = messages.Add(msg);
 
-      ProcessCompilerMessages(messages.OrderBy(_.Location).ThenBy(_.Type).ThenBy(_.Text));
+      ProcessCompilerMessages(messages);
 
       def (_, _, namespaceSymbol) = data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol;
       namespaceSymbol
@@ -115,11 +116,47 @@ namespace Tdl2JsonLib
     {
       OnMessage?.Invoke(msg);
     }
-    
+
     private ProcessCompilerMessages(messages : IEnumerable[CompilerMessage]) : void
     {
-      when(messages.Any())
-        throw CompilerErrorException(string.Join(Environment.NewLine, messages.Select(m => m.ToString())), messages)
+      def texts = List();
+      
+      mutable errorCount;
+      mutable warningCount;
+      mutable skipHints;
+      foreach (message in messages)
+      {
+        match (message.Type)
+        {
+          | FatalError | Error =>
+            when (errorCount == _maxErrorsOrWarningsToDisplay)
+            {
+              texts.Add($"Too many errors detected! Only first $(errorCount) shown.");
+              break;
+            }
+            errorCount++;
+            skipHints = false;
+
+          | Warning =>
+            when (warningCount == _maxErrorsOrWarningsToDisplay)
+              texts.Add($"Too many warnings detected! Only first $(warningCount) shown.");
+            warningCount++;
+            when (warningCount > _maxErrorsOrWarningsToDisplay)
+            {
+              skipHints = true;
+              continue;
+            }
+
+          | Hint =>
+            when (skipHints)
+              continue;
+        }
+
+        texts.Add(message.ToString());
+      }
+
+      when (texts.Count > 0)
+        throw CompilerErrorException(string.Join(Environment.NewLine, texts), messages)
     }
 
     private GenerateJson(root : NamespaceSymbol) : string
