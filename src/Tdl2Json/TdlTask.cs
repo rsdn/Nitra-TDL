@@ -11,6 +11,16 @@ public class TdlTask : ToolTask
         get { return "Tdl2Json.exe"; }
     }
 
+    protected override MessageImportance StandardErrorLoggingImportance
+    {
+        get { return MessageImportance.High; }
+    }
+
+    protected override MessageImportance StandardOutputLoggingImportance
+    {
+        get { return MessageImportance.Low; }
+    }
+
     public string WorkingDirectory
     {
         get;
@@ -67,40 +77,5 @@ public class TdlTask : ToolTask
         }
         buffer.Add("-out:" + OutputFile);
         return string.Join(Environment.NewLine, buffer);
-    }
-
-    private static readonly Regex OutputRegex = new Regex(@"(.*?)\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\:\s*(\w*)\:\s*(.*)");
-
-    protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
-    {
-        var match = OutputRegex.Match(singleLine);
-        if (match.Success)
-        {
-            switch (match.Groups[6].Value)
-            {
-                case "error":
-                    Log.LogError("", "", "", match.Groups[1].Value,
-                        int.Parse(match.Groups[2].Value), int.Parse(match.Groups[3].Value),
-                        int.Parse(match.Groups[4].Value), int.Parse(match.Groups[5].Value),
-                        match.Groups[7].Value);
-                    break;
-                case "warning":
-                    Log.LogWarning("", "", "", match.Groups[1].Value,
-                        int.Parse(match.Groups[2].Value), int.Parse(match.Groups[3].Value),
-                        int.Parse(match.Groups[4].Value), int.Parse(match.Groups[5].Value),
-                        match.Groups[7].Value);
-                    break;
-                default:
-                    Log.LogMessage("", "", "", match.Groups[1].Value,
-                        int.Parse(match.Groups[2].Value), int.Parse(match.Groups[3].Value),
-                        int.Parse(match.Groups[4].Value), int.Parse(match.Groups[5].Value),
-                        match.Groups[7].Value);
-                    break;
-            }
-        }
-        else
-        {
-            base.LogEventsFromTextOutput(singleLine, messageImportance);
-        }
     }
 }
