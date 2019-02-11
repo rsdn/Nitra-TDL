@@ -91,21 +91,21 @@ namespace Tdl2JsonLib
       JsonGenerator.ReportMessage("Semantic analysis...");
       projectSupport.RefreshProject(CancellationToken.None, files, data);
 
-      def messages = List();
+      def messages = HashSet();
       JsonGenerator.ReportMessage("Done.");
 
       foreach (msg in project.CompilerMessages :> CompilerMessageList)
-        messages.Add(msg);
+        _ = messages.Add(msg);
 
       foreach (file when file.HasCompilerMessage in files)
       foreach (msg  in file.GetCompilerMessage())
-        messages.Add(msg);
+        _ = messages.Add(msg);
 
       foreach (file in project.Files)
       foreach (msg  in file.GetCompilerMessages())
-        messages.Add(msg);
+        _ = messages.Add(msg);
 
-      ProcessCompilerMessages(messages);
+      ProcessCompilerMessages(messages.OrderBy(_.Location).ThenBy(_.Type).ThenBy(_.Text));
 
       def (_, _, namespaceSymbol) = data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol;
       namespaceSymbol
