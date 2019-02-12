@@ -66,7 +66,7 @@ public class TdlTask : ToolTask
     protected override string GenerateResponseFileCommands()
     {
         var buffer = new List<string>();
-        buffer.Add("");
+        buffer.Add("-log-level:short");
         foreach (var item in Sources)
         {
             buffer.Add(item.GetMetadata("FullPath"));

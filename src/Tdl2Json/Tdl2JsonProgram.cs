@@ -13,6 +13,12 @@ namespace Tdl2Json
     {
         private const string TransformPrompt = "path-to.dll|Qualified.Function.Name";
 
+        private static readonly Dictionary<string, MessageImportance> LogLevels = new Dictionary<string, MessageImportance>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["normal"] = MessageImportance.Low,
+            ["short"] = MessageImportance.High,
+        };
+
         /// <summary>
         /// Generates JSON from source files <paramref name="sourceFileNames"/>. Throws <see cref="Exception"/> when error occures.
         /// </summary>
@@ -41,24 +47,37 @@ namespace Tdl2Json
                 var transformators     = FilterOption(args, "/transformator:", "-transformator:");
                 var outputs            = FilterOption(args, "/out:", "-out:");
                 var workingDirectories = FilterOption(args, "/wd:", "-wd:", "/WorkingDirectory:", "-WorkingDirectory:");
-                var files              = ExpandFilePaths(args.Where(a => !a.StartsWith("-", "/out:", "/wd:", "/h", "/?", "/from-file:", "/transformator:"))).ToArray();
+                var loglevels          = FilterOption(args, "/log-level:", "-log-level:");
+                var files              = ExpandFilePaths(args.Where(a => !a.StartsWith("-", "/out:", "/wd:", "/h", "/?", "/from-file:", "/transformator:", "/log-level:"))).ToArray();
                 var tdls               = files.Where(a => a.EndsWith(".tdl", StringComparison.InvariantCultureIgnoreCase)).ToArray();
                 var refs               = files.Where(a => a.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase)).ToArray();
                 var needHelp           = args.Contains("/?", "/h", "-?", "-h");
 
-                if (args.Length == 0 || needHelp || outputs.Length > 1 || workingDirectories.Length > 1 || tdls.Length == 0)
+                if (args.Length == 0 || needHelp || outputs.Length > 1 || workingDirectories.Length > 1 || tdls.Length == 0 || loglevels.Length > 1)
                 {
                     if (!needHelp)
                         Print("Invalid parameters", ConsoleColor.Red);
-                    Print($"Tdl2Json.exe [-out:output_file.json] file1.tdl[[+file2.tdl]...][[+file3.dll][+file4.dll]...] [-transformator:{TransformPrompt}]", ConsoleColor.Cyan);
+                    Print($"Tdl2Json.exe [-out:output_file.json] file1.tdl[[+file2.tdl]...][[+file3.dll][+file4.dll]...] [-transformator:{TransformPrompt}] [-log-level:normal]", ConsoleColor.Cyan);
                     Print(@"example Tdl2Json.exe /out:c:\temp\stage_tdl.json c:\TDLs\*.tdl c:\DLLs\Autotest.*.Suites.dll", ConsoleColor.Gray);
 
                     return needHelp ? 0 : -2;
                 }
+
+                var logLevel = MessageImportance.Low;
+                if (loglevels.Length == 1 && !LogLevels.TryGetValue(loglevels[0], out logLevel))
+                {
+                    Print($"Invalid log level value '{loglevels[0]}'. Valid values are: {string.Join(", ", LogLevels.Keys)}.", ConsoleColor.Cyan);
+                    return -2;
+                }
+
                 var workingDirectory = workingDirectories.SingleOrDefault() ?? Directory.GetCurrentDirectory();
                 var outPath = outputs.SingleOrDefault() ?? Path.Combine(workingDirectory, "out.json");
 
-                JsonGenerator.OnMessage += JsonGenerator_OnMessage;
+                JsonGenerator.OnMessage += (message, importance) =>
+                {
+                    if (importance >= logLevel)
+                        Print(message, ConsoleColor.DarkGray);
+                };
 
                 if (transformators.Length > 0)
                 {
@@ -137,11 +156,6 @@ namespace Tdl2Json
         private static void ReportIncorrectTransformator()
         {
             throw new Exception($"The 'transformator' parameter should have the format: '{TransformPrompt}'.");
-        }
-
-        private static void JsonGenerator_OnMessage(string message)
-        {
-            Print(message, ConsoleColor.DarkGray);
         }
 
         private static string[] FilterOption(string[] args, params string[] samples)
