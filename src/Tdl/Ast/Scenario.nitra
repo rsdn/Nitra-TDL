@@ -27,8 +27,9 @@ namespace Tdl
           in Environments   : ImmutableArray[Environment];
           in ParallelSetOpt : Scenario.SetSymbol;
 
-          Kind      = "scenario";
-          SpanClass = TdlLang.ScenarioSpanClass;
+          Kind           = "scenario";
+          SpanClass      = TdlLang.ScenarioSpanClass;
+          IsSameIdentity = candidate is Tdl.Scenario;
         }
       stage 1:
         out DeploymentRef          : Ref[DeploymentSymbol];
@@ -72,8 +73,9 @@ namespace Tdl
           in MultiMachineId : Guid;
           in BarriersCount  : list[BarrierSymbol * int];
 
-          Kind      = "scenario set";
-          SpanClass = TdlLang.ScenarioSpanClass;
+          Kind           = "scenario set";
+          SpanClass      = TdlLang.ScenarioSpanClass;
+          IsSameIdentity = candidate is Tdl.Scenario;
         }
 
         Scenarios.Scope                 = Scope;
@@ -102,9 +104,10 @@ namespace Tdl
         stage 3:
           in Froms      : ImmutableArray[Code.From];
 
-          Scope     = MemberTable;
-          Kind      = "scenario generator";
-          SpanClass = TdlLang.ScenarioSpanClass;
+          Scope          = MemberTable;
+          Kind           = "scenario generator";
+          IsSameIdentity = candidate is Tdl.Scenario;
+          SpanClass      = TdlLang.ScenarioSpanClass;
         }
 
       stage 1:

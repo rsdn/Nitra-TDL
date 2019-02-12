@@ -18,8 +18,9 @@ namespace Tdl
       in Statements : ImmutableArray[SuiteStatement];
       in Type       : SuiteTypeSymbol;
 
-      Kind      = "suite";
-      SpanClass = TdlLang.SuiteSpanClass;
+      Kind           = "suite";
+      SpanClass      = TdlLang.SuiteSpanClass;
+      IsSameIdentity = candidate is Tdl.Suite;
     }
 
     out PlatformRef : Ref[PlatformSymbol];

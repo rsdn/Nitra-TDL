@@ -19,8 +19,9 @@ namespace Tdl
       {
         symbol
         {
-          Kind      = "platform";
-          SpanClass = TdlLang.PlatformSpanClass;
+          Kind           = "platform";
+          SpanClass      = TdlLang.PlatformSpanClass;
+          IsSameIdentity = candidate is Tdl.Platform;
         }
       }
     | Set
@@ -32,9 +33,10 @@ namespace Tdl
         stage 2:
           in Platforms : ImmutableArray[PlatformSymbol];
 
-          Kind      = "platform";
-          SpanClass = TdlLang.PlatformSpanClass;
-          MakeHint  = TdlUtils.PlatformMakeHint(symbolCache, this);
+          Kind           = "platform";
+          SpanClass      = TdlLang.PlatformSpanClass;
+          IsSameIdentity = candidate is Tdl.Platform;
+          MakeHint       = TdlUtils.PlatformMakeHint(symbolCache, this);
         }
 
         Symbol.PlatformsRefs = TdlUtils.Resolve(Platforms.Ref);
