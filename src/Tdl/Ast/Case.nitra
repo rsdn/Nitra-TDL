@@ -1,0 +1,40 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  ast Case : BindableAst
+  {
+    out Refs : Ref[DeclarationSymbol];
+    out Cases : ImmutableArray[string];
+
+    Reference.Scope = Scope;
+    Refs = Reference.Ref;
+    Cases = Values.Values;
+
+    Values    : CaseValue*;
+    Reference : Reference;
+  }
+
+  abstract ast CaseValue : BindableAst
+  {
+    out Values : string;
+
+    | String
+      {
+        Values = TdlUtils.ConvertStringLiteralOrNull(Value);
+
+        Value : CSharp.StringLiteral;
+      }
+
+    | Wildcard
+      {
+        Values = null;
+      }
+  }
+}

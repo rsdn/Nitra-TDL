@@ -61,7 +61,28 @@ namespace Tdl2JsonLib
             ScriptArgs     = scriptArgs;
         })
     }
-    
+
+    private GenerateDeploymentSelect(sel : Deployment.SelectSymbol) : string * QuickType.Deployment
+    {
+      def separator   = "⁞";
+      def deployments = sel.Deployments;
+      def cases       = sel.Cases;
+      assert2(deployments.Length == cases.Length);
+      
+      def condition = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
+      def values    = cases.Map2ToArray(deployments, 
+        (values, d) => (string.Join(separator, values), 
+        DeploymentWithParameters() <- { Deployment = d.Name; Parameters = Dictionary(); })).ToDictionary();
+
+      (sel.Name, 
+        Deployment() <- 
+        { 
+            Type      = TypeEnum.Select;
+            Condition = condition;
+            Values    = values;
+        })
+    }
+
     private GenerateDeploymentCurrying1(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
     {
       def deployments = Dictionary();
@@ -115,6 +136,8 @@ namespace Tdl2JsonLib
             }
           )
         
+
+        | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel)
         | _ => ThrowNotSupportedSymbol(deploymentSymbol) 
       }
     }

@@ -42,6 +42,7 @@ namespace Tdl
       }
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Deployments.Item1 -> Deployments; }
     | Currying         -> Deployment.Currying { Name -> Name; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
+    | DeploymentSelect -> Deployment.Select   { Name -> Name; Parameters.Item1 -> Parameters; Cases -> Cases; }
     | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; }
     | Product          -> Product.Def         { Name -> Name; Type -> ProductType; ProductBody.DefDeclarations -> Definitions; }
     | ProductSet       -> Product.Set         { Name -> Name; Type -> ProductType; Products.Item1 -> Products; }
@@ -88,6 +89,27 @@ namespace Tdl
     | Barrier  -> Barrier     { Name -> Name; Timeout -> Timeout; }
   }
 
+  map syntax Grammar.MemberDeclaration.DeploymentSelect.Parameter -> FormalParameter
+  {
+    Name         -> Name;
+    Expr.Nop { } -> Default;
+    []           -> Attributes;
+    QualifiedReference.Simple { Name = Reference(Name.Location.FromEnd(), "string"); } -> Type;
+    Modifier = ParsedValue(Name.Span.FromEnd(), ParameterModifier.None);
+  }
+
+  map syntax Grammar.Case -> Case
+  {
+    Values.Item1 -> Values;
+    Reference    -> Reference;
+  }
+
+  map syntax Grammar.Case.Value -> CaseValue
+  {
+    | String   -> String   { this.StringLiteral -> Value; }
+    | Wildcard -> Wildcard { }
+  }
+
   map syntax Grammar.From -> From
   {
     VarDecl    -> Vars;
@@ -101,7 +123,7 @@ namespace Tdl
   }
 
   //HACK: отсутствует оператор map! маппинг Tuple написан инлайновым кодом
-  map syntax Grammar.From.VarDecl(names : Name*) -> Var*
+  map syntax Grammar.From.VarDecl(_names : Name*) -> Var*
   {
     | Name -> this
   }
