@@ -10,7 +10,8 @@ namespace Tdl
   {
     symbol
     {
-      Kind  = "tdl module";
+      Kind           = "tdl module";
+      IsSameIdentity = candidate is Tdl.Module;
     }
   stage 0:
     in RootNamespace : NamespaceSymbol;

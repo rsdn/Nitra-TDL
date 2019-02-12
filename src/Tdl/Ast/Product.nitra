@@ -13,7 +13,6 @@ namespace Tdl
     symbol
     {
       Type = context.ToTdlContext().ProductType;
-
     stage 1:
       in ProductType : ProductTypeSymbol;
       SpanClass = TdlLang.ProductSpanClass;
@@ -32,7 +31,9 @@ namespace Tdl
         symbol
         {
           in Defs : ImmutableArray[Def];
-          Kind = "product";
+    
+          Kind           = "product";
+          IsSameIdentity = candidate is Tdl.Product;
         }
 
         Definitions.DefinitionScope = Symbol.ProductType.Scope;
@@ -53,7 +54,8 @@ namespace Tdl
           stage 1:
             in Products    : ImmutableArray[ProductSymbol];
 
-          Kind      = "product set";
+          Kind           = "product set";
+          IsSameIdentity = candidate is Tdl.Product;
         }
 
         Products.Scope     = Scope;

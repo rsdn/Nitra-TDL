@@ -28,8 +28,9 @@ namespace Tdl
           in Timeout   : ParsedValue[string];
           in Defs      : ImmutableArray[Def2];
 
-          Kind      = "deployment";
-          SpanClass = TdlLang.DeploymentSpanClass;
+          Kind           = "deployment";
+          SpanClass      = TdlLang.DeploymentSpanClass;
+          IsSameIdentity = candidate is Tdl.Deployment;
         }
 
 
@@ -61,8 +62,9 @@ namespace Tdl
         stage 1:
           in Deployments : ImmutableArray[DeploymentSymbol];
 
-          Kind      = "deployment set";
-          SpanClass = TdlLang.DeploymentSpanClass;
+          Kind           = "deployment set";
+          SpanClass      = TdlLang.DeploymentSpanClass;
+          IsSameIdentity = candidate is Tdl.Deployment;
         }
 
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployments);
@@ -82,8 +84,9 @@ namespace Tdl
           in ExcludedParams  : ImmutableArray[FormalParameterSymbol];
           in ParameterValues : ImmutableArray[Def];
 
-          Kind      = "deployment";
-          SpanClass = TdlLang.DeploymentSpanClass;
+          Kind           = "deployment";
+          SpanClass      = TdlLang.DeploymentSpanClass;
+          IsSameIdentity = candidate is Tdl.Deployment;
         }
 
         out BaseDeploymentRef : Ref[DeploymentSymbol];
@@ -113,8 +116,9 @@ namespace Tdl
           in Deployments : ImmutableArray[DeploymentSymbol];
           in Cases       : ImmutableArray[ImmutableArray[string]];
 
-          Kind      = "select deployment";
-          SpanClass = TdlLang.DeploymentSpanClass;
+          Kind           = "select deployment";
+          SpanClass      = TdlLang.DeploymentSpanClass;
+          IsSameIdentity = candidate is Tdl.Deployment;
         }
 
         Parameters.DeclaredIn           = Symbol;

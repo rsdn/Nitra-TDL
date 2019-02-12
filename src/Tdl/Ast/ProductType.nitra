@@ -10,9 +10,10 @@ namespace Tdl
   {
     symbol
     {
-      Scope     = MemberTable;
-      Kind      = "product type";
-      SpanClass = TdlLang.TdlTypeSpanClass;
+      Scope          = MemberTable;
+      Kind           = "product type";
+      IsSameIdentity = candidate is Tdl.ProductType;
+      SpanClass      = TdlLang.TdlTypeSpanClass;
     }
 
     when (TdlUtils.IsMissingRequiredProductTypeFields(Fields.Symbol))
