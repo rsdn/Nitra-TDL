@@ -9,8 +9,6 @@ using Tdl2JsonLib;
 
 namespace Tdl2Json
 {
-    using TransformatorType = Func<DotNet.NamespaceSymbol, string, List<Nitra.ProjectSystem.CompilerMessage>>;
-
     public static class Program
     {
         private const string TransformPrompt = "path-to.dll|Qualified.Function.Name";
@@ -20,7 +18,9 @@ namespace Tdl2Json
         /// </summary>
         public static string GenerateJson(string workingDirectory, IEnumerable<string> sourceFileNames, IEnumerable<string> references, bool validateMethodNames)
         {
-            return JsonGenerator.Generate(workingDirectory, sourceFileNames.ToArray(), references.ToArray(), "", validateMethodNames, null);
+            var writer = new StringWriter();
+            JsonGenerator.Generate(workingDirectory, sourceFileNames.ToArray(), references.ToArray(), validateMethodNames, new Lazy<TextWriter>(() => writer), null, null);
+            return writer.ToString();
         }
 
         /// <summary>
@@ -57,21 +57,26 @@ namespace Tdl2Json
                 }
                 var workingDirectory = workingDirectories.SingleOrDefault() ?? Directory.GetCurrentDirectory();
                 var outPath = outputs.SingleOrDefault() ?? Path.Combine(workingDirectory, "out.json");
-                if (tdls.Length > 10 || tdls.Sum(f => new FileInfo(f).Length) > 1024 * 1024)
-                    JsonGenerator.OnMessage += JsonGenerator_OnMessage;
+
+                JsonGenerator.OnMessage += JsonGenerator_OnMessage;
+
                 if (transformators.Length > 0)
                 {
                     Print($"Used a custom transformers", ConsoleColor.Magenta);
                     foreach (string transformator in transformators)
                     {
                         var transformatorFunc = LoadTransformator(transformator);
-                        JsonGenerator.Generate(workingDirectory, tdls, refs, outPath, isMethodTypingEnabled: true, transformatorOpt: transformatorFunc);
+                        JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: null,
+                            transformatorOutput: outPath, transformatorOpt: transformatorFunc);
                     }
                 }
                 else
                 {
-                    var contents = JsonGenerator.Generate(workingDirectory, tdls, refs, outPath, isMethodTypingEnabled: true, transformatorOpt: null);
-                    File.WriteAllText(outPath, contents, Encoding.UTF8);
+                    var output = new Lazy<TextWriter>(() => new StreamWriter(outPath, false, Encoding.UTF8));
+                    JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
+                        transformatorOutput: null, transformatorOpt: null);
+                    if (output.IsValueCreated)
+                        output.Value.Dispose();
                     Print($"The JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
                 }
 
@@ -122,11 +127,11 @@ namespace Tdl2Json
             return (type, funcName);
         }
 
-        private static TransformatorType LoadTransformator(string transformator)
+        private static TransfomationFunc LoadTransformator(string transformator)
         {
             var (path, qualifiedFunctionName) = getPathAndFunc(transformator);
             var (type, funcName) = getTypeAndFunc(Assembly.LoadFrom(path), qualifiedFunctionName);
-            return (TransformatorType)Delegate.CreateDelegate(typeof(TransformatorType), type, funcName);
+            return (TransfomationFunc)Delegate.CreateDelegate(typeof(TransfomationFunc), type, funcName);
         }
 
         private static void ReportIncorrectTransformator()

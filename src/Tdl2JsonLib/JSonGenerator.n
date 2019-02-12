@@ -25,8 +25,10 @@ using Microsoft.Cci;
 using QuickType;
 
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -37,13 +39,16 @@ using Tdl2JsonLib.ExceptionHelper;
 // Сгенерированно с помощью: https://app.quicktype.io/
 namespace Tdl2JsonLib
 {
+  public delegate TransfomationFunc(rootNs : NamespaceSymbol, output : string) : List[CompilerMessage];
+
   public module JsonGenerator
   {
     static _jsonVersion = 5;
     static _maxErrorsOrWarningsToDisplay = 30;
     public event OnMessage : Action[string];
     
-    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string], [NotNull] output : string, isMethodTypingEnabled : bool, transformatorOpt : Func[NamespaceSymbol, string, List[CompilerMessage]]) : string
+    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
+      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc) : void
     {
       def absolutePaths = sourceFiles.Select(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f)).ToArray();
 
@@ -62,12 +67,11 @@ namespace Tdl2JsonLib
       def rootNamespace = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled);
       if (transformatorOpt != null)
       {
-        def messages = transformatorOpt(rootNamespace, output);
+        def messages = transformatorOpt(rootNamespace, transformatorOutput);
         ProcessCompilerMessages(messages);
-        ""
       }
       else
-        GenerateJson(rootNamespace);
+        GenerateJson(rootNamespace, output);
     }
 
     private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol
@@ -83,17 +87,23 @@ namespace Tdl2JsonLib
                                  FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
                                  .Concat(refs.Select(r => FileLibReference(r) : LibReference)).ToArray());
 
+      def stopwatch      = Stopwatch.StartNew();
+
       def projectSupport = ProjectSupport();
-      JsonGenerator.ReportMessage("Loading types from referenced assemblies...");
+      ReportMessage("Loading types from referenced assemblies...");
       def data           = projectSupport.RefreshReferences(CancellationToken.None, project);
-      JsonGenerator.ReportMessage("Parsing TDLs...");
+      ReportElapsedTime(stopwatch);
+
+      ReportMessage("Parsing TDLs...");
       project.Data       = data;
       def files          = project.Files.Select(_.GetEvalPropertiesData()).ToImmutableArray();
-      JsonGenerator.ReportMessage("Semantic analysis...");
+      ReportElapsedTime(stopwatch);
+
+      ReportMessage("Semantic analysis...");
       projectSupport.RefreshProject(CancellationToken.None, files, data);
+      ReportElapsedTime(stopwatch);
 
       def messages = HashSet();
-      JsonGenerator.ReportMessage("Done.");
 
       foreach (msg in project.CompilerMessages :> CompilerMessageList)
         _ = messages.Add(msg);
@@ -115,6 +125,12 @@ namespace Tdl2JsonLib
     internal ReportMessage(msg : string) : void
     {
       OnMessage?.Invoke(msg);
+    }
+
+    private ReportElapsedTime(stopwatch : Stopwatch) : void
+    {
+      ReportMessage($"Elapsed time: $(stopwatch.Elapsed)");
+      stopwatch.Restart();
     }
 
     private ProcessCompilerMessages(messages : IEnumerable[CompilerMessage]) : void
@@ -159,8 +175,11 @@ namespace Tdl2JsonLib
         throw CompilerErrorException(string.Join(Environment.NewLine, texts), messages)
     }
 
-    private GenerateJson(root : NamespaceSymbol) : string
+    private GenerateJson(root : NamespaceSymbol, output : Lazy[TextWriter]) : void
     {
+      def stopwatch = Stopwatch.StartNew();
+      JsonGenerator.ReportMessage("Generating JSON...");
+
       def symbols = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
       def coordinate = Root() <-
       {
@@ -173,9 +192,12 @@ namespace Tdl2JsonLib
         TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol]().SelectMany(GenerateScenarios).ToDictionary();
       };
 
-      def settings = ConverterSettings.Settings;
-      settings.Formatting = Formatting.Indented;
-      Newtonsoft.Json.JsonConvert.SerializeObject(coordinate, settings);
+      def settings = ConverterSettings.Settings <- Formatting = Formatting.Indented;
+      def serializer = JsonSerializer.Create(settings);
+      serializer.Serialize(output.Value, coordinate);
+      output.Value.Flush();
+
+      ReportElapsedTime(stopwatch);
     }
 
     private GeneratePlatform(platformSymbol : PlatformSymbol) : string * PlatformValue
