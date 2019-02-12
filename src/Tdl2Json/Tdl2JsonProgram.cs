@@ -80,18 +80,23 @@ namespace Tdl2Json
             }
             catch (CompilerErrorException e)
             {
-                Print($"Compilation failed:", ConsoleColor.Red);
-                Console.Error.Write(e.Message, ConsoleColor.Red);
+                using (new ConsoleForegroundColor(ConsoleColor.Red))
+                {
+                    Console.WriteLine("Compilation failed:");
+                    Console.Error.Write(e.Message);
+                }
                 return -3;
             }
             catch (ConfigurationException e)
             {
-                Console.Error.Write($"Configuration error: {e.Message}", ConsoleColor.Red);
+                using (new ConsoleForegroundColor(ConsoleColor.Red))
+                    Console.Error.Write($"Configuration error: {e.Message}");
                 return -3;
             }
             catch (Exception e)
             {
-                Console.Error.Write($"Unhandled exception: {e}", ConsoleColor.Red);
+                using (new ConsoleForegroundColor(ConsoleColor.Red))
+                    Console.Error.Write($"Unhandled exception: {e}");
                 return -3;
             }
         }
@@ -141,10 +146,8 @@ namespace Tdl2Json
 
         private static void Print(string text, ConsoleColor color)
         {
-            var oldColor = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.WriteLine(text);
-            Console.ForegroundColor = oldColor;
+            using (new ConsoleForegroundColor(color))
+                Console.WriteLine(text);
         }
 
         public static string[] ExpandFilePaths(IEnumerable<string> args)
