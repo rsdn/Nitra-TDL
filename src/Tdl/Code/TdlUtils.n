@@ -69,6 +69,14 @@ namespace Tdl
       builder.ToImmutable()
     }
 
+    public ResolveDeployments(deploymentRefs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[Ref[DeploymentSymbol]]
+    {
+      def builder = ImmutableArray.CreateBuilder(deploymentRefs.Length);
+      foreach (r in deploymentRefs)
+        builder.Add(r.Resolve());
+      builder.MoveToImmutable()
+    }
+    
     public MakeAllProducts(it : ProductSymbol, products : ImmutableArray[ProductSymbol]) : ImmutableArray[ProductSymbol]
     {
       def builder = ImmutableArray.CreateBuilder();
@@ -204,6 +212,15 @@ namespace Tdl
       if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value.Value) else ParsedValue(valueOpt.Span.StartPos)
     }
 
+    public ConvertStringLiteralOrNull(str : CSharp.StringLiteral) : string
+    {
+      def rsult = ConvertStringLiteral(str);
+      if (rsult.HasValue)
+        rsult.Value
+      else
+        null
+    }
+    
     public ConvertStringLiteral(str : CSharp.StringLiteral) : ParsedValue[string]
     {
       def builder = Text.StringBuilder();
@@ -245,6 +262,45 @@ namespace Tdl
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in definitions)
         builder.Add(Def(definition.SymbolRef.Symbol, ConvertDefExpr(definition.Expr)));
+      builder.TryMoveToImmutable()
+    }
+
+    public MakeDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
+    {
+      def builder = ImmutableArray.CreateBuilder(definitions.Count);
+      foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in definitions)
+      {
+        def sym = definition.SymbolRef.Symbol;
+        when (sym is FormalParameterSymbol as p when p.IsDeclaredInEvaluated)
+        {
+          when (p.DeclaredIn is Deployment.SelectSymbol as sel)
+          {
+            mutable found;
+            def index = sel.Parameters.IndexOf(p);
+            assert2(index >= 0);
+            def value = ConvertDefExpr(definition.Expr);
+            when (value is Tdl.Expr.String as str)
+            {
+              foreach (case when index < case.Length in sel.Cases)
+              {
+                def val = case[index];
+                when (string.Equals(val, str.Value, StringComparison.Ordinal))
+                {
+                  found = true;
+                  break;
+                }
+              }
+              unless (found)
+              {
+                def msgs = context.GetFileData(definitions.Location.Source.File.Id).GetCompilerMessage();
+                using (root = msgs.ReportRootMessage(CompilerMessageType.Error, definition.Expr.Location, $"The '$(sel.Name)' select statement does not contain a '$(str.Value)' value.", 0))
+                  root.ReportMessage(CompilerMessageType.Hint, sel.FirstDeclarationOrDefault.Name.Location, "The related select statement.", 0);
+              }
+            }
+          }
+        }
+        builder.Add(Def(sym, ConvertDefExpr(definition.Expr)));
+      }
       builder.TryMoveToImmutable()
     }
 
@@ -409,6 +465,18 @@ namespace Tdl
       filteringScope
     }
 
+    public MakeDeploymentScope(scope : Scope) : Scope
+    {
+      def filter(symbol : DeclarationSymbol) : bool
+      {
+        | DeploymentSymbol => true
+        | _                => false
+      }
+
+      def filteringScope = FilteringScope(scope, filter);
+      filteringScope
+    }
+    
     public HasUndefinedFieldsInProduct(type : ProductTypeSymbol, defs : ImmutableArray[Def]) : bool
     {
       CollectUndefinedFieldsInProduct(type, defs).Any()
@@ -760,6 +828,45 @@ namespace Tdl
         ParsedValue(span.StartPos)
       else
         ParsedValue(span, TimeSpan.Parse(text))
+    }
+
+    public MakeSelectAggregateParametersScope(scope : TableScope, deployments : ImmutableArray[DeploymentSymbol]) : ValueOption[Scope]
+    {
+      def visited = HashSet();
+      mutable builder = UnionScopeBuilder();
+      if (CollectDeployments(visited, ref builder, deployments))
+        VSome(builder.ToScope().HideWith(scope))
+      else
+        VNone()
+    }
+
+    public ChechSelectDeployment(this ast : IAst, context : DependentPropertyEvalContext, cases : Case.IAstList) : void
+    {
+      def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+      
+      mutable valuesCount = -1;
+      foreach (case in cases)
+      {
+        if (valuesCount < 0)
+          valuesCount = case.Values.Count;
+        else when (valuesCount != case.Values.Count)
+        {
+          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "The case must has $valuesCount values.", 0);
+          break;
+        }
+      }
+
+      foreach (case in cases with k)
+      foreach (value when value.Values == "" in case.Values)
+        msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value catn't be empty.", 0);
+      
+      def set = HashSet();
+      foreach (case in cases with k)
+      {
+        def values = case.Values.Map(v => v.Values);
+        unless (set.Add(values))
+          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Duplicate entry.", 0);
+      }
     }
   } // module
 } // namespace

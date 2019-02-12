@@ -44,6 +44,14 @@
       | DeploymentScript  = "deployment"        sm Name outline_begin_before "(" (FormalParameter; ","sm)* ")" outline_end_before sm "script" ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
       | DeploymentSet     = "deployment"        sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
       | Currying          = "deployment"        sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
+      | DeploymentSelect  = "select" sm "deployment" sm Name sm "(" (Parameter; "," sm)+ ")"
+                            "{" inl
+                                Case*  
+                            d "}" nl outline_end_before
+        {
+          syntax Parameter = Name;
+        }
+
       | ProductType       = "product" sm "type" sm Name nl TypeBody;
       | Product           = "product"           sm Name sm ":" Type=Reference nl ProductBody;
       | ProductSet        = "product"           sm Name sm ":" Type=Reference sm "=" sm Products=(Reference; "," sm)+ ";" nl;
@@ -56,6 +64,15 @@
       | SuiteTyped        = "suite"             sm Name sm ":" Type=Reference nl SuiteBody;
       | External          = "external"          sm ExternalBody;
       | Barrier           = "barrier"           sm Name "timeout" sm Timeout=StringLiteral ";" nl;
+    }
+
+    syntax Case = "|" sm (Value; "," sm)+ sm "=>" Reference nl
+    {
+      syntax Value
+      {
+        | String = StringLiteral
+        | Wildcard = "_"
+      }
     }
 
     syntax From = "from" VarDecl "in" List=(VarRef; "," sm; ?)+

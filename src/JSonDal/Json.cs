@@ -104,17 +104,21 @@ namespace QuickType
         [JsonProperty("RebootTimeout", NullValueHandling = NullValueHandling.Ignore)]
         public string RebootTimeout { get; set; }
 
-        [JsonProperty("Condition", NullValueHandling = NullValueHandling.Ignore)]
-        public string Condition { get; set; }
-
         /// <summary>
         /// Должен ли выполняться тест, если значения параметра нет в списке? (для хотфиксов)
         /// </summary>
         [JsonProperty("SkipInvalidCondition", NullValueHandling = NullValueHandling.Ignore)]
         public bool? SkipInvalidCondition { get; set; }
 
-        [JsonProperty("Values", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, ValueValue> Values { get; set; }
+        #region Type = Select
+
+        [JsonProperty("Condition", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Condition { get; set; }
+
+        [JsonProperty("Values", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, DeploymentWithParameters> Values { get; set; }
+
+        #endregion
 
         [JsonProperty("Deployments", NullValueHandling = NullValueHandling.Ignore)]
         public object[] Deployments { get; set; }
@@ -315,15 +319,6 @@ namespace QuickType
         public static implicit operator DeploymentDeploymentUnion(string String) => new DeploymentDeploymentUnion { String = String };
     }
 
-    public partial struct ValueValue
-    {
-        public string String;
-        public ValueClass ValueClass;
-
-        public static implicit operator ValueValue(string String) => new ValueValue { String = String };
-        public static implicit operator ValueValue(ValueClass ValueClass) => new ValueValue { ValueClass = ValueClass };
-    }
-
     public partial struct PlatformValue
     {
         public Platform Platform;
@@ -389,7 +384,6 @@ namespace QuickType
             {
                 DeploymentDeploymentUnionConverter.Singleton,
                 TypeEnumConverter.Singleton,
-                ValueValueConverter.Singleton,
                 PlatformValueConverter.Singleton,
                 ProductValueConverter.Singleton,
                 TestCaseConverter.Singleton,
@@ -484,44 +478,6 @@ namespace QuickType
         }
 
         public static readonly TypeEnumConverter Singleton = new TypeEnumConverter();
-    }
-
-    internal class ValueValueConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(ValueValue) || t == typeof(ValueValue?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            switch (reader.TokenType)
-            {
-                case JsonToken.String:
-                case JsonToken.Date:
-                    var stringValue = serializer.Deserialize<string>(reader);
-                    return new ValueValue { String = stringValue };
-                case JsonToken.StartObject:
-                    var objectValue = serializer.Deserialize<ValueClass>(reader);
-                    return new ValueValue { ValueClass = objectValue };
-            }
-            throw new Exception("Cannot unmarshal type ValueValue");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (ValueValue)untypedValue;
-            if (value.String != null)
-            {
-                serializer.Serialize(writer, value.String);
-                return;
-            }
-            if (value.ValueClass != null)
-            {
-                serializer.Serialize(writer, value.ValueClass);
-                return;
-            }
-            throw new Exception("Cannot marshal type ValueValue");
-        }
-
-        public static readonly ValueValueConverter Singleton = new ValueValueConverter();
     }
 
     internal class PlatformValueConverter : JsonConverter

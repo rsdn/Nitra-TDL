@@ -33,7 +33,7 @@ namespace Tdl
         }
 
 
-        //Definitions.DefinitionScope   = parameters scope from script
+        Parameters.DeclaredIn           = Symbol;
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
         Symbol.Path                     = TdlUtils.ConvertStringLiteral(Path);
@@ -97,13 +97,36 @@ namespace Tdl
         Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
         Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams);
 
-        Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, CurredParameters.SymbolRef);
+        Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, CurredParameters.SymbolRef);
 
         when (Symbol.BaseDeployment is Deployment.SetSymbol)
           BaseDeployment.Error(context, "The deployment group is not allowed source for base deployment.");
 
         BaseDeployment   : Reference;
         CurredParameters : Definition*;
+
+      }
+    | Select : Parameterizable
+      {
+        symbol
+        {
+          in Deployments : ImmutableArray[DeploymentSymbol];
+          in Cases       : ImmutableArray[ImmutableArray[string]];
+
+          Kind      = "select deployment";
+          SpanClass = TdlLang.DeploymentSpanClass;
+        }
+
+        Parameters.DeclaredIn           = Symbol;
+        Symbol.Deployments              = TdlUtils.MakeDeployments(TdlUtils.ResolveDeployments(Cases.Refs));
+        Symbol.AggregateParametersScope = await TdlUtils.MakeSelectAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployments);
+        Parameters.Scope                = Scope;
+        Cases.Scope                     = TdlUtils.MakeDeploymentScope(Scope);
+        Symbol.Cases                    = Cases.Cases;
+
+        ChechSelectDeployment(context, Cases);
+
+        Cases      : Case*;
       }
   } // Deployment
 }
