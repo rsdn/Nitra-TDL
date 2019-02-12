@@ -31,6 +31,12 @@ namespace Tdl2JsonLib
             _counter
         }
 
+        public override ReParse() : void
+        {
+          JsonGenerator.ReportMessage(FullName, MessageImportance.Low);
+          base.ReParse();
+        }
+
         public override UpdateAst()       : void { base.UpdateAst(); }
         public override UpdateParseTree() : void { base.UpdateParseTree(); }
     }

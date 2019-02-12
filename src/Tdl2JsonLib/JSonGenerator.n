@@ -41,16 +41,25 @@ namespace Tdl2JsonLib
 {
   public delegate TransfomationFunc(rootNs : NamespaceSymbol, output : string) : List[CompilerMessage];
 
+  public delegate MessageHandler(text : string, importance : MessageImportance) : void;
+
+  public enum MessageImportance
+  {
+    | Low
+    | High
+  }
+
   public module JsonGenerator
   {
     static _jsonVersion = 5;
     static _maxErrorsOrWarningsToDisplay = 30;
-    public event OnMessage : Action[string];
-    
+
+    public event OnMessage : MessageHandler;
+
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
       isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc) : void
     {
-      def absolutePaths = sourceFiles.Select(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f)).ToArray();
+      def absolutePaths = sourceFiles.Map(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f));
 
       def CheckFilesExists(files, messageformatter : string -> string)
       {
@@ -122,9 +131,9 @@ namespace Tdl2JsonLib
       namespaceSymbol
     }
 
-    internal ReportMessage(msg : string) : void
+    internal ReportMessage(msg : string, importance : MessageImportance = MessageImportance.High) : void
     {
-      OnMessage?.Invoke(msg);
+      OnMessage?.Invoke(msg, importance);
     }
 
     private ReportElapsedTime(stopwatch : Stopwatch) : void
