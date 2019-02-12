@@ -154,6 +154,14 @@ namespace Tdl
               return false;
             UnionScopeBuilder.Add(s.ParameterScope, ref builder);
             
+          | sel is Deployment.SelectSymbol   =>
+            unless (sel.IsParameterScopeEvaluated)
+              return false;
+            UnionScopeBuilder.Add(sel.ParameterScope, ref builder);
+
+            unless (CollectDeployments(visited, ref builder, sel.Deployments))
+              return false;
+            
           | s is Deployment.SetSymbol      =>
             unless (CollectDeployments(visited, ref builder, s.Deployments))
               return false;
