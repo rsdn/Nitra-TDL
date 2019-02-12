@@ -154,12 +154,12 @@ namespace Tdl
               return false;
             UnionScopeBuilder.Add(s.ParameterScope, ref builder);
             
-          | sel is Deployment.SelectSymbol   =>
-            unless (sel.IsParameterScopeEvaluated)
+          | s is Deployment.SelectSymbol   =>
+            unless (s.IsParameterScopeEvaluated)
               return false;
-            UnionScopeBuilder.Add(sel.ParameterScope, ref builder);
+            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
 
-            unless (CollectDeployments(visited, ref builder, sel.Deployments))
+            unless (CollectDeployments(visited, ref builder, s.Deployments))
               return false;
             
           | s is Deployment.SetSymbol      =>
@@ -171,7 +171,7 @@ namespace Tdl
               return false;
             UnionScopeBuilder.Add(s.AggregateParametersScope, ref builder);
           
-          | _ is DeploymentRebootSymbol => ()
+          | _ is DeploymentRebootSymbol    => ()
             
           | null => assert(false, "The deployment can't be null.")
           | _    => assert(false, "Not supported deployment type: " + deployment.GetType().Name)
