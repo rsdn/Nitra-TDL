@@ -13,7 +13,7 @@
     public class TestMethodSequence : TestMethod
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public bool?            AllowReboot  { get; set; }
+        public bool? AllowReboot { get; set; }
         [JsonProperty(Required = Required.Always)]
         public TestSequenceItem[] TestSequence { get; set; }
     }
