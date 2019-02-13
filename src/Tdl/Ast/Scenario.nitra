@@ -123,6 +123,7 @@ namespace Tdl
         Product.Scope               = Deployment.Scope;
         Method.Scope                = Deployment.Scope;
         Definitions.DefinitionScope = ProjectSupport.ScenarioParameterScope;
+        Definitions.Scope           = ProjectSupport.ExternalSymbolTable;
 
         DeploymentRef               = Deployment.Ref.Resolve();
         MethodRef                   = Method.Ref.Resolve();
