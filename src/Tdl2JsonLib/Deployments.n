@@ -72,7 +72,7 @@ namespace Tdl2JsonLib
       def condition = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
       def values    = cases.Map2ToArray(deployments, 
         (values, d) => (string.Join(separator, values), 
-        DeploymentWithParameters() <- { Deployment = d.Name; Parameters = Dictionary(); })).ToDictionary();
+        [(d.Name, object())].ToDictionary())).ToDictionary();
 
       (sel.Name, 
         Deployment() <- 

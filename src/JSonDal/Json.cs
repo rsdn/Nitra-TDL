@@ -116,7 +116,7 @@ namespace QuickType
         public string Condition { get; set; }
 
         [JsonProperty("Values", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, DeploymentWithParameters> Values { get; set; }
+        public Dictionary<string, object> Values { get; set; }
 
         #endregion
 
