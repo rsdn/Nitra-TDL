@@ -10,12 +10,12 @@ namespace Tdl
 {
   ast Case : BindableAst
   {
-    out Refs : Ref[DeclarationSymbol];
+    out Refs  : Ref[DeclarationSymbol];
     out Cases : ImmutableArray[string];
 
     Reference.Scope = Scope;
-    Refs = Reference.Ref;
-    Cases = Values.Values;
+    Refs            = Reference.Ref;
+    Cases           = Values.Values;
 
     Values    : CaseValue*;
     Reference : Reference;
