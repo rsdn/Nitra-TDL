@@ -12,11 +12,12 @@ namespace Tdl
   {
     symbol
     {
-      in Defs       : ImmutableArray[Def];
-      in Platform   : PlatformSymbol;
-      in Product    : ProductSymbol;
-      in Statements : ImmutableArray[SuiteStatement];
-      in Type       : SuiteTypeSymbol;
+      in Defs        : ImmutableArray[Def];
+      in Platform    : PlatformSymbol;
+      in Product     : ProductSymbol;
+      in Statements  : ImmutableArray[SuiteStatement];
+      in Type        : SuiteTypeSymbol;
+      in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
 
       Kind           = "suite";
       SpanClass      = TdlLang.SuiteSpanClass;
@@ -46,6 +47,7 @@ namespace Tdl
     TypeOpt.Scope               = Scope;
     TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
     Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
+    Symbol.DefaultDefs          = Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope);
 
     TypeOpt     : Reference?;
     Platform    : Reference;

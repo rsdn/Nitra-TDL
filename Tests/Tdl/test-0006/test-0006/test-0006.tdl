@@ -1,0 +1,76 @@
+select deployment Select_Deploy(A, B)
+{
+  | "xx", "yy" => Deploy_Gated
+  | "yy", "yy" => Deploy_Middle
+  | "yy",  _   => Deploy_Finish
+  | _,    _    => Deploy_Finish
+}
+
+suite SelectDeployTestSuit
+{
+    platform gated_platforms;
+    product KES;
+    A                       = "yy";
+    ProductDistributivePath = ProductDistributivePath;
+    ProductModulesPath      = ProductModulesPath;
+    AutotestsPath           = AutotestsPath;
+    BaseDistribTestModules  = BaseDistribTestModules;
+    SelectDeployTest();
+}
+
+scenario SelectDeployTest
+{
+    deployment Select_Deploy;
+    environments (gated_platforms, KES);
+    config @"um/interprecz/interprecz_smoke.json";
+    Area = "GatedTestsChain1";
+    UniqueId = "BDA24CAF-BF05-49EC-9884-129A48C42F8A";
+    TfsId = 0;
+    RevertAgentAfter = true;
+    RevertAgentBefore = true;
+    Timeout = "00:00:10";
+}
+
+deployment Execute_Deploy(
+    string ProductDistributivePath,
+    string ProductModulesPath,
+    string BaseDistribTestModules,
+    string AutotestsPath = "xyz",
+    string DeploymentSequenceName = "abc"
+)
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\CSharp_Deployer\executeDeploy.ps1"
+{
+    timeout "01:00:00";
+    expected 42;
+}
+
+deployment Deploy_Gated  = Execute_Deploy(DeploymentSequenceName: "gated");
+deployment Deploy_Middle = Execute_Deploy(DeploymentSequenceName: "middle");
+deployment Deploy_Finish = Execute_Deploy(AutotestsPath: "finish");
+
+platform gated_platforms = w10rs3-x64, win7-x64, win2012r2;
+platform w10rs3-x64;
+platform win2012r2;
+platform win7-x64;
+
+product type Kes
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+}
+
+product KES : Kes 
+{
+    Name = @"KES";
+    ReleaseName = @"Main";
+    Version = "11.1";
+}
+
+external
+{
+  string ProductDistributivePath;
+  string ProductModulesPath;
+  string AutotestsPath;
+  string BaseDistribTestModules;
+}

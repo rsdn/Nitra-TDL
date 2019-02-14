@@ -71,7 +71,7 @@ namespace Tdl2JsonLib
       
       def condition = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
       def values    = cases.Map2ToArray(deployments, 
-        (values, d) => (string.Join(separator, values), 
+        (values, d) => (string.Join(separator, values.Select(v => if (v == null) JsonGenerator.ParameterDefaultValue else v)), 
         [(d.Name, object())].ToDictionary())).ToDictionary();
 
       (sel.Name, 

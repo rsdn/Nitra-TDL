@@ -876,5 +876,65 @@ namespace Tdl
           msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Duplicate entry.", 0);
       }
     }
+    
+    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope) : ImmutableArray[FormalParameterSymbol]
+    {
+      def filteringScope = definitionScope :> FilteringScope;
+      def selectParams   = HashSet(filteringScope.Scope.GetAllSymbols().OfType.[FormalParameterSymbol]()
+                                         .Where(p => p.DeclaredIn is Deployment.SelectSymbol));
+                                         
+      when (selectParams.Count == 0)
+        return ImmutableArray.Empty;
+      
+      def selectDeployments = HashSet(selectParams.Select(p => p.DeclaredIn :> Deployment.SelectSymbol));
+      def paramMap          = Dictionary(ParameterComparer.Instance);
+      
+      // We fill the values explicitly specified.
+      foreach (d in defs)
+        when (d.Expr is Tdl.Expr.String as str)
+          paramMap[d.Symbol] = str.Value;
+      
+      foreach (s in selectDeployments)
+      {
+        def values = array(s.Parameters.Length);
+        foreach (p in s.Parameters with k)
+        {
+          mutable value;
+          when (paramMap.TryGetValue(p, out value))
+            values[k] = value;
+        }
+        
+        mutable isEntryPresent;
+        foreach (entry in s.Cases)
+        {
+          when (entry.Length != values.Length)
+            return ImmutableArray.Empty; // An error message has already been reported.
+
+          mutable isEntryMatch = true;
+          for (mutable i = 0; i < values.Length; i++)
+          {
+            isEntryMatch &= entry[i] == values[i];
+            unless (isEntryMatch)
+              break;
+          }
+          isEntryPresent |= isEntryMatch;
+        }
+        unless (isEntryPresent)
+        {
+          def entryStr = values.Select(v => if (v == null) "_" else <#"#> + v + '"');
+          def msgs     = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+          using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"The $(s.Name) select deployment has no ..$entryStr entry.", 0))
+            root.ReportMessage(CompilerMessageType.Hint, s.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
+          return ImmutableArray.Empty;
+        }
+      }
+      
+      def distinctSelectParams = HashSet(selectParams, ParameterComparer.Instance);
+      
+      def builder = ImmutableArray.CreateBuilder(distinctSelectParams.Count);
+      foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
+        builder.Add(p);
+      builder.ToImmutable()
+    }
   } // module
 } // namespace

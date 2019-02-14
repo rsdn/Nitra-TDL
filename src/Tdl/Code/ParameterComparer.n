@@ -16,6 +16,8 @@ namespace Tdl
 {
     class ParameterComparer : IEqualityComparer[DeclarationSymbol]
     {
+      public static Instance : this = ParameterComparer();
+      
       public Equals(x : DeclarationSymbol, y : DeclarationSymbol) : bool
       {
         | (p1 is FormalParameterSymbol, p2 is FormalParameterSymbol) =>
