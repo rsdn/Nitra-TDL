@@ -71,12 +71,4 @@
     }
 
     public sealed class ForceReboot { }
-
-
-    public class DeploymentWithParameters
-    {
-        public string Deployment { get; set; }
-
-        public Dictionary<string, string> Parameters { get; set; }
-    }
 }
