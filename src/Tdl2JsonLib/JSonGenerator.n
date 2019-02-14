@@ -40,7 +40,6 @@ using Tdl2JsonLib.ExceptionHelper;
 namespace Tdl2JsonLib
 {
   public delegate TransfomationFunc(rootNs : NamespaceSymbol, output : string) : List[CompilerMessage];
-
   public delegate MessageHandler(text : string, importance : MessageImportance) : void;
 
   public enum MessageImportance
@@ -51,6 +50,8 @@ namespace Tdl2JsonLib
 
   public module JsonGenerator
   {
+    public static ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
+    
     static _jsonVersion = 5;
     static _maxErrorsOrWarningsToDisplay = 30;
 
@@ -511,6 +512,8 @@ namespace Tdl2JsonLib
     private GenerateSuite(suiteSymbol : SuiteSymbol) : string * TestSuite
     {
       def parameters = CollectDefs(suiteSymbol.Defs).ToDictionary();
+      foreach (d in suiteSymbol.DefaultDefs)
+        parameters.Add(d.Name, ParameterDefaultValue);
       def suite = TestSuite() <- 
       {
         Platforms     = array[suiteSymbol.Platform.Name];
