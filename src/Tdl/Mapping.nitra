@@ -134,7 +134,7 @@ namespace Tdl
     foreach (n in names with index)
       items[index] = Var(n.Location, n);
     Var.AstList(names.Location, items);
-  }
+  };
 
   map syntax Grammar.From.VarRef -> Elem
   {
@@ -156,6 +156,15 @@ namespace Tdl
 
   map syntax Grammar.Action -> Action*
   {
+    | Script   -> [ Action.Script
+      {
+        Name -> Name; Arguments -> Arguments;
+        match (EnvironmentsOpt)
+        {
+          | None -> []
+          | Some(x) -> x.Defs.Item1
+        } -> Definitions;
+      } ]
     | Config   -> [ Action.Config { Path -> Path; ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(TimeSpan, GetText(TimeSpan)); } ]
     | Method   -> [ Action.Method { Method.QualifiedIdentifier -> Method; } ]
     | Sequence -> SequenceActions
@@ -184,6 +193,12 @@ namespace Tdl
     DefExpr   -> Expr;
   }
 
+  map syntax Grammar.DefEnv -> Definition
+  {
+    Reference -> Reference;
+    DefExpr   -> Expr;
+  }
+
   map syntax Grammar.ParameterCurrying -> Definition
   {
     Reference -> Reference;
@@ -195,10 +210,10 @@ namespace Tdl
     | StringLiteral             -> String                    { StringLiteral -> Value; }
     | True                      -> True                      {  }
     | False                     -> False                     {  }
-    | RealLiteral               -> RealLiteral               {  }
-    | DecimalIntegerLiteral     -> DecimalIntegerLiteral     {  }
-    | HexadecimalIntegerLiteral -> HexadecimalIntegerLiteral {  }
     | Reference                 -> Reference                 { this.Reference -> PatameterName; }
+    | RealLiteral               = DefExpr.RealLiteral(Location.WithSpan(RealLiteral));
+    | DecimalIntegerLiteral     = DefExpr.DecimalIntegerLiteral(Lit.Location);
+    | HexadecimalIntegerLiteral = DefExpr.HexadecimalIntegerLiteral(Lit.Location);
   }
 
   map syntax Grammar.Field -> Field

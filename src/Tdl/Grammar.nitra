@@ -108,6 +108,10 @@
     {
       | Method
       | Config = "config" sm Path=StringLiteral TimeSpan ";" nl
+      | Script = "script" sm Name=StringLiteral Arguments=StringLiteral* EnvironmentsOpt=Environments? ";" nl
+        {
+          syntax Environments = "(" Defs=(DefEnv; ", ")+ ")";
+        }
       | Sequence = "sequence" sm  "{" inl SequenceAction* d "}" nl outline_end_before
     }
     regex TimeSpan = DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit | "";
@@ -162,6 +166,7 @@
     }
 
     syntax DefDeclaration = Reference sm "=" sm DefExpr ";" nl;
+    syntax DefEnv         = Reference sm "=" sm DefExpr;
 
     syntax DefExpr
     {

@@ -1,0 +1,13 @@
+product type Kavkis
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+}
+
+product MonorepoHelloWorld : Kavkis 
+{
+    Name = @"MonorepoHelloWorld";
+    ReleaseName = @"MonorepoHelloWorld";
+    Version = ProductVersion;
+}

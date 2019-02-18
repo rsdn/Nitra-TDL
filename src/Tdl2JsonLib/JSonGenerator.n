@@ -23,6 +23,7 @@ using Nitra.ProjectSystem;
 using Microsoft.Cci;
 
 using QuickType;
+using Utils;
 
 using System;
 using System.Text;
@@ -475,6 +476,13 @@ namespace Tdl2JsonLib
                 {
                   def c = r.Actions[0] :> ScenarioAction.Config;
                   TestBot() <- { TestConfigName = c.path.Value; ArtifactsCollectionTimeout = c.ArtifactsCollectionTimeout; }
+                }
+                else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Script)
+                {
+                  def c = r.Actions[0] :> ScenarioAction.Script;
+                  def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
+                  def env = c.Defs.Select(d => (d.Name, d.Expr.ToObject())).ToDictionary();
+                  RobotFramework() <- { TestScriptName = c.Name.Value; TestScriptArgs = testScriptArgs; Environment = env; }
                 }
                 else
                   TestMethodSequence() <-

@@ -1,6 +1,7 @@
 ﻿using DotNet;
 using Nitra;
 using System;
+using System.Collections.Immutable;
 
 using Location = Tdl.Utils.Location;
 
@@ -11,6 +12,7 @@ namespace Tdl
   {
     public Location : Location { get; }
     
+    | Script        { Name   : ParsedValue[string]; Arguments : ImmutableArray[ParsedValue[string]]; Defs : ImmutableArray[Def2];  }
     | Config        { path   : ParsedValue[string]; ArtifactsCollectionTimeout : TimeSpan?; }
     | Method        { method : Member.MethodSymbol; }
     | Reboot        { }

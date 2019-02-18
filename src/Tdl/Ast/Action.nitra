@@ -6,12 +6,23 @@ using Nitra.Declarations;
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Tdl
 {
   abstract ast Action : BindableAst
   {
     out ScenarioActions : ScenarioAction;
+
+    | Script
+      {
+        ScenarioActions = ScenarioAction.Script(Name.Location.Convert(), TdlUtils.ConvertStringLiteral(Name), 
+          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions));
+
+        Name        : CSharp.StringLiteral;
+        Arguments   : CSharp.StringLiteral*;
+        Definitions : Definition*;
+      }
 
     | Config
       {

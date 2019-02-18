@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using Utils;
 
 namespace JsonToTdl
 {
@@ -183,12 +185,16 @@ namespace JsonToTdl
             Expect(JsonToken.EndObject);
         }
 
+        private static Regex _spliceRegex = new Regex(@"\$\(([^)]+)\)", RegexOptions.Compiled);
+
         private static void ConvertScript()
         {
             _builder.Append("(");
             ExpectProperty("ScriptPath");
             ExpectString(out var scriptPath);
 
+            var splisedVars = new HashSet<string>();
+            ParseSplacedVars(scriptPath, splisedVars);
 
             if (AcceptProperty("ScriptArgs"))
             {
@@ -208,19 +214,23 @@ namespace JsonToTdl
                             break;
                         case JsonToken.String:
                             var str = (string)_reader.Value;
-                            if (str.StartsWith("$("))
+                            if (ParseSplacedVars(str, splisedVars) is int count && count > 0)
                             {
-                                var content = str.Substring(2, str.Length - 3);
-                                if (content == name)
-                                    args.Add(("string ", name, null));
+                                if (count == 1)
+                                {
+                                    var content = str.Substring(2, str.Length - 3);
+                                    if (content == name)
+                                        args.Add(("string ", name, null));
+                                    else
+                                        defs.Add((name, content));
+                                }
                                 else
                                 {
-                                    defs.Add((name, content));
-                                    args.Add(("string ", content, null));
+                                    defs.Add((name, str.AsString()));
                                 }
                             }
                             else
-                                args.Add(("string ", name, $"@\"{str}\""));//.Replace(@"\\", @"\")
+                                args.Add(("string ", name, str.AsString()));
                             break;
                         case JsonToken.Boolean:
                             args.Add(("bool   ", name, (bool)_reader.Value ? "true" : "false"));
@@ -234,6 +244,10 @@ namespace JsonToTdl
                     }
                     Expect(_reader.TokenType);
                 }
+
+                foreach (var name in splisedVars)
+                    args.Add(("string ", name, null));
+
                 var parms = args.OrderBy(a => a.c != null)
                                 .ThenByDescending(a => a.t)
                                 .ThenBy(a => a.n)
@@ -283,6 +297,14 @@ namespace JsonToTdl
                 }
             }
             _builder.AppendLine("}");
+        }
+
+        private static int ParseSplacedVars(string scriptPath, HashSet<string> splisedVars)
+        {
+            var matches = _spliceRegex.Matches(scriptPath);
+            foreach (Match matche in matches)
+                splisedVars.Add(matche.Groups[1].Value);
+            return matches.Count;
         }
 
         private static string GetValue()
@@ -504,12 +526,40 @@ namespace JsonToTdl
             Expect(JsonToken.StartObject);
             void expectMethod()
             {
+                string testScriptArgs = null;
                 if (AcceptProperty("AssemblyName"))
                 {
                     Expect(JsonToken.String);
                     ExpectProperty("MethodName");
-                    Expect(JsonToken.String, out var value);
+                    ExpectString(out var value);
                     methods.Add("    method " + value + ";");
+                }
+                else if (AcceptProperty("TestScriptName"))
+                {
+                    ExpectString(out var testScriptName);
+
+                    if (AcceptProperty("TestScriptArgs"))
+                        ExpectString(out testScriptArgs);
+                    var envs = new List<string>();
+                    if (AcceptProperty("Environment"))
+                    {
+                        Expect(JsonToken.StartObject);
+
+                        while (!Accept(JsonToken.EndObject))
+                        {
+                            if (Accept(JsonToken.PropertyName))
+                            {
+                                var name = (string)_reader.Value;
+                                ExpectString(out var value);
+                                envs.Add($"{name} = " + value.AsString());
+                            }
+                        }
+                    }
+                    var envsStr = envs.Count == 0 ? "" : " (" + string.Join(", ", envs) + ")";
+                    var script = $"    script {testScriptName.AsString()} {testScriptArgs.AsString()}{envsStr};";
+                    // script "hello_tests.robot" "utf_robot_executor.sh" (A = "b", C = "d");
+                    // script "hello_tests.robot" "utf_robot_executor.sh";
+                    methods.Add(script);
                 }
                 else
                 {
