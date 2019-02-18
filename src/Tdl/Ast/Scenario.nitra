@@ -15,7 +15,11 @@ namespace Tdl
     {
     stage 3:
       in AggregateParametersScope : Scope;
+
     }
+    
+    CheckForRecursionScenario(context, Symbol, Symbol.AggregateParametersScope);
+
     | Def
       {
         symbol

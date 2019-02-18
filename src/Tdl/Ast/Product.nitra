@@ -17,6 +17,7 @@ namespace Tdl
       in ProductType : ProductTypeSymbol;
       SpanClass = TdlLang.ProductSpanClass;
     }
+
   stage 1:
     out ProductTypeRef : Ref[ProductTypeSymbol];
 
@@ -61,6 +62,8 @@ namespace Tdl
         Products.Scope     = Scope;
         Symbol.Products    = TdlUtils.MakeProducts(Products.Ref);
         Symbol.AllProducts = TdlUtils.MakeAllProducts(Symbol, Symbol.Products);
+
+        CheckForRecursionProduct(context, Symbol, Symbol.AllProducts);
 
         Products : Reference*;
       }
