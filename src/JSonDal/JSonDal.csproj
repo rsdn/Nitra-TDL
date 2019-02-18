@@ -48,6 +48,9 @@
     <Compile Include="..\AssemblyVersion.cs">
       <Link>Properties\AssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\JsonToTdl\StringHelpers.cs">
+      <Link>StringHelpers.cs</Link>
+    </Compile>
     <Compile Include="ConverterSettings.cs" />
     <Compile Include="Json-2.cs" />
     <Compile Include="Json.cs" />

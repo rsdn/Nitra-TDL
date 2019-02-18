@@ -229,6 +229,42 @@ namespace Tdl
         null
     }
     
+    [DebuggerStepThroughAttribute]
+    private HexDigit(c : char) : int
+    {
+      | c when '0' <= c && c <= '9' => c : int - '0' : int
+      | c when 'a' <= c && c <= 'f' => c : int - 'a' : int + 10
+      | c when 'A' <= c && c <= 'F' => c : int - 'A' : int + 10
+      | _ => assert3(false)
+    }
+
+    [DebuggerStepThroughAttribute]
+    private DecDigit(c : char) : int
+    {
+      | c when '0' <= c && c <= '9' => c : int - '0' : int
+      | _ => assert3(false)
+    }
+
+    [DebuggerStepThroughAttribute]
+    public HexToChar(location : Location, startPos : int, endPos : int) : char
+    {
+      unchecked HexToInt(location, startPos, endPos) :> char
+    }
+
+    [DebuggerStepThroughAttribute]
+    public HexToInt(location : Location, startPos : int, endPos : int) : int
+    {
+      assert2(startPos < endPos);
+
+      def text = location.Source.OriginalText;
+      mutable result = HexDigit(text[startPos]);
+
+      for (mutable i = startPos + 1; i < endPos; i++)
+        unchecked result = (result << 4) + HexDigit(text[i]);
+
+      result
+    }
+    
     public ConvertStringLiteral(str : CSharp.StringLiteral) : ParsedValue[string]
     {
       def builder = Text.StringBuilder();
@@ -239,11 +275,20 @@ namespace Tdl
         | InterpolatedOpenEscape  => _ = builder.Append("{");
         | InterpolatedCloseEscape => _ = builder.Append("}");
         | Error                   => ()
-        | SimpleEscape            => _ = builder.Append(part.Location.GetText()); // FIXME:
-        | UnicodeEscape           => _ = builder.Append(part.Location.GetText()); // FIXME:
-        | HexadecimalEscape       => _ = builder.Append(part.Location.GetText()); // FIXME:
+        | SimpleEscape       as x =>
+          def text = x.Source.Text;
+          _ = builder.Append(Nitra.Internal.DotUtils.EscapeSequence(text[x.Span.StartPos + 1]));
+          
+        | UnicodeEscape      as x 
+        | HexadecimalEscape  as x =>
+          def span = x.Span;
+          def value = HexToInt(part.Location, span.StartPos + 3, span.EndPos);
+          try
+            _ = builder.Append(value :> char);
+          catch { _ is OverflowException => return ParsedValue(str.Location.Span.StartPos); }
+        
         | RegulaChars             => _ = builder.Append(part.Location.GetText());
-        | VerbatimEscape          => _ = builder.Append(part.Location.GetText()); // FIXME:
+        | VerbatimEscape          => _ = builder.Append('"');
         | _                       => ()
       }
 
@@ -609,7 +654,7 @@ namespace Tdl
       def groups = GraphAlgorithms.FindStronglyConnectedComponents(nodesMap.Values);
       
       foreach (group in groups)
-        when (group.Nodes.Count > 1)
+        when (group.IsNonTrivial())
         {
           def symbols = HashSet();
           foreach (node in group.Nodes)
@@ -935,6 +980,102 @@ namespace Tdl
       foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
         builder.Add(p);
       builder.ToImmutable()
+    }
+
+    [Record]
+    class RecNode : IGraphNode[RecNode]
+    {
+      public Symbol : DeclarationSymbol;
+      
+      [RecordIgnore]
+      public Connections : List[RecNode] implements IGraphNode[RecNode].Connections { get; default List(); }
+    }
+    
+    public AsName(text : string) : string
+    {
+      foreach (ch when char.IsWhiteSpace(ch) in text)
+        return "\"" + text + '"';
+      
+      text
+    }
+
+    public CheckForRecursionProduct(this ast : IAst, context : DependentPropertyEvalContext, symbol : ProductSymbol, _depend : object) : void
+    {
+      def getDescendants(sym : ProductSymbol) : Seq[ProductSymbol]
+      {
+          | _ is Product.DefSymbol   => []
+          | s is Product.SetSymbol      => if (s.IsProductsEvaluated) s.Products else []
+          | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
+      }
+      CheckForRecursion(ast, context, symbol, getDescendants, _depend)
+    }
+
+    public CheckForRecursionScenario(this ast : IAst, context : DependentPropertyEvalContext, symbol : ScenarioSymbol, _depend : object) : void
+    {
+      def getDescendants(sym : ScenarioSymbol) : Seq[ScenarioSymbol]
+      {
+          | _ is Scenario.DefSymbol   => []
+          | s is Scenario.SetSymbol      => if (s.IsScenariosEvaluated) s.Scenarios else []
+          | _ is Scenario.GeneratorSymbol => [] // 
+          | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
+      }
+      CheckForRecursion(ast, context, symbol, getDescendants, _depend)
+    }
+    
+    public CheckForRecursionDeployment(this ast : IAst, context : DependentPropertyEvalContext, symbol : DeploymentSymbol, _depend : object) : void
+    {
+      def getDescendants(sym : DeploymentSymbol) : Seq[DeploymentSymbol]
+      {
+          | _ is Deployment.ScriptSymbol   => []
+          | s is Deployment.SetSymbol      => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
+          | s is Deployment.SelectSymbol   => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
+          | s is Deployment.CurryingSymbol => if (s.IsBaseDeploymentEvaluated) [s.BaseDeployment] else []
+          | _ is DeploymentRebootSymbol    => []
+          | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
+      }
+      CheckForRecursion(ast, context, symbol, getDescendants, _depend)
+    }
+    
+    public CheckForRecursion[TSymbol](this ast : IAst, context : DependentPropertyEvalContext, symbol : TSymbol, getDescendants : TSymbol -> Seq[TSymbol], _depend : object) : void
+      where TSymbol: DeclarationSymbol
+    {
+      def nodesMap = Dictionary();
+      def loop(parentNode : RecNode, sym : TSymbol) : void
+      {
+        def nodesMap = nodesMap;
+        mutable node;
+        unless (nodesMap.TryGetValue(sym, out node))
+        {
+          node = RecNode(sym);
+          nodesMap.Add(sym, node);
+
+          def descendants = getDescendants(sym).ToArray();
+          foreach (subSym in descendants)
+            loop(node, subSym);
+        }
+        
+        when (parentNode != null)
+          node.Connections.Add(parentNode);
+      }
+
+      loop(null, symbol);
+        
+      def nodesMap = nodesMap;
+      def groups = GraphAlgorithms.FindStronglyConnectedComponents(nodesMap.Values);
+      
+      foreach (group when group.IsNonTrivial() in groups)
+      {
+        def names = group.Nodes.ToArray().MapToArray(n => AsName(n.Symbol.Name));
+        def msg   = if (group.Nodes.Count == 1) $"$(names[0]) is cycled." else $"Detected a cycle between: ..$names.";
+        def msgs  = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+        foreach (node in group.Nodes)
+        {
+          def sym  = node.Symbol : DeclarationSymbol;
+          def decl = sym.FirstDeclarationOrDefault;
+          def loc  = decl.Name.Location;
+          msgs.ReportMessage(CompilerMessageType.Error, loc, msg, 0);
+        }
+      }
     }
   } // module
 } // namespace

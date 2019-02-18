@@ -70,5 +70,17 @@
         public TimeSpan? ArtifactsCollectionTimeout { get; set; }
     }
 
+    public sealed class RobotFramework : TestMethod
+    {
+        [JsonProperty("TestScriptName", Required = Required.Always)]
+        public string TestScriptName { get; set; }
+
+        [JsonProperty("TestScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
+        public string TestScriptArgs { get; set; }
+
+        [JsonProperty("Environment", NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> Environment { get; set; }
+    }
+
     public sealed class ForceReboot { }
 }
