@@ -18,6 +18,8 @@ namespace Tdl
       in AggregateParametersScope : Scope;
     }
 
+    CheckForRecursionDeployment(context, Symbol, Symbol.AggregateParametersScope);
+
     | Script : Parameterizable
       {
         symbol
