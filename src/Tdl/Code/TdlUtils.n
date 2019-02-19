@@ -646,6 +646,7 @@ namespace Tdl
             return;
           foreach (scenario in s.Scenarios)
             loop(scenario);
+        | Scenario.GeneratorSymbol => ()
         | _ => assert(false)
       }
       foreach (scenario in scenarios)
@@ -707,6 +708,7 @@ namespace Tdl
           | Scenario.SetSymbol as subSet                => loop(subSet)
           | Scenario.DefSymbol as d when visited.Add(d) => result.Add(d);
           | Scenario.DefSymbol as d                     => when (duplicates != null) _ = duplicates.Add((set, d))
+          | Scenario.GeneratorSymbol as g               => ()
           | _ => assert(false)
         }
       }
