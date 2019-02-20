@@ -70,7 +70,7 @@
         public TimeSpan? ArtifactsCollectionTimeout { get; set; }
     }
 
-    public sealed class RobotFramework : TestMethod
+    public sealed class UnixScriptRunner : TestMethodOrTestSequenceItem
     {
         [JsonProperty("TestScriptName", Required = Required.Always)]
         public string TestScriptName { get; set; }

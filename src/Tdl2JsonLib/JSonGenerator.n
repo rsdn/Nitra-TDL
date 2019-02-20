@@ -444,6 +444,12 @@ namespace Tdl2JsonLib
                   def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
                   TestMethodQualifier() <- { AssemblyName = assemblyName; MethodName = methodName; }
                 }
+                def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
+                {
+                    def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
+                    def env = c.Defs.Select(d => (d.Name, d.Expr.ToObject())).ToDictionary();
+                    UnixScriptRunner() <- { TestScriptName = c.Name.Value; TestScriptArgs = testScriptArgs; Environment = env; }
+                }
                 def makeAction(action : ScenarioAction) : TestSequenceItem
                 {
                   | Reboot             => RebootTestStep() <- { ForceReboot = ForceReboot() }
@@ -469,6 +475,8 @@ namespace Tdl2JsonLib
                           Count   = barriersCount[b];
                         }
                     }
+                  | Script as c => makeScriptAction(c)
+
                   | _ => assert(false, "Unsupported ScenarioAction: " + action)
                 }
                 
@@ -478,12 +486,7 @@ namespace Tdl2JsonLib
                   TestBot() <- { TestConfigName = c.path.Value; ArtifactsCollectionTimeout = c.ArtifactsCollectionTimeout; }
                 }
                 else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Script)
-                {
-                  def c = r.Actions[0] :> ScenarioAction.Script;
-                  def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
-                  def env = c.Defs.Select(d => (d.Name, d.Expr.ToObject())).ToDictionary();
-                  RobotFramework() <- { TestScriptName = c.Name.Value; TestScriptArgs = testScriptArgs; Environment = env; }
-                }
+                  makeScriptAction(r.Actions[0] :> ScenarioAction.Script)
                 else
                   TestMethodSequence() <-
                   {
