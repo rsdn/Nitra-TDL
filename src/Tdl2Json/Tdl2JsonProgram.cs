@@ -1,33 +1,30 @@
-﻿using System;
+﻿using Nitra;
+using Nitra.ProjectSystem;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+
 using Tdl2JsonLib;
+
+using File = System.IO.File;
 
 namespace Tdl2Json
 {
     public static class Program
     {
+        internal const int MaxErrorsOrWarningsToDisplay = 30;
         private const string TransformPrompt = "path-to.dll|Qualified.Function.Name";
 
         private static readonly Dictionary<string, MessageImportance> LogLevels = new Dictionary<string, MessageImportance>(StringComparer.OrdinalIgnoreCase)
         {
             ["normal"] = MessageImportance.Low,
-            ["short"] = MessageImportance.High,
+            ["short"]  = MessageImportance.High,
         };
-
-        /// <summary>
-        /// Generates JSON from source files <paramref name="sourceFileNames"/>. Throws <see cref="Exception"/> when error occures.
-        /// </summary>
-        public static string GenerateJson(string workingDirectory, IEnumerable<string> sourceFileNames, IEnumerable<string> references, bool validateMethodNames)
-        {
-            var writer = new StringWriter();
-            JsonGenerator.Generate(workingDirectory, sourceFileNames.ToArray(), references.ToArray(), validateMethodNames, new Lazy<TextWriter>(() => writer), null, null);
-            return writer.ToString();
-        }
 
         /// <summary>
         /// Application entry point. Returns 0 for success.
@@ -39,10 +36,10 @@ namespace Tdl2Json
             {
                 if (args.Length == 1 && args[0].StartsWith("/from-file:", "-from-file:"))
                 {
-                    var arg = args[0];
-                    int index = arg.IndexOf(':') + 1;
+                    var arg               = args[0];
+                    int index             = arg.IndexOf(':') + 1;
                     var comandOptionsFile = arg.Substring(index, arg.Length - index);
-                    args = File.ReadAllLines(comandOptionsFile);
+                    args                  = File.ReadAllLines(comandOptionsFile);
                 }
                 var transformators     = FilterOption(args, "/transformator:", "-transformator:");
                 var outputs            = FilterOption(args, "/out:", "-out:");
@@ -79,25 +76,35 @@ namespace Tdl2Json
                         Print(message, ConsoleColor.DarkGray);
                 };
 
+                var messages = new List<CompilerMessage>();
+
                 if (transformators.Length > 0)
                 {
                     Print($"Used a custom transformers", ConsoleColor.Magenta);
                     foreach (string transformator in transformators)
                     {
                         var transformatorFunc = LoadTransformator(transformator);
-                        JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: null,
-                            transformatorOutput: outPath, transformatorOpt: transformatorFunc);
+                        messages.AddRange(JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: null,
+                            transformatorOutput: outPath, transformatorOpt: transformatorFunc));
+
+                        if (HasErrors(messages))
+                            break;
                     }
+                    ReportCompilerMessages(messages);
                 }
                 else
                 {
                     var output = new Lazy<TextWriter>(() => new StreamWriter(outPath, false, Encoding.UTF8));
-                    JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
-                        transformatorOutput: null, transformatorOpt: null);
+                    messages.AddRange(JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
+                        transformatorOutput: null, transformatorOpt: null));
                     if (output.IsValueCreated)
                         output.Value.Dispose();
+                    ReportCompilerMessages(messages);
                     Print($"The JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
                 }
+
+                if (HasErrors(messages))
+                    return -3;
 
                 Console.WriteLine("Took: " + timer.Elapsed);
                 return 0;
@@ -124,6 +131,67 @@ namespace Tdl2Json
                 return -3;
             }
         }
+
+        private static void PrintError(string msg)
+        {
+            using (new ConsoleForegroundColor(ConsoleColor.Red))
+                Console.Error.WriteLine(msg);
+        }
+
+        private static void PrintWarning(string msg)
+        {
+            using (new ConsoleForegroundColor(ConsoleColor.Yellow))
+                Console.Error.WriteLine(msg);
+        }
+
+        private static void PrintHint(string msg)
+        {
+            using (new ConsoleForegroundColor(ConsoleColor.DarkYellow))
+                Console.Error.WriteLine(msg);
+        }
+
+        private static void ReportCompilerMessages(IEnumerable<CompilerMessage> messages)
+        {
+            var texts        = new List<string>();
+            var errorCount   = 0;
+            var warningCount = 0;
+            var skipHints    = false;
+
+            foreach (var message in messages)
+            {
+                if (message.Type == CompilerMessageType.FatalError || message.Type == CompilerMessageType.Error)
+                {
+                    if (errorCount == MaxErrorsOrWarningsToDisplay)
+                    {
+                        PrintWarning($"Too many errors detected! Only first $(errorCount) shown.");
+                        break;
+                    }
+                    errorCount++;
+                    skipHints = false;
+                    PrintError(message.ToString());
+                }
+                else if (message.Type == CompilerMessageType.Warning)
+                {
+                    if (warningCount == MaxErrorsOrWarningsToDisplay)
+                        PrintWarning($"Too many warnings detected! Only first $(warningCount) shown.");
+                    warningCount++;
+                    if (warningCount > MaxErrorsOrWarningsToDisplay)
+                    {
+                        skipHints = true;
+                        continue;
+                    }
+                    PrintWarning(message.ToString());
+                }
+                else if (skipHints)
+                    continue;
+
+                else if (message.Type == CompilerMessageType.Hint)
+                    PrintHint(message.ToString());
+            }
+        }
+
+        private static bool HasErrors(List<CompilerMessage> messages) =>
+            messages.Any(m => m.Type == CompilerMessageType.Error || m.Type == CompilerMessageType.FatalError);
 
         static (string path, string func) getPathAndFunc(string transformator)
         {

@@ -145,5 +145,5 @@
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
-  <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" /> 
+  <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" />
 </Project>

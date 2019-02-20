@@ -49,6 +49,8 @@ namespace Tdl
     Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
     Symbol.DefaultDefs          = Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope);
 
+    SetUsed(Symbol.Statements);
+
     TypeOpt     : Reference?;
     Platform    : Reference;
     Product     : Reference;

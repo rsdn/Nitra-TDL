@@ -9,16 +9,18 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Scenario : NamespaceMember
+  abstract declaration Scenario : NamespaceMember, UsedDeclaration
   {
     symbol
     {
     stage 3:
       in AggregateParametersScope : Scope;
-
     }
     
     CheckForRecursionScenario(context, Symbol, Symbol.AggregateParametersScope);
+
+    unless (Symbol.IsUsed)
+      Name.Warning(context, "Unused scenario.");
 
     | Def
       {
@@ -92,6 +94,7 @@ namespace Tdl
           CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
 
         CheckUniquenessOfScenarios(context, Symbol, Symbol.AggregateParametersScope);
+        SetUsed(Symbol.Scenarios, Symbol.IsUsed);
 
         MultiMachineId : Guid;
         Scenarios      : Reference*;
