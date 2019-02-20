@@ -239,19 +239,6 @@ namespace Tdl
     }
 
     [DebuggerStepThroughAttribute]
-    private DecDigit(c : char) : int
-    {
-      | c when '0' <= c && c <= '9' => c : int - '0' : int
-      | _ => assert3(false)
-    }
-
-    [DebuggerStepThroughAttribute]
-    public HexToChar(location : Location, startPos : int, endPos : int) : char
-    {
-      unchecked HexToInt(location, startPos, endPos) :> char
-    }
-
-    [DebuggerStepThroughAttribute]
     public HexToInt(location : Location, startPos : int, endPos : int) : int
     {
       assert2(startPos < endPos);
@@ -708,7 +695,7 @@ namespace Tdl
           | Scenario.SetSymbol as subSet                => loop(subSet)
           | Scenario.DefSymbol as d when visited.Add(d) => result.Add(d);
           | Scenario.DefSymbol as d                     => when (duplicates != null) _ = duplicates.Add((set, d))
-          | Scenario.GeneratorSymbol as g               => ()
+          | Scenario.GeneratorSymbol                    => ()
           | _ => assert(false)
         }
       }
@@ -743,22 +730,6 @@ namespace Tdl
     public ToTdlContext(this context : DependentPropertyEvalContext) : TdlDependentPropertyEvalContext
     {
       context :> TdlDependentPropertyEvalContext
-    }
-    
-    public CreateTupleOrFreeTypeVar(this context : DependentPropertyEvalContext, count : int) : TypeSymbol
-    {
-      if (count == 1)
-        context.CreateFreeTypeVar()
-      else
-      {
-        def tupleType = TdlType.TupleSymbol();
-        def builder = ImmutableArray.CreateBuilder(count);
-        for (mutable i = 0; i < count; i++)
-          builder.Add(context.CreateFreeTypeVar());
-        tupleType.Args = builder.MoveToImmutable();
-        tupleType.EvalProperties(context);
-        tupleType
-      }
     }
 
     public CheckExpected(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, type2 : TypeSymbol) : void
@@ -1077,6 +1048,21 @@ namespace Tdl
           def loc  = decl.Name.Location;
           msgs.ReportMessage(CompilerMessageType.Error, loc, msg, 0);
         }
+      }
+    }
+    
+    public SetUsed[T](this _ast : IAst, items : Seq[T], isUsed : bool) : void
+      where T: UsedDeclarationSymbol
+    {
+      foreach (item when !item.IsIsUsedEvaluated in items)
+        item.IsUsed = isUsed;
+    }
+
+    public SetUsed(this _ast : IAst, statements : Seq[SuiteStatement]) : void
+    {
+      foreach (statement in statements)
+      {
+        | CallScenario as s => unless (s.Reference.IsIsUsedEvaluated) s.Reference.IsUsed = true;
       }
     }
   } // module

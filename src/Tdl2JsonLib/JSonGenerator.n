@@ -54,12 +54,11 @@ namespace Tdl2JsonLib
     public static ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
     
     static _jsonVersion = 5;
-    static _maxErrorsOrWarningsToDisplay = 30;
 
     public event OnMessage : MessageHandler;
 
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
-      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc) : void
+      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc) : Seq[CompilerMessage]
     {
       def absolutePaths = sourceFiles.Map(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f));
 
@@ -75,17 +74,20 @@ namespace Tdl2JsonLib
 
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
-      def rootNamespace = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled);
+      def (rootNamespace, messages) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled);
+      when (messages.Any(m => m.Type == CompilerMessageType.Error || m.Type == CompilerMessageType.FatalError))
+        return messages;
+        
       if (transformatorOpt != null)
-      {
-        def messages = transformatorOpt(rootNamespace, transformatorOutput);
-        ProcessCompilerMessages(messages);
-      }
+        transformatorOpt(rootNamespace, transformatorOutput);
       else
+      {
         GenerateJson(rootNamespace, output);
+        messages
+      }
     }
 
-    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol * Seq[CompilerMessage]
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
 
@@ -127,10 +129,8 @@ namespace Tdl2JsonLib
       foreach (msg  in file.GetCompilerMessages())
         _ = messages.Add(msg);
 
-      ProcessCompilerMessages(messages);
-
       def (_, _, namespaceSymbol) = data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol;
-      namespaceSymbol
+      (namespaceSymbol, messages)
     }
 
     internal ReportMessage(msg : string, importance : MessageImportance = MessageImportance.High) : void
@@ -142,48 +142,6 @@ namespace Tdl2JsonLib
     {
       ReportMessage($"Elapsed time: $(stopwatch.Elapsed)");
       stopwatch.Restart();
-    }
-
-    private ProcessCompilerMessages(messages : IEnumerable[CompilerMessage]) : void
-    {
-      def texts = List();
-      
-      mutable errorCount;
-      mutable warningCount;
-      mutable skipHints;
-      foreach (message in messages)
-      {
-        match (message.Type)
-        {
-          | FatalError | Error =>
-            when (errorCount == _maxErrorsOrWarningsToDisplay)
-            {
-              texts.Add($"Too many errors detected! Only first $(errorCount) shown.");
-              break;
-            }
-            errorCount++;
-            skipHints = false;
-
-          | Warning =>
-            when (warningCount == _maxErrorsOrWarningsToDisplay)
-              texts.Add($"Too many warnings detected! Only first $(warningCount) shown.");
-            warningCount++;
-            when (warningCount > _maxErrorsOrWarningsToDisplay)
-            {
-              skipHints = true;
-              continue;
-            }
-
-          | Hint =>
-            when (skipHints)
-              continue;
-        }
-
-        texts.Add(message.ToString());
-      }
-
-      when (texts.Count > 0)
-        throw CompilerErrorException(string.Join(Environment.NewLine, texts), messages)
     }
 
     private GenerateJson(root : NamespaceSymbol, output : Lazy[TextWriter]) : void

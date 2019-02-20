@@ -149,6 +149,9 @@
     <Compile Include="Ast\TdlType.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\UsedDeclaration.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ast\Var.nitra">
       <SubType>Code</SubType>
     </Compile>
