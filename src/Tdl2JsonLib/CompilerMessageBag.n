@@ -1,0 +1,61 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Nitra;
+using Nitra.ProjectSystem;
+
+namespace Tdl2JsonLib
+{
+  public class CompilerMessageBag : IReadOnlyCollection[CompilerMessage]
+  {
+    private messagesList : List[CompilerMessage] = List();
+    private messagesSet  : HashSet[CompilerMessage] = HashSet();
+
+    public HasErrors : bool{ get; private set; }
+
+    public Count : int { get { messagesList.Count } }
+
+    public this() {}
+
+    public this(messages : Seq[CompilerMessage])
+    {
+      _ = AddRange(messages)
+    }
+
+    public GetEnumerator() : List[CompilerMessage].Enumerator
+    {
+      messagesList.GetEnumerator()
+    }
+
+    public AddRange(messages : Seq[CompilerMessage]) : int
+    {
+      mutable added;
+      foreach (message in messages)
+        when (Add(message))
+          ++added;
+      added;
+    }
+
+    public Add(message : CompilerMessage) : bool
+    {
+      if (messagesSet.Add(message))
+      {
+        messagesList.Add(message);
+        match (message.Type)
+        {
+          | FatalError | Error => HasErrors = true;
+          | _ => ()
+        }
+        true
+      }
+      else
+        false
+    }
+  }
+}
