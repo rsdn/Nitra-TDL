@@ -58,24 +58,24 @@ public class TdlTask : ToolTask
         return WorkingDirectory;
     }
 
-    protected override string GetResponseFileSwitch(string responseFilePath)
-    {
-        return "\"" + "-from-file:" + responseFilePath + "\"";
-    }
-
     protected override string GenerateResponseFileCommands()
     {
         var buffer = new List<string>();
         buffer.Add("-log-level:short");
         foreach (var item in Sources)
         {
-            buffer.Add(item.GetMetadata("FullPath"));
+            buffer.Add(EscapeFilePath(item.GetMetadata("FullPath")));
         }
         foreach (var item in References)
         {
-            buffer.Add(item.GetMetadata("FullPath"));
+            buffer.Add(EscapeFilePath(item.GetMetadata("FullPath")));
         }
-        buffer.Add("-out:" + OutputFile);
+        buffer.Add("-out:" + EscapeFilePath(OutputFile));
         return string.Join(Environment.NewLine, buffer);
+    }
+
+    private static string EscapeFilePath(string filePath)
+    {
+        return filePath.IndexOf(' ') < 0 ? filePath : ("\"" + filePath + "\"");
     }
 }
