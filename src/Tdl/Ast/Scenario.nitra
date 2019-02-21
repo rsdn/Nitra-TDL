@@ -123,26 +123,27 @@ namespace Tdl
         out PlatformRef   : Ref[TypedSymbol];
         out ProductRef    : Ref[TypedSymbol];
 
-        Froms.Scope                 = Scope;
-        Froms.ContainingTable       = Symbol.MemberTable;
-        Deployment.Scope            = Scope.HideWith(Symbol.MemberTable);
-        Platform.Scope              = Deployment.Scope;
-        Product.Scope               = Deployment.Scope;
-        Method.Scope                = Deployment.Scope;
-        Definitions.DefinitionScope = ProjectSupport.ScenarioParameterScope;
-        Definitions.Scope           = ProjectSupport.ExternalSymbolTable;
+        Froms.Scope                     = Scope;
+        Froms.ContainingTable           = Symbol.MemberTable;
+        Deployment.Scope                = Scope.HideWith(Symbol.MemberTable);
+        Platform.Scope                  = Deployment.Scope;
+        Product.Scope                   = Deployment.Scope;
+        Method.Scope                    = Deployment.Scope;
+        Definitions.DefinitionScope     = ProjectSupport.ScenarioParameterScope;
+        Definitions.Scope               = ProjectSupport.ExternalSymbolTable;
 
-        DeploymentRef               = Deployment.Ref.Resolve();
-        MethodRef                   = Method.Ref.Resolve();
-        PlatformRef                 = Platform.Ref.Resolve();
-        ProductRef                  = Product.Ref.Resolve();
+        DeploymentRef                   = Deployment.Ref.Resolve();
+        MethodRef                       = Method.Ref.Resolve();
+        PlatformRef                     = Platform.Ref.Resolve();
+        ProductRef                      = Product.Ref.Resolve();
 
-        Symbol.Deployment           = DeploymentRef.Symbol;
-        Symbol.Method               = MethodRef    .Symbol;
-        Symbol.Platform             = PlatformRef  .Symbol;
-        Symbol.Product              = ProductRef   .Symbol;
-        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
-        Symbol.Froms                = await TdlUtils.MakeFroms(Froms);
+        Symbol.Deployment               = DeploymentRef.Symbol;
+        Symbol.Method                   = MethodRef    .Symbol;
+        Symbol.Platform                 = PlatformRef  .Symbol;
+        Symbol.Product                  = ProductRef   .Symbol;
+        Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
+        Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployment, Symbol.Froms);
         
         Deployment.CheckExpected(context, context.ToTdlContext().DeploymentType, DeploymentRef.Symbol.Type);
         Method.    CheckExpected(context, context.ToTdlContext().MethodType,     MethodRef.Symbol.Type);

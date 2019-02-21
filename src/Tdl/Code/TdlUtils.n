@@ -130,7 +130,7 @@ namespace Tdl
       builder.ToImmutable()
     }
 
-    public MakeAggregateParametersScope(deployments : ImmutableArray[DeploymentSymbol]) : ValueOption[Scope]
+    public MakeAggregateParametersScope(deployments : Seq[DeploymentSymbol]) : ValueOption[Scope]
     {
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
@@ -140,7 +140,7 @@ namespace Tdl
         VNone()
     }
 
-    private CollectDeployments(visited : HashSet[int], builder : ref UnionScopeBuilder, deployments : ImmutableArray[DeploymentSymbol]) : bool
+    private CollectDeployments(visited : HashSet[int], builder : ref UnionScopeBuilder, deployments : Seq[DeploymentSymbol]) : bool
     {
       foreach (deployment in deployments)
       {
@@ -740,29 +740,35 @@ namespace Tdl
         ast.Error(context, $"Expected '$(TypeToString(type1))' but got '$(TypeToString(type2))'.", 0);
     }
 
-    public CheckExpectedForTuple(this ast : IAst, context : DependentPropertyEvalContext, items : QualifiedReference.IAstList, type1 : TypeSymbol, type2 : TypeSymbol) : void
+    public CheckExpectedForTuple(this ast : IAst, context : DependentPropertyEvalContext, items : QualifiedReference.IAstList, expectedType : TypeSymbol, type : TypeSymbol) : void
     {
-      match (type1, type2)
+      match (expectedType, type)
       {
         | _ when (items.Count < 2) => ast.Error(context, "A tuple must have more than one elements.", 0);
-        | (tuple1 is TdlType.TupleSymbol, tuple2 is TdlType.TupleSymbol) =>
-          def args1 = tuple1.Args;
-          def args2 = tuple2.Args;
-          assert2(args1.Length == items.Count);
-          assert2(args1.Length == args2.Length);
-          for (mutable i = 0; i < args1.Length; i++)
+        | (expectedTuple is TdlType.TupleSymbol, tuple2 is TdlType.TupleSymbol) =>
+          def expectedArgs = expectedTuple.Args;
+          def args = tuple2.Args;
+          
+          when (expectedArgs.Length != items.Count || expectedArgs.Length != args.Length)
           {
-            def t1   = args1[i];
-            def t2   = args2[i];
+            def got = if (expectedArgs.Length == items.Count) args.Length else items.Count;
+            items.Error(context, $"Expected $(expectedArgs.Length) but got $got tuple elemens.", 0);
+            return;
+          }
+            
+          for (mutable i = 0; i < expectedArgs.Length; i++)
+          {
+            def t1   = expectedArgs[i];
+            def t2   = args[i];
             def item = items[i];
             if (TdlTypeUnifier.Instance.TryUnify(t1, t2))
               _ = TdlTypeUnifier.Instance.Unify(t1, t2);
             else
-              item.Error(context, $"Expected '$(TypeToString(type1))' but got '$(TypeToString(type2))'.", 0);
+              item.Error(context, $"Expected '$(TypeToString(expectedType))' but got '$(TypeToString(type))'.", 0);
           }
           
-        | _ when TdlTypeUnifier.Instance.TryUnify(type1, type2) => _ = TdlTypeUnifier.Instance.Unify(type1, type2);
-        | _ => ast.Error(context, $"Expected $(TypeToString(type1)) but got $(TypeToString(type2)).", 0);
+        | _ when TdlTypeUnifier.Instance.TryUnify(expectedType, type) => _ = TdlTypeUnifier.Instance.Unify(expectedType, type);
+        | _ => ast.Error(context, $"Expected $(TypeToString(expectedType)) but got $(TypeToString(type)).", 0);
       }
     }
     
@@ -1064,6 +1070,22 @@ namespace Tdl
       {
         | CallScenario as s => unless (s.Reference.IsIsUsedEvaluated) s.Reference.IsUsed = true;
       }
+    }
+
+    public MakeAggregateParametersScope(deployment : TypedSymbol, froms : ImmutableArray[Code.From]) : ValueOption[Scope]
+    {
+      def deployments = List();
+      foreach (from in froms)
+      foreach (var when var.Id == deployment.Id in from.Vars with i)
+      {
+        foreach (elem in from.Elems)
+        {
+          when (elem[i] is DeploymentSymbol as d)
+            deployments.Add(d);
+        }
+        break;
+      }
+      MakeAggregateParametersScope(deployments)
     }
   } // module
 } // namespace
