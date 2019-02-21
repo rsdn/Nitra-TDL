@@ -145,7 +145,6 @@ namespace Tdl2Json
 
         private static void ReportCompilerMessages(IEnumerable<CompilerMessage> messages)
         {
-            var texts        = new List<string>();
             var errorCount   = 0;
             var warningCount = 0;
             var skipHints    = false;
