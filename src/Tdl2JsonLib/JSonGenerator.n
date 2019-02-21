@@ -58,7 +58,7 @@ namespace Tdl2JsonLib
     public event OnMessage : MessageHandler;
 
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
-      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc) : Seq[CompilerMessage]
+      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc) : CompilerMessageBag
     {
       def absolutePaths = sourceFiles.Map(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f));
 
@@ -75,11 +75,11 @@ namespace Tdl2JsonLib
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
       def (rootNamespace, messages) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled);
-      when (messages.Any(m => m.Type == CompilerMessageType.Error || m.Type == CompilerMessageType.FatalError))
+      when (messages.HasErrors)
         return messages;
         
       if (transformatorOpt != null)
-        transformatorOpt(rootNamespace, transformatorOutput);
+        CompilerMessageBag(transformatorOpt(rootNamespace, transformatorOutput));
       else
       {
         GenerateJson(rootNamespace, output);
@@ -87,7 +87,7 @@ namespace Tdl2JsonLib
       }
     }
 
-    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol * Seq[CompilerMessage]
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol * CompilerMessageBag
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
 
@@ -116,18 +116,13 @@ namespace Tdl2JsonLib
       projectSupport.RefreshProject(CancellationToken.None, files, data);
       ReportElapsedTime(stopwatch);
 
-      def messages = HashSet();
-
-      foreach (msg in project.CompilerMessages :> CompilerMessageList)
-        _ = messages.Add(msg);
+      def messages = CompilerMessageBag(project.CompilerMessages :> CompilerMessageList);
 
       foreach (file when file.HasCompilerMessage in files)
-      foreach (msg  in file.GetCompilerMessage())
-        _ = messages.Add(msg);
+        _ = messages.AddRange(file.GetCompilerMessage());
 
       foreach (file in project.Files)
-      foreach (msg  in file.GetCompilerMessages())
-        _ = messages.Add(msg);
+        _ = messages.AddRange(file.GetCompilerMessages());
 
       def (_, _, namespaceSymbol) = data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol;
       (namespaceSymbol, messages)

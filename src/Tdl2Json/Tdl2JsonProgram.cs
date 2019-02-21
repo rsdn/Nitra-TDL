@@ -76,18 +76,19 @@ namespace Tdl2Json
                         Print(message, ConsoleColor.DarkGray);
                 };
 
-                var messages = new List<CompilerMessage>();
+                CompilerMessageBag messages;
 
                 if (transformators.Length > 0)
                 {
                     Print($"Used a custom transformers", ConsoleColor.Magenta);
+                    messages = new CompilerMessageBag();
                     foreach (string transformator in transformators)
                     {
                         var transformatorFunc = LoadTransformator(transformator);
                         messages.AddRange(JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: null,
                             transformatorOutput: outPath, transformatorOpt: transformatorFunc));
 
-                        if (HasErrors(messages))
+                        if (messages.HasErrors)
                             break;
                     }
                     ReportCompilerMessages(messages);
@@ -95,28 +96,20 @@ namespace Tdl2Json
                 else
                 {
                     var output = new Lazy<TextWriter>(() => new StreamWriter(outPath, false, Encoding.UTF8));
-                    messages.AddRange(JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
-                        transformatorOutput: null, transformatorOpt: null));
+                    messages = JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
+                        transformatorOutput: null, transformatorOpt: null);
                     if (output.IsValueCreated)
                         output.Value.Dispose();
                     ReportCompilerMessages(messages);
-                    Print($"The JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
+                    if (!messages.HasErrors)
+                        Print($"The JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
                 }
 
-                if (HasErrors(messages))
+                if (messages.HasErrors)
                     return -3;
 
                 Console.WriteLine("Took: " + timer.Elapsed);
                 return 0;
-            }
-            catch (CompilerErrorException e)
-            {
-                using (new ConsoleForegroundColor(ConsoleColor.Red))
-                {
-                    Console.WriteLine("Compilation failed:");
-                    Console.Error.Write(e.Message);
-                }
-                return -3;
             }
             catch (ConfigurationException e)
             {
@@ -163,7 +156,7 @@ namespace Tdl2Json
                 {
                     if (errorCount == MaxErrorsOrWarningsToDisplay)
                     {
-                        PrintWarning($"Too many errors detected! Only first $(errorCount) shown.");
+                        PrintWarning($"Too many errors detected! Only first {errorCount} shown.");
                         break;
                     }
                     errorCount++;
@@ -173,7 +166,7 @@ namespace Tdl2Json
                 else if (message.Type == CompilerMessageType.Warning)
                 {
                     if (warningCount == MaxErrorsOrWarningsToDisplay)
-                        PrintWarning($"Too many warnings detected! Only first $(warningCount) shown.");
+                        PrintWarning($"Too many warnings detected! Only first {warningCount} shown.");
                     warningCount++;
                     if (warningCount > MaxErrorsOrWarningsToDisplay)
                     {
@@ -182,16 +175,10 @@ namespace Tdl2Json
                     }
                     PrintWarning(message.ToString());
                 }
-                else if (skipHints)
-                    continue;
-
-                else if (message.Type == CompilerMessageType.Hint)
+                else if (message.Type == CompilerMessageType.Hint && !skipHints)
                     PrintHint(message.ToString());
             }
         }
-
-        private static bool HasErrors(List<CompilerMessage> messages) =>
-            messages.Any(m => m.Type == CompilerMessageType.Error || m.Type == CompilerMessageType.FatalError);
 
         static (string path, string func) getPathAndFunc(string transformator)
         {
