@@ -1,5 +1,4 @@
 ﻿using Nitra;
-using Nitra.ProjectSystem;
 
 using System;
 using System.Collections.Generic;
@@ -76,11 +75,12 @@ namespace Tdl2Json
                         Print(message, ConsoleColor.DarkGray);
                 };
 
+                var output = new Lazy<TextWriter>(() => new StreamWriter(outPath, false, Encoding.UTF8));
                 CompilerMessageBag messages;
 
                 if (transformators.Length > 0)
                 {
-                    Print($"Used a custom transformers", ConsoleColor.Magenta);
+                    Print($"Using custom transformers", ConsoleColor.Magenta);
                     messages = new CompilerMessageBag();
                     foreach (string transformator in transformators)
                     {
@@ -91,25 +91,23 @@ namespace Tdl2Json
                         if (messages.HasErrors)
                             break;
                     }
-                    ReportCompilerMessages(messages);
                 }
                 else
                 {
-                    var output = new Lazy<TextWriter>(() => new StreamWriter(outPath, false, Encoding.UTF8));
                     messages = JsonGenerator.Generate(workingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
                         transformatorOutput: null, transformatorOpt: null);
-                    if (output.IsValueCreated)
-                        output.Value.Dispose();
-                    ReportCompilerMessages(messages);
-                    if (!messages.HasErrors)
-                        Print($"The JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
                 }
 
-                if (messages.HasErrors)
-                    return -3;
+                if (output.IsValueCreated)
+                    output.Value.Dispose();
 
-                Console.WriteLine("Took: " + timer.Elapsed);
-                return 0;
+                ReportCompilerMessages(messages);
+
+                if (output.IsValueCreated)
+                    Print($"JSON file was created successfully: '{outPath}'.", ConsoleColor.Green);
+
+                Print("Took: " + timer.Elapsed, ConsoleColor.DarkGray);
+                return messages.HasErrors ? -3 : 0;
             }
             catch (ConfigurationException e)
             {
@@ -143,7 +141,7 @@ namespace Tdl2Json
                 Console.Error.WriteLine(msg);
         }
 
-        private static void ReportCompilerMessages(IEnumerable<CompilerMessage> messages)
+        private static void ReportCompilerMessages(CompilerMessageBag messages)
         {
             var errorCount   = 0;
             var warningCount = 0;
