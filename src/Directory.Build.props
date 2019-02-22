@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <_NitraOutputPath>nitra\bin\Debug\Stage1</_NitraOutputPath>
     <_NitraGrammarsOutputPath>nitra\Grammars\bin\Debug</_NitraGrammarsOutputPath>
     <_NitraLanguageCompilerOutputPath>nitra\Nitra.LanguageCompiler\bin\Debug</_NitraLanguageCompilerOutputPath>
