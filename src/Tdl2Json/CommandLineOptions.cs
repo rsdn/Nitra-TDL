@@ -45,7 +45,7 @@ namespace Tdl2Json
                 { "t|transformator=", "Transformer: path-to.dll|Qualified.Function.Name", AddTransformer },
                 new ResponseFileSource(),
 
-                // backword compatibility
+                // backward compatibility
                 { "wd|workingDirectory=", "", v => WorkingDirectory = v, true },
             };
         }
@@ -59,6 +59,10 @@ namespace Tdl2Json
             IgnoredOptions = new List<string>();
 
             var extraValues = optionSet.Parse(arguments);
+
+            if (NeedHelp)
+                return;
+
             foreach (var value in ExpandFilePaths(extraValues))
             {
                 const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
