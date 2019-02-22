@@ -24,6 +24,9 @@ namespace Tdl2Json
             var options = new CommandLineOptions();
             try
             {
+                var toolName = Assembly.GetExecutingAssembly().GetName();
+                Print($"{toolName.Name} v{toolName.Version}", ConsoleColor.Gray);
+
                 options.Parse(args);
 
                 if (options.NeedHelp)
@@ -79,7 +82,6 @@ namespace Tdl2Json
             catch (OptionException e)
             {
                 PrintError(e.Message);
-                options.PrintHelp(Console.Out);
                 return -2;
             }
             catch (ConfigurationException e)
