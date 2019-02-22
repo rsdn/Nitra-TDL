@@ -86,10 +86,9 @@ namespace Tdl2Json
 
         public void PrintHelp(TextWriter writer)
         {
-            writer.WriteLine("Tdl2Json.exe [OPTIONS] file1.tdl[[+file2.tdl]...][[+file3.dll][+file4.dll]...]");
+            writer.WriteLine("Usage: Tdl2Json [OPTIONS] file1.tdl[[+file2.tdl]...][[+file3.dll][+file4.dll]...]");
             optionSet.WriteOptionDescriptions(writer);
-            writer.WriteLine();
-            writer.WriteLine(@"example Tdl2Json.exe /out:c:\temp\stage_tdl.json c:\TDLs\*.tdl c:\DLLs\Autotest.*.Suites.dll");
+            writer.WriteLine(@"Example: Tdl2Json /out:c:\temp\stage_tdl.json c:\TDLs\*.tdl c:\DLLs\Autotest.*.Suites.dll");
         }
 
         private void SetLogLevel(string value)
