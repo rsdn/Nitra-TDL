@@ -53,7 +53,7 @@ namespace Tdl2Json
   {
     public static ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
     
-    static _jsonVersion = 5;
+    static _jsonVersion = 6;
 
     public event OnMessage : MessageHandler;
 
