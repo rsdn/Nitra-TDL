@@ -1,0 +1,26 @@
+﻿using Nitra;
+using Nitra.Declarations;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl2Json
+{
+  [Record]
+  public class TransformationContext
+  {
+    public RootNamespace : DotNet.NamespaceSymbol { get; }
+
+    public Comments : CommentBag { get; }
+
+    public Messages : CompilerMessageBag { get; }
+    
+    public OutputPath : string { get; }
+  }
+}
