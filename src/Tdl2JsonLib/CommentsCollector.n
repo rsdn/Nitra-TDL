@@ -1,0 +1,42 @@
+﻿using Nitra;
+using Nitra.Runtime;
+using Nitra.Internal;
+using Nitra.ProjectSystem;
+
+using Nemerle;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl2Json
+{
+  internal class CommentsCollector : WalkerBase[CommentBag]
+  {
+    private mutable currentWhitespace : NSpan;
+
+    public override WalkSimple(startPos : int, endPos : int, ruleParser : SimpleRuleParser, parseResult : IParseResult, context : CommentBag) : void
+    {
+      if (ruleParser.Descriptor : object == Nitra.Core.s)
+      {
+        def oldWhitespace = currentWhitespace;
+        currentWhitespace = NSpan(startPos, endPos);
+        base.WalkSimple(startPos, endPos, ruleParser, parseResult, context);
+        currentWhitespace = oldWhitespace;
+      }
+      else
+        base.WalkSimple(startPos, endPos, ruleParser, parseResult, context);
+    }
+
+    public override WalkPrefix(rawTreePtr : int, startPos : int, endPos : int, ruleParser : PrefixRuleParser, parseResult : IParseResult, context : CommentBag) : void
+    {
+      def spanClass = ruleParser.Descriptor.SpanClass;
+      if (spanClass : object == Nitra.Language.MultilineCommentSpanClass || spanClass : object == Nitra.Language.InlineCommentSpanClass)
+        context.Add(parseResult.SourceSnapshot, currentWhitespace, NSpan(startPos, endPos));
+      else
+        base.WalkPrefix(rawTreePtr, startPos, endPos, ruleParser, parseResult, context);
+    }
+  }
+}
