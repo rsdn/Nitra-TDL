@@ -17,9 +17,9 @@ using Nitra.Declarations;
 
 using Tdl;
 using QuickType;
-using Tdl2JsonLib.ExceptionHelper;
+using Tdl2Json.ExceptionHelper;
 
-namespace Tdl2JsonLib
+namespace Tdl2Json
 {
   public module Deployments
   {
