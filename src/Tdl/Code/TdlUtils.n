@@ -590,13 +590,12 @@ namespace Tdl
       public From : ScenarioAction.Barrier;
       public To   : ScenarioAction.Barrier;
     }
-    
+
     [Record]
-    class Node : IGraphNode[Node]
+    class Node[TSymbol] : GraphNodeWithConnections[Node[TSymbol]]
+      where TSymbol : DeclarationSymbol
     {
-      public Barrier : BarrierSymbol;
-      [RecordIgnore]
-      public Connections : List[Node] implements IGraphNode[Node].Connections { get; default List(); }
+      public Symbol : TSymbol;
     }
     
     public CheckMultiMachineScenario(this ast : IAst, context : DependentPropertyEvalContext, scenarios : ImmutableArray[ScenarioSymbol], _depend : object) : void
@@ -621,7 +620,7 @@ namespace Tdl
             
             when (prev != null)
             {
-              nodesMap[prev.barrier].Connections.Add(node);
+              nodesMap[prev.barrier].AddConnection(node);
               edges.Add(Edge(prev, action));
             }
             
@@ -646,7 +645,7 @@ namespace Tdl
         {
           def symbols = HashSet();
           foreach (node in group.Nodes)
-            _ = symbols.Add(node.Barrier);
+            _ = symbols.Add(node.Symbol);
             
           def barrierUsages = HashSet();
           foreach (edge in edges)
@@ -660,12 +659,12 @@ namespace Tdl
           
           def filesMap           = context.Files.ToDictionary(d => d.FullName);
           def msgs               = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-          def dadeLockedBarriers = group.Nodes.ToArray().Select(n => n.Barrier.Name);
+          def deadLockedBarriers = group.Nodes.ToArray().Map(n => AsName(n.Symbol.Name));
           foreach (usage in barrierUsages.OrderBy(u => u.Location.File).ThenBy(u => u.Location.StartPos))
           {
             def fileData = filesMap[usage.Location.File];
             def loc      = Location(fileData.Ast.Location.Source, usage.Location.StartPos, usage.Location.EndPos);
-            msgs.ReportMessage(CompilerMessageType.Error, loc, $"Barriers dadelock detected: ..$dadeLockedBarriers", 0);
+            msgs.ReportMessage(CompilerMessageType.Error, loc, $"Barriers deadlock detected: ..$deadLockedBarriers", 0);
           }
         }
     }
@@ -961,15 +960,6 @@ namespace Tdl
       builder.ToImmutable()
     }
 
-    [Record]
-    class RecNode : IGraphNode[RecNode]
-    {
-      public Symbol : DeclarationSymbol;
-      
-      [RecordIgnore]
-      public Connections : List[RecNode] implements IGraphNode[RecNode].Connections { get; default List(); }
-    }
-    
     public AsName(text : string) : string
     {
       foreach (ch when char.IsWhiteSpace(ch) in text)
@@ -1019,13 +1009,13 @@ namespace Tdl
       where TSymbol: DeclarationSymbol
     {
       def nodesMap = Dictionary();
-      def loop(parentNode : RecNode, sym : TSymbol) : void
+      def loop(parentNode : Node[TSymbol], sym : TSymbol) : void
       {
         def nodesMap = nodesMap;
         mutable node;
         unless (nodesMap.TryGetValue(sym, out node))
         {
-          node = RecNode(sym);
+          node = Node(sym);
           nodesMap.Add(sym, node);
 
           def descendants = getDescendants(sym).ToArray();
@@ -1034,7 +1024,7 @@ namespace Tdl
         }
         
         when (parentNode != null)
-          node.Connections.Add(parentNode);
+          node.AddConnection(parentNode);
       }
 
       loop(null, symbol);
@@ -1044,12 +1034,12 @@ namespace Tdl
       
       foreach (group when group.IsNonTrivial() in groups)
       {
-        def names = group.Nodes.ToArray().MapToArray(n => AsName(n.Symbol.Name));
+        def names = group.Nodes.ToArray().Map(n => AsName(n.Symbol.Name));
         def msg   = if (group.Nodes.Count == 1) $"$(names[0]) is cycled." else $"Detected a cycle between: ..$names.";
         def msgs  = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
         foreach (node in group.Nodes)
         {
-          def sym  = node.Symbol : DeclarationSymbol;
+          def sym  = node.Symbol;
           def decl = sym.FirstDeclarationOrDefault;
           def loc  = decl.Name.Location;
           msgs.ReportMessage(CompilerMessageType.Error, loc, msg, 0);

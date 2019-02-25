@@ -26,10 +26,10 @@
 
   <PropertyGroup>
     <NitraAndNemerleSourcesPath Condition=" '$(NitraAndNemerleSourcesPath)' == '' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</NitraAndNemerleSourcesPath>
-    <NitraPath Condition=" '$(NitraPath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraOutputPath)'))</NitraPath>
-    <NitraGrammarsPath Condition=" '$(NitraGrammarsPath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraGrammarsOutputPath)'))</NitraGrammarsPath>
-    <NitraLanguageCompilerPath Condition=" '$(NitraLanguageCompilerPath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraLanguageCompilerOutputPath)'))</NitraLanguageCompilerPath>
-    <NitraCommonIdePath Condition=" '$(NitraCommonIdePath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraCommonIdeOutputPath)'))</NitraCommonIdePath>
-    <NugetExePath Condition=" '$(NugetExePath)' == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', 'nitra\ExternalTools\Nuget.exe'))</NugetExePath>
+    <NitraPath                  Condition=" '$(NitraPath)'                  == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraOutputPath)'))</NitraPath>
+    <NitraGrammarsPath          Condition=" '$(NitraGrammarsPath)'          == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraGrammarsOutputPath)'))</NitraGrammarsPath>
+    <NitraLanguageCompilerPath  Condition=" '$(NitraLanguageCompilerPath)'  == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraLanguageCompilerOutputPath)'))</NitraLanguageCompilerPath>
+    <NitraCommonIdePath         Condition=" '$(NitraCommonIdePath)'         == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', '$(_NitraCommonIdeOutputPath)'))</NitraCommonIdePath>
+    <NugetExePath               Condition=" '$(NugetExePath)'               == '' ">$([System.IO.Path]::Combine('$(NitraAndNemerleSourcesPath)', 'nitra\ExternalTools\Nuget.exe'))</NugetExePath>
   </PropertyGroup>
 </Project>
