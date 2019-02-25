@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSonDal", "JSonDal\JSonDal.csproj", "{E35348E5-1931-4EB8-802C-DC29BA93F82D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonDal", "JsonDal\JsonDal.csproj", "{E35348E5-1931-4EB8-802C-DC29BA93F82D}"
 EndProject
 Project("{EDCC3B85-0BAD-11DB-BC1A-00112FDE8B61}") = "Tdl2JsonLib", "Tdl2JsonLib\Tdl2JsonLib.nproj", "{D00E46D7-E1D4-436C-A455-28183D9A1EE5}"
 EndProject

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace JSonDal
+namespace JsonDal
 {
     public class ConverterSettings
     {

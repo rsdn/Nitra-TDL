@@ -7,8 +7,8 @@
     <ProjectGuid>{E35348E5-1931-4EB8-802C-DC29BA93F82D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JSonDal</RootNamespace>
-    <AssemblyName>JSonDal</AssemblyName>
+    <RootNamespace>JsonDal</RootNamespace>
+    <AssemblyName>JsonDal</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

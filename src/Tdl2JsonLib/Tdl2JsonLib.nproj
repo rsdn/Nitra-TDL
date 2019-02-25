@@ -115,7 +115,7 @@
     <Compile Include="FsFileWithId.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="JSonGenerator.n">
+    <Compile Include="JsonGenerator.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.n" />
@@ -124,8 +124,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JSonDal\JSonDal.csproj">
-      <Name>JSonDal</Name>
+    <ProjectReference Include="..\JsonDal\JsonDal.csproj">
+      <Name>JsonDal</Name>
       <Project>{e35348e5-1931-4eb8-802c-dc29ba93f82d}</Project>
       <Private>True</Private>
     </ProjectReference>
