@@ -35,10 +35,10 @@ using System.Linq;
 using System.Threading;
 
 using Tdl;
-using Tdl2JsonLib.ExceptionHelper;
+using Tdl2Json.ExceptionHelper;
 
 // Сгенерированно с помощью: https://app.quicktype.io/
-namespace Tdl2JsonLib
+namespace Tdl2Json
 {
   public delegate TransfomationFunc(rootNs : NamespaceSymbol, output : string) : List[CompilerMessage];
   public delegate MessageHandler(text : string, importance : MessageImportance) : void;

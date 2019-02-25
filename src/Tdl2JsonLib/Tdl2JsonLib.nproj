@@ -8,7 +8,7 @@
     <ProjectGuid>d00e46d7-e1d4-436c-a455-28183d9a1ee5</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tdl2JsonLib</RootNamespace>
+    <RootNamespace>Tdl2Json</RootNamespace>
     <AssemblyName>Tdl2JsonLib</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

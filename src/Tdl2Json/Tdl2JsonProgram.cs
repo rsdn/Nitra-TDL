@@ -7,8 +7,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-using Tdl2JsonLib;
-
 namespace Tdl2Json
 {
     public static class Program
