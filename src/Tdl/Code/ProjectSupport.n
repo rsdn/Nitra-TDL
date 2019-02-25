@@ -355,7 +355,7 @@ namespace Tdl
 
       def platformType = backEnd.PlatformType;
       
-      defineParameter(context, "AllowReboot",                     platformType.Boolean, required=false);
+      defineParameter(context, "MaxRebootsCount",                 platformType.Int32,   required=false);
       defineParameter(context, "Area",                            platformType.String,  required=false);
       defineParameter(context, "EnforceBinariesFolderUniqueness", platformType.Boolean, required=false);
       defineParameter(context, "LocalTestBinariesFolder",         platformType.String,  required=false);

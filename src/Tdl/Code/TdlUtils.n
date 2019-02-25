@@ -1077,5 +1077,18 @@ namespace Tdl
       }
       MakeAggregateParametersScope(deployments)
     }
+    
+    public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
+    {
+      unless (maxRebootsCountOpt.HasValue)
+        return ParsedValue(maxRebootsCountOpt.Span.StartPos);
+        
+      def lit = maxRebootsCountOpt.Value.Value;
+      
+      when (lit.IsMissing || lit.IsAmbiguous)
+        return ParsedValue(lit.Span.StartPos);
+      
+      ParsedValue(lit.Span, int.Parse(lit.GetText()))
+    }
   } // module
 } // namespace

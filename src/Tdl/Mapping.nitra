@@ -164,15 +164,33 @@ namespace Tdl
           | None -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
+        Value = MaxRebootsCountOpt.ToInt();
       } ]
-    | Config   -> [ Action.Config { Path -> Path; ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(TimeSpan, GetText(TimeSpan)); } ]
-    | Method   -> [ Action.Method { Method.QualifiedIdentifier -> Method; } ]
+    | Config   -> 
+      [ Action.Config
+        {
+          Path -> Path;
+          ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(TimeSpan, GetText(TimeSpan));
+          Value                      = MaxRebootsCountOpt.ToInt();
+        }
+      ]
+    | Method   -> 
+      [ Action.Method
+        {
+          Method.QualifiedIdentifier -> Method;
+          Value = Method.MaxRebootsCountOpt.ToInt();
+        }
+      ]
     | Sequence -> SequenceActions
   }
 
   map syntax Grammar.SequenceAction -> Action
   {
-    | Method         -> Method { Method.QualifiedIdentifier -> Method; }
+    | Method         -> Method
+      {
+        Method.QualifiedIdentifier -> Method;
+        Value = Method.MaxRebootsCountOpt.ToInt();
+      }
     | Reboot         -> Reboot { }
     | WaitForReboot1 -> WaitForReboot { TimeSpan = ParsedValue(TimeSpan, GetText(TimeSpan)); }
     | WaitForReboot2 -> WaitForReboot { TimeSpan = ParsedValue(TimeSpan, GetText(TimeSpan)); }
