@@ -158,20 +158,21 @@ namespace Tdl
   {
     | Script   -> [ Action.Script
       {
-        Name -> Name; Arguments -> Arguments;
-        match (EnvironmentsOpt)
+        Script.Name -> Name;
+        Script.Arguments -> Arguments;
+        match (Script.EnvironmentsOpt)
         {
           | None -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
-        Value = MaxRebootsCountOpt.ToInt();
+        Value = Script.MaxRebootsCountOpt.ToInt();
       } ]
     | Config   -> 
       [ Action.Config
         {
-          Path -> Path;
-          ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(TimeSpan, GetText(TimeSpan));
-          Value                      = MaxRebootsCountOpt.ToInt();
+          Config.Path -> Path;
+          ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(Config.TimeSpan, GetText(Config.TimeSpan));
+          Value                      = Config.MaxRebootsCountOpt.ToInt();
         }
       ]
     | Method   -> 
@@ -186,11 +187,28 @@ namespace Tdl
 
   map syntax Grammar.SequenceAction -> Action
   {
-    | Method         -> Method
+    | Method  -> Method
       {
         Method.QualifiedIdentifier -> Method;
         Value = Method.MaxRebootsCountOpt.ToInt();
       }
+    | Script ->  Action.Script
+      {
+        Script.Name -> Name;
+        Script.Arguments -> Arguments;
+        match (Script.EnvironmentsOpt)
+        {
+          | None -> []
+          | Some(x) -> x.Defs.Item1
+        } -> Definitions;
+        Value = Script.MaxRebootsCountOpt.ToInt();
+      }
+    | Config -> Action.Config
+        {
+          Config.Path -> Path;
+          ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(Config.TimeSpan, GetText(Config.TimeSpan));
+          Value                      = Config.MaxRebootsCountOpt.ToInt();
+        }
     | Reboot         -> Reboot { }
     | WaitForReboot1 -> WaitForReboot { TimeSpan = ParsedValue(TimeSpan, GetText(TimeSpan)); }
     | WaitForReboot2 -> WaitForReboot { TimeSpan = ParsedValue(TimeSpan, GetText(TimeSpan)); }
