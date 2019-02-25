@@ -103,12 +103,12 @@
 
     syntax Environments = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
     syntax Environment  = "(" Platform=Reference "," sm Product=Reference ")";
-    syntax Method       = "method" sm QualifiedIdentifier ";" nl;
+    syntax Method       = "method" sm QualifiedIdentifier MaxRebootsCountOpt=MaxRebootsCount? ";" nl;
     syntax Action
     {
       | Method
-      | Config = "config" sm Path=StringLiteral TimeSpan ";" nl
-      | Script = "script" sm Name=StringLiteral Arguments=StringLiteral* EnvironmentsOpt=Environments? ";" nl
+      | Config = "config" sm Path=StringLiteral TimeSpan MaxRebootsCount? ";" nl
+      | Script = "script" sm Name=StringLiteral Arguments=StringLiteral* Environments? MaxRebootsCount? ";" nl
         {
           syntax Environments = "(" Defs=(DefEnv; ", ")+ ")";
         }
@@ -180,5 +180,7 @@
       //| InterpolatedRegularStringLiteral  = Lit=InterpolatedRegularStringLiteral
       //| InterpolatedVerbatimStringLiteral = Lit=InterpolatedVerbatimStringLiteral
     }
+
+    syntax MaxRebootsCount = sm "max-reboots" sm Value=DecimalIntegerLiteral;
   }
 }

@@ -12,8 +12,6 @@
 
     public class TestMethodSequence : TestMethod
     {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public bool? AllowReboot { get; set; }
         [JsonProperty(Required = Required.Always)]
         public TestSequenceItem[] TestSequence { get; set; }
     }
@@ -22,8 +20,12 @@
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string AssemblyName { get; set; }
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string MethodName   { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
     }
 
     public sealed class RebootTestStep : TestMethodOrTestSequenceItem
@@ -61,13 +63,16 @@
         }
     }
 
-    public sealed class TestBot : TestMethod
+    public sealed class TestBot : TestMethodOrTestSequenceItem
     {
         [JsonProperty("TestConfigName", Required = Required.Always)]
         public string TestConfigName { get; set; }
 
         [JsonProperty("ArtifactsCollectionTimeout", NullValueHandling = NullValueHandling.Ignore)]
         public TimeSpan? ArtifactsCollectionTimeout { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
     }
 
     public sealed class UnixScriptRunner : TestMethodOrTestSequenceItem
@@ -80,6 +85,9 @@
 
         [JsonProperty("Environment", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, object> Environment { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
     }
 
     public sealed class ForceReboot { }

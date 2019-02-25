@@ -592,7 +592,7 @@ namespace JsonToTdl
                 Expect(JsonToken.EndArray);
 
                 if (AcceptProperty("AllowReboot"))
-                    ConvertSimpleProperty("AllowReboot");
+                    throw new InvalidOperationException("Property AllowReboot deprecated.");
             }
             else
                 expectMethod();

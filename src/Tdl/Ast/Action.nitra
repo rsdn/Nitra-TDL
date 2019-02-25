@@ -17,8 +17,9 @@ namespace Tdl
     | Script
       {
         ScenarioActions = ScenarioAction.Script(Name.Location.Convert(), TdlUtils.ConvertStringLiteral(Name), 
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions));
+          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions), Value);
 
+        Value       : ParsedValue[int];
         Name        : CSharp.StringLiteral;
         Arguments   : CSharp.StringLiteral*;
         Definitions : Definition*;
@@ -27,8 +28,9 @@ namespace Tdl
     | Config
       {
         ScenarioActions = ScenarioAction.Config(Path.Location.Convert(), TdlUtils.ConvertStringLiteral(Path), 
-          if (ArtifactsCollectionTimeout.HasValue) ArtifactsCollectionTimeout.Value else null);
+          if (ArtifactsCollectionTimeout.HasValue) ArtifactsCollectionTimeout.Value else null, Value);
 
+        Value                      : ParsedValue[int];
         Path                       : CSharp.StringLiteral;
         ArtifactsCollectionTimeout : ParsedValue[TimeSpan];
       }
@@ -41,8 +43,9 @@ namespace Tdl
         Method.NameScopeFactory = TdlUtils.MethodScopeFactory;
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = ScenarioAction.Method(Method.Location.Convert(), MethodRef.Symbol);
+        ScenarioActions         = ScenarioAction.Method(Method.Location.Convert(), MethodRef.Symbol, Value);
 
+        Value  : ParsedValue[int];
         Method : QualifiedReference;
       }
     | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location.Convert()); }

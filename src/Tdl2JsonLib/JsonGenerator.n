@@ -348,13 +348,13 @@ namespace Tdl2Json
         | _ => yield GenerateScenario(scenarioSymbol);
       }
     }
-    
+
     private GenerateScenario(scenarioSymbol : ScenarioSymbol) : string * TestCase
     {
       (scenarioSymbol.Name, 
         TestCase() <- {
           TestGroup = 
-          match(scenarioSymbol)
+          match (scenarioSymbol)
           {
             | Tdl.Scenario.DefSymbol as r =>
               def parallelSetOpt = if (r.IsParallelSetOptEvaluated) r.ParallelSetOpt else null;
@@ -381,27 +381,47 @@ namespace Tdl2Json
               }
               def getTestMethod() : TestMethod
               {
-                def allowRebootOpt = getBool("AllowReboot");
-                when (allowRebootOpt == null && r.Actions.Length == 1)
+                when (r.Actions.Length == 1)
                 when (r.Actions[0] is ScenarioAction.Method as method)
                 {
                   def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
                   return TestMethodQualifier() <- 
                   {
-                    AssemblyName = assemblyName;
-                    MethodName   = methodName;
+                    AssemblyName    = assemblyName;
+                    MethodName      = methodName;
+                    MaxRebootsCount = method.MaxRebootsCountOpt.ToNulable();
                   };
                 }
                 def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
                 {
                   def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
-                  TestMethodQualifier() <- { AssemblyName = assemblyName; MethodName = methodName; }
+                  TestMethodQualifier() <- 
+                  {
+                    AssemblyName    = assemblyName;
+                    MethodName      = methodName;
+                    MaxRebootsCount = method.MaxRebootsCountOpt.ToNulable();
+                  }
                 }
                 def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
                 {
                     def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
                     def env = c.Defs.Select(d => (d.Name, d.Expr.ToObject())).ToDictionary();
-                    UnixScriptRunner() <- { TestScriptName = c.Name.Value; TestScriptArgs = testScriptArgs; Environment = env; }
+                    UnixScriptRunner() <-
+                    {
+                      TestScriptName  = c.Name.Value;
+                      TestScriptArgs  = testScriptArgs;
+                      Environment     = env;
+                      MaxRebootsCount = c.MaxRebootsCountOpt.ToNulable();
+                    }
+                }
+                def makeConfigAction(c : ScenarioAction.Config) : TestBot
+                {
+                  TestBot() <-
+                  {
+                    TestConfigName             = c.path.Value;
+                    ArtifactsCollectionTimeout = c.ArtifactsCollectionTimeout;
+                    MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                  }
                 }
                 def makeAction(action : ScenarioAction) : TestSequenceItem
                 {
@@ -429,22 +449,18 @@ namespace Tdl2Json
                         }
                     }
                   | Script as c => makeScriptAction(c)
-
+                  | Config as c => makeConfigAction(c)
                   | _ => assert(false, "Unsupported ScenarioAction: " + action)
                 }
                 
                 if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Config)
-                {
-                  def c = r.Actions[0] :> ScenarioAction.Config;
-                  TestBot() <- { TestConfigName = c.path.Value; ArtifactsCollectionTimeout = c.ArtifactsCollectionTimeout; }
-                }
+                  makeConfigAction(r.Actions[0] :> ScenarioAction.Config)
                 else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Script)
                   makeScriptAction(r.Actions[0] :> ScenarioAction.Script)
                 else
                   TestMethodSequence() <-
                   {
                     TestSequence = r.Actions.Select(makeAction).ToArray();
-                    AllowReboot  = allowRebootOpt;
                   }
               }
               

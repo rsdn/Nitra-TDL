@@ -12,9 +12,15 @@ namespace Tdl
   {
     public Location : Location { get; }
     
-    | Script        { Name   : ParsedValue[string]; Arguments : ImmutableArray[ParsedValue[string]]; Defs : ImmutableArray[Def2];  }
-    | Config        { path   : ParsedValue[string]; ArtifactsCollectionTimeout : TimeSpan?; }
-    | Method        { method : Member.MethodSymbol; }
+    | Script
+      {
+        Name               : ParsedValue[string];
+        Arguments          : ImmutableArray[ParsedValue[string]];
+        Defs               : ImmutableArray[Def2];
+        MaxRebootsCountOpt : ParsedValue[int];
+      }
+    | Config        { path   : ParsedValue[string]; ArtifactsCollectionTimeout : TimeSpan?; MaxRebootsCountOpt : ParsedValue[int]; }
+    | Method        { method : Member.MethodSymbol; MaxRebootsCountOpt : ParsedValue[int]; }
     | Reboot        { }
     | WaitForReboot { TimeSpan : string; }
     | Barrier       { barrier : BarrierSymbol; }
