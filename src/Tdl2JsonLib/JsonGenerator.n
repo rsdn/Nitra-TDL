@@ -332,6 +332,7 @@ namespace Tdl2Json
                     Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
                     TestMethod              = getTestMethod();
                     Area                    = getString("Area");
+                    LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
                     NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
                     RequireInternet         = getBool  ("RequireInternet");
                     RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
@@ -476,6 +477,7 @@ namespace Tdl2Json
                   Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
                   TestMethod              = getTestMethod();
                   Area                    = getString("Area");
+                  LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
                   NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
                   RequireInternet         = getBool  ("RequireInternet");
                   RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
