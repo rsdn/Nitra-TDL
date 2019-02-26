@@ -99,6 +99,12 @@
     <Compile Include="..\AssemblyVersion.n">
       <Link>Properties\AssemblyVersion.n</Link>
     </Compile>
+    <Compile Include="CommentBag.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CommentsCollector.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CompilerMessageBag.n">
       <SubType>Code</SubType>
     </Compile>
@@ -119,6 +125,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.n" />
+    <Compile Include="TransformationContext.n">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

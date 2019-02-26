@@ -1,24 +1,24 @@
-﻿using Nitra.ProjectSystem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Tdl2Json;
 
 namespace Tdl
 {
     /// <summary>An example implementation of custom processing for Tdl2Json.exe.</summary>
     public static class Test
     {
-        public static List<CompilerMessage> Transformator(DotNet.NamespaceSymbol root, string output)
+        static Test()
         {
-            List<CompilerMessage> errorList = new List<CompilerMessage>();
-            Console.WriteLine($"output:'{output}'");
+            // проверка компилируемости
+            _ = (TransfomationFunc)Transformator;
+        }
+
+        public static void Transformator(TransformationContext context)
+        {
+            Console.WriteLine($"output:'{context.OutputPath}'");
             Console.WriteLine("Symbols:");
             // Enumerate all symbolss in the global namespace...
-            foreach (var symbol in root.MemberTable.AllSymbols)
+            foreach (var symbol in context.RootNamespace.MemberTable.AllSymbols)
                 Console.WriteLine("    " + symbol.Name);
-            return errorList;
         }
     }
 }

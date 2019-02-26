@@ -40,7 +40,8 @@ using Tdl2Json.ExceptionHelper;
 // Сгенерированно с помощью: https://app.quicktype.io/
 namespace Tdl2Json
 {
-  public delegate TransfomationFunc(rootNs : NamespaceSymbol, output : string) : List[CompilerMessage];
+  public delegate TransfomationFunc(context : TransformationContext) : void;
+
   public delegate MessageHandler(text : string, importance : MessageImportance) : void;
 
   public enum MessageImportance
@@ -74,31 +75,36 @@ namespace Tdl2Json
 
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
-      def (rootNamespace, messages) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled);
-      when (messages.HasErrors)
-        return messages;
-        
-      if (transformatorOpt != null)
-        CompilerMessageBag(transformatorOpt(rootNamespace, transformatorOutput));
-      else
+      def (rootNamespace, messages, commentBag) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled, transformatorOpt != null);
+      unless (messages.HasErrors)
       {
-        GenerateJson(rootNamespace, output);
-        messages
+        if (transformatorOpt != null)
+          transformatorOpt(TransformationContext(rootNamespace, commentBag, messages, transformatorOutput));
+        else
+          GenerateJson(rootNamespace, output);
       }
+
+      messages
     }
 
-    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool) : NamespaceSymbol * CompilerMessageBag
+    private static StandardLibraries : array[LibReference] = array[
+      FullNameLibReference("mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"),
+      FullNameLibReference("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"),
+      FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")
+    ];
+
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool,
+      isCommentCollectingEnabled : bool) : NamespaceSymbol * CompilerMessageBag * CommentBag
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
+      
+      def commentBag = if (isCommentCollectingEnabled) CommentBag() else null;
 
       def solution = FsSolution();
       def project  = FsProject(solution, 
                                directory, 
-                               files.Map(FsFileWithId(_, TdlLang.Instance)),
-                               [FullNameLibReference("mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")  : LibReference,
-                                 FullNameLibReference("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"),
-                                 FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-                                 .Concat(refs.Select(r => FileLibReference(r) : LibReference)).ToArray());
+                               files.Map(FsFileWithId(_, TdlLang.Instance, commentBag)),
+                               StandardLibraries.Concat(refs.Select(FileLibReference)).ToArray());
 
       def stopwatch      = Stopwatch.StartNew();
 
@@ -125,7 +131,7 @@ namespace Tdl2Json
         _ = messages.AddRange(file.GetCompilerMessages());
 
       def (_, _, namespaceSymbol) = data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol;
-      (namespaceSymbol, messages)
+      (namespaceSymbol, messages, commentBag)
     }
 
     internal ReportMessage(msg : string, importance : MessageImportance = MessageImportance.High) : void

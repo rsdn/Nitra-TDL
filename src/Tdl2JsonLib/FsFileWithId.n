@@ -19,10 +19,12 @@ namespace Tdl2Json
         public override Id : int { get { _id.Value }}
         private static mutable _counter : int;
         private _id : Lazy[int] = Lazy.[int](GetId);
+        private _commentBag : CommentBag;
 
-        public this([NotNull] filePath : string, [NotNull] language : Language, fsProject : FsProject[TAst] = null, statistics : FileStatistics = null)
+        public this([NotNull] filePath : string, [NotNull] language : Language, commentBag : CommentBag = null, fsProject : FsProject[TAst] = null, statistics : FileStatistics = null)
         {
-            base(filePath, language, fsProject, statistics)
+            base(filePath, language, fsProject, statistics);
+            _commentBag = commentBag;
         }
 
         private static GetId() : int
@@ -35,6 +37,8 @@ namespace Tdl2Json
         {
           JsonGenerator.ReportMessage(FullName, MessageImportance.Low);
           base.ReParse();
+          when (_commentBag != null)
+            CommentsCollector().Walk(ParseResult, _commentBag);
         }
 
         public override UpdateAst()       : void { base.UpdateAst(); }
