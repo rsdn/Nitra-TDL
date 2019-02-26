@@ -268,6 +268,9 @@ namespace QuickType
 
         [JsonProperty("ProductGroupName", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string ProductGroupName { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string LocalTestBinariesFolder { get; set; }
     }
 
     public partial class FluffyDeployment
