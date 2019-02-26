@@ -1,0 +1,107 @@
+﻿using Nitra;
+
+using Nemerle;
+using Nemerle.Imperative;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+
+namespace Tdl2Json
+{
+  [Record]
+  public class CommentBlock : Located
+  {
+    public override Location : Location                 { get; }
+    public          Comments : ImmutableArray[Location] { get; }
+  }
+
+  public class CommentBag
+  {
+    private table : Dictionary[SourceSnapshot, Dictionary[int, int * SortedSet[NSpan]] * Dictionary[int, int * SortedSet[NSpan]]] = Dictionary();
+
+    public Add(source : SourceSnapshot, whitespace : NSpan, comment : NSpan) : void
+    {
+      mutable lookups;
+      unless (table.TryGetValue(source, out lookups))
+      {
+        lookups = (Dictionary(), Dictionary());
+        table.Add(source, lookups);
+      }
+
+      def (startPosLookup, endPosLookup) = lookups;
+
+      mutable startPosComments;
+      unless (startPosLookup.TryGetValue(whitespace.StartPos, out startPosComments))
+      {
+        startPosComments = (whitespace.EndPos, SortedSet());
+        startPosLookup.Add(whitespace.StartPos, startPosComments);
+        endPosLookup.Add(whitespace.EndPos, (whitespace.StartPos, startPosComments[1]));
+      }
+
+      _ = startPosComments[1].Add(comment);
+    }
+
+    public GetSourcesWithComments() : ImmutableArray[SourceSnapshot]
+    {
+      table.Keys.ToImmutableArray()
+    }
+
+    public GetAllComments(source : SourceSnapshot) : ImmutableArray[CommentBlock]
+    {
+      mutable lookups;
+      unless (table.TryGetValue(source, out lookups))
+        return ImmutableArray.Empty;
+
+      def lookup = lookups[0];
+      def builder = ImmutableArray.CreateBuilder(lookup.Count);
+      foreach (p in lookup)
+        builder.Add(CommentBlock(Location(source, p.Key, p.Value[0]), MakeLocations(source, p.Value[1])));
+      builder.MoveToImmutable()
+    }
+
+    public TryFindBefore(location : Location) : CommentBlock
+    {
+      // ищем комментарий заканчивающийся перед location, либо начинающийся с этой позиции
+      def source = location.Source;
+      def pos = location.StartPos;
+      TryFind(source, pos, false) ?? TryFind(source, pos, true)
+    }
+
+    public TryFindAfter(location : Location) : CommentBlock
+    {
+      // ищем комментарий начинающийся после location, либо заканчивающийся в конце этой позиции
+      def source = location.Source;
+      def pos = location.EndPos;
+      TryFind(source, pos, true) ?? TryFind(source, pos, false)
+    }
+
+    private TryFind(source : SourceSnapshot, pos : int, isStartOfWhitespace : bool) : CommentBlock
+    {
+      mutable lookups;
+      unless (table.TryGetValue(source, out lookups))
+        return null;
+
+      def lookup = if (isStartOfWhitespace) lookups[0] else lookups[1];
+
+      mutable comments;
+      unless (lookup.TryGetValue(pos, out comments))
+        return null;
+
+      def whitespace = if (isStartOfWhitespace) Location(source, pos, comments[0]) else Location(source, comments[0], pos);
+      CommentBlock(whitespace, MakeLocations(source, comments[1]))
+    }
+
+    private MakeLocations(source : SourceSnapshot, comments : SortedSet[NSpan]) : ImmutableArray[Location]
+    {
+      def builder = ImmutableArray.CreateBuilder(comments.Count);
+      foreach (c in comments)
+        builder.Add(Location(source, c));
+      builder.MoveToImmutable()
+    }
+  }
+}
