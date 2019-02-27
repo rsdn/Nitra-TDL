@@ -170,9 +170,9 @@ namespace Tdl
     | Config   -> 
       [ Action.Config
         {
-          Config.Path -> Path;
-          ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(Config.TimeSpan, GetText(Config.TimeSpan));
-          Value                      = Config.MaxRebootsCountOpt.ToInt();
+          Config.Path     -> Path;
+          Config.TimeSpan -> ArtifactsCollectionTimeout;
+          Value           = Config.MaxRebootsCountOpt.ToInt();
         }
       ]
     | Method   -> 
@@ -205,21 +205,21 @@ namespace Tdl
       }
     | Config -> Action.Config
         {
-          Config.Path -> Path;
-          ArtifactsCollectionTimeout = TdlUtils.MakeTimeSpan(Config.TimeSpan, GetText(Config.TimeSpan));
-          Value                      = Config.MaxRebootsCountOpt.ToInt();
+          Config.Path     -> Path;
+          Config.TimeSpan -> ArtifactsCollectionTimeout;
+          Value           = Config.MaxRebootsCountOpt.ToInt();
         }
     | Reboot         -> Reboot { }
-    | WaitForReboot1 -> WaitForReboot { TimeSpan = ParsedValue(TimeSpan, GetText(TimeSpan)); }
-    | WaitForReboot2 -> WaitForReboot { TimeSpan = ParsedValue(TimeSpan, GetText(TimeSpan)); }
+    | WaitForReboot1 -> WaitForReboot { TimeSpan -> TimeSpan; }
+    | WaitForReboot2 -> WaitForReboot { TimeSpan -> TimeSpan; }
     | Barrier        -> Barrier       { Reference -> Reference; }
   }
 
   map syntax Grammar.DeploymentOption -> DeploymentOption
   {
-    | Success    -> Success   { Value = ParsedValue(Value.Span, int.Parse(Value.GetText())); }
-    | ForReboot1 -> ForReboot { Value = ParsedValue(Value.Span, int.Parse(Value.GetText())); }
-    | ForReboot2 -> ForReboot { Value = ParsedValue(Value.Span, int.Parse(Value.GetText())); }
+    | Success    -> Success   { Value -> Value; }
+    | ForReboot1 -> ForReboot { Value -> Value; }
+    | ForReboot2 -> ForReboot { Value -> Value; }
     | Timeout    -> Timeout   { Value -> Value; }
   }
 

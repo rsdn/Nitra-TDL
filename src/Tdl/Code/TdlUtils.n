@@ -852,14 +852,6 @@ namespace Tdl
         def msgs = context.GetFileData(location.Source.File.Id).GetCompilerMessage();
         msgs.ReportMessage(CompilerMessageType.Error, location, message, 0);
     }
-    
-    public MakeTimeSpan(span : NSpan, text : string) : ParsedValue[TimeSpan]
-    {
-      if (string.IsNullOrWhiteSpace(text))
-        ParsedValue(span.StartPos)
-      else
-        ParsedValue(span, TimeSpan.Parse(text))
-    }
 
     public MakeSelectAggregateParametersScope(scope : TableScope, deployments : ImmutableArray[DeploymentSymbol]) : ValueOption[Scope]
     {
