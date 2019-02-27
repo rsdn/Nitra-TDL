@@ -488,6 +488,7 @@ namespace Tdl2Json
                   TfsId                   = getLong  ("TfsId");
                   Timeout                 = getString("Timeout");
                   UniqueId                = getString("UniqueId");
+                  ProductGroupName        = getString("ProductGroupName");
                   MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
               }
 
