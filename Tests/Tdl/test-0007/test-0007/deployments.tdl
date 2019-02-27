@@ -28,4 +28,4 @@ deployment InstallProduct(
     expected 0;
 }
 
-deployment LinuxDeploy = InstallTestAgent, InstallProduct, LinuxDeploy;
+deployment LinuxDeploy = InstallTestAgent, InstallProduct;
