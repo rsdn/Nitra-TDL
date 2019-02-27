@@ -45,6 +45,16 @@ namespace Tdl
       DotNet.AstUtils.MakeDefault = DotNet.Coverters.MakeDefaultParameters;
     }
 
+    public Reset(project : Project) : void
+    {
+      when (_backEnd != null)
+      {
+        _backEnd.Dispose();
+        _backEnd = null;
+      }
+      project.Data = null;
+    }
+    
     public RefreshReferences(cancellationToken : CancellationToken, project : Project) : object
     {
       TdlTypeUnifier.InitInstance();
