@@ -13,7 +13,7 @@
     </Task>
   </UsingTask>
 
-  <Target Name="CoreCompile" DependsOnTargets="$(CoreCompileDependsOn)">
+  <Target Name="PrepareTdlCompile">
     <PropertyGroup>
       <TdlOutputPath Condition=" '$(TdlOutputPath)' == '' ">$(OutDir)$(TargetName).json</TdlOutputPath>
     </PropertyGroup>
@@ -22,6 +22,9 @@
       <TdlCompile Include="@(None)"    Condition=" '%(Extension)' == '.tdl' " />
       <TdlCompile Include="@(Content)" Condition=" '%(Extension)' == '.tdl' " />
     </ItemGroup>
+  </Target>
+
+  <Target Name="CoreCompile" Inputs="$(MSBuildAllProjects);@(TdlCompile)" Outputs="$(TdlOutputPath)" DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile">
     <TdlTask Condition=" '$(BuildingProject)' != 'false' "
             ToolPath         = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
             WorkingDirectory = "$(MSBuildProjectDirectory)"
