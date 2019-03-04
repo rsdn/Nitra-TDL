@@ -42,6 +42,7 @@ namespace Tdl
 
     public this()
     {
+      assert2(false);
       DotNet.AstUtils.MakeDefault = DotNet.Coverters.MakeDefaultParameters;
     }
 
@@ -105,28 +106,28 @@ namespace Tdl
       def productType           = TdlType.ProductSymbol();
       def methodType            = FunctionTypeSymbol();
       def context               = TdlDependentPropertyEvalContext(project, deploymentType, platformType, productType, methodType);
-      def rootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
-      def systemNsRef   = bindNs(rootNamespace.Scope, "System");
+      def dotnetRootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
+      def systemNsRef   = bindNs(dotnetRootNamespace.Scope, "System");
       when (systemNsRef.IsSymbolEvaluated)
       {
         def systemNs = systemNsRef.Symbol;
 
-        defineAlias(context, systemNs, rootNamespace, "Object",  "object");
-        defineAlias(context, systemNs, rootNamespace, "Void",    "void");
-        defineAlias(context, systemNs, rootNamespace, "String",  "string");
-        defineAlias(context, systemNs, rootNamespace, "Boolean", "bool");
-        defineAlias(context, systemNs, rootNamespace, "Byte",    "byte");
-        defineAlias(context, systemNs, rootNamespace, "SByte",   "sbyte");
-        defineAlias(context, systemNs, rootNamespace, "Int16",   "short");
-        defineAlias(context, systemNs, rootNamespace, "UInt16",  "ushort");
-        defineAlias(context, systemNs, rootNamespace, "Int32",   "int");
-        defineAlias(context, systemNs, rootNamespace, "UInt32",  "uint");
-        defineAlias(context, systemNs, rootNamespace, "Int64",   "long");
-        defineAlias(context, systemNs, rootNamespace, "UInt64",  "ulong");
-        defineAlias(context, systemNs, rootNamespace, "Single",  "float");
-        defineAlias(context, systemNs, rootNamespace, "Double",  "double");
-        defineAlias(context, systemNs, rootNamespace, "Decimal", "decimal");
-        defineAlias(context, systemNs, rootNamespace, "Char",    "char");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Object",  "object");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Void",    "void");
+        defineAlias(context, systemNs, dotnetRootNamespace, "String",  "string");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Boolean", "bool");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Byte",    "byte");
+        defineAlias(context, systemNs, dotnetRootNamespace, "SByte",   "sbyte");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Int16",   "short");
+        defineAlias(context, systemNs, dotnetRootNamespace, "UInt16",  "ushort");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Int32",   "int");
+        defineAlias(context, systemNs, dotnetRootNamespace, "UInt32",  "uint");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Int64",   "long");
+        defineAlias(context, systemNs, dotnetRootNamespace, "UInt64",  "ulong");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Single",  "float");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Double",  "double");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Decimal", "decimal");
+        defineAlias(context, systemNs, dotnetRootNamespace, "Char",    "char");
 
         methodType.Parameters = ImmutableArray.Empty;
         def symbolRef  = bindType(systemNsRef.Scope, "Void");
@@ -134,6 +135,8 @@ namespace Tdl
           methodType.Return = symbolRef.Symbol;
       }
 
+      def rootNamespace = NamespaceSymbol();
+      
       def initTypeSymbol(type : TypeSymbol) : void
       {
         type.EvalProperties(context);
@@ -147,12 +150,16 @@ namespace Tdl
       MakeExternalSymbol(context, rootNamespace);
       MakeScenarioParametersScope(backEnd, context);
       
-      (backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace)
+      TdlProjectData(backEnd, context, dotnetRootNamespace, rootNamespace)
     }
 
     public RefreshProject(cancellationToken : CancellationToken, files : ImmutableArray[FileEvalPropertiesData], data : object) : void
     {
-      def (backEnd, context, rootNamespace) = (data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol);
+      def projectData           = data :> TdlProjectData;
+      def backEnd               = projectData.BackEnd;
+      def context               = projectData.Context;
+      def dotnetRootNamespace   = projectData.RootNamespace;
+      def rootNamespace         = projectData.TdlRootNamespace;
       context.CancellationToken = cancellationToken;
       backEnd.CancellationToken = cancellationToken;
 
@@ -166,13 +173,13 @@ namespace Tdl
         foreach (symbol is NamespaceSymbol in symbols)
           removeParsedSymbols(symbol.MemberTable);
       }
-      removeParsedSymbols(rootNamespace.MemberTable);
+      removeParsedSymbols(dotnetRootNamespace.MemberTable);
       removeParsedSymbols(ExternalSymbolTable);
 
       when (cancellationToken.IsCancellationRequested)
         return;
 
-      def evalHost = TdlProjectEvalPropertiesHost(files, rootNamespace);
+      def evalHost = TdlProjectEvalPropertiesHost(files, dotnetRootNamespace, rootNamespace);
       evalHost.EvalProperties(context, "SymbolHierarchy", 0);
       evalHost.EvalProperties(context, "Scopes", 1);
       evalHost.EvalProperties(context, "Stage 2", 2);
@@ -268,7 +275,7 @@ namespace Tdl
     
     public GetSymbolById(data : object, symbolId : int) : ValueOption[DeclarationSymbol]
     {
-      def (_, _, rootNamespace) = DecomposeData(data);
+      def projectData = DecomposeData(data);
       // TODO: cache symbols an use it cache to find symbol by id
       def findSymbol(symbols : Seq[DeclarationSymbol]) : ValueOption[DeclarationSymbol]
       {
@@ -299,12 +306,13 @@ namespace Tdl
         ValueOption.None()
       }
 
-      foreach (symbols in rootNamespace.MemberTable.Symbols)
-      {
-        def result = findSymbol(symbols);
-        when (result.IsSome)
-          return result;
-      }
+      def result = findSymbol(projectData.RootNamespace.MemberTable.GetAllSymbols());
+      when (result.IsSome)
+        return result;
+
+      def result = findSymbol(projectData.TdlRootNamespace.MemberTable.GetAllSymbols());
+      when (result.IsSome)
+        return result;
 
       ValueOption.None()
     }
@@ -321,8 +329,9 @@ namespace Tdl
 
     public VisitGlobalSymbols(data : object, callback : Predicate[DeclarationSymbol]) : void
     {
-      def (_, _, rootNamespace) = DecomposeData(data);
-      _ = rootNamespace.VisitChildrenAndSelf(SymbolUtils.GetNestedSymbol, callback);
+      def projectData = DecomposeData(data);
+      _ = projectData.RootNamespace.VisitChildrenAndSelf(SymbolUtils.GetNestedSymbol, callback);
+      _ = projectData.TdlRootNamespace.VisitChildrenAndSelf(SymbolUtils.GetNestedSymbol, callback);
     }
 
     public Postprocessing(cancellationToken : System.Threading.CancellationToken, project : Nitra.ProjectSystem.Project, asts : System.Collections.Immutable.ImmutableArray[(Nitra.Declarations.IAst * bool)], data : object) : void
@@ -330,9 +339,9 @@ namespace Tdl
       IgnoreParams();
     }
 
-    public DecomposeData(data : object) : IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol
+    public DecomposeData(data : object) : TdlProjectData
     {
-      data :> (IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol)
+      data :> TdlProjectData
     }
 
     public MakeExternalSymbol(context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : void

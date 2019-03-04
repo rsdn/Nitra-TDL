@@ -17,9 +17,12 @@ namespace Tdl
 {
   class TdlProjectEvalPropertiesHost : CSharpProjectEvalPropertiesHost
   {
-    public this(files : ImmutableArray[FileEvalPropertiesData], rootNamespace : NamespaceSymbol)
+    protected _dotnetRootNamespace : NamespaceSymbol;
+    
+    public this(files : ImmutableArray[FileEvalPropertiesData], dotnetRootNamespace : NamespaceSymbol, rootNamespace : NamespaceSymbol)
     {
       base(files, rootNamespace);
+      _dotnetRootNamespace = dotnetRootNamespace;
     }
 
     protected override BeforeStage(context : DependentPropertyEvalContext, _passName : string) : void
@@ -30,14 +33,14 @@ namespace Tdl
           foreach (file in _files)
             when (file.Ast is Module as m)
             {
-              m.ContainingTable = _rootNamespace.MemberTable;
-              m.RootNamespace = _rootNamespace;
+              m.ContainingTable = _dotnetRootNamespace.MemberTable;
+              m.RootNamespace   = _dotnetRootNamespace;
             }
 
         | 1 =>
           foreach (file in _files)
             when (file.Ast is Module as m)
-              m.Scope = _rootNamespace.Scope;
+              m.Scope = _dotnetRootNamespace.Scope.HideWith(_rootNamespace.Scope);
 
         | _ => ()
       }
