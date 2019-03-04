@@ -96,5 +96,17 @@
         public int? MaxRebootsCount { get; set; }
     }
 
+    public sealed class GTestProgram : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    {
+        [JsonProperty("ProgramName", Required = Required.Always)]
+        public string ProgramName { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string[] Arguments { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
+    }
+
     public sealed class ForceReboot { }
 }
