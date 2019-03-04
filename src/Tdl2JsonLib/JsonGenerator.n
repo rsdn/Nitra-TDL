@@ -130,7 +130,7 @@ namespace Tdl2Json
       foreach (file in project.Files)
         _ = messages.AddRange(file.GetCompilerMessages());
 
-      def (_, _, namespaceSymbol) = data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol;
+      def namespaceSymbol = (data :> TdlProjectData).RootNamespace;
       (namespaceSymbol, messages, commentBag)
     }
 
@@ -425,6 +425,17 @@ namespace Tdl2Json
                       ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                     }
                 }
+                def makeGTestAction(c : ScenarioAction.GTest) : GTestProgram
+                {
+                    def testScriptArgs = c.Arguments.MapToArray(a => a.Value);
+                    GTestProgram() <-
+                    {
+                      ProgramName                = c.Name.Value;
+                      Arguments                  = testScriptArgs;
+                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                      ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+                    }
+                }
                 def makeConfigAction(c : ScenarioAction.Config) : TestBot
                 {
                   TestBot() <-
@@ -459,8 +470,9 @@ namespace Tdl2Json
                           Count   = barriersCount[b];
                         }
                     }
-                  | Script as c => makeScriptAction(c)
+                  | Script as s => makeScriptAction(s)
                   | Config as c => makeConfigAction(c)
+                  | GTest  as g => makeGTestAction(g)
                   | _ => assert(false, "Unsupported ScenarioAction: " + action)
                 }
                 
@@ -468,6 +480,8 @@ namespace Tdl2Json
                   makeConfigAction(r.Actions[0] :> ScenarioAction.Config)
                 else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Script)
                   makeScriptAction(r.Actions[0] :> ScenarioAction.Script)
+                else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.GTest)
+                  makeGTestAction(r.Actions[0] :> ScenarioAction.GTest)
                 else
                   TestMethodSequence() <-
                   {

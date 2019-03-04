@@ -15,7 +15,7 @@ scenario SecondTestFile
 {
     deployment LinuxDeploy;
     environments (cent75-x64, MonorepoHelloWorld);
-    script "utf_robot_wrapper.sh" "hello_tests_second.robot";
+    gtest "utf_robot_wrapper.sh" "hello_tests_second.robot" "a2";
     UniqueId = @"73b136a8-2032-4abb-b5dc-85283cda1d92";
     //NeedPythonAgent = true;
     RerunCountOnTestFailure = 0;

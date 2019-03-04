@@ -19,10 +19,10 @@ namespace Tdl
         ScenarioActions = ScenarioAction.Script(Name.Location.Convert(), TdlUtils.ConvertStringLiteral(Name), 
           Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions), Value);
 
-        Value       : ParsedValue[int];
         Name        : CSharp.StringLiteral;
         Arguments   : CSharp.StringLiteral*;
         Definitions : Definition*;
+        Value       : ParsedValue[int];
       }
 
     | Config
@@ -31,6 +31,16 @@ namespace Tdl
 
         Value                      : ParsedValue[int];
         Path                       : CSharp.StringLiteral;
+      }
+
+    | GTest
+      {
+        ScenarioActions = ScenarioAction.GTest(Name.Location.Convert(), TdlUtils.ConvertStringLiteral(Name), 
+          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), Value);
+
+        Name        : CSharp.StringLiteral;
+        Arguments   : CSharp.StringLiteral*;
+        Value       : ParsedValue[int];
       }
 
     | Method

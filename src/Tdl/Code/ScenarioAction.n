@@ -20,6 +20,12 @@ namespace Tdl
         MaxRebootsCountOpt : ParsedValue[int];
       }
     | Config        { path   : ParsedValue[string]; MaxRebootsCountOpt : ParsedValue[int]; }
+    | GTest
+      {
+        Name               : ParsedValue[string];
+        Arguments          : ImmutableArray[ParsedValue[string]];
+        MaxRebootsCountOpt : ParsedValue[int];
+      }
     | Method        { method : Member.MethodSymbol; MaxRebootsCountOpt : ParsedValue[int]; }
     | Reboot        { }
     | WaitForReboot { TimeSpan : string; }
