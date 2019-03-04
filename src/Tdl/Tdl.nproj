@@ -188,6 +188,9 @@
     <Compile Include="Code\TdlDependentPropertyEvalContext.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\TdlProjectData.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\TdlProjectEvalPropertiesHost.n">
       <SubType>Code</SubType>
     </Compile>
