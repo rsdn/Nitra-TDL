@@ -16,9 +16,10 @@ namespace Tdl
 
     stage 2:
       in AggregateParametersScope : Scope;
+      in AllDeployments : ImmutableArray[DeploymentSymbol];
     }
 
-    CheckForRecursionDeployment(context, Symbol, Symbol.AggregateParametersScope);
+    Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
 
     | Script : Parameterizable
       {
@@ -33,6 +34,7 @@ namespace Tdl
           Kind           = "deployment";
           SpanClass      = TdlLang.DeploymentSpanClass;
           IsSameIdentity = candidate is Tdl.Deployment;
+          MakeHint       = TdlUtils.DeploymentMakeHint(symbolCache, this);
         }
 
 
@@ -93,9 +95,9 @@ namespace Tdl
 
         out BaseDeploymentRef : Ref[DeploymentSymbol];
 
-        BaseDeployment.Scope  = Scope;
-        BaseDeploymentRef     = BaseDeployment.Ref.Resolve();
-        Symbol.BaseDeployment = BaseDeploymentRef.Symbol;
+        BaseDeployment.Scope             = Scope;
+        BaseDeploymentRef                = BaseDeployment.Ref.Resolve();
+        Symbol.BaseDeployment            = BaseDeploymentRef.Symbol;
 
         CurredParameters.Scope           = Scope;
         CurredParameters.DefinitionScope = BaseDeploymentRef.Symbol.AggregateParametersScope;
