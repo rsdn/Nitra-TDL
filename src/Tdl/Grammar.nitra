@@ -104,7 +104,7 @@
     syntax Environments = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
     syntax Environment  = "(" Platform=Reference "," sm Product=Reference ")";
     syntax Method       = "method" sm QualifiedIdentifier MaxRebootsCountOpt=MaxRebootsCount? ";" nl;
-    syntax Config       = "config" sm Path=StringLiteral TimeSpan MaxRebootsCount? ";" nl;
+    syntax Config       = "config" sm Path=StringLiteral MaxRebootsCount? ";" nl;
     syntax Script       = "script" sm Name=StringLiteral Arguments=StringLiteral* Environments? MaxRebootsCount? ";" nl
     {
       syntax Environments = "(" Defs=(DefEnv; ", ")+ ")";

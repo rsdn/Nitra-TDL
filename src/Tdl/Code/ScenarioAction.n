@@ -19,7 +19,7 @@ namespace Tdl
         Defs               : ImmutableArray[Def2];
         MaxRebootsCountOpt : ParsedValue[int];
       }
-    | Config        { path   : ParsedValue[string]; ArtifactsCollectionTimeout : TimeSpan?; MaxRebootsCountOpt : ParsedValue[int]; }
+    | Config        { path   : ParsedValue[string]; MaxRebootsCountOpt : ParsedValue[int]; }
     | Method        { method : Member.MethodSymbol; MaxRebootsCountOpt : ParsedValue[int]; }
     | Reboot        { }
     | WaitForReboot { TimeSpan : string; }

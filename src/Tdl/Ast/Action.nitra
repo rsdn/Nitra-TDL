@@ -27,12 +27,10 @@ namespace Tdl
 
     | Config
       {
-        ScenarioActions = ScenarioAction.Config(Path.Location.Convert(), TdlUtils.ConvertStringLiteral(Path), 
-          if (ArtifactsCollectionTimeout.HasValue) ArtifactsCollectionTimeout.Value else null, Value);
+        ScenarioActions = ScenarioAction.Config(Path.Location.Convert(), TdlUtils.ConvertStringLiteral(Path), Value);
 
         Value                      : ParsedValue[int];
         Path                       : CSharp.StringLiteral;
-        ArtifactsCollectionTimeout : ParsedValue[TimeSpan];
       }
 
     | Method
