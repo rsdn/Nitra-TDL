@@ -8,7 +8,8 @@ scenario FirstTestFile
     //NeedPythonAgent = true;
     RerunCountOnTestFailure = 0;
     Timeout = @"01:00:00";
-}
+    ArtifactsCollectionTimeout = "00:01:00";
+  }
 
 scenario SecondTestFile
 {

@@ -42,7 +42,7 @@ namespace Tdl
 
     public this()
     {
-      assert2(false);
+      //assert2(false);
       DotNet.AstUtils.MakeDefault = DotNet.Coverters.MakeDefaultParameters;
     }
 
@@ -374,10 +374,11 @@ namespace Tdl
 
       def platformType = backEnd.PlatformType;
       
-      defineParameter(context, "MaxRebootsCount",                 platformType.Int32,   required=false);
       defineParameter(context, "Area",                            platformType.String,  required=false);
+      defineParameter(context, "ArtifactsCollectionTimeout",      platformType.String,  required=true);
       defineParameter(context, "EnforceBinariesFolderUniqueness", platformType.Boolean, required=false);
       defineParameter(context, "LocalTestBinariesFolder",         platformType.String,  required=false);
+      defineParameter(context, "MaxRebootsCount",                 platformType.Int32,   required=false);
       defineParameter(context, "NeedUnsignedAgent",               platformType.Boolean, required=false);
       defineParameter(context, "ProductGroupName",                platformType.String,  required=false);
       defineParameter(context, "RequireInternet",                 platformType.Boolean, required=false);

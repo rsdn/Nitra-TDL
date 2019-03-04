@@ -170,9 +170,8 @@ namespace Tdl
     | Config   -> 
       [ Action.Config
         {
-          Config.Path     -> Path;
-          Config.TimeSpan -> ArtifactsCollectionTimeout;
-          Value           = Config.MaxRebootsCountOpt.ToInt();
+          Config.Path -> Path;
+          Value       = Config.MaxRebootsCountOpt.ToInt();
         }
       ]
     | Method   -> 
@@ -205,9 +204,8 @@ namespace Tdl
       }
     | Config -> Action.Config
         {
-          Config.Path     -> Path;
-          Config.TimeSpan -> ArtifactsCollectionTimeout;
-          Value           = Config.MaxRebootsCountOpt.ToInt();
+          Config.Path -> Path;
+          Value       = Config.MaxRebootsCountOpt.ToInt();
         }
     | Reboot         -> Reboot { }
     | WaitForReboot1 -> WaitForReboot { TimeSpan -> TimeSpan; }

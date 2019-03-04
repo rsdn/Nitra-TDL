@@ -386,6 +386,7 @@ namespace Tdl2Json
               {
                   r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
               }
+              def artifactsCollectionTimeout = getString("ArtifactsCollectionTimeout");
               def getTestMethod() : TestMethod
               {
                 when (r.Actions.Length == 1)
@@ -394,9 +395,10 @@ namespace Tdl2Json
                   def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
                   return TestMethodQualifier() <- 
                   {
-                    AssemblyName    = assemblyName;
-                    MethodName      = methodName;
-                    MaxRebootsCount = method.MaxRebootsCountOpt.ToNulable();
+                    AssemblyName               = assemblyName;
+                    MethodName                 = methodName;
+                    MaxRebootsCount            = method.MaxRebootsCountOpt.ToNulable();
+                    ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                   };
                 }
                 def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
@@ -404,9 +406,10 @@ namespace Tdl2Json
                   def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
                   TestMethodQualifier() <- 
                   {
-                    AssemblyName    = assemblyName;
-                    MethodName      = methodName;
-                    MaxRebootsCount = method.MaxRebootsCountOpt.ToNulable();
+                    AssemblyName               = assemblyName;
+                    MethodName                 = methodName;
+                    MaxRebootsCount            = method.MaxRebootsCountOpt.ToNulable();
+                    ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                   }
                 }
                 def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
@@ -415,10 +418,11 @@ namespace Tdl2Json
                     def env = c.Defs.Select(d => (d.Name, d.Expr.ToObject())).ToDictionary();
                     UnixScriptRunner() <-
                     {
-                      TestScriptName  = c.Name.Value;
-                      TestScriptArgs  = testScriptArgs;
-                      Environment     = env;
-                      MaxRebootsCount = c.MaxRebootsCountOpt.ToNulable();
+                      TestScriptName             = c.Name.Value;
+                      TestScriptArgs             = testScriptArgs;
+                      Environment                = env;
+                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                      ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                     }
                 }
                 def makeConfigAction(c : ScenarioAction.Config) : TestBot
@@ -426,8 +430,8 @@ namespace Tdl2Json
                   TestBot() <-
                   {
                     TestConfigName             = c.path.Value;
-                    ArtifactsCollectionTimeout = c.ArtifactsCollectionTimeout;
                     MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                    ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                   }
                 }
                 def makeAction(action : ScenarioAction) : TestSequenceItem
@@ -467,7 +471,8 @@ namespace Tdl2Json
                 else
                   TestMethodSequence() <-
                   {
-                    TestSequence = r.Actions.Select(makeAction).ToArray();
+                    TestSequence               = r.Actions.Select(makeAction).ToArray();
+                    ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                   }
               }
               

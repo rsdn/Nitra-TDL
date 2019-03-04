@@ -4,19 +4,28 @@
     using System;
     using System.Collections.Generic;
 
-    public interface TestMethodOrTestSequenceItem : TestMethod, TestSequenceItem { }
+    public interface TestMethodOrTestSequenceItem : TestMethod, TestSequenceItem
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        string ArtifactsCollectionTimeout { get; set; }
+    }
+    public class TestMethodOrTestSequenceItemImpl : TestMethod, TestSequenceItem
+    {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string ArtifactsCollectionTimeout { get; set; }
+    }
 
     public interface TestMethod { }
 
     public interface TestSequenceItem { }
 
-    public class TestMethodSequence : TestMethod
+    public class TestMethodSequence : TestMethodOrTestSequenceItemImpl, TestMethod
     {
         [JsonProperty(Required = Required.Always)]
         public TestSequenceItem[] TestSequence { get; set; }
     }
 
-    public sealed class TestMethodQualifier : TestMethodOrTestSequenceItem
+    public sealed class TestMethodQualifier : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string AssemblyName { get; set; }
@@ -28,7 +37,7 @@
         public int? MaxRebootsCount { get; set; }
     }
 
-    public sealed class RebootTestStep : TestMethodOrTestSequenceItem
+    public sealed class RebootTestStep : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public ForceReboot ForceReboot { get; set; }
@@ -63,19 +72,16 @@
         }
     }
 
-    public sealed class TestBot : TestMethodOrTestSequenceItem
+    public sealed class TestBot : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
     {
         [JsonProperty("TestConfigName", Required = Required.Always)]
         public string TestConfigName { get; set; }
-
-        [JsonProperty("ArtifactsCollectionTimeout", NullValueHandling = NullValueHandling.Ignore)]
-        public TimeSpan? ArtifactsCollectionTimeout { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? MaxRebootsCount { get; set; }
     }
 
-    public sealed class UnixScriptRunner : TestMethodOrTestSequenceItem
+    public sealed class UnixScriptRunner : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
     {
         [JsonProperty("TestScriptName", Required = Required.Always)]
         public string TestScriptName { get; set; }

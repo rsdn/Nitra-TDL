@@ -1,4 +1,4 @@
-﻿product "KES 11.1__PURE 2020.MP0" : Kavkis  = "KES 11.1", "PURE 2020.MP0";
+product "KES 11.1__PURE 2020.MP0" : Kavkis  = "KES 11.1", "PURE 2020.MP0";
 
 scenario FacadeProductStopStart
 {
@@ -16,7 +16,8 @@ scenario FacadeProductStopStart
     UniqueId = @"c5e33360-e3f1-40e2-a11b-cce562bfc87d";
     Timeout = @"00:20:00";
     TfsId = 3020065;
-    AllowReboot = true;
+    MaxRebootsCount = 1;
+    ArtifactsCollectionTimeout = "00:01:00";
 }
 
 scenario InternetExplorer_CheckDnT
@@ -24,7 +25,7 @@ scenario InternetExplorer_CheckDnT
     deployment DeployWithDeployer_NoReboot;
     environments (win10, "PURE 2020.MP0");
     method Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT;
-    AllowReboot = true;
+    MaxRebootsCount = 1;
     UniqueId = @"0fb5a0e1-1b7e-4ae9-9a63-46a27f375546";
     Timeout = @"00:20:00";
     RerunCountOnTestFailure = 1;
