@@ -1,0 +1,182 @@
+suite "Kav.BvtPvt.Stress" : SessionParameters
+{
+    platform platform_group_1;
+    product KAV;
+    ExcludeMasks = @"*.iso,*.vhd,*_full.exe";
+    DistribFiles = DistribFiles;
+    DistribTestModules = DistribTestModules;
+    Kav-Main-BvtPvt-Stress-scenarios();
+}
+
+scenario Kav-Main-BvtPvt-Stress-scenarios = OpvoProductRestartScenatioKashell-2738;
+
+scenario OpvoProductRestartScenatioKashell-2738
+{
+    deployment "Install product for only kashell manipulation [s]";
+    environments (platform_group_1, KAV);
+    // method guid: 403ad4bb-1d7e-4480-8e8c-35359cbf4156
+    method Autotest.Kis.Suites.Stress.KashellRestartStressTests.OpvoProductRestartScenatioKashell;
+    UniqueId = "efbdf80b-6eb7-4593-aa5b-334da314b9c7";
+    Timeout = "04:00:00";
+    Area = "Stress";
+    TfsId = 812736;
+}
+
+select deployment "Install product for only kashell manipulation [s]" (Name)
+{
+    | "SAAS" => "Install product for only kashell manipulation SAAS"
+    | _      => "Install product for only kashell manipulation"
+}
+
+deployment "Install product for only kashell manipulation SAAS" = "_Install product"(
+    ForceDisableAppVerifier: true,
+    DisableTestModulesInstallation: true,
+    ActivateEmbeddedTrial: false,
+    InstallLicenceBackdoor: "Off",
+    SetProductNameForFacade: false);
+
+deployment "Install product for only kashell manipulation" = "_Install product"(
+    ForceDisableAppVerifier: true,
+    DisableTestModulesInstallation: true,
+    ActivateEmbeddedTrial: true,
+    InstallLicenceBackdoor: "Off",
+    SetProductNameForFacade: false);
+
+    deployment "_Install product"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string DumpFolder = @"",
+    string AcceptEula = "On",
+    string AcceptKsnAgreement = "On",
+    string AcceptMarketingAgreement = "On",
+    string AcceptSocializationAgreement = "On",
+    bool ActivateEmbeddedTrial = false,
+    string ActivationCode = "",
+    string ActivationServerUrl = "",
+    string AdditionalFiles = @"\\tis-dfs.avp.ru\Autotests\KIS\AdditionalFiles\Kis.Main.AdditionalContinuousIntegration",
+    string BundleKSDE = "Default",
+    bool CollectContinuousProductTraces = true,
+    string CollectionMountType = "File share",
+    string CollectionsNetworkPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Deployment\Kis.Main",
+    string ConfigFilesFamily,
+    bool ContinueOnErrors = false,
+    string DefaultUpdateSource = "",
+    bool DisableDistribFilesDownloading = false,
+    bool DisablePpl = false,
+    bool DisableProductInstallation = false,
+    bool DisableRestartService = true,
+    bool DisableTestModulesInstallation = false,
+    bool DisableVSCollectorsDeployment = false,
+    string DriversLogState = "MainEnableBranchDisable",
+    bool EnableAntiSpam = false,
+    bool EnableAutomaticKfaDowngrade = false,
+    bool EnableBssLogs = false,
+    bool EnableSslDecoding = false,
+    bool ForceDisableAppVerifier = false,
+    bool ForceDisableDriverVerifier = false,
+    bool ForceInstallCertificates = false,
+    bool ForcePreloadDumpWriter = false,
+    string ForceTraceLevel = "",
+    bool IgnoreNothingToUpdateCode = false,
+    bool InstallActivationServerBackdoor = false,
+    string InstallerExecutableFileMask = "",
+    bool InstallKLPSRV = false,
+    string InstallLicenceBackdoor = "On",
+    string IsoImageFileName = "",
+    string KpcActivationCode = "",
+    string KpcKasperskyId = "",
+    string KpcOneTimeRegistrationSharedSecret = "",
+    string KPCRegion = "",
+    string KpcUserId = "",
+    string LocalizationCode = "",
+    bool PostUpdateServiceStartStop = false,
+    string RegisterAiCom = "Off",
+    bool ReplaceDistributiveFromIso = false,
+    string RequestSaaSTrialTier = "Default",
+    bool RunAtSystemStartup = false,
+    string SaveHashesPath = "",
+    string ScreenshotsFolder = "",
+    bool SetProductNameForFacade = true,
+    bool Silent = false,
+    bool StartService = false,
+    string SuggestSafeKids = "Off",
+    int TimesToUpdate = 1,
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    bool TurnOffDumpOnAssert = false,
+    bool TurnOffProtection = false,
+    string UpdateChromeToVersion = "",
+    string UpdateFirefoxToVersion = "",
+    string UpdateSource = "",
+    string UseCollections = "On",
+    string UseGDPR = "Default",
+    bool UseProxyForUpdate = false,
+    bool Verbose = false,
+    bool VerboseExternalProcessesOutput = false,
+    bool WaitForProductActivation = false)
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}
+
+external
+{
+    string ProductVersion;
+    string DistribFiles;
+    string DistribTestModules;
+    string AutotestsBinariesPath;
+    string BaseDistribFiles;
+    string BaseDistribTestModules;
+    string ProductBasesPath;
+}
+
+product KAV : Kavkis 
+{
+    Name = @"KAV";
+    ReleaseName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;ksde*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"Kis.";
+    TestAppPackName = @"KasperskyLab.Kis.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product type Kavkis
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+    string AutotestBinariesExcludedFilesMasks;
+    string ProductBinariesExcludedFilesMasks;
+    string ConfigFilesFamily;
+    string TestAppPackName;
+    bool   DisableAddingTrustedApplications;
+    bool   SkipRecommendedSettings;
+    string InstallerExecutableFileMask;
+}
+
+suite type SessionParameters
+{
+    string DistribFiles;
+    string DistribTestModules;
+    string AutotestsBinariesPath;
+    string ExcludeMasks;
+    string BaseDistribFiles;
+    string BaseDistribTestModules;
+}
+
+platform win7-x64;
+platform win7-x86;
+platform win811-x64;
+platform win811-x86;
+platform win10-x64;
+platform w10rs4-x64;
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs6-x64;
+platform w10rs6-x86;
+
+platform platform_group_1 = w10rs5-x64, w10rs6-x64, w10rs5-x86, w10rs6-x86, win7-x64, win7-x86, win811-x64, win811-x86;

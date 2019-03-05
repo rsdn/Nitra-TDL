@@ -211,11 +211,13 @@ namespace Tdl2Json
           else
             null
         }
+        def name = useAsFixedParameter("Name");
+        parameters.Add("Name", name);
         (Def.Name, 
           ProductValue() <- 
           {
             Product = Product() <- { 
-              Name        = useAsFixedParameter("Name");
+              Name        = name;
               ReleaseName = useAsFixedParameter("ReleaseName");
               Version     = useAsFixedParameter("Version");
               Parameters  = parameters;
