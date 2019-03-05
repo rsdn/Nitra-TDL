@@ -366,6 +366,7 @@ namespace Tdl2Json
           match (scenarioSymbol)
           {
             | Tdl.Scenario.DefSymbol as r =>
+            def r = r;
               def parallelSetOpt = if (r.IsParallelSetOptEvaluated) r.ParallelSetOpt else null;
               def barriersCount  = if (parallelSetOpt == null) Dictionary() 
                                    else parallelSetOpt.BarriersCount.ToDictionary();
@@ -469,7 +470,7 @@ namespace Tdl2Json
                         {
                           Id      = b.Guid;
                           Timeout = TimeSpan.Parse(b.Timeout.Value);
-                          Count   = barriersCount[b];
+                          Count   = barriersCount.GetValue(b);
                         }
                     }
                   | Script as s => makeScriptAction(s)

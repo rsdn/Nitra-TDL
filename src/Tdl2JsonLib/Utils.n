@@ -1,0 +1,26 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl2Json
+{
+  module Utils
+  {
+    public GetValue[K, V](this dic : Dictionary[K, V], key : K, dicName : string = null) : V
+    {
+      mutable value;
+      if (dic.TryGetValue(key, out value))
+        value
+      else
+      {
+        def suffix = if (dicName == null) null else (" (" + dicName + ")");
+        throw KeyNotFoundException($"The '$key' key not found in Dictionary[$(default(K)), $(default(V))]$suffix");
+      }
+    }
+  }
+}

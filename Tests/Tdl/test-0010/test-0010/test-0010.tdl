@@ -1,0 +1,211 @@
+suite BuildAcceptance
+{
+    platform platform_group_1;
+    product PURE;
+    KpmDownloadAndInstallMultiMachineScenario();
+}
+
+parallel scenario KpmDownloadAndInstallMultiMachineScenario =
+    KpmDownloadAndInstallMultiMachineDevice1,
+    KpmDownloadAndInstallMultiMachineDevice2;
+    
+barrier CreateUcpAccountBarrier timeout "00:10:00";
+
+scenario KpmDownloadAndInstallMultiMachineDevice1
+{
+    deployment "Install product no uac-1124";
+    environments (platform_group_1, PURE);
+    sequence
+    {
+        method Autotest.Kis.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount;
+        barrier CreateUcpAccountBarrier;
+        method Autotest.Kis.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice;
+    }
+    
+    UniqueId = "3028FAB1-767B-4628-9F20-CCAD45AF16A0";
+    RevertAgentAfter  = true;
+    Timeout = "00:40:00";
+    Area = "KPMIntergration";
+    TfsId = 891723;
+}
+
+scenario KpmDownloadAndInstallMultiMachineDevice2
+{
+    deployment "Disable UAC";
+    environments (platform_group_1, PURE);
+    sequence
+    {
+        barrier CreateUcpAccountBarrier;
+        method Autotest.Kis.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice;
+    }
+
+    UniqueId = "691F0DCE-96C5-4DC2-96D8-8707D169EB53";
+    RevertAgentAfter  = true;
+    Timeout = "00:40:00";
+    Area = "KPMIntergration";
+    TfsId = 891723;
+}
+
+platform platform_group_1 = w10rs5-x64, w10rs6-x64, w10rs5-x86, w10rs6-x86, win7-x64, win7-x86, win811-x64, win811-x86;
+
+platform win7-x64;
+platform win7-x86;
+platform win811-x64;
+platform win811-x86;
+platform win10-x64;
+platform w10rs4-x64;
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs6-x64;
+platform w10rs6-x86;
+
+deployment "RebootAgent" = reboot "00:15:00";
+deployment "Disable UAC Impl"(
+    string UacAction = "Disable")
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\ManageUAC\ManageUAC.ps1"
+{
+    expected 42;
+}
+
+deployment "Disable UAC" = "Disable UAC Impl", "RebootAgent";
+
+deployment "Install product no uac-1124" = "Disable UAC", "Install product NoBackdoor TraceLevel_1000";
+
+select deployment "Install product NoBackdoor TraceLevel_1000"(InstallationType)
+{
+    | _ => "_Install product NoBackdoor TraceLevel_1000"
+    | "Regular" => "_Install product NoBackdoor TraceLevel_1000"
+    | "Upgrade 2019" => "Install 2019 -> Install product NoBackdoor TraceLevel_1000"
+}
+deployment "_Install product NoBackdoor TraceLevel_1000" = "_Install product"(
+    ForceTraceLevel: "1000",
+    InstallLicenceBackdoor: "Off");
+
+deployment "_Install product"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string DumpFolder = @"",
+    string AcceptEula = "On",
+    string AcceptKsnAgreement = "On",
+    string AcceptMarketingAgreement = "On",
+    string AcceptSocializationAgreement = "On",
+    bool ActivateEmbeddedTrial = false,
+    string ActivationCode = "",
+    string ActivationServerUrl = "",
+    string AdditionalFiles = @"\\tis-dfs.avp.ru\Autotests\KIS\AdditionalFiles\Kis.Main.AdditionalContinuousIntegration",
+    string BundleKSDE = "Default",
+    bool CollectContinuousProductTraces = true,
+    string CollectionMountType = "File share",
+    string CollectionsNetworkPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Deployment\Kis.Main",
+    string ConfigFilesFamily,
+    bool ContinueOnErrors = false,
+    string DefaultUpdateSource = "",
+    bool DisableDistribFilesDownloading = false,
+    bool DisablePpl = false,
+    bool DisableProductInstallation = false,
+    bool DisableRestartService = true,
+    bool DisableTestModulesInstallation = false,
+    bool DisableVSCollectorsDeployment = false,
+    string DriversLogState = "MainEnableBranchDisable",
+    bool EnableAntiSpam = false,
+    bool EnableAutomaticKfaDowngrade = false,
+    bool EnableBssLogs = false,
+    bool EnableSslDecoding = false,
+    bool ForceDisableAppVerifier = false,
+    bool ForceDisableDriverVerifier = false,
+    bool ForceInstallCertificates = false,
+    bool ForcePreloadDumpWriter = false,
+    string ForceTraceLevel = "",
+    bool IgnoreNothingToUpdateCode = false,
+    bool InstallActivationServerBackdoor = false,
+    string InstallerExecutableFileMask = "",
+    bool InstallKLPSRV = false,
+    string InstallLicenceBackdoor = "On",
+    string IsoImageFileName = "",
+    string KpcActivationCode = "",
+    string KpcKasperskyId = "",
+    string KpcOneTimeRegistrationSharedSecret = "",
+    string KPCRegion = "",
+    string KpcUserId = "",
+    string LocalizationCode = "",
+    bool PostUpdateServiceStartStop = false,
+    string RegisterAiCom = "Off",
+    bool ReplaceDistributiveFromIso = false,
+    string RequestSaaSTrialTier = "Default",
+    bool RunAtSystemStartup = false,
+    string SaveHashesPath = "",
+    string ScreenshotsFolder = "",
+    bool SetProductNameForFacade = true,
+    bool Silent = false,
+    bool StartService = false,
+    string SuggestSafeKids = "Off",
+    int TimesToUpdate = 1,
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    bool TurnOffDumpOnAssert = false,
+    bool TurnOffProtection = false,
+    string UpdateChromeToVersion = "",
+    string UpdateFirefoxToVersion = "",
+    string UpdateSource = "",
+    string UseCollections = "On",
+    string UseGDPR = "Default",
+    bool UseProxyForUpdate = false,
+    bool Verbose = false,
+    bool VerboseExternalProcessesOutput = false,
+    bool WaitForProductActivation = false)
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}
+
+deployment "Install 2019 -> Install product NoBackdoor TraceLevel_1000" = "Install Base Product 2019", "_Install product NoBackdoor TraceLevel_1000", "RebootAgent";
+deployment "Install Base Product 2019" = "Install Base Product"(
+    AdditionalFiles: @"\\tis-dfs.avp.ru\Autotests\KIS\AdditionalFiles\Kis2019.MP0.AdditionalContinuousIntegration");
+
+deployment "Install Base Product" = "_Install product"(
+    BuildPath: @"$(SessionWorkFolder)\BaseProductBuild",
+    DisableTestModulesInstallation: true,
+    DisableVSCollectorsDeployment: true,
+    InstallActivationServerBackdoor: true,
+    SetProductNameForFacade: false,
+    StartService: true,
+    TurnOffDumpOnAssert: true,
+    UseCollections: "Off");
+product PURE : Kavkis 
+{
+    Name = @"PURE";
+    ReleaseName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;ksde*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"Kis.";
+    TestAppPackName = @"KasperskyLab.Kis.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product type Kavkis
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+    string AutotestBinariesExcludedFilesMasks;
+    string ProductBinariesExcludedFilesMasks;
+    string ConfigFilesFamily;
+    string TestAppPackName;
+    bool   DisableAddingTrustedApplications;
+    bool   SkipRecommendedSettings;
+    string InstallerExecutableFileMask;
+}
+
+external
+{
+    string ProductVersion;
+    string DistribFiles;
+    string DistribTestModules;
+    string AutotestsBinariesPath;
+    string BaseDistribFiles;
+    string BaseDistribTestModules;
+    string ProductBasesPath;
+}
