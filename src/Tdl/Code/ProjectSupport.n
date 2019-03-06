@@ -185,6 +185,7 @@ namespace Tdl
       evalHost.EvalProperties(context, "Stage 2", 2);
       evalHost.EvalProperties(context, "Stage 3", 3);
       evalHost.EvalProperties(context, "Stage 4", 4);
+      evalHost.Finish();
       CheckScenarios(context, dotnetRootNamespace.MemberTable);
     }
 
