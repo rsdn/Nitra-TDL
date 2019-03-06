@@ -41,7 +41,7 @@
       | Open              = "using"             sm QualifiedIdentifier ";" nl;
       | Platform          = "platform"          sm Name ";" nl;
       | PlatformSet       = "platform"          sm Name sm "=" sm Platforms=(Reference; "," sm)+ ";" nl;
-      | DeploymentScript  = "deployment"        sm Name outline_begin_before "(" (FormalParameter; ","sm)* ")" outline_end_before sm "script" ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
+      | DeploymentScript  = "deployment"        sm Name outline_begin_before "(" (FormalParameter; ","sm)* ")" outline_end_before sm "script" sm "data"? ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
       | DeploymentSet     = "deployment"        sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
       | Currying          = "deployment"        sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
       | DeploymentSelect  = "select" sm "deployment" sm Name sm "(" (Parameter; "," sm)+ ")"

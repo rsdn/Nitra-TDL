@@ -49,12 +49,14 @@ namespace Tdl2Json
       def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
       def parameters = script.Parameters.Select(p => (p.Name, getParameterValue(p)));
       def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
+      def isBase64Encoded = if (script.IsIsBase64EncodedEvaluated && script.IsBase64Encoded.HasValue) script.IsBase64Encoded.Value else false;
       def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
       (script.Name, 
         Deployment() <- 
         { 
             Type           = TypeEnum.Script;
-            ScriptPath     = script.Path.Value; 
+            ScriptPath     = if (!isBase64Encoded)          script.Path.Value      else null;
+            ScriptData     = if (isBase64Encoded)           script.Path.Value      else null; 
             ReturnValue    = if (script.Expected.HasValue)  script.Expected.Value  else null;
             RebootExitCode = if (script.ForReboot.HasValue) script.ForReboot.Value else null;
             Timeout        = if (script.Timeout.HasValue)   script.Timeout.Value   else null;

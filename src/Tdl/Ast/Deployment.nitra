@@ -25,11 +25,12 @@ namespace Tdl
       {
         symbol
         {
-          in Path      : ParsedValue[string];
-          in Expected  : ParsedValue[int];
-          in ForReboot : ParsedValue[int];
-          in Timeout   : ParsedValue[string];
-          in Defs      : ImmutableArray[Def2];
+          in Path            : ParsedValue[string];
+          in IsBase64Encoded : ParsedValue[bool];
+          in Expected        : ParsedValue[int];
+          in ForReboot       : ParsedValue[int];
+          in Timeout         : ParsedValue[string];
+          in Defs            : ImmutableArray[Def2];
 
           Kind           = "deployment";
           SpanClass      = TdlLang.DeploymentSpanClass;
@@ -47,10 +48,12 @@ namespace Tdl
         Symbol.Timeout                  = TdlUtils.MakeTimeout(Timeout);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
         Parameters.Scope                = Scope;
+        Symbol.IsBase64Encoded          = IsBase64Encoded;
 
-        Path        : CSharp.StringLiteral;
-        Definitions : Definition*;
-        Options     : DeploymentOption*;
+        Path            : CSharp.StringLiteral;
+        Definitions     : Definition*;
+        Options         : DeploymentOption*;
+        IsBase64Encoded : bool;
 
         decompose Options
         {

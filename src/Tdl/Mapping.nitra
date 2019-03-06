@@ -39,6 +39,7 @@ namespace Tdl
         FormalParameters.Item1               -> Parameters;
         DeploymentScriptBody.DefDeclarations -> Definitions;
         DeploymentScriptBody.Options         -> Options;
+        IsBase64Encoded = ParsedValue(KwDataOpt.Span, KwDataOpt.HasValue);
       }
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Deployments.Item1 -> Deployments; }
     | Currying         -> Deployment.Currying { Name -> Name; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
