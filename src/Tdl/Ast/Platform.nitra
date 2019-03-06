@@ -15,7 +15,7 @@ namespace Tdl
       Type = context.ToTdlContext().PlatformType;
     }
 
-    | Def
+    | ignore-case Def
       {
         symbol
         {
@@ -24,7 +24,7 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Platform;
         }
       }
-    | Set
+    | ignore-case Set
       {
         symbol
         {

@@ -27,7 +27,7 @@ namespace Tdl
 
     ProductType : Reference;
 
-    | Def
+    | ignore-case Def
       {
         symbol
         {
@@ -46,7 +46,7 @@ namespace Tdl
 
         Definitions : Definition*;
       }
-    | Set
+    | ignore-case Set
       {
         symbol
         {

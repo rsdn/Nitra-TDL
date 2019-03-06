@@ -22,7 +22,7 @@ namespace Tdl
     unless (Symbol.IsUsed)
       Name.Warning(context, "Unused scenario.");
 
-    | Def
+    | ignore-case Def
       {
         symbol
         {
@@ -69,7 +69,7 @@ namespace Tdl
         Definitions  : Definition*;
         Actions      : Action*;
       }
-    | Set
+    | ignore-case Set
       {
         symbol
         {
@@ -99,7 +99,7 @@ namespace Tdl
         MultiMachineId : Guid;
         Scenarios      : Reference*;
       }
-    | Generator : Container
+    | ignore-case Generator : Container
       {
         symbol
         {
