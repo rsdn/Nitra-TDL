@@ -171,7 +171,8 @@ deployment "Install Base Product" = "_Install product"(
     StartService: true,
     TurnOffDumpOnAssert: true,
     UseCollections: "Off");
-product PURE : Kavkis 
+    
+product PURE : Kavkis
 {
     Name = @"PURE";
     ReleaseName = @"Main";
@@ -183,6 +184,7 @@ product PURE : Kavkis
     DisableAddingTrustedApplications = false;
     SkipRecommendedSettings = false;
     InstallerExecutableFileMask = @"startup.exe";
+    InstallationType = "Regular";
 }
 
 product type Kavkis
@@ -197,6 +199,7 @@ product type Kavkis
     bool   DisableAddingTrustedApplications;
     bool   SkipRecommendedSettings;
     string InstallerExecutableFileMask;
+    string InstallationType;
 }
 
 external

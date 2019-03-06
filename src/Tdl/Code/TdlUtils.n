@@ -928,11 +928,13 @@ namespace Tdl
       }
     }
     
-    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope) : ImmutableArray[FormalParameterSymbol]
+    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : ProductSymbol) : ImmutableArray[FormalParameterSymbol]
     {
-      def filteringScope = definitionScope :> FilteringScope;
-      def selectParams   = HashSet(filteringScope.Scope.GetAllSymbols().OfType.[FormalParameterSymbol]()
-                                         .Where(p => p.DeclaredIn is Deployment.SelectSymbol));
+      def productParameters = product.ProductType.MemberTable.GetAllSymbols();
+      def filteringScope    = definitionScope :> FilteringScope;
+      def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
+                                                    .OfType.[FormalParameterSymbol]()
+                                                    .Where(p => p.DeclaredIn is Deployment.SelectSymbol));
                                          
       when (selectParams.Count == 0)
         return ImmutableArray.Empty;
@@ -944,7 +946,19 @@ namespace Tdl
       foreach (d in defs)
         when (d.Expr is Tdl.Expr.String as str)
           paramMap[d.Symbol] = str.Value;
-      
+
+      def getAllProducts(product : ProductSymbol) : Seq[Product.DefSymbol]
+      {
+        | Product.DefSymbol as ds => [ds]
+        | Product.SetSymbol as ss => ss.AllProducts.OfType.[Product.DefSymbol]()
+        | _ => assert(false);
+      }
+
+      foreach (ds in getAllProducts(product))
+        foreach (d in ds.Defs)
+          when (d.Expr is Tdl.Expr.String as str)
+            paramMap[d.Symbol] = str.Value;
+
       foreach (s in selectDeployments)
       {
         def values = array(s.Parameters.Length);
@@ -985,6 +999,7 @@ namespace Tdl
       def builder = ImmutableArray.CreateBuilder(distinctSelectParams.Count);
       foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
         builder.Add(p);
+      _ = productParameters;
       builder.ToImmutable()
     }
 

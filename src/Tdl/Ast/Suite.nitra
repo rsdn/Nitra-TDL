@@ -47,7 +47,7 @@ namespace Tdl
     TypeOpt.Scope               = Scope;
     TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
     Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
-    Symbol.DefaultDefs          = Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope);
+    Symbol.DefaultDefs          = Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product);
 
     SetUsed(Symbol.Statements);
 
