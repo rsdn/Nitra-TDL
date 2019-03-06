@@ -23,6 +23,12 @@ namespace Tdl
         | (p1 is FormalParameterSymbol, p2 is FormalParameterSymbol) =>
           p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type) && Cmp(p1.Default, p2.Default)
         
+        | (p1 is FieldSymbol, p2 is FormalParameterSymbol) =>
+          p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
+          
+        | (p1 is FormalParameterSymbol, p2 is FieldSymbol) =>
+          p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
+          
         | _ => false
       }
       
@@ -30,6 +36,10 @@ namespace Tdl
       {
         | x is FormalParameterSymbol => 
           def result = x.Name.GetHashCode() ^ x.Type.GetHashCode() ^ HashCode(x.Default);
+          result
+          
+        | x is FieldSymbol => 
+          def result = x.Name.GetHashCode() ^ x.Type.GetHashCode() ^ HashCode(DefaultValue.None());
           result
           
         | _ => obj.GetHashCode()
