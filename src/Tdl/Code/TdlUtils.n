@@ -917,7 +917,7 @@ namespace Tdl
 
       foreach (case in cases with k)
       foreach (value when value.Values == "" in case.Values)
-        msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value catn't be empty.", 0);
+        msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value can't be empty.", 0);
       
       def set = HashSet();
       foreach (case in cases with k)
