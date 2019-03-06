@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  declaration Barrier : NamespaceMember
+  ignore-case declaration Barrier : NamespaceMember
   {
     symbol
     {

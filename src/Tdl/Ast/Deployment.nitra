@@ -21,7 +21,7 @@ namespace Tdl
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
 
-    | Script : Parameterizable
+    | ignore-case Script : Parameterizable
       {
         symbol
         {
@@ -62,7 +62,7 @@ namespace Tdl
           Timeout   : DeploymentOption.Timeout?;
         }
       }
-    | Set
+    | ignore-case Set
       {
         symbol
         {
@@ -83,7 +83,7 @@ namespace Tdl
         Deployments : DeploymentExpr*;
       }
 
-    | Currying
+    | ignore-case Currying
       {
         symbol
         {
@@ -116,7 +116,7 @@ namespace Tdl
         CurredParameters : Definition*;
 
       }
-    | Select : Parameterizable
+    | ignore-case Select : Parameterizable
       {
         symbol
         {

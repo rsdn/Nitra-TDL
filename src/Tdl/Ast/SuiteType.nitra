@@ -6,7 +6,7 @@ using Nitra.Declarations;
 
 namespace Tdl
 {
-  declaration SuiteType : NamespaceMember, Container
+  ignore-case declaration SuiteType : NamespaceMember, Container
   {
     symbol
     {
