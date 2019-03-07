@@ -48,7 +48,7 @@ namespace Tdl
       stage 1:
         out MethodRef : Ref[Member.MethodSymbol];
 
-        Method.NameScopeFactory = TdlUtils.MethodScopeFactory;
+        Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
         ScenarioActions         = ScenarioAction.Method(Method.Location.Convert(), MethodRef.Symbol, Value);

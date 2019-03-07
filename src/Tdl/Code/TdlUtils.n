@@ -29,13 +29,30 @@ namespace Tdl
     public NoLocation         : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan             : NSpan              = NSpan(0);
-    public MethodScopeFactory : ScopeFactory       = MethodScopeFactoryImpl;
     
-    _methodScopeFactoryCache : Dictionary[int, bool] = Dictionary();
-
-    public ResetMethodScopeFactoryCache() : void
+    public ToTdlContext(this context : DependentPropertyEvalContext) : TdlDependentPropertyEvalContext
     {
-      _methodScopeFactoryCache.Clear();
+      context :> TdlDependentPropertyEvalContext;
+    }
+
+    public GetExternalSymbolTable(this context : DependentPropertyEvalContext) : TableScope
+    {
+      ToTdlContext(context).TdlProjectData.ExternalSymbolTable
+    }
+
+    public GetScenarioParameterScope(this context : DependentPropertyEvalContext) : Scope
+    {
+      ToTdlContext(context).TdlProjectData.ScenarioParameterScope
+    }
+
+    public GetRequiredScenarioParameters(this context : DependentPropertyEvalContext) : ImmutableArray[FormalParameterSymbol]
+    {
+      ToTdlContext(context).TdlProjectData.RequiredScenarioParameters
+    }
+
+    public GetMethodScopeFactory(this context : DependentPropertyEvalContext) : ScopeFactory
+    {
+      ToTdlContext(context).TdlProjectData.MethodScopeFactory
     }
 
     public PlatformMakeHint(symbolCache : ISymbolCache, symbol : Platform.SetSymbol) : string
@@ -452,25 +469,25 @@ namespace Tdl
       FilteringScope(scope, HashSet(ParameterComparer()).Add)
     }
     
-    public IsMissingRequiredOptions(options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : bool
+    public IsMissingRequiredOptions(context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : bool
     {
-      GetMissingRequiredOptionNames(options).Any()
+      GetMissingRequiredOptionNames(context, options).Any()
     }
 
-    GetMissingRequiredOptionNames(options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : Seq[string]
+    GetMissingRequiredOptionNames(context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : Seq[string]
     {
       def optionSet = HashSet();
       foreach (option when option.IsSymbolEvaluated in options)
         _ = optionSet.Add(option.Symbol.Id);
 
-      foreach (required in ProjectSupport.RequiredScenarioParameters)
+      foreach (required in context.GetRequiredScenarioParameters())
         unless (optionSet.Contains(required.Id))
           yield required.Name;
     }
     
-    public GetMissingRequiredOptionMessage(options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : string
+    public GetMissingRequiredOptionMessage(context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : string
     {
-      string.Join(", ", GetMissingRequiredOptionNames(options))
+      string.Join(", ", GetMissingRequiredOptionNames(context, options))
     }
 
     public TryMoveToImmutable[T](this builder : ImmutableArray[T].Builder) : ImmutableArray[T]
@@ -479,66 +496,6 @@ namespace Tdl
         builder.MoveToImmutable()
       else
         builder.ToImmutable()
-    }
-
-    MethodScopeFactoryImpl(scope : Scope) : Scope
-    {
-      def filter(symbol : DeclarationSymbol) : bool
-      {
-        mutable result;
-        when (_methodScopeFactoryCache.TryGetValue(symbol.Id, out result))
-          return result;
-        
-        def isTestMethod(m : Member.MethodSymbol) : bool
-        {
-          foreach (a in m.CustomAttributes)
-          {
-            def name = a.Name;
-            when (name == "TestMethodAttribute" || name == "TestMethod" )
-              return true;
-          }
-          false
-        }
-        def isTestMember(m : DeclarationSymbol) : bool
-        {
-          | method is Member.MethodSymbol => isTestMethod(method)
-          | _                             => false
-        }
-
-        def isTestClass(c : TopClassSymbol) : bool
-        {
-          foreach (a in c.CustomAttributes)
-          {
-            def name = a.Name;
-            when (name.Contains("Test") && c.Scope.GetAllSymbols().Any(isTestMember))
-              return true;
-          }
-          false
-        }
-
-        def isNamespaceContainsTestClasses(ns : NamespaceSymbol) : bool
-        {
-          foreach (m when filter(m) in ns.MemberTable.GetAllSymbols())
-            return true;
-          false
-        }
-
-        result =
-          match (symbol)
-          {
-            | NamespaceSymbol     as ns when isNamespaceContainsTestClasses(ns) => true
-            | TopClassSymbol      as c  when isTestClass(c)                     => true
-            | Member.MethodSymbol as m  when isTestMethod(m)                    => true
-            | _                                                                 => false
-          };
-
-        _methodScopeFactoryCache[symbol.Id] = result;
-        
-        result
-      }
-
-      def filteringScope = FilteringScope(scope, filter);
-      filteringScope
     }
 
     public MakeDeploymentScope(scope : Scope) : Scope
@@ -762,11 +719,6 @@ namespace Tdl
       }
     }
     
-    public ToTdlContext(this context : DependentPropertyEvalContext) : TdlDependentPropertyEvalContext
-    {
-      context :> TdlDependentPropertyEvalContext
-    }
-
     public CheckExpected(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, type2 : TypeSymbol) : void
     {
       if (TdlTypeUnifier.Instance.TryUnify(type1, type2))
@@ -1019,7 +971,7 @@ namespace Tdl
           | s is Product.SetSymbol      => if (s.IsProductsEvaluated) s.Products else []
           | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
       }
-      CheckForRecursion(ast, context, symbol, getDescendants, _depend)
+      _ = CheckForRecursion(ast, context, symbol, getDescendants, _depend)
     }
 
     public CheckForRecursionScenario(this ast : IAst, context : DependentPropertyEvalContext, symbol : ScenarioSymbol, _depend : object) : void

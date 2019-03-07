@@ -2,18 +2,95 @@
 
 using Nemerle;
 using Nemerle.Collections;
+using Nemerle.Imperative;
 using Nemerle.Text;
 using Nemerle.Utility;
 
+using Nitra.Declarations;
+
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Tdl
 {
-  [Record]
   public class TdlProjectData : DotNetProjectData
   {
-    public TdlRootNamespace : NamespaceSymbol;
+	  public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol)
+	  {
+		  base(backEnd, context, rootNamespace);
+		  ScenarioParameterScope     = scenarioParameterScope;
+		  RequiredScenarioParameters = requiredScenarioParameters;
+		  ExternalSymbolTable        = externalSymbol.MemberTable;
+		  MethodScopeFactory         = MethodScopeFactoryImpl;
+	  }    
+    
+	  public ScenarioParameterScope     : TableScope                            { get; }
+    public RequiredScenarioParameters : ImmutableArray[FormalParameterSymbol] { get; }
+    public ExternalSymbolTable        : TableScope                            { get; }
+    public MethodScopeFactory         : ScopeFactory                          { get; }
+   
+    private _methodScopeFactoryCache    : Dictionary[int, bool] = Dictionary();
+
+    MethodScopeFactoryImpl(scope : Scope) : Scope
+    {
+      def filter(symbol : DeclarationSymbol) : bool
+      {
+        mutable result;
+        when (_methodScopeFactoryCache.TryGetValue(symbol.Id, out result))
+          return result;
+        
+        def isTestMethod(m : Member.MethodSymbol) : bool
+        {
+          foreach (a in m.CustomAttributes)
+          {
+            def name = a.Name;
+            when (name == "TestMethodAttribute" || name == "TestMethod" )
+              return true;
+          }
+          false
+        }
+        def isTestMember(m : DeclarationSymbol) : bool
+        {
+          | method is Member.MethodSymbol => isTestMethod(method)
+          | _                             => false
+        }
+
+        def isTestClass(c : TopClassSymbol) : bool
+        {
+          foreach (a in c.CustomAttributes)
+          {
+            def name = a.Name;
+            when (name.Contains("Test") && c.Scope.GetAllSymbols().Any(isTestMember))
+              return true;
+          }
+          false
+        }
+
+        def isNamespaceContainsTestClasses(ns : NamespaceSymbol) : bool
+        {
+          foreach (m when filter(m) in ns.MemberTable.GetAllSymbols())
+            return true;
+          false
+        }
+
+        result =
+          match (symbol)
+          {
+            | NamespaceSymbol     as ns when isNamespaceContainsTestClasses(ns) => true
+            | TopClassSymbol      as c  when isTestClass(c)                     => true
+            | Member.MethodSymbol as m  when isTestMethod(m)                    => true
+            | _                                                                 => false
+          };
+
+        _methodScopeFactoryCache[symbol.Id] = result;
+        
+        result
+      }
+
+      def filteringScope = FilteringScope(scope, filter);
+      filteringScope
+    }
   }
 }

@@ -8,7 +8,7 @@ namespace Tdl
 {
   ast ExternalAst : NamespaceMember
   {
-    Fields.ContainingTable = ProjectSupport.ExternalSymbolTable;
+    Fields.ContainingTable = context.GetExternalSymbolTable();
     Fields.Scope = Scope;
     
     Fields : Field*;
