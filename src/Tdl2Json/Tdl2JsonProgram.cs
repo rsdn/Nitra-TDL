@@ -118,34 +118,44 @@ namespace Tdl2Json
             var warningCount = 0;
             var skipHints    = false;
 
-            foreach (var message in messages)
+            foreach (Nitra.ProjectSystem.CompilerMessage message in messages)
+                if (PrintCompilerMessage(message, ref errorCount, ref warningCount, ref skipHints))
+                    break;
+        }
+
+        private static bool PrintCompilerMessage(Nitra.ProjectSystem.CompilerMessage message, ref int errorCount, ref int warningCount, ref bool skipHints)
+        {
+            if (message.Type == CompilerMessageType.FatalError || message.Type == CompilerMessageType.Error)
             {
-                if (message.Type == CompilerMessageType.FatalError || message.Type == CompilerMessageType.Error)
+                if (errorCount == MaxErrorsOrWarningsToDisplay)
                 {
-                    if (errorCount == MaxErrorsOrWarningsToDisplay)
-                    {
-                        PrintWarning($"Too many errors detected! Only first {errorCount} shown.");
-                        break;
-                    }
-                    errorCount++;
-                    skipHints = false;
-                    PrintError(message.ToString());
+                    PrintWarning($"Too many errors detected! Only first {errorCount} shown.");
+                    return true;
                 }
-                else if (message.Type == CompilerMessageType.Warning)
-                {
-                    if (warningCount == MaxErrorsOrWarningsToDisplay)
-                        PrintWarning($"Too many warnings detected! Only first {warningCount} shown.");
-                    warningCount++;
-                    if (warningCount > MaxErrorsOrWarningsToDisplay)
-                    {
-                        skipHints = true;
-                        continue;
-                    }
-                    PrintWarning(message.ToString());
-                }
-                else if (message.Type == CompilerMessageType.Hint && !skipHints)
-                    PrintHint(message.ToString());
+                errorCount++;
+                skipHints = false;
+                PrintError(message.ToString());
             }
+            else if (message.Type == CompilerMessageType.Warning)
+            {
+                if (warningCount == MaxErrorsOrWarningsToDisplay)
+                    PrintWarning($"Too many warnings detected! Only first {warningCount} shown.");
+                warningCount++;
+                if (warningCount > MaxErrorsOrWarningsToDisplay)
+                {
+                    skipHints = true;
+                    return false;
+                }
+                PrintWarning(message.ToString());
+            }
+            else if (message.Type == CompilerMessageType.Hint && !skipHints)
+                PrintHint(message.ToString());
+
+            foreach (var nestedMessage in message.NestedMessages)
+                if (PrintCompilerMessage(nestedMessage, ref errorCount, ref warningCount, ref skipHints))
+                    return true;
+
+            return false;
         }
 
         private static TransfomationFunc LoadTransformator(string path, string typeName, string methodName)
