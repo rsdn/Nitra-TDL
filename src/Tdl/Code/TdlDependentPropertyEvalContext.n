@@ -13,8 +13,10 @@ using System.Linq;
 namespace Tdl
 {
   [Record]
-  class TdlDependentPropertyEvalContext : DependentPropertyEvalContext
+  public class TdlDependentPropertyEvalContext : DependentPropertyEvalContext
   {
+    [RecordIgnore]
+    public TdlProjectData : TdlProjectData { get; set; }
     public DeploymentType : TdlType.DeploymentSymbol;
     public PlatformType   : TdlType.PlatformSymbol;
     public ProductType    : TdlType.ProductSymbol;

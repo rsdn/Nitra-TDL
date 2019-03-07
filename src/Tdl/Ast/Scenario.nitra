@@ -53,14 +53,14 @@ namespace Tdl
         Environments.Scope              = Scope;
         Symbol.Environments             = Environments.Environment;
 
-        Definitions.Scope               = ProjectSupport.ExternalSymbolTable;
-        Definitions.DefinitionScope     = ProjectSupport.ScenarioParameterScope;
+        Definitions.Scope               = context.GetExternalSymbolTable();
+        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
 
         ReportDuplicateBarrier(context, Symbol.Actions);
 
-        when (TdlUtils.IsMissingRequiredOptions(Definitions.SymbolRef))
-          Name.Error(context, $"Missing required option: $(TdlUtils.GetMissingRequiredOptionMessage(Definitions.SymbolRef))");
+        when (TdlUtils.IsMissingRequiredOptions(context, Definitions.SymbolRef))
+          Name.Error(context, $"Missing required option: $(TdlUtils.GetMissingRequiredOptionMessage(context, Definitions.SymbolRef))");
 
         CheckOptionForDuplicates(context, Definitions.SymbolRef);
 
@@ -129,8 +129,8 @@ namespace Tdl
         Platform.Scope                  = Deployment.Scope;
         Product.Scope                   = Deployment.Scope;
         Method.Scope                    = Deployment.Scope;
-        Definitions.DefinitionScope     = ProjectSupport.ScenarioParameterScope;
-        Definitions.Scope               = ProjectSupport.ExternalSymbolTable;
+        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
+        Definitions.Scope               = context.GetExternalSymbolTable();
 
         DeploymentRef                   = Deployment.Ref.Resolve();
         MethodRef                       = Method.Ref.Resolve();
