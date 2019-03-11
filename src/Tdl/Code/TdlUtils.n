@@ -325,14 +325,14 @@ namespace Tdl
           def value = HexToInt(part.Location, span.StartPos + 3, span.EndPos);
           try
             _ = builder.Append(value :> char);
-          catch { _ is OverflowException => return ParsedValue(str.Location.Span.StartPos); }
+          catch { _ is OverflowException => return ParsedValue(str.Span.StartPos); }
         
         | RegulaChars             => _ = builder.Append(part.Location.GetText());
         | VerbatimEscape          => _ = builder.Append('"');
         | _                       => ()
       }
 
-      ParsedValue(str.Location.Span, builder.ToString())
+      ParsedValue(str.Span, builder.ToString())
     }
 
     private ConvertDefExpr(expr : DefExpr) : Expr
