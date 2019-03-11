@@ -175,7 +175,7 @@ deployment "Install Base Product" = "_Install product"(
 product PURE : Kavkis
 {
     Name = @"PURE";
-    ReleaseName = @"Main";
+    BranchName = @"Main";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;ksde*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -190,7 +190,7 @@ product PURE : Kavkis
 product type Kavkis
 {
     string Name;
-    string ReleaseName;
+    string BranchName;
     string Version;
     string AutotestBinariesExcludedFilesMasks;
     string ProductBinariesExcludedFilesMasks;
