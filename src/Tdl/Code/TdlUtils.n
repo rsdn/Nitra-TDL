@@ -24,11 +24,20 @@ namespace Tdl
 {
   module TdlUtils
   {
-    static RequiredProductTypeFields : list[string] = ["Name", "ReleaseName", "Version"];
+    static RequiredProductTypeFields : list[string] = ["Name", "BranchName", "Version"];
+    static ObsoleteProductTypeFields : Dictionary[string, string] = [("ReleaseName", "BranchName")].ToDictionary();
     
     public NoLocation         : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan             : NSpan              = NSpan(0);
+    
+    public ToDictionary[TKey, TValue](this seq : Seq[TKey * TValue]) : Dictionary[TKey, TValue]
+    {
+      def dictionary = Dictionary();
+      foreach ((k, v) in seq)
+        dictionary.Add(k, v);
+      dictionary
+    }
     
     public ToTdlContext(this context : DependentPropertyEvalContext) : TdlDependentPropertyEvalContext
     {
@@ -549,21 +558,22 @@ namespace Tdl
       }
     }
     
-    public IsMissingRequiredProductTypeFields(fields : ImmutableArray[Tdl.FieldSymbol]) : bool
+    public ReportProductTypeFields(this ast : IAst, context : DependentPropertyEvalContext, fields : ImmutableArray[Tdl.FieldSymbol]) : void
     {
+      mutable replacedWith;
+      // Check required fields
       def set = HashSet(RequiredProductTypeFields);
       foreach (field in fields)
-        _ = set.Remove(field.Name);
-      set.Count > 0
-    }
-    
-    public GetMissingRequiredProductTypeFieldsMessage(fields : ImmutableArray[Tdl.FieldSymbol]) : string
-    {
-      def set = HashSet(RequiredProductTypeFields);
-      foreach (field in fields)
-        _ = set.Remove(field.Name);
+        unless (set.Remove(field.Name))
+          when (ObsoleteProductTypeFields.TryGetValue(field.Name, out replacedWith))
+            _ = set.Remove(replacedWith);
       
-      $"Missing required fields: ..$set"
+      unless (set.IsEmpty())
+        ast.Error(context, $"Missing required fields: ..$set");
+      
+      // Check obsolete fields
+      foreach (field when ObsoleteProductTypeFields.TryGetValue(field.Name, out replacedWith) in fields)
+        field.FirstDeclarationOrDefault.Name.Warning(context, $"Field $(field.Name) is obsolete and will be replaced with $replacedWith field.");
     }
     
     public ReportDuplicateBarrier(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
