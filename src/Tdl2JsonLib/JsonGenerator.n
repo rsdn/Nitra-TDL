@@ -188,7 +188,7 @@ namespace Tdl2Json
           | Tdl.Expr.False         => yield (name, false)
           | Tdl.Expr.True          => yield (name, true)
           | Real            as x   => yield (name, x.Value)
-          | Integerl        as x   => yield (name, x.Value)
+          | Integer         as x   => yield (name, x.Value)
           | Reference       as x   => yield (name, "#(" + x.Name + ")")
           | Error           as e   => throw NotSupportedException("Error at: " + e.Location);
           | x                      => throw NotSupportedException("The '" + x + "' is not supported");
@@ -292,7 +292,7 @@ namespace Tdl2Json
               }
               def getLong(name : string) : long?
               {
-                  g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
+                  g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
               }
               def incGuid(guid : Guid) : Guid
               {
@@ -387,7 +387,7 @@ namespace Tdl2Json
               }
               def getLong(name : string) : long?
               {
-                  r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integerl).Value)).WithDefault(null);
+                  r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
               }
               def artifactsCollectionTimeout = getString("ArtifactsCollectionTimeout");
               def getTestMethod() : TestMethod
