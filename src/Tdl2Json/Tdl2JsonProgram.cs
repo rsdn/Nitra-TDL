@@ -92,6 +92,11 @@ namespace Tdl2Json
                 PrintError($"Unhandled exception: {e}");
                 return -3;
             }
+            finally
+            {
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+            }
         }
 
         private static void PrintError(string msg)
