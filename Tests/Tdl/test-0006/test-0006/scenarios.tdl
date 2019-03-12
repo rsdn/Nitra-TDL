@@ -1,0 +1,29 @@
+product KES__SafeKids : Kavkis  = KES, SafeKids;
+product "KES__KIS for Mac 2018 MR1__KIS for Mac 2018 MR2__KSeCL for Mac 2018 MR1__KSeCL for Mac 2018 MR2__SafeKids" : Kavkis  = KES, "KIS for Mac 2018 MR1", "KIS for Mac 2018 MR2", "KSeCL for Mac 2018 MR1", "KSeCL for Mac 2018 MR2", SafeKids;
+product "KES__KIS__KSeCL__SafeKids for Mac 1.0 MR3__SafeKids for Mac 1.0 MR4" : Kavkis  = KES, KIS, KSeCL, "SafeKids for Mac 1.0 MR3", "SafeKids for Mac 1.0 MR4";
+product "KES for Mac 10 SP2 MR1__KIS for Mac 2019__KSeCL for Mac 2019" : Kavkis  = "KES for Mac 10 SP2 MR1", "KIS for Mac 2019", "KSeCL for Mac 2019";
+platform osx10__osx9 = osx10, osx9;
+
+scenario InterpreczRollback
+{
+    deployment DeployWithTestBot;
+    environments (osx9, KES), (osx10, KES__SafeKids), (osx11, "KES__KIS for Mac 2018 MR1__KIS for Mac 2018 MR2__KSeCL for Mac 2018 MR1__KSeCL for Mac 2018 MR2__SafeKids"), (osx12, All), (osx13, "KES__KIS__KSeCL__SafeKids for Mac 1.0 MR3__SafeKids for Mac 1.0 MR4"), (osx14, "KES for Mac 10 SP2 MR1__KIS for Mac 2019__KSeCL for Mac 2019");
+    config @"um/interprecz/interprecz_rb.json";
+    UniqueId = @"6480b1c0-12f6-451f-b3ba-091d7c0d036a";
+    Timeout = @"00:15:00";
+    RevertAgentAfter = true;
+}
+
+scenario InterpreczSmoke
+{
+    deployment DeployWithTestBot;
+    environments (osx9, KES), (osx10, KES__SafeKids), (osx11, "KES__KIS for Mac 2018 MR1__KIS for Mac 2018 MR2__KSeCL for Mac 2018 MR1__KSeCL for Mac 2018 MR2__SafeKids"), (osx12, All), (osx13, "KES__KIS__KSeCL__SafeKids for Mac 1.0 MR3__SafeKids for Mac 1.0 MR4"), (osx14, "KES for Mac 10 SP2 MR1__KIS for Mac 2019__KSeCL for Mac 2019");
+    config @"um/interprecz/interprecz_smoke.json";
+    UniqueId = @"19a25e05-9f4e-42bb-97e3-40f2c3775c4f";
+    Timeout = @"00:15:00";
+}
+
+scenario Interprecz =
+    InterpreczRollback,
+    InterpreczSmoke;
+
