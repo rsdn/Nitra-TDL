@@ -17,7 +17,7 @@ namespace Tdl2Json
             | Error     => "<error>";
             | False     => false
             | True      => true
-            | Integerl  as i => i.Value
+            | Integer   as i => i.Value
             | Real      as r => r.Value
             | Reference as r => "$(" + r.Name + ")"
             | String    as s => s.Value
