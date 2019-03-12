@@ -346,7 +346,7 @@ namespace Tdl
         | x is DefExpr.DecimalIntegerLiteral     => Expr.Integerl(int.Parse(x.Location.GetText()))
         | x is DefExpr.HexadecimalIntegerLiteral => Expr.Integerl(int.Parse(x.Location.GetText().Substring(2), NumberStyles.HexNumber))
         | x is DefExpr.Reference                 => Expr.Reference(x.Location.GetText())
-        | x with loc = x.Location                => Expr.Error(Utils.Location(loc.Source.File.FullName, loc.StartPos, loc.EndPos))
+        | x                                      => Expr.Error(x.Location)
       }
     }
 
@@ -650,21 +650,11 @@ namespace Tdl
             }
           }
           
-          def filesMap           = context.Files.ToDictionary(d => d.FullName);
           def msgs               = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
           def deadLockedBarriers = group.Nodes.ToArray().Map(n => AsName(n.Symbol.Name));
-          foreach (usage in barrierUsages.OrderBy(u => u.Location.File).ThenBy(u => u.Location.StartPos))
-          {
-            def fileData = filesMap[usage.Location.File];
-            def loc      = Location(fileData.Ast.Location.Source, usage.Location.StartPos, usage.Location.EndPos);
-            msgs.ReportMessage(CompilerMessageType.Error, loc, $"Barriers deadlock detected: ..$deadLockedBarriers", 0);
-          }
+          foreach (usage in barrierUsages.OrderBy(u => u.Location.Source.File).ThenBy(u => u.Location.StartPos))
+            msgs.ReportMessage(CompilerMessageType.Error, usage.Location, $"Barriers deadlock detected: ..$deadLockedBarriers", 0);
         }
-    }
-
-    public Convert(this location : Nitra.Location) : Tdl.Utils.Location
-    {
-        Tdl.Utils.Location(location.Source.File.FullName, location.StartPos, location.EndPos)
     }
 
     public GetSetScenarios(scenarioSet : Scenario.SetSymbol) : List[Scenario.DefSymbol]

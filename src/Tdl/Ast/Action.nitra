@@ -16,7 +16,7 @@ namespace Tdl
 
     | Script
       {
-        ScenarioActions = ScenarioAction.Script(Name.Location.Convert(), TdlUtils.ConvertStringLiteral(Name), 
+        ScenarioActions = ScenarioAction.Script(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
           Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions), Value);
 
         Name        : CSharp.StringLiteral;
@@ -27,7 +27,7 @@ namespace Tdl
 
     | Config
       {
-        ScenarioActions = ScenarioAction.Config(Path.Location.Convert(), TdlUtils.ConvertStringLiteral(Path), Value);
+        ScenarioActions = ScenarioAction.Config(Path.Location, TdlUtils.ConvertStringLiteral(Path), Value);
 
         Value                      : ParsedValue[int];
         Path                       : CSharp.StringLiteral;
@@ -35,7 +35,7 @@ namespace Tdl
 
     | GTest
       {
-        ScenarioActions = ScenarioAction.GTest(Name.Location.Convert(), TdlUtils.ConvertStringLiteral(Name), 
+        ScenarioActions = ScenarioAction.GTest(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
           Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), Value);
 
         Name        : CSharp.StringLiteral;
@@ -51,15 +51,15 @@ namespace Tdl
         Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = ScenarioAction.Method(Method.Location.Convert(), MethodRef.Symbol, Value);
+        ScenarioActions         = ScenarioAction.Method(Method.Location, MethodRef.Symbol, Value);
 
         Value  : ParsedValue[int];
         Method : QualifiedReference;
       }
-    | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location.Convert()); }
+    | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot
       {
-        ScenarioActions = ScenarioAction.WaitForReboot(this.Location.Convert(), TimeSpan.Value);
+        ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value);
 
         TimeSpan : ParsedValue[string];
       }
@@ -68,7 +68,7 @@ namespace Tdl
         out BarrierRef : Ref[BarrierSymbol] = Reference.Ref.Resolve();
 
         Reference.Scope = Scope;
-        ScenarioActions = ScenarioAction.Barrier(Reference.Location.Convert(), BarrierRef.Symbol);
+        ScenarioActions = ScenarioAction.Barrier(Reference.Location, BarrierRef.Symbol);
 
         Reference : Reference;
       }

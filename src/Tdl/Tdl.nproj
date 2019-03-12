@@ -170,9 +170,6 @@
     <Compile Include="Code\From.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Code\Location.n">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Code\ParameterComparer.n">
       <SubType>Code</SubType>
     </Compile>
