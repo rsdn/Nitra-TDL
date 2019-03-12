@@ -1,4 +1,4 @@
-
+// Linux test
 suite BuildAcceptance
 {
     platform cent75-x64;
