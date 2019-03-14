@@ -1,5 +1,14 @@
-﻿suite Gate_KFA
+entity Module1
 {
+  Name = "sss";
+  BranchName = "fff";
+  Version = "bbb";
+  Type = "zzz";
+}
+
+suite Gate_KFA
+{
+    entity Module1;
     platform gated_platforms;
     product KES;
     ProductDistributivePath = ProductDistributivePath;
