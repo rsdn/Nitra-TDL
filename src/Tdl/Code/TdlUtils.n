@@ -44,6 +44,11 @@ namespace Tdl
       context :> TdlDependentPropertyEvalContext;
     }
 
+    public GetEntityFieldsScope(this context : DependentPropertyEvalContext) : TableScope
+    {
+      ToTdlContext(context).TdlProjectData.EntityFieldsScope
+    }
+
     public GetExternalSymbolTable(this context : DependentPropertyEvalContext) : TableScope
     {
       ToTdlContext(context).TdlProjectData.ExternalSymbolTable
@@ -478,27 +483,6 @@ namespace Tdl
       FilteringScope(scope, HashSet(ParameterComparer()).Add)
     }
     
-    public IsMissingRequiredOptions(context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : bool
-    {
-      GetMissingRequiredOptionNames(context, options).Any()
-    }
-
-    GetMissingRequiredOptionNames(context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : Seq[string]
-    {
-      def optionSet = HashSet();
-      foreach (option when option.IsSymbolEvaluated in options)
-        _ = optionSet.Add(option.Symbol.Id);
-
-      foreach (required in context.GetRequiredScenarioParameters())
-        unless (optionSet.Contains(required.Id))
-          yield required.Name;
-    }
-    
-    public GetMissingRequiredOptionMessage(context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : string
-    {
-      string.Join(", ", GetMissingRequiredOptionNames(context, options))
-    }
-
     public TryMoveToImmutable[T](this builder : ImmutableArray[T].Builder) : ImmutableArray[T]
     {
       if (builder.Capacity == builder.Count)
@@ -519,22 +503,13 @@ namespace Tdl
       filteringScope
     }
     
-    public HasUndefinedFieldsInProduct(type : ProductTypeSymbol, defs : ImmutableArray[Def]) : bool
+    public ChechRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def]) : void
     {
-      CollectUndefinedFieldsInProduct(type, defs).Any()
-    }
-    
-    public ReportProduct(type : ProductTypeSymbol, defs : ImmutableArray[Def]) : string
-    {
-      def undefinedFields = CollectUndefinedFieldsInProduct(type, defs).Select(x => x.Name).OrderBy(x => x);
-      "The product does not have fields declared in the product type: " + string.Join(", ", undefinedFields) + "."
-    }
-
-    CollectUndefinedFieldsInProduct(type : ProductTypeSymbol, defs : ImmutableArray[Def]) : Seq[DeclarationSymbol]
-    {
-      def fieldSet = type.MemberTable.GetAllSymbols();
-      def defSet   = defs.Select(d => d.Symbol);
-      fieldSet.Except(defSet)
+      def defSet        = fields.Select(d => d.Symbol);
+      def missingFields = requiredFields.Except(defSet).MapToArray(x => x.InitialName);
+      def count         = missingFields.Length;
+      unless (missingFields.IsEmpty())
+        ast.Error(context, $<#The following $(name)$(if (count == 1) "" else "s") are required: ..$missingFields.#>);
     }
     
     public ResolveSuiteTypeSymbol(this context : DependentPropertyEvalContext, typeRef : Ref[DeclarationSymbol]) : SuiteTypeSymbol
@@ -1096,6 +1071,18 @@ namespace Tdl
         return ParsedValue(lit.Span.StartPos);
       
       ParsedValue(lit.Span, int.Parse(lit.GetText()))
+    }
+    
+    public ResolveOpt[TSymbol](this refOpt : ValueOption[Ref[DeclarationSymbol]]) : ValueOption[Ref[TSymbol]]
+      where TSymbol: DeclarationSymbol
+    {
+      if (refOpt.HasValue) VSome(refOpt.Value.Resolve.[TSymbol]()) else VNone()
+    }
+
+    public GetSymbolOpt[TSymbol](this refOpt : ValueOption[Ref[TSymbol]]) : ValueOption[TSymbol]
+      where TSymbol: DeclarationSymbol
+    {
+      if (refOpt.HasValue && refOpt.Value.IsSymbolEvaluated) VSome(refOpt.Value.Symbol) else VNone()
     }
   } // module
 } // namespace

@@ -15,6 +15,7 @@ namespace Tdl
     | Platform   { symbol { ToString = "Platform"; } }
     | Method     { symbol { ToString = "Method"; } }
     | Product    { symbol { ToString = "Product"; } }
+    | Entity     { symbol { ToString = "Entity"; } }
     | Tuple
       {
         symbol
