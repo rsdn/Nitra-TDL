@@ -95,8 +95,9 @@ namespace Tdl
       def deploymentType        = TdlType.DeploymentSymbol();
       def platformType          = TdlType.PlatformSymbol();
       def productType           = TdlType.ProductSymbol();
+      def entityType            = TdlType.EntitySymbol();
       def methodType            = FunctionTypeSymbol();
-      def context               = TdlDependentPropertyEvalContext(project, deploymentType, platformType, productType, methodType);
+      def context               = TdlDependentPropertyEvalContext(project, deploymentType, platformType, productType, entityType, methodType);
       def rootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
       def systemNsRef   = bindNs(rootNamespace.Scope, "System");
       when (systemNsRef.IsSymbolEvaluated)
@@ -134,12 +135,14 @@ namespace Tdl
       initTypeSymbol(platformType);
       initTypeSymbol(methodType);
       initTypeSymbol(productType);
+      initTypeSymbol(entityType);
 
       
       def externalSymbol             = MakeExternalSymbol(context, rootNamespace);
       def scenarioParameterScope     = TableScope("ScenarioParameterScope");
       def requiredScenarioParameters = MakeScenarioParametersScope(backEnd, context, scenarioParameterScope);
-      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, requiredScenarioParameters, externalSymbol);
+      def entityFieldsScope          = MakeEntityFieldsScope(backEnd, context, TableScope("EntityFieldsScope"));
+      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, entityFieldsScope, requiredScenarioParameters, externalSymbol);
       context.TdlProjectData         = data;
       data
     }
@@ -333,7 +336,7 @@ namespace Tdl
     public MakeExternalSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : ExternalSymbol
     {
       def parameterName = Name(NoLocation, "external");
-      def symbol = ExternalSymbolDeclaration(parameterName).DefineSymbol(rootNamespace.MemberTable);
+      def symbol = ExternalDeclaration.[ExternalSymbol](parameterName).DefineSymbol(rootNamespace.MemberTable);
       symbol.EvalProperties(context);
       symbol
     }
@@ -347,7 +350,7 @@ namespace Tdl
       def defineParameter(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
         def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
-        def parameter      = ScenarioParameterDeclaration(parameterName).DefineSymbol(scenarioParameterScope);
+        def parameter      = ExternalDeclaration.[FormalParameterSymbol](parameterName).DefineSymbol(scenarioParameterScope);
         when (required)
           _                = requiredScenarioParametersBuilder.Add(parameter);
         parameter.Type     = type;
@@ -379,25 +382,40 @@ namespace Tdl
       requiredScenarioParametersBuilder.ToImmutable();
     }
     
+    public MakeEntityFieldsScope(backEnd : IDotNetBackEnd, context : TdlDependentPropertyEvalContext, entityFieldsScope : TableScope) : TableScope
+    {
+      //def requiredScenarioParametersBuilder = ImmutableArray.CreateBuilder();
+      mutable index;
+      
+      def defineField(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
+      {
+        _ = required;
+        def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
+        def parameter      = ExternalDeclaration.[FormalParameterSymbol](parameterName).DefineSymbol(entityFieldsScope);
+        //when (required)
+        //  _                = requiredScenarioParametersBuilder.Add(parameter);
+        parameter.Type     = type;
+        parameter.Modifier = ParameterModifier.None;
+        parameter.Index    = index;
+        index++;
+        parameter.EvalProperties(context);
+      }
+
+      def platformType = backEnd.PlatformType;
+      
+      defineField(context, "Name",       platformType.String, required=true);
+      defineField(context, "BranchName", platformType.String, required=true);
+      defineField(context, "Version",    platformType.String, required=true);
+      defineField(context, "Type",       platformType.String, required=true);
+      
+      //requiredScenarioParametersBuilder.ToImmutable();
+      entityFieldsScope
+    }
+
     public Dispose() : void
     {
       when (_backEnd != null)
         _backEnd.Dispose();
     }
-  }
-
-  // Predeclaration
-  public partial class ExternalSymbol : SymbolBase, DeclarationSymbol, ContainerSymbol { }
-  
-  [Record]
-  public class ExternalSymbolDeclaration : ExternalDeclaration[ExternalSymbol]
-  {
-    public override CreateSymbol() : DeclarationSymbol { ExternalSymbol() }
-  }
-
-  [Record]
-  public class ScenarioParameterDeclaration : ExternalDeclaration[FormalParameterSymbol]
-  {
-    public override CreateSymbol() : DeclarationSymbol { FormalParameterSymbol() }
   }
 }

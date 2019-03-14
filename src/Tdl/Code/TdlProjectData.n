@@ -17,16 +17,18 @@ namespace Tdl
 {
   public class TdlProjectData : DotNetProjectData
   {
-	  public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol)
-	  {
-		  base(backEnd, context, rootNamespace);
-		  ScenarioParameterScope     = scenarioParameterScope;
-		  RequiredScenarioParameters = requiredScenarioParameters;
-		  ExternalSymbolTable        = externalSymbol.MemberTable;
-		  MethodScopeFactory         = MethodScopeFactoryImpl;
-	  }    
+    public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, entityFieldsScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol)
+    {
+      base(backEnd, context, rootNamespace);
+      ScenarioParameterScope     = scenarioParameterScope;
+      EntityFieldsScope          = entityFieldsScope;
+      RequiredScenarioParameters = requiredScenarioParameters;
+      ExternalSymbolTable        = externalSymbol.MemberTable;
+      MethodScopeFactory         = MethodScopeFactoryImpl;
+    }    
     
-	  public ScenarioParameterScope     : TableScope                            { get; }
+    public ScenarioParameterScope     : TableScope                            { get; }
+    public EntityFieldsScope          : TableScope                            { get; }
     public RequiredScenarioParameters : ImmutableArray[FormalParameterSymbol] { get; }
     public ExternalSymbolTable        : TableScope                            { get; }
     public MethodScopeFactory         : ScopeFactory                          { get; }
