@@ -84,19 +84,6 @@ namespace Tdl2Json
             Values    = values;
         })
     }
-
-    private GenerateDeploymentCurrying1(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
-    {
-      def deployments = Dictionary();
-      deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
-      (currying.Name,
-        Deployment() <-
-        {
-            Type        = TypeEnum.Sequence;
-            Deployments = array[deployments];
-        }
-      )
-    }
     
     private GenerateDeploymentCurrying2(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
     {
