@@ -51,6 +51,11 @@
       <Private>True</Private>
       <HintPath>$(NitraPath)\DotNetLang.dll</HintPath>
     </Reference>
+    <Reference Include="JsonDiffPatchDotNet, Version=2.1.0.0, Culture=neutral, PublicKeyToken=a407b9994a6d66d5">
+      <Name>JsonDiffPatchDotNet</Name>
+      <AssemblyName>JsonDiffPatchDotNet.dll</AssemblyName>
+      <HintPath>..\packages\JsonDiffPatch.Net.2.1.0\lib\net45\JsonDiffPatchDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Cci.MetadataHelper">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -62,10 +67,10 @@
       <HintPath>$(NitraPath)\Microsoft.Cci.PeReader.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <Name>Newtonsoft.Json</Name>
       <AssemblyName>Newtonsoft.Json.dll</AssemblyName>
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
