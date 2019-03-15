@@ -1,6 +1,6 @@
 using Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1;
 
-scenario SbSTestScenario1 =
+scenario SbSTestScenario1 = // W: Unused scenario.
     from (Deployment , Platform) in (Deploy_Gated, w10rs4-x64), (Deploy_Middle, w10rs4-x86), (Deploy_Finish, win_10_rs3) 
     from Method in Gated1_S01_Installation, Gated1_S02_CheckFilesAndRegistry, Gated1_S03_CheckDrivers
     select
@@ -49,7 +49,7 @@ scenario GatedChain2
     Timeout = "00:00:10";
 }
 
-scenario GatedChain3
+scenario GatedChain3 // W: Unused scenario.
 {
     deployment Deploy_Gated;
     environments (gated_platforms, KES);

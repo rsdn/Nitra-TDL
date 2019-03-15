@@ -129,11 +129,14 @@
     <Compile Include="JsonGenerator.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MultiDictionary.n">
+    <Compile Include="Properties\AssemblyInfo.n" />
+    <Compile Include="Tests\CompilerMessagesCheckResult.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.n" />
-    <Compile Include="Tests.n">
+    <Compile Include="Tests\NotMatchedMessage.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\Tests.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TransformationContext.n">
@@ -144,6 +147,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Tests" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

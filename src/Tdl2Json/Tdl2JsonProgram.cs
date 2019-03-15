@@ -1,7 +1,8 @@
 ﻿using Mono.Options;
 using Nitra;
-
+using Nitra.ProjectSystem;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -42,6 +43,10 @@ namespace Tdl2Json
                 foreach (var ignoredOption in options.IgnoredOptions)
                     PrintError($"File or option was ignored: {ignoredOption}");
 
+                var isTestMode = options.ComilerMessagesTest || options.SampleOutputFile != null;
+                Print("Test mode!", ConsoleColor.White);
+
+
                 var (tdls, refs) = (options.InputFiles.ToArray(), options.References.ToArray());
                 var output = new Lazy<TextWriter>(() => new StreamWriter(options.OutputFile, false, Encoding.UTF8));
                 CompilerMessageBag messages;
@@ -53,8 +58,9 @@ namespace Tdl2Json
                     foreach (var t in options.Transformers)
                     {
                         var transformatorFunc = LoadTransformator(t.assembly, t.type, t.method);
-                        messages.AddRange(JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, isMethodTypingEnabled: true, output: null,
-                            transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc));
+                        var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, isMethodTypingEnabled: true, output: null,
+                            transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc, isCommentCollectingEnabled: true);
+                        messages.AddRange(transformationContext.Messages);
 
                         if (messages.HasErrors)
                             break;
@@ -62,8 +68,52 @@ namespace Tdl2Json
                 }
                 else
                 {
-                    messages = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
-                        transformatorOutput: null, transformatorOpt: null);
+                    var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
+                        transformatorOutput: null, transformatorOpt: null, isCommentCollectingEnabled: isTestMode);
+                    Debug.Assert(transformationContext.Comments != null);
+                    messages = transformationContext.Messages;
+                    if (options.ComilerMessagesTest || options.SampleOutputFile != null)
+                    {
+                        var result = Tests.CheckCompilerMessages(transformationContext);
+
+                        if (result.HasUnmathed)
+                        {
+                            if (!result.NotMathedMessages.IsEmpty)
+                            {
+                                PrintError("Unexpected compiler messages present.");
+                                ReportCompilerMessages(result.NotMathedMessages);
+                            }
+
+                            if (!result.NotMathedSamples.IsEmpty)
+                            {
+                                PrintError($"{result.NotMathedSamples.Length} sample compiler messages don't match the compiler messages.");
+                                // TODO: Вывести несмачившиеся образцы...
+                                foreach (var sample in result.NotMathedSamples)
+                                    PrintError($"{sample.Location.ToMessageString()}The {sample.Kind} not match with appropriate compiler message: '{sample.Body}'.");
+                            }
+
+                            return -4;
+                        }
+                        else
+                            Print("All compiler messages match samples.", ConsoleColor.Green);
+                    }
+                    if (output.IsValueCreated && options.SampleOutputFile != null)
+                    {
+                        output.Value.Dispose();
+
+                        var resultOpt = Tests.Diff(options.OutputFile, options.SampleOutputFile);
+                        if (resultOpt != null)
+                        {
+                            PrintError("The output file not equals with the sample output file.");
+                            PrintHint($"      OutputFile: '{options.OutputFile}'.");
+                            PrintHint($"SampleOutputFile: '{options.SampleOutputFile}'.");
+                            PrintDiff(resultOpt.ToString());
+                            return -4;
+                        }
+                        Print("The output json match sample json.", ConsoleColor.Green);
+                        return 0;
+                    }
+
                 }
 
                 if (output.IsValueCreated)
@@ -99,6 +149,12 @@ namespace Tdl2Json
             }
         }
 
+        private static void PrintDiff(string msg)
+        {
+            using (new ConsoleForegroundColor(ConsoleColor.Magenta))
+                Console.Error.WriteLine(msg);
+        }
+
         private static void PrintError(string msg)
         {
             using (new ConsoleForegroundColor(ConsoleColor.Red))
@@ -117,7 +173,7 @@ namespace Tdl2Json
                 Console.Error.WriteLine(msg);
         }
 
-        private static void ReportCompilerMessages(CompilerMessageBag messages)
+        private static void ReportCompilerMessages(IEnumerable<CompilerMessage> messages)
         {
             var errorCount   = 0;
             var warningCount = 0;

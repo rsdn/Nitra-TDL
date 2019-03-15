@@ -1,0 +1,114 @@
+﻿using JsonDiffPatchDotNet;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using Nitra;
+using Nitra.ProjectSystem;
+
+using System;
+using System.Collections.Immutable;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace Tdl2Json
+{
+  public module Tests
+  {
+    private static _msgRegex = Regex(<#^\s*([WEHweh])\s*\:\s*(.*?)\s*$#>, RegexOptions.Compiled);
+    
+    // Return Some(JToken) if files different and None() otherwise.
+    public Diff(currentJsonPath : string, sampleJsonPath : string) : JToken
+    {
+      def currentJson = File.ReadAllText(currentJsonPath);
+      def sampleJson  = File.ReadAllText(sampleJsonPath);
+      
+      when (string.Equals(currentJson, sampleJson, StringComparison.InvariantCultureIgnoreCase))
+        return null;
+      
+      def jdp           = JsonDiffPatch();
+      def currentJToken = JToken.Parse(currentJson);
+      def sampleJToken  = JToken.Parse(sampleJson);
+      
+      when (JToken.DeepEquals(currentJToken, sampleJToken))
+        return null;
+      
+      def patchJToken = jdp.Diff(currentJToken, sampleJToken);        
+      patchJToken
+    }
+    
+    public CheckCompilerMessages(context : TransformationContext) : CompilerMessagesCheckResult
+    {
+      def compilerMessages = context.Messages;
+      
+      def comparer = StringComparer.OrdinalIgnoreCase;
+      def lineToMsgs = Dictionary(comparer);
+
+      foreach (msg in compilerMessages)
+        lineToMsgs.MultyAdd(Path.GetFullPath(msg.Location.Source.File.FullName), msg.Location.StartLineColumn.Line, msg);
+      
+      foreach (lineToMsg in lineToMsgs)
+        foreach (msgs in lineToMsg.Value)
+          msgs.Value.SortBy(msg1 => msg1.Location.StartLineColumn.Column);
+      
+      def comments          = context.Comments;
+      def notMathedMessages = HashSet(compilerMessages);
+      def notMathedSamples  = List();
+
+      foreach (source in comments.GetSourcesWithComments())
+      {
+        def file = Path.GetFullPath(source.File.FullName);
+        def text = source.OriginalText;
+        
+        foreach (s in comments.GetAllComments(source))
+        foreach (comment in s.Comments)
+        {
+          def lineIndex   = comment.StartLineColumn.Line;
+          def isMultiline = text[comment.StartPos + 1] == '*';
+          def text2       = text.Substring(comment.StartPos + 2, comment.Length - if (isMultiline) 4 else 2).TrimEnd('\n', '\r');
+          def m           = _msgRegex.Match(text2);
+          when (m.Success)
+          {
+            def kind    = m.Groups[1].Value.ToUpperInvariant();
+            def body    = m.Groups[2].Value;
+            def isRegex = !body.IsEmpty() && body[0] == '/';
+            def regex   = if (isRegex) Regex(body.Substring(1)) else null;
+            def msgs    = lineToMsgs.MultyGetValues(file, lineIndex);
+            def kind =
+              match (kind)
+              {
+                | "E" => CompilerMessageType.Error
+                | "W" => CompilerMessageType.Warning
+                | "H" => CompilerMessageType.Hint
+                | _   => assert(false)
+              };
+            
+            foreach (msg in msgs)
+            {
+              def foungd =
+                if (isRegex)
+                  regex.IsMatch(msg.Text)
+                else
+                  msg.Text.IndexOf(body, StringComparison.InvariantCultureIgnoreCase) >= 0;
+
+              if (foungd)
+                _ = notMathedMessages.Remove(msg);
+              else
+                notMathedSamples.Add(NotMatchedMessage(kind, body, comment));
+            }
+          }
+        }
+      }
+      
+      CompilerMessagesCheckResult(notMathedMessages.ToImmutableArray(), notMathedSamples.ToImmutableArray())
+    }
+  }
+}

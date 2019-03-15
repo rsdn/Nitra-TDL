@@ -1,5 +1,6 @@
 ﻿using Nemerle;
 using Nemerle.Collections;
+using Nemerle.Imperative;
 using Nemerle.Text;
 using Nemerle.Utility;
 
@@ -21,6 +22,58 @@ namespace Tdl2Json
         def suffix = if (dicName == null) null else (" (" + dicName + ")");
         throw KeyNotFoundException($"The '$key' key not found in Dictionary[$(default(K)), $(default(V))]$suffix");
       }
+    }
+    
+    public MultyAdd[TKey, TValue](this multiDictionary : Dictionary[TKey, List[TValue]], key : TKey, value : TValue) : void
+    {
+      mutable values;
+      
+      unless (multiDictionary.TryGetValue(key, out values))
+      {
+        values = List();
+        multiDictionary.Add(key, values);
+      }
+
+      values.Add(value);
+    }
+    
+    public MultyAdd[TKey1, TKey2, TValue](this multiDictionary : Dictionary[TKey1, Dictionary[TKey2, List[TValue]]], key1 : TKey1, key2 : TKey2, value : TValue) : void
+    {
+      mutable values;
+      
+      unless (multiDictionary.TryGetValue(key1, out values))
+      {
+        values = Dictionary();
+        multiDictionary.Add(key1, values);
+      }
+
+      values.MultyAdd(key2, value);
+    }
+    
+    module ListUtil[T]
+    {
+      public Empty : IReadOnlyList[T] = List(0);
+    }
+    
+    public MultyGetValues[TKey1, TKey2, TValue](this multiDictionary : Dictionary[TKey1, Dictionary[TKey2, List[TValue]]], key1 : TKey1, key2 : TKey2) : IReadOnlyList[TValue]
+    {
+      mutable dic;
+
+      unless (multiDictionary.TryGetValue(key1, out dic))
+        return ListUtil.[TValue].Empty;
+        
+      mutable values;
+      
+      unless (dic.TryGetValue(key2, out values))
+        return ListUtil.[TValue].Empty;
+        
+      values
+    }
+
+    public SortBy[T, TCmp](this list : List[T], selector : T -> TCmp) : void
+      where TCmp: IComparable[TCmp]
+    {
+      list.Sort((x, y) => selector(x).CompareTo(selector(y)))
     }
   }
 }
