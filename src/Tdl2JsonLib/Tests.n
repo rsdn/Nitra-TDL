@@ -1,0 +1,53 @@
+﻿using JsonDiffPatchDotNet;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using Nitra.ProjectSystem;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace Tdl2Json
+{
+  public module Tests
+  {
+    // Return Some(JToken) if files different and None() otherwise.
+    public Diff(currentJsonPath : string, sampleJsonPath : string) : option[JToken]
+    {
+      def currentJson = File.ReadAllText(currentJsonPath);
+      def sampleJson  = File.ReadAllText(sampleJsonPath);
+      
+      when (string.Equals(currentJson, sampleJson, StringComparison.InvariantCultureIgnoreCase))
+        return None();
+      
+      def jdp           = JsonDiffPatch();
+      def currentJToken = JToken.Parse(currentJson);
+      def sampleJToken  = JToken.Parse(sampleJson);
+      
+      when (JToken.DeepEquals(currentJToken, sampleJToken))
+        return None();
+      
+      def patchJToken = jdp.Diff(currentJToken, sampleJToken);        
+      Some(patchJToken)
+    }
+    
+    public CheckCompilerMessages(files : Seq[string], compilerMessages : Seq[CompilerMessage]) : bool
+    {
+      def lineToMsgs = MultiDictionary();
+      foreach (msg in compilerMessages)
+        lineToMsgs.Add(msg.Location.StartLineColumn.Line, msg);
+      //foreach (lineToMsg in lineToMsgs)
+      //  lineToMsg.Value.Sort(msg => msg.Location.StartLineColumn.Column);
+        false
+    }
+  }
+}

@@ -67,10 +67,10 @@
       <HintPath>$(NitraPath)\Microsoft.Cci.PeReader.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
       <Name>Newtonsoft.Json</Name>
       <AssemblyName>Newtonsoft.Json.dll</AssemblyName>
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -129,7 +129,13 @@
     <Compile Include="JsonGenerator.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MultiDictionary.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.n" />
+    <Compile Include="Tests.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TransformationContext.n">
       <SubType>Code</SubType>
     </Compile>
