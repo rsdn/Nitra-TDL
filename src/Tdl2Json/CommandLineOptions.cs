@@ -12,7 +12,7 @@ namespace Tdl2Json
             new Dictionary<string, MessageImportance>(StringComparer.OrdinalIgnoreCase)
             {
                 ["normal"] = MessageImportance.Low,
-                ["short"] = MessageImportance.High,
+                ["short"]  = MessageImportance.High,
             };
 
         private readonly OptionSet optionSet;
@@ -33,15 +33,21 @@ namespace Tdl2Json
 
         public List<string> IgnoredOptions { get; private set; }
 
+        public bool ComilerMessagesTest { get; private set; }
+
+        public string SampleOutputFile { get; private set; }
+
         public CommandLineOptions()
         {
             optionSet = new OptionSet()
             {
-                { "?|h|help", "Prints this message.", v => NeedHelp = true },
-                { "o|out=", "Output file path.", v => OutputFile = v },
-                { "w|working-directory=", "Working directory.", v => WorkingDirectory = v },
-                { "l|log-level=", $"Logging verbosity: {string.Join(", ", LogLevels.Keys)}.", SetLogLevel },
-                { "t|transformator=", "Transformer: path-to.dll|Qualified.Function.Name", AddTransformer },
+                { "?|h|help",                 "Prints this message.",                                    v => NeedHelp = true },
+                { "o|out=",                   "Output file path.",                                       v => OutputFile = v },
+                { "w|working-directory=",     "Working directory.",                                      v => WorkingDirectory = v },
+                { "l|log-level=",            $"Logging verbosity: {string.Join(", ", LogLevels.Keys)}.", SetLogLevel },
+                { "t|transformator=",         "Transformer: path-to.dll|Qualified.Function.Name",        AddTransformer },
+                { "m|compiler-messages-test", "Test comiler meesges by sampels.",                        _ => ComilerMessagesTest = true },
+                { "s|sample=",                "Sammple output file path.",                               v => SampleOutputFile = v },
                 new ResponseFileSource(),
 
                 // backward compatibility

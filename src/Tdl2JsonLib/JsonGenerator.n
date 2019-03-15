@@ -59,7 +59,7 @@ namespace Tdl2Json
     public event OnMessage : MessageHandler;
 
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
-      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc) : CompilerMessageBag
+      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc, isCommentCollectingEnabled : bool) : TransformationContext
     {
       def absolutePaths = sourceFiles.Map(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f));
 
@@ -75,16 +75,17 @@ namespace Tdl2Json
 
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
-      def (rootNamespace, messages, commentBag) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled, transformatorOpt != null);
+      def (rootNamespace, messages, commentBag) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled, isCommentCollectingEnabled || transformatorOpt != null);
+      def context = TransformationContext(rootNamespace, commentBag, messages, transformatorOutput);
       unless (messages.HasErrors)
       {
         if (transformatorOpt != null)
-          transformatorOpt(TransformationContext(rootNamespace, commentBag, messages, transformatorOutput));
+          transformatorOpt(context);
         else
           GenerateJson(rootNamespace, output);
       }
 
-      messages
+      context
     }
 
     private static StandardLibraries : array[LibReference] = array[
@@ -93,8 +94,7 @@ namespace Tdl2Json
       FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")
     ];
 
-    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool,
-      isCommentCollectingEnabled : bool) : NamespaceSymbol * CompilerMessageBag * CommentBag
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, isCommentCollectingEnabled : bool) : NamespaceSymbol * CompilerMessageBag * CommentBag
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
       
