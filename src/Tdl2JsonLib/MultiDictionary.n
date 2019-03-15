@@ -1,0 +1,28 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl2Json
+{
+  [Record]
+  public class MultiDictionary[TKey, TValue] : Dictionary[TKey, List[TValue]]
+  {
+    public Add(key : TKey, value : TValue) : void
+    {
+      mutable values;
+      
+      unless (TryGetValue(key, out values))
+      {
+        values = List();
+        Add(key, values);
+      }
+
+      values.Add(value);
+    }
+  }
+}
