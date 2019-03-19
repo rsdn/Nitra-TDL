@@ -86,7 +86,7 @@ namespace Tdl2Json
                                 return result;
                         }
 
-                        Print($"test passed. The test took: {timer.Elapsed}", ConsoleColor.Green);
+                        Print($"test passed. Test took: {timer.Elapsed}", ConsoleColor.Green);
                         return 0;
                     }
 

@@ -76,18 +76,15 @@ namespace TestRunner
                     //var exitCode             = Tdl2Json.Program.Main(new[] { "\"-out:{outputFilePath}\"", "\"{tdls}\"", "\"{dlls}\"", "--log-level=short", option });
                     var exitCode = process.ExitCode;
                     if (exitCode < 0)
-                    {
                         failed++;
-                        //Console.WriteLine(arguments);
-                    }
                 }
 
                 if (failed > 0)
-                    PrintError($"{failed} tests failed! Test took: {timer.Elapsed}");
+                    PrintError($"{failed} tests failed! All tests took: {timer.Elapsed}");
                 else
                     Print("All tests passed.", ConsoleColor.Green);
 
-                //Directory.Delete(outputDir, recursive: true);
+                Directory.Delete(outputDir, recursive: true);
 
                 return failed > 0 ? -4 : 0;
             }
