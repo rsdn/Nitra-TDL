@@ -1,0 +1,444 @@
+﻿{
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "Deployments": {
+    "InstallProduct": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "-testbot_path": "$(TestBotPath)",
+        "-product_path": "$(ProductPath)",
+        "-product_info": "$(ProductInfoJson)",
+        "-product_installer": "$(ProductInstallerJson)",
+        "-settings_file": "$(TestSettingsFile)",
+        "-samples_path": "$(SamplesPath)"
+      },
+      "ScriptPath": "\\\\sdfs\\storage\\CoreTechnologies\\AutotestProjectBuilds\\MacAutotests\\Deployer\\deployer.py"
+    },
+    "TestUI": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_ui.py"
+    },
+    "TestDeployArtifacts": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_deploy_artifacts.py"
+    },
+    "TestDeployArtifactsWithTimeout": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_deploy_artifacts.py",
+      "Timeout": "00:00:02"
+    },
+    "TestAirCli": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_air_cli.py"
+    },
+    "EnableSelenium": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\enable_selenium.sh"
+    },
+    "RebootWithScript": {
+      "Type": "Script",
+      "RebootExitCode": 101,
+      "ReturnValue": 42,
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\Reboot\\deployReboot.sh",
+      "Timeout": "00:02:00"
+    },
+    "DeployWithTestBot": {
+      "Type": "Sequence",
+      "Deployments": [
+        "InstallProduct",
+        "RebootWithScript"
+      ]
+    },
+    "DeployToRunPyAsTest": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\run_py_test_deploy.py"
+    }
+  },
+  "Platforms": {
+    "osx9": {},
+    "osx10": {},
+    "osx11": {},
+    "osx12": {},
+    "osx13": {},
+    "osx14": {},
+    "Debug": [
+      "osx11",
+      "osx12",
+      "osx13"
+    ],
+    "All": [
+      "osx9",
+      "osx10",
+      "osx11",
+      "osx12",
+      "osx13",
+      "osx14"
+    ],
+    "osx10__osx9": [
+      "osx10",
+      "osx9"
+    ]
+  },
+  "Products": {
+    "All": [
+      "App4 for Mac 10 SP2",
+      "App4 for Mac 10 SP2 MR1",
+      "App2 for Mac 2018 MR1",
+      "App2 for Mac 2018 MR2",
+      "App2 for Mac 2019",
+      "App5 for Mac 2019",
+      "App5 for Mac 2018 MR1",
+      "App5 for Mac 2018 MR2",
+      "App3 for Mac 1.0 MR2",
+      "App3 for Mac 1.0 MR3",
+      "App3 for Mac 1.0 MR4"
+    ],
+    "App4 for Mac 10 SP2": {
+      "Name": "App4 for Mac",
+      "Parameters": {
+        "Name": "App4 for Mac",
+        "ProductType": "Kes",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App410SP2",
+        "ProductInfoJson": "kes-10-2.json",
+        "ProductInstallerJson": "um/installers/kes10-2-install.json"
+      },
+      "ReleaseName": "10",
+      "Version": "10.2.0.267"
+    },
+    "App4 for Mac 10 SP2 MR1": {
+      "Name": "App4 for Mac",
+      "Parameters": {
+        "Name": "App4 for Mac",
+        "ProductType": "Kes",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App410SP2MR1",
+        "ProductInfoJson": "kes-10-2.json",
+        "ProductInstallerJson": "um/installers/kes10-2-install.json"
+      },
+      "ReleaseName": "10",
+      "Version": "10.2.1.319"
+    },
+    "App2 for Mac 2018 MR1": {
+      "Name": "App2 for Mac",
+      "Parameters": {
+        "Name": "App2 for Mac",
+        "ProductType": "App2_",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App22018MR1",
+        "ProductInfoJson": "kis-18-0.json",
+        "ProductInstallerJson": "um/installers/kis18-0-install.json"
+      },
+      "ReleaseName": "18 MR1",
+      "Version": "18.0.1.35"
+    },
+    "App2 for Mac 2018 MR2": {
+      "Name": "App2 for Mac",
+      "Parameters": {
+        "Name": "App2 for Mac",
+        "ProductType": "App2_",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App22018MR2",
+        "ProductInfoJson": "kis-18-0.json",
+        "ProductInstallerJson": "um/installers/kis18-0-install.json"
+      },
+      "ReleaseName": "18 MR2",
+      "Version": "18.0.2.60"
+    },
+    "App2 for Mac 2019": {
+      "Name": "App2 for Mac",
+      "Parameters": {
+        "Name": "App2 for Mac",
+        "ProductType": "App2_",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App22019",
+        "ProductInfoJson": "kis-19-0.json",
+        "ProductInstallerJson": "um/installers/install-activate-kis19.json"
+      },
+      "ReleaseName": "19",
+      "Version": "19.0.0.295"
+    },
+    "App5 for Mac 2019": {
+      "Name": "App5 for Mac",
+      "Parameters": {
+        "Name": "App5 for Mac",
+        "ProductType": "Ksecl",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52019",
+        "ProductInfoJson": "ksecl-19-0.json",
+        "ProductInstallerJson": "um/installers/ksecl19-0-install.json"
+      },
+      "ReleaseName": "19",
+      "Version": "19.0.0.294"
+    },
+    "App5 for Mac 2018 MR1": {
+      "Name": "App5 for Mac",
+      "Parameters": {
+        "Name": "App5 for Mac",
+        "ProductType": "Ksecl",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52018MR1",
+        "ProductInfoJson": "ksecl-18-0.json",
+        "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
+      },
+      "ReleaseName": "18 MR1",
+      "Version": "18.0.1.35"
+    },
+    "App5 for Mac 2018 MR2": {
+      "Name": "App5 for Mac",
+      "Parameters": {
+        "Name": "App5 for Mac",
+        "ProductType": "Ksecl",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52018MR2",
+        "ProductInfoJson": "ksecl-18-0.json",
+        "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
+      },
+      "ReleaseName": "18 MR2",
+      "Version": "18.0.2.60"
+    },
+    "App3 for Mac 1.0 MR2": {
+      "Name": "App3 for Mac",
+      "Parameters": {
+        "Name": "App3 for Mac",
+        "ProductType": "App3",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App31MR2",
+        "ProductInfoJson": "safekids-1-0.json",
+        "ProductInstallerJson": "um/installers/safekids-install.json"
+      },
+      "ReleaseName": "1",
+      "Version": "1.0.2.282"
+    },
+    "App3 for Mac 1.0 MR3": {
+      "Name": "App3 for Mac",
+      "Parameters": {
+        "Name": "App3 for Mac",
+        "ProductType": "App3",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App31MR3",
+        "ProductInfoJson": "safekids-1-0.json",
+        "ProductInstallerJson": "um/installers/safekids-install.json"
+      },
+      "ReleaseName": "1",
+      "Version": "1.0.3.253"
+    },
+    "App3 for Mac 1.0 MR4": {
+      "Name": "App3 for Mac",
+      "Parameters": {
+        "Name": "App3 for Mac",
+        "ProductType": "App3",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App31MR4",
+        "ProductInfoJson": "safekids-1-0.json",
+        "ProductInstallerJson": "um/installers/safekids-install.json"
+      },
+      "ReleaseName": "1",
+      "Version": "1.0.4.73"
+    },
+    "App4": [
+      "App4 for Mac 10 SP2",
+      "App4 for Mac 10 SP2 MR1"
+    ],
+    "App2": [
+      "App2 for Mac 2018 MR1",
+      "App2 for Mac 2018 MR2",
+      "App2 for Mac 2019"
+    ],
+    "App5": [
+      "App5 for Mac 2019",
+      "App5 for Mac 2018 MR1",
+      "App5 for Mac 2018 MR2"
+    ],
+    "App3": [
+      "App3 for Mac 1.0 MR2",
+      "App3 for Mac 1.0 MR3",
+      "App3 for Mac 1.0 MR4"
+    ],
+    "App4__App3": [
+      "App4 for Mac 10 SP2",
+      "App4 for Mac 10 SP2 MR1",
+      "App3 for Mac 1.0 MR2",
+      "App3 for Mac 1.0 MR3",
+      "App3 for Mac 1.0 MR4"
+    ],
+    "App4__App2 for Mac 2018 MR1__App2 for Mac 2018 MR2__App5 for Mac 2018 MR1__App5 for Mac 2018 MR2__App3": [
+      "App4 for Mac 10 SP2",
+      "App4 for Mac 10 SP2 MR1",
+      "App2 for Mac 2018 MR1",
+      "App2 for Mac 2018 MR2",
+      "App5 for Mac 2018 MR1",
+      "App5 for Mac 2018 MR2",
+      "App3 for Mac 1.0 MR2",
+      "App3 for Mac 1.0 MR3",
+      "App3 for Mac 1.0 MR4"
+    ],
+    "App4__App2__App5__App3 for Mac 1.0 MR3__App3 for Mac 1.0 MR4": [
+      "App4 for Mac 10 SP2",
+      "App4 for Mac 10 SP2 MR1",
+      "App2 for Mac 2018 MR1",
+      "App2 for Mac 2018 MR2",
+      "App2 for Mac 2019",
+      "App5 for Mac 2019",
+      "App5 for Mac 2018 MR1",
+      "App5 for Mac 2018 MR2",
+      "App3 for Mac 1.0 MR3",
+      "App3 for Mac 1.0 MR4"
+    ],
+    "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019": [
+      "App4 for Mac 10 SP2 MR1",
+      "App2 for Mac 2019",
+      "App5 for Mac 2019"
+    ]
+  },
+  "Suites": {
+    "Interprecz": {
+      "Parameters": {
+        "TestSettingsFile": "\\\\sdfs\\Autotests\\Components\\TestRuns\\Mac\\11530_Interprecz.json",
+        "TestBotPath": "\\\\sdfs\\storage\\CoreTechnologies\\AutotestProjectBuilds\\MacAutotests\\MacAutotests_20190122.3\\distrib",
+        "SamplesPath": "\\\\tis-dfs\\autotests\\Components\\CopyToVmMac\\common,\\\\tis-dfs\\autotests\\Components\\CopyToVmMac\\interprecz"
+      },
+      "Platforms": [
+        "osx10__osx9"
+      ],
+      "Products": [
+        "App4 for Mac 10 SP2"
+      ],
+      "TestScenarios": [
+        "Interprecz"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "InterpreczRollback": {
+      "Deployments": [
+        "DeployWithTestBot"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "osx9"
+          ],
+          "Products": [
+            "App4"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx10"
+          ],
+          "Products": [
+            "App4__App3"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx11"
+          ],
+          "Products": [
+            "App4__App2 for Mac 2018 MR1__App2 for Mac 2018 MR2__App5 for Mac 2018 MR1__App5 for Mac 2018 MR2__App3"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx12"
+          ],
+          "Products": [
+            "All"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx13"
+          ],
+          "Products": [
+            "App4__App2__App5__App3 for Mac 1.0 MR3__App3 for Mac 1.0 MR4"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx14"
+          ],
+          "Products": [
+            "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestConfigName": "um/interprecz/interprecz_rb.json"
+      },
+      "Timeout": "00:15:00",
+      "UniqueId": "6480b1c0-12f6-451f-b3ba-091d7c0d036a"
+    },
+    "InterpreczSmoke": {
+      "Deployments": [
+        "DeployWithTestBot"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "osx9"
+          ],
+          "Products": [
+            "App4"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx10"
+          ],
+          "Products": [
+            "App4__App3"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx11"
+          ],
+          "Products": [
+            "App4__App2 for Mac 2018 MR1__App2 for Mac 2018 MR2__App5 for Mac 2018 MR1__App5 for Mac 2018 MR2__App3"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx12"
+          ],
+          "Products": [
+            "All"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx13"
+          ],
+          "Products": [
+            "App4__App2__App5__App3 for Mac 1.0 MR3__App3 for Mac 1.0 MR4"
+          ]
+        },
+        {
+          "Platforms": [
+            "osx14"
+          ],
+          "Products": [
+            "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "TestConfigName": "um/interprecz/interprecz_smoke.json"
+      },
+      "Timeout": "00:15:00",
+      "UniqueId": "19a25e05-9f4e-42bb-97e3-40f2c3775c4f"
+    },
+    "Interprecz": {
+      "TestScenarios": [
+        "InterpreczRollback",
+        "InterpreczSmoke"
+      ]
+    }
+  },
+  "version": 6
+}

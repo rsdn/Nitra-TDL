@@ -1,42 +1,142 @@
-﻿platform win7-x86;
-platform win7-x64;
-platform win_7 = win7-x86, win7-x64;
-platform win811-x86;
-platform win811-x64;
+platform platform_group_1 = w10rs5-x64, w10rs6-x64, w10rs5-x86, w10rs6-x86, win7-x64, win7-x86, win811-x64, win811-x86;
+platform platform_group_2 = w10rs6-x64, w10rs6-x86, w10rs5-x64, w10rs6-x64, w10rs5-x86;
+platform platform_group_3 = win7-x64, win7-x86, win811-x64, win811-x86;
+platform platform_group_4 = w10rs6-x86, w10rs5-x64, w10rs6-x64, w10rs5-x86, win811-x64, win811-x86;
+platform platform_group_5 = w10rs5-x86, w10rs6-x86, win7-x64;
+platform platform_group_6 = w10rs6-x86, w10rs5-x64, w10rs6-x64, w10rs5-x86, win7-x64, win7-x86, win811-x86;
+platform platform_group_7 = w10rs6-x86, w10rs5-x86, win7-x86, win811-x86;
+platform platform_group_8 = w10rs6-x86, w10rs5-x86, win7-x64, win7-x86, win811-x86;
+platform platform_group_9 = win7-x64, win7-x86;
+platform platform_group_10 = w10rs6-x86, w10rs5-x64, w10rs6-x64, w10rs5-x86, win7-x64, win7-x86;
+platform platform_group_11 = w10rs5-x64, w10rs6-x64, win7-x64, win811-x64;
+platform platform_group_12 = sbs2011, win2008r2, win2012r2, win-2019, xs-14393;
+platform platform_group_13 = win2012r2, win-2019, xs-14393;
+platform platform_group_14 = sbs2011, win2008r2;
+platform platform_group_15 = w10rs6-x64, win7-x64, win811-x64;
+platform platform_group_16 = w10rs6-x86, w10rs5-x64, w10rs6-x64, win7-x64, win7-x86, win811-x86;
+platform platform_group_17 = w10rs6-x64, w10rs6-x86, w10rs5-x64, w10rs5-x86, win7-x64;
+platform platform_group_18 = w10rs6-x64, w10rs6-x86, win7-x64, win7-x86, win811-x64, win811-x86;
+platform platform_group_19 = w10rs6-x86, win7-x86, win811-x86;
+platform platform_group_20 = w10rs6-x86, win7-x64, win7-x86, win811-x86;
+platform platform_group_21 = w10rs6-x64, w10rs6-x86, win811-x64, win811-x86;
+platform platform_group_22 = w10rs6-x64, w10rs6-x86, win7-x64, win7-x86, win811-x86;
+platform platform_group_23 = w10rs5-x86, w10rs6-x86, win7-x86, win811-x86;
+platform platform_group_24 = w10rs5-x64, w10rs6-x64, w10rs5-x86, w10rs6-x86, win7-x86;
+platform platform_group_25 = w10rs5-x64, w10rs6-x64, w10rs5-x86, w10rs6-x86, win7-x86, win811-x86;
+platform platform_group_28 = w10rs6-x64, w10rs6-x86, win7-x64, win7-x86;
+platform platform_group_29 = win7-x86, win811-x86;
+platform platform_group_30 = w10rs6-x64, w10rs6-x86;
+platform platform_group_31 = w10rs5-x64, w10rs6-x64, w10rs5-x86, w10rs6-x86, win7-x64, win7-x86, win811-x64, win811-x86;
+platform platform_group_32 = win2008r2, win2012r2, win-2019, xs-14393;
+platform platform_group_33 = w10rs6-x86, w10rs5-x86, win7-x64, win7-x86, win811-x64, win811-x86;
+platform platform_group_34 = win2012r2, win-2019;
+platform platform_group_35 = win10_x64, win811-x64;
+platform platform_group_36 = w10rs5-x64, w10rs6-x64, win7-x86, win811-x64;
+platform platform_group_37 = w10rs6-x64, w10rs6-x86, w10rs5-x64, w10rs5-x86, win7-x64, win7-x64, win811-x64, win811-x86;
+platform platform_group_38 = w10rs5-x64, w10rs6-x64, win7-x64;
+platform platform_group_39 = w10rs5-x64, w10rs6-x64, win7-x64, win811-x86;
+platform platform_group_40 = w10rs6-x64, w10rs6-x86, w10rs5-x64, w10rs5-x86, win7-x64, win811-x86;
+
+platform win_7 =
+    win7-x86,
+    win7-x64;
+
 platform win_811 =
     win811-x86,
     win811-x64;
-platform w10rs3-x86;
-platform w10rs3-x64;
-platform win_10_rs3 =
-    w10rs3-x86,
-    w10rs3-x64;
-platform w10rs4-x86;
-platform w10rs4-x64;
-platform win_10_rs4 =
-    w10rs4-x86,
-    w10rs4-x64;
-platform w10rs5-x86;
-platform w10rs5-x64;
+
 platform win_10_rs5 =
     w10rs5-x86,
     w10rs5-x64;
+
+platform win_10_rs6 =
+    w10rs6-x86,
+    w10rs6-x64;
+
 platform win_10 =
-    win_10_rs3,
-    win_10_rs4,
-    win_10_rs5;
-platform win2008r2;
-platform win2012r2;
-platform sbs2008;
-platform sbs2011;
-platform xs-14393;
+    win_10_rs5,
+    win_10_rs6;
+
+platform win10_x64 =
+    w10rs5-x64,
+    w10rs6-x64;
+
+platform win_7_win_8 =
+    win_7,
+    win_811;
+
+platform win_811_and_later =
+    win_811,
+    win_10;
+
+platform App9_no_proxy = 
+	win7-x64,
+	win811-x64,
+	win10-x64,
+	w10rs5-x64;
+
 platform all_pc =
     win_7,
     win_811,
     win_10;
+
+platform all_App9 =
+    win7-x64,
+    win811-x64,
+    win10-x64,
+	w10rs5-x64;
+
+platform all_but_win10_App9 =
+    win7-x64,
+	win811-x64;
+
 platform all_servers =
+    sbs2011,
     win2008r2,
     win2012r2,
-    sbs2008,
-    sbs2011,
+    win-2019,
     xs-14393;
+
+platform all_pc_and_servers = 
+    all_pc,
+    all_servers;
+
+platform all_pc_and_servers_and_win_10_dg = 
+	all_pc_and_servers,
+	w10rs5-dg1,
+	w10rs5-dg2;
+
+platform all_pc_and_servers_and_win_10_dg_exclude_10rs6 = 
+    win_7,
+    win_811,
+    win_10_rs5,
+	all_servers,
+	w10rs5-dg1,
+	w10rs5-dg2;
+
+platform all_pc_exclude_win8plus_x64_only = w10rs6-x86, w10rs5-x86, win811-x86, win_7;
+
+platform not_win_10 = 
+	win_7,
+	win_811;
+	
+platform win7-x64;
+platform win7-x86;
+platform win811-x64;
+platform win811-x86;
+platform win10-x64;
+platform w10rs4-x64;
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs6-x64;
+platform w10rs6-x86;
+
+platform w10rs5-dg1;
+platform w10rs5-dg2;
+
+platform sbs2008;
+platform sbs2011;
+platform win2008r2;
+platform win2012r2;
+platform xs-14393;
+platform win-2019;

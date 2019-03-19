@@ -10,8 +10,8 @@
 suite "Ext.PullRequest" : Ext
 {
     platform win10;
-    product "KES 11.1__PURE 2020.MP0";
-    AutotestAssemblies = @"\\sdfs.avp.ru\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
+    product "App4 11.1__App6 2020.MP0";
+    AutotestAssemblies = @"\\sdfs.domain.com\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
     DeployIsNeeded = true;
     UpdateSourceAddress = "";
     UseSecondaryUpdateSource = false;
@@ -23,8 +23,8 @@ suite "Ext.PullRequest" : Ext
 suite "Ext.Delivery" : Ext
 {
     platform win10;
-    product "KES 11.1__PURE 2020.MP0";
-    AutotestAssemblies = @"\\sdfs.avp.ru\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
+    product "App4 11.1__App6 2020.MP0";
+    AutotestAssemblies = @"\\sdfs.domain.com\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
     DeployIsNeeded = true;
     UpdateSourceAddress = "";
     UseSecondaryUpdateSource = false;

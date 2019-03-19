@@ -19,32 +19,32 @@ deployment InstallProduct(
 }
 
 deployment TestUI()
-    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\Kis2019\test_ui.py"
+    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\App2_2019\test_ui.py"
 {
     expected 0;
 }
 
 deployment TestDeployArtifacts()
-    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\Kis2019\test_deploy_artifacts.py"
+    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\App2_2019\test_deploy_artifacts.py"
 {
     expected 0;
 }
 
 deployment TestDeployArtifactsWithTimeout()
-    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\Kis2019\test_deploy_artifacts.py"
+    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\App2_2019\test_deploy_artifacts.py"
 {
     expected 0;
     timeout "00:00:02";
 }
 
 deployment TestAirCli()
-    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\Kis2019\test_air_cli.py"
+    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\App2_2019\test_air_cli.py"
 {
     expected 0;
 }
 
 deployment EnableSelenium()
-    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\Kis2019\enable_selenium.sh"
+    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\App2_2019\enable_selenium.sh"
 {
     expected 0;
 }
@@ -60,7 +60,7 @@ deployment RebootWithScript()
 deployment DeployWithTestBot = InstallProduct, RebootWithScript;
 
 deployment DeployToRunPyAsTest()
-    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\Kis2019\run_py_test_deploy.py"
+    script @"\\sdfs\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\App2_2019\run_py_test_deploy.py"
 {
     expected 0;
 }

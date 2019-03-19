@@ -1,0 +1,10 @@
+
+suite "App1_.BvtPvt.GUI" : SessionParameters
+{
+    platform platform_group_1;
+    product App7_Main;
+    ExcludeMasks = @"*.iso,*.vhd,*_full.exe";
+    DistribFiles = DistribFiles;
+    DistribTestModules = DistribTestModules;
+    App1_-Main-BvtPvt-GUI-scenarios();
+}

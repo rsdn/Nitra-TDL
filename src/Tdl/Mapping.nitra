@@ -65,8 +65,8 @@ namespace Tdl
         SelectScenario.Product                    -> Product;
         SelectScenario.DefDeclarations            -> Definitions;
       }
-    | ScenarioSet       -> Scenario.Set { Name -> Name; MultiMachineId = ParsedValue(Span.StartPos);            Scenarios.Item1 -> Scenarios; }
-    | ParallelScenario  -> Scenario.Set { Name -> Name; MultiMachineId = ParsedValue(Parallel, Guid.NewGuid()); Scenarios.Item1 -> Scenarios; }
+    | ScenarioSet       -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Span.StartPos);  }
+    | ParallelScenario  -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Parallel, true); }
     | SuiteType         -> SuiteType    { Name -> Name; TypeBody.Fields -> Fields; }
     | Suite             -> Suite
       {

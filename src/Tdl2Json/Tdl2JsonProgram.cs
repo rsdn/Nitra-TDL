@@ -8,6 +8,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
+using File = System.IO.File;
+
 namespace Tdl2Json
 {
     public static class Program
@@ -43,8 +45,9 @@ namespace Tdl2Json
                 foreach (var ignoredOption in options.IgnoredOptions)
                     PrintError($"File or option was ignored: {ignoredOption}");
 
-                var isTestMode = options.ComilerMessagesTest || options.SampleOutputFile != null;
-                Print("Test mode!", ConsoleColor.White);
+                var isTestMode = options.IsTestMode;
+                if (isTestMode)
+                    Print("Test mode!", ConsoleColor.White);
 
 
                 var (tdls, refs) = (options.InputFiles.ToArray(), options.References.ToArray());
@@ -59,7 +62,7 @@ namespace Tdl2Json
                     {
                         var transformatorFunc = LoadTransformator(t.assembly, t.type, t.method);
                         var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, isMethodTypingEnabled: true, output: null,
-                            transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc, isCommentCollectingEnabled: true);
+                            transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc, isTestMode: true);
                         messages.AddRange(transformationContext.Messages);
 
                         if (messages.HasErrors)
@@ -69,51 +72,20 @@ namespace Tdl2Json
                 else
                 {
                     var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
-                        transformatorOutput: null, transformatorOpt: null, isCommentCollectingEnabled: isTestMode);
+                        transformatorOutput: null, transformatorOpt: null, isTestMode: isTestMode);
                     Debug.Assert(transformationContext.Comments != null);
+
+                    if (isTestMode)
+                    {
+                        if (!TestCompilerMessages(transformationContext))
+                            return -4;
+                        if (output.IsValueCreated && options.SampleOutputFile != null)
+                            return TestCompareWitSample(options, output);
+
+                        return 0; // Test passed.
+                    }
+
                     messages = transformationContext.Messages;
-                    if (options.ComilerMessagesTest || options.SampleOutputFile != null)
-                    {
-                        var result = Tests.CheckCompilerMessages(transformationContext);
-
-                        if (result.HasUnmathed)
-                        {
-                            if (!result.NotMathedMessages.IsEmpty)
-                            {
-                                PrintError("Unexpected compiler messages present.");
-                                ReportCompilerMessages(result.NotMathedMessages);
-                            }
-
-                            if (!result.NotMathedSamples.IsEmpty)
-                            {
-                                PrintError($"{result.NotMathedSamples.Length} sample compiler messages don't match the compiler messages.");
-                                // TODO: Вывести несмачившиеся образцы...
-                                foreach (var sample in result.NotMathedSamples)
-                                    PrintError($"{sample.Location.ToMessageString()}The {sample.Kind} not match with appropriate compiler message: '{sample.Body}'.");
-                            }
-
-                            return -4;
-                        }
-                        else
-                            Print("All compiler messages match samples.", ConsoleColor.Green);
-                    }
-                    if (output.IsValueCreated && options.SampleOutputFile != null)
-                    {
-                        output.Value.Dispose();
-
-                        var resultOpt = Tests.Diff(options.OutputFile, options.SampleOutputFile);
-                        if (resultOpt != null)
-                        {
-                            PrintError("The output file not equals with the sample output file.");
-                            PrintHint($"      OutputFile: '{options.OutputFile}'.");
-                            PrintHint($"SampleOutputFile: '{options.SampleOutputFile}'.");
-                            PrintDiff(resultOpt.ToString());
-                            return -4;
-                        }
-                        Print("The output json match sample json.", ConsoleColor.Green);
-                        return 0;
-                    }
-
                 }
 
                 if (output.IsValueCreated)
@@ -125,6 +97,7 @@ namespace Tdl2Json
                     Print($"JSON file was created successfully: '{options.OutputFile}'.", ConsoleColor.Green);
 
                 Print("Took: " + timer.Elapsed, ConsoleColor.DarkGray);
+
                 return messages.HasErrors ? -3 : 0;
             }
             catch (OptionException e)
@@ -147,6 +120,69 @@ namespace Tdl2Json
                 if (Debugger.IsAttached)
                     Debugger.Break();
             }
+        }
+
+        private static int TestCompareWitSample(CommandLineOptions options, Lazy<TextWriter> output)
+        {
+            output.Value.Dispose();
+
+            if (!File.Exists(options.SampleOutputFile))
+            {
+                PrintError($"Sample file '{options.SampleOutputFile}' not exists.");
+                return -4;
+            }
+
+            if (!File.Exists(options.OutputFile))
+            {
+                PrintError($"Output file '{options.OutputFile}' not exists.");
+                return -4;
+            }
+
+            var resultOpt = Tests.Diff(options.OutputFile, options.SampleOutputFile);
+            if (resultOpt != null)
+            {
+                PrintError("The output file not equals with the sample output file.");
+                PrintTestOutputAndSample(options);
+                PrintDiff(resultOpt.ToString());
+                return -4;
+            }
+            Print("The output json match sample json.", ConsoleColor.Green);
+            PrintTestOutputAndSample(options);
+            Print("Test passed.", ConsoleColor.Green);
+            return 0;
+        }
+
+        private static bool TestCompilerMessages(TransformationContext transformationContext)
+        {
+            var result = Tests.CheckCompilerMessages(transformationContext);
+
+            if (result.HasUnmathed)
+            {
+                if (!result.NotMathedMessages.IsEmpty)
+                {
+                    PrintError("Unexpected compiler messages present.");
+                    ReportCompilerMessages(result.NotMathedMessages);
+                }
+
+                if (!result.NotMathedSamples.IsEmpty)
+                {
+                    PrintError($"{result.NotMathedSamples.Length} sample compiler messages don't match the compiler messages.");
+                    foreach (var sample in result.NotMathedSamples)
+                        PrintError($"{sample.Location.ToMessageString()}The {sample.Kind} not match with appropriate compiler message: '{sample.Body}'.");
+                }
+
+                return false;
+            }
+            else
+                Print("All compiler messages match samples.", ConsoleColor.Green);
+
+            return true;
+        }
+
+        private static void PrintTestOutputAndSample(CommandLineOptions options)
+        {
+            PrintHint($"      OutputFile: '{options.OutputFile}'.");
+            PrintHint($"SampleOutputFile: '{options.SampleOutputFile}'.");
         }
 
         private static void PrintDiff(string msg)

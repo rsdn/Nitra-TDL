@@ -113,6 +113,9 @@
     <Compile Include="CompilerMessageBag.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CompilerMode.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ConfigurationException.n">
       <SubType>Code</SubType>
     </Compile>

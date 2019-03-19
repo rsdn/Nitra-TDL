@@ -1,6 +1,10 @@
-﻿external
+external
 {
-  string ProductVersion;
-  string AutotestsBinariesToken;
-  string ProductBinariesToken;
+    string ProductVersion;
+    string DistribFiles;
+    string DistribTestModules;
+    string AutotestsBinariesPath;
+    string BaseDistribFiles;
+    string BaseDistribTestModules;
+    string ProductBasesPath;
 }

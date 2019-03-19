@@ -1,0 +1,457 @@
+﻿select deployment "Install product"(InstallationType)
+{
+    | _ => "_Install product"
+    | "Upgrade 2019" => "Install 2019 -> Install product"
+}
+
+select deployment "Install product No Backdoor"(InstallationType)
+{
+    | _ => "_Install Product No Backdoor"
+    | "Upgrade 2019" => "Install 2019 -> Install product No backdoor"
+}
+
+deployment "Install 2019 -> Install product No backdoor" = 
+	"Install Base Product 2019 No Backdoor", 
+	"_Install Product No Backdoor", 
+	"RebootAgent";
+
+deployment "Install 2019 -> Install product" = 
+	"Install Base Product 2019", 
+	"_Install product", 
+	"RebootAgent";
+
+deployment "_Install product"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string DumpFolder = @"",
+    string AcceptEula = "On",
+    string AcceptKsnAgreement = "On",
+    string AcceptMarketingAgreement = "On",
+    string AcceptSocializationAgreement = "On",
+    bool ActivateEmbeddedTrial = false,
+    string ActivationCode = "",
+    string ActivationServerUrl = "",
+    string AdditionalFiles = @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2.Main.AdditionalContinuousIntegration",
+    string BundleApp9 = "Default",
+    bool CollectContinuousProductTraces = true,
+    string CollectionMountType = "File share",
+    string CollectionsNetworkPath = @"\\tis-dfs.company.ru\Autotests\App2\Deployment\App2.Main",
+    string ConfigFilesFamily,
+    bool ContinueOnErrors = false,
+    string DefaultUpdateSource = "",
+    bool DisableDistribFilesDownloading = false,
+    bool DisablePpl = false,
+    bool DisableProductInstallation = false,
+    bool DisableRestartService = true,
+    bool DisableTestModulesInstallation = false,
+    bool DisableVSCollectorsDeployment = false,
+    string DriversLogState = "MainEnableBranchDisable",
+    bool EnableAntiSpam = false,
+    bool EnableAutomaticApp11Downgrade = false,
+    bool EnableBssLogs = false,
+    bool EnableSslDecoding = false,
+    bool ForceDisableAppVerifier = false,
+    bool ForceDisableDriverVerifier = false,
+    bool ForceInstallCertificates = false,
+    bool ForcePreloadDumpWriter = false,
+    string ForceTraceLevel = "",
+    bool IgnoreNothingToUpdateCode = false,
+    bool InstallActivationServerBackdoor = false,
+    string InstallerExecutableFileMask = "",
+    bool InstallLib1 = false,
+    string InstallLicenceBackdoor = "On",
+    string IsoImageFileName = "",
+    string KpcActivationCode = "",
+    string KpcCompanyId = "",
+    string KpcOneTimeRegistrationSharedSecret = "",
+    string KPCRegion = "",
+    string KpcUserId = "",
+    string LocalizationCode = "",
+    bool PostUpdateServiceStartStop = false,
+    string RegisterAiCom = "Off",
+    bool ReplaceDistributiveFromIso = false,
+    string RequestApp8TrialTier = "Default",
+    bool RunAtSystemStartup = false,
+    string SaveHashesPath = "",
+    string ScreenshotsFolder = "",
+    bool SetProductNameForFacade = true,
+    bool Silent = false,
+    bool StartService = false,
+    string SuggestApp3 = "Off",
+    int TimesToUpdate = 1,
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    bool TurnOffDumpOnAssert = false,
+    bool TurnOffProtection = false,
+    string UpdateChromeToVersion = "",
+    string UpdateFirefoxToVersion = "",
+    string UpdateSource = "",
+    string UseCollections = "On",
+    string UseGDPR = "Default",
+    bool UseProxyForUpdate = false,
+    bool Verbose = false,
+    bool VerboseExternalProcessesOutput = false,
+    bool WaitForProductActivation = false)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}
+
+deployment "_Install Product No Backdoor" =  "_Install product"(
+	InstallLicenceBackdoor: "Off",
+	InstallActivationServerBackdoor: false);
+
+
+deployment "Install Base Product 2019" = "Install Base Product"(
+    AdditionalFiles: @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2_2019.MP0.AdditionalContinuousIntegration");
+
+deployment "Install Base Product 2019 No Backdoor" = "Install Base Product No Backdoor"(
+    AdditionalFiles: @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2_2019.MP0.AdditionalContinuousIntegration");
+
+deployment "Install Base Product 2017" = "Install Base Product"(
+    AdditionalFiles: @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2_2017.MP0.AdditionalContinuousIntegration");
+
+deployment "Install Base Product" = "_Install product"(
+    BuildPath: @"$(SessionWorkFolder)\BaseProductBuild",
+    DisableTestModulesInstallation: true,
+    DisableVSCollectorsDeployment: true,
+    InstallActivationServerBackdoor: true,
+    SetProductNameForFacade: false,
+    StartService: true,
+    TurnOffDumpOnAssert: true,
+    UseCollections: "Off");
+
+deployment "Install Base Product No Backdoor" =  "_Install product"(
+	InstallLicenceBackdoor: "Off",
+	BuildPath: @"$(SessionWorkFolder)\BaseProductBuild",
+    DisableTestModulesInstallation: true,
+    DisableVSCollectorsDeployment: true,
+    InstallActivationServerBackdoor: false,
+    SetProductNameForFacade: false,
+    StartService: true,
+    TurnOffDumpOnAssert: true,
+    UseCollections: "Off");
+
+deployment "Install App9"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string DumpFolder = @"",
+    string AcceptEula = "On",
+    string AcceptKsnAgreement = "On",
+    string AcceptMarketingAgreement = "On",
+    string AcceptSocializationAgreement = "On",
+    string AdditionalFiles = @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App9.Additional",
+    bool CollectContinuousProductTraces = false,
+    string CollectionMountType = "File share",
+    string CollectionsNetworkPath = @"\\tis-dfs.company.ru\Autotests\App2\Deployment\App2.Main",
+    string ConfigFilesFamily = @"App9.",
+    bool DisableProductInstallation = false,
+    bool DisableTestModulesInstallation = false,
+    bool DownloadBackdoorsUsingBinariesService = false,
+    bool ForceInstallCertificates = false,
+    string HydraDllPath = "",
+    string InstallerExecutableFileMask = "",
+    bool InstallLib1 = false,
+    bool App9WasInstalledInBundlePreviously = false,
+    string SaveHashesPath = "",
+    string ScreenshotsFolder = "",
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    string UseCollections = "On",
+    string UseProxy = "0")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\simpleDeploy.ps1"
+{
+    expected 42;
+}
+
+deployment "Install Base App9" = "Install App9"(
+    BuildPath: @"$(SessionWorkFolder)\BaseProductBuild",
+    DisableTestModulesInstallation: true,
+    UseCollections: "Off");
+
+    
+deployment "deploy_patch_Execute"(
+    string BuildPath = @"$(SessionWorkFolder)\BaseProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string DumpFolder = @"",
+    string AcceptEula = "On",
+    string AcceptKsnAgreement = "On",
+    string AcceptMarketingAgreement = "On",
+    string AcceptSocializationAgreement = "On",
+    bool ActivateEmbeddedTrial = false,
+    string ActivationCode = "",
+    string ActivationServerUrl = "",
+    string AdditionalFiles = @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2.Main.AdditionalContinuousIntegration",
+    string backdoorSet = "Base",
+    string BundleApp9 = "Default",
+    bool CollectContinuousProductTraces = false,
+    string CollectionMountType = "File share",
+    string CollectionsNetworkPath = @"\\tis-dfs.company.ru\Autotests\App2\Deployment\App2.Main",
+    string ConfigFilesFamily,
+    bool ContinueOnErrors = false,
+    string DefaultUpdateSource = "",
+    bool DisableDistribFilesDownloading = false,
+    bool DisableDriversLog = false,
+    bool DisablePpl = false,
+    bool DisableProductInstallation = false,
+    bool DisableRestartService = true,
+    bool DisableTestModulesInstallation = false,
+    bool DisableVSCollectorsDeployment = false,
+    bool EnableAntiSpam = false,
+    bool EnableAutomaticApp11Downgrade = false,
+    bool EnableSslDecoding = false,
+    bool ForceDisableAppVerifier = false,
+    bool ForceDisableDriverVerifier = false,
+    bool ForceDownloadBackdoors = true,
+    bool ForceInstallCertificates = false,
+    bool ForcePreloadDumpWriter = false,
+    string ForceTraceLevel = "",
+    bool IgnoreNothingToUpdateCode = false,
+    bool InstallActivationServerBackdoor = false,
+    string InstallerExecutableFileMask = "",
+    bool InstallLib1 = false,
+    string InstallLicenceBackdoor = "Off",
+    string IsoImageFileName = "",
+    string LocalizationCode = "",
+    bool PostUpdateServiceStartStop = false,
+    string RegisterAiCom = "Off",
+    bool ReplaceDistributiveFromIso = false,
+    bool RunAtSystemStartup = true,
+    string SaveHashesPath = "",
+    string ScreenshotsFolder = "",
+    bool SetProductNameForFacade = false,
+    bool Silent = false,
+    bool SkipRecommendedSettings = false,
+    bool StartService = false,
+    int TimesToUpdate = 1,
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    bool TurnOffDumpOnAssert = false,
+    bool TurnOffProtection = false,
+    string UpdateSource = "",
+    string UseCollections = "On",
+    string UseGDPR = "Default",
+    bool UseProxyForUpdate = false,
+    bool Verbose = false,
+    bool VerboseExternalProcessesOutput = false,
+    bool WaitForProductActivation = false)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\deploy_patch.ps1"
+{
+    expected 42;
+}
+
+    
+deployment "Install GUI test app"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string ConfigFilesFamily,
+    bool ContinueOnErrors = false,
+    bool Silent = false,
+    string TestAppPackName = "CompanyLab.App2.UI.TestApp.zip",
+    bool Verbose = false,
+    bool VerboseExternalProcessesOutput = false)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\deployGuiTestApp.ps1"
+{
+    expected 42;
+}
+
+select deployment "Copy New Product Version"(BaseProductType)
+{
+    | "SameProduct" => "Copy New Product Version (CurrentProduct)"
+    | "NextProduct" => "Copy New Product Version (BaseProduct)"
+    | "PreviousProduct" => "Copy New Product Version (CurrentProduct)"
+}
+
+deployment "Copy New Product Version (CurrentProduct)"(
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    string AdditionalFiles = @"$(SessionWorkFolder)\ProductBuild",
+    bool ForceDisableDriverVerifier = true,
+    string TargetFolder = @"c:\installNewVersion")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\TfuCopyNewVersionTo.ps1"
+{
+    expected 42;
+}
+
+deployment "Copy New Product Version (BaseProduct)"(
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    string AdditionalFiles = @"$(SessionWorkFolder)\BaseProductBuild",
+    bool ForceDisableDriverVerifier = true,
+    string TargetFolder = @"c:\installNewVersion")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\TfuCopyNewVersionTo.ps1"
+{
+    expected 42;
+}
+
+deployment "copyAdditionalFilesTo_Execute"(
+    string AdditionalFiles = @"$(SessionWorkFolder)\ProductBuild",
+    string TargetFolder = @"c:\TfuStarter")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\copyAdditionalFilesTo.ps1"
+{
+    expected 42;
+}
+
+deployment "Install Windows Language Pack"(
+    string LanguagePacksRootPath = @"\\tis-dfs.company.ru\Autotests\App2\Windows Langpacks\ru-RU")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\installWindowsLanguagePack.ps1"
+{
+    timeout "00:30:00";
+    expected 42;
+}
+
+deployment "Set autoplay"(
+    string AdditionalFiles = "")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\setAutoplay.ps1"
+{
+    expected 42;
+}
+
+deployment "[App10FS.Main.WithComodo] Enable autoplay"(
+)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\HIPS\enableAutorun.ps1"
+{
+    expected 42;
+}
+
+deployment "Copy Comodo"(
+    string AdditionalFiles = @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\Rivals\Comodo",
+	bool SetAutorun = false)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\HIPS\DeployAndRunComodo.ps1"
+{
+    expected 42;
+}
+
+    
+deployment "[Main.BvtPvt.SaveRegistry] SaveEnviroment Impl"(
+    string FileName = "registyEnvironment.json")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\registryEnvironmentSave.ps1"
+{
+    expected 42;
+}
+
+deployment "Copy EicarCreator tool"(
+)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\OAS\CopyTool.ps1"
+{
+    expected 42;
+}
+
+deployment "Turn firewall on"(
+)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\firewall_turn_on.ps1"
+{
+    expected 0;
+}
+
+deployment "browserUpdate_Execute"(
+    string Browser = "Chrome",
+    string Version = "71.0.3578.802")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\browserUpdate.ps1"
+{
+    expected 42;
+}
+
+deployment "Disable UAC Impl"(
+    string UacAction = "Disable")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\ManageUAC\ManageUAC.ps1"
+{
+    expected 42;
+}
+
+deployment "[Main.TFU] Copy old autotest facade"(
+    string BuildPath = @"$(SessionWorkFolder)\BaseProductBuild")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\copyOldAutotestFacade.ps1"
+{
+}
+
+deployment "Set autotest overrides Impl"(
+    string DistribFolder = @"C:\installNewVersion")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\TfuSetAutotestOverrides.ps1"
+{
+    expected 42;
+}
+
+deployment "[App2.TFU] Prepare environment and reboot Impl"(
+    string AssemblyFolder = @"$(SessionWorkFolder)\Autotests",
+    string Command = "prepare_for_reboot")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\ExternalAction\runExternalActionWithTestrunner.ps1"
+{
+    expected 42;
+}
+
+deployment "Install Outlook [old]"(
+    string AssemblyFolder = @"$(SessionWorkFolder)\Autotests",
+    string AssemblyName = "Autotest.App2.Utilities.dll",
+    string ClassName = "Autotest.Utilities.OutlookDeployManager.OutlookDeployer",
+    string MethodName = "DeployOutlookPop3WithAssemblyResolve")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\ExternalAction\runExternalActionAssemblyResolve.ps1"
+{
+    expected 42;
+}
+
+deployment "Install Outlook" = "Install Outlook [old]"(
+    ClassName: "Autotest.App2.Utilities.OutlookDeployManager.OutlookDeployer");
+
+deployment "Start Comodo Impl"(
+    string FailureFilePath = @"C:\install\comodo_installation_faill.txt",
+    string SuccessFilePath = @"C:\install\comodo_installation_complete.txt")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\externalActionsWaiter.ps1"
+{
+    expected 42;
+}
+
+deployment "set environment variables"(
+    string BuildNumber = "$BuildNumber",
+    string Browser = "Chrome",
+    string EnableAllForceRerun = "Off",
+    string featureApp10Domain = "",
+    string featureMainDomain = "",
+    string IsTrafficIntercepted = "Off",
+    string LocalesList = "",
+    string LoginURL = "Prod",
+    string Parameter10Name = "",
+    string Parameter10Value = "",
+    string Parameter11Name = "",
+    string Parameter11Value = "",
+    string Parameter12Name = "",
+    string Parameter12Value = "",
+    string Parameter13Name = "",
+    string Parameter13Value = "",
+    string Parameter14Name = "",
+    string Parameter14Value = "",
+    string Parameter15Name = "",
+    string Parameter15Value = "",
+    string Parameter1Name = "",
+    string Parameter1Value = "",
+    string Parameter2Name = "",
+    string Parameter2Value = "",
+    string Parameter3Name = "",
+    string Parameter3Value = "",
+    string Parameter4Name = "",
+    string Parameter4Value = "",
+    string Parameter5Name = "",
+    string Parameter5Value = "",
+    string Parameter6Name = "",
+    string Parameter6Value = "",
+    string Parameter7Name = "",
+    string Parameter7Value = "",
+    string Parameter8Name = "",
+    string Parameter8Value = "",
+    string Parameter9Name = "",
+    string Parameter9Value = "",
+    string PortalNode = "None",
+    string PortalVersionFolder = @"$(SessionWorkFolder)\Artefacts",
+    string serverTag = "",
+    string TrafficInterceptor = "Default",
+    string ucpInstanceType = "",
+    string UseCustomDns = "None",
+    string UseMailProxy = "None",
+    string UseProxy = "None",
+    string UserCountry = "USA",
+    string UserLanguage = "EnglishUS")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Branches\UCP\environmentVariables.ps1"
+{
+    expected 42;
+}
+
+deployment "RebootAgent" = reboot "00:15:00";

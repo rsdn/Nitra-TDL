@@ -1,4 +1,4 @@
-using Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1;
+using Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1;
 
 scenario SbSTestScenario1 = // W: Unused scenario.
     from (Deployment , Platform) in (Deploy_Gated, w10rs4-x64), (Deploy_Middle, w10rs4-x86), (Deploy_Finish, win_10_rs3) 
@@ -6,7 +6,7 @@ scenario SbSTestScenario1 = // W: Unused scenario.
     select
     {
         deployment Deployment;
-        environments (Platform, KES);
+        environments (Platform, App4);
         method Method;
         UniqueId = "BDA24CAF-BF05-49EC-9884-129A48C42FFF";
         Timeout = "02:30:00";
@@ -22,7 +22,7 @@ barrier Barrier2 timeout "00:20:00";
 scenario GatedChain1
 {
     deployment Deploy_Gated;
-    environments (gated_platforms, KES);
+    environments (gated_platforms, App4);
     config @"um/interprecz/interprecz_smoke.json";
     Area = "GatedTestsChain1";
     UniqueId = "BDA24CAF-BF05-49EC-9884-129A48C42F8C";
@@ -35,12 +35,12 @@ scenario GatedChain1
 scenario GatedChain2
 {
     deployment Deploy_Gated;
-    environments (gated_platforms, KES);
+    environments (gated_platforms, App4);
     sequence
     {
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
     }
     Area = @"GatedTestsChain2";
     UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8D";
@@ -52,12 +52,12 @@ scenario GatedChain2
 scenario GatedChain3 // W: Unused scenario.
 {
     deployment Deploy_Gated;
-    environments (gated_platforms, KES);
+    environments (gated_platforms, App4);
     sequence
     {
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
-      method Autotest.Products.KES_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
     }
     Area = @"GatedTestsChain2";
     UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8F";
@@ -66,16 +66,16 @@ scenario GatedChain3 // W: Unused scenario.
     Timeout = "00:00:10";
 }
 
-parallel scenario GateTests_KES = GatedChain1, GatedChain2;
+parallel scenario GateTests_App4 = GatedChain1, GatedChain2;
 
-scenario GateTests_KES2 = GatedChain3;
+scenario GateTests_App42 = GatedChain3;
 
-scenario GateTests = GateTests_KES, GateTests_KES2;
+scenario GateTests = GateTests_App4, GateTests_App42;
 
 suite Gate_2
 {
     platform gated_platforms;
-    product KES;
+    product App4;
     ProductDistributivePath = ProductDistributivePath;
     ProductModulesPath = ProductModulesPath;
     AutotestsPath = AutotestsPath;

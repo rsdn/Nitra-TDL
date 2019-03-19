@@ -1,11 +1,11 @@
-product type Kavkis
+product type AppType
 {
     string Name;
     string ReleaseName;
     string Version;
 }
 
-product MonorepoHelloWorld : Kavkis 
+product MonorepoHelloWorld : AppType 
 {
     Name = @"MonorepoHelloWorld";
     ReleaseName = @"MonorepoHelloWorld";

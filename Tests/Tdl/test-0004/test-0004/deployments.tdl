@@ -6,7 +6,7 @@ deployment Execute_Deploy(
     string AutotestsPath = "xyz",
     string DeploymentSequenceName = "abc"
 )
-    script @"\\tis-dfs.avp.ru\Autotests\KIS\CSharp_Deployer\executeDeploy.ps1"
+    script @"\\tis-dfs.company.ru\Autotests\App2\CSharp_Deployer\executeDeploy.ps1"
 {
     timeout "01:00:00";
     expected 42;

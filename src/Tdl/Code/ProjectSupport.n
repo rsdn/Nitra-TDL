@@ -30,12 +30,19 @@ namespace Tdl
     static NoFile     : ProjectSystem.File = SourceSnapshot.Default.File;
     static NoSpan     : NSpan              = NSpan(0);
 
+    public TestMode : bool { get; }
     mutable _backEnd : CciBackEnd;
-
+    
     public this()
     {
       //assert2(false);
       DotNet.AstUtils.MakeDefault = DotNet.Coverters.MakeDefaultParameters;
+    }
+
+    public this(testMode : bool)
+    {
+      this();
+      TestMode = testMode;
     }
 
     public Reset(project : Project) : void
@@ -139,7 +146,7 @@ namespace Tdl
       def externalSymbol             = MakeExternalSymbol(context, rootNamespace);
       def scenarioParameterScope     = TableScope("ScenarioParameterScope");
       def requiredScenarioParameters = MakeScenarioParametersScope(backEnd, context, scenarioParameterScope);
-      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, requiredScenarioParameters, externalSymbol);
+      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, requiredScenarioParameters, externalSymbol, TestMode);
       context.TdlProjectData         = data;
       data
     }

@@ -1,7 +1,7 @@
 suite BuildAcceptance
 {
     platform platform_group_1;
-    product PURE;
+    product App6;
     KpmDownloadAndInstallMultiMachineScenario();
 }
 
@@ -14,12 +14,12 @@ barrier CreateUcpAccountBarrier timeout "00:10:00";
 scenario KpmDownloadAndInstallMultiMachineDevice1
 {
     deployment "Install product no uac-1124";
-    environments (platform_group_1, PURE);
+    environments (platform_group_1, App6);
     sequence
     {
-        method Autotest.Kis.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount;
+        method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount;
         barrier CreateUcpAccountBarrier;
-        method Autotest.Kis.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice;
+        method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice;
     }
     
     UniqueId = "3028FAB1-767B-4628-9F20-CCAD45AF16A0";
@@ -32,11 +32,11 @@ scenario KpmDownloadAndInstallMultiMachineDevice1
 scenario KpmDownloadAndInstallMultiMachineDevice2
 {
     deployment "Disable UAC";
-    environments (platform_group_1, PURE);
+    environments (platform_group_1, App6);
     sequence
     {
         barrier CreateUcpAccountBarrier;
-        method Autotest.Kis.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice;
+        method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice;
     }
 
     UniqueId = "691F0DCE-96C5-4DC2-96D8-8707D169EB53";
@@ -62,7 +62,7 @@ platform w10rs6-x86;
 deployment "RebootAgent" = reboot "00:15:00";
 deployment "Disable UAC Impl"(
     string UacAction = "Disable")
-    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\ManageUAC\ManageUAC.ps1"
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\ManageUAC\ManageUAC.ps1"
 {
     expected 42;
 }
@@ -93,11 +93,11 @@ deployment "_Install product"(
     bool ActivateEmbeddedTrial = false,
     string ActivationCode = "",
     string ActivationServerUrl = "",
-    string AdditionalFiles = @"\\tis-dfs.avp.ru\Autotests\KIS\AdditionalFiles\Kis.Main.AdditionalContinuousIntegration",
-    string BundleKSDE = "Default",
+    string AdditionalFiles = @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2.Main.AdditionalContinuousIntegration",
+    string BundleApp9 = "Default",
     bool CollectContinuousProductTraces = true,
     string CollectionMountType = "File share",
-    string CollectionsNetworkPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Deployment\Kis.Main",
+    string CollectionsNetworkPath = @"\\tis-dfs.company.ru\Autotests\App2\Deployment\App2.Main",
     string ConfigFilesFamily,
     bool ContinueOnErrors = false,
     string DefaultUpdateSource = "",
@@ -109,7 +109,7 @@ deployment "_Install product"(
     bool DisableVSCollectorsDeployment = false,
     string DriversLogState = "MainEnableBranchDisable",
     bool EnableAntiSpam = false,
-    bool EnableAutomaticKfaDowngrade = false,
+    bool EnableAutomaticApp11Downgrade = false,
     bool EnableBssLogs = false,
     bool EnableSslDecoding = false,
     bool ForceDisableAppVerifier = false,
@@ -120,11 +120,11 @@ deployment "_Install product"(
     bool IgnoreNothingToUpdateCode = false,
     bool InstallActivationServerBackdoor = false,
     string InstallerExecutableFileMask = "",
-    bool InstallKLPSRV = false,
+    bool InstallLib1 = false,
     string InstallLicenceBackdoor = "On",
     string IsoImageFileName = "",
     string KpcActivationCode = "",
-    string KpcKasperskyId = "",
+    string KpcCompanyId = "",
     string KpcOneTimeRegistrationSharedSecret = "",
     string KPCRegion = "",
     string KpcUserId = "",
@@ -132,14 +132,14 @@ deployment "_Install product"(
     bool PostUpdateServiceStartStop = false,
     string RegisterAiCom = "Off",
     bool ReplaceDistributiveFromIso = false,
-    string RequestSaaSTrialTier = "Default",
+    string RequestApp8TrialTier = "Default",
     bool RunAtSystemStartup = false,
     string SaveHashesPath = "",
     string ScreenshotsFolder = "",
     bool SetProductNameForFacade = true,
     bool Silent = false,
     bool StartService = false,
-    string SuggestSafeKids = "Off",
+    string SuggestApp3 = "Off",
     int TimesToUpdate = 1,
     string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
     bool TurnOffDumpOnAssert = false,
@@ -153,14 +153,14 @@ deployment "_Install product"(
     bool Verbose = false,
     bool VerboseExternalProcessesOutput = false,
     bool WaitForProductActivation = false)
-    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\deploy.ps1"
 {
     expected 42;
 }
 
 deployment "Install 2019 -> Install product NoBackdoor TraceLevel_1000" = "Install Base Product 2019", "_Install product NoBackdoor TraceLevel_1000", "RebootAgent";
 deployment "Install Base Product 2019" = "Install Base Product"(
-    AdditionalFiles: @"\\tis-dfs.avp.ru\Autotests\KIS\AdditionalFiles\Kis2019.MP0.AdditionalContinuousIntegration");
+    AdditionalFiles: @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2_2019.MP0.AdditionalContinuousIntegration");
 
 deployment "Install Base Product" = "_Install product"(
     BuildPath: @"$(SessionWorkFolder)\BaseProductBuild",
@@ -172,22 +172,22 @@ deployment "Install Base Product" = "_Install product"(
     TurnOffDumpOnAssert: true,
     UseCollections: "Off");
     
-product PURE : Kavkis
+product App6 : AppType
 {
-    Name = @"PURE";
+    Name = @"App6";
     ReleaseName = @"Main";
     Version = ProductVersion;
-    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;ksde*.Product.Config";
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
-    ConfigFilesFamily = @"Kis.";
-    TestAppPackName = @"KasperskyLab.Kis.UI.TestApp.zip";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
     DisableAddingTrustedApplications = false;
     SkipRecommendedSettings = false;
     InstallerExecutableFileMask = @"startup.exe";
     InstallationType = "Regular";
 }
 
-product type Kavkis
+product type AppType
 {
     string Name;
     string ReleaseName;

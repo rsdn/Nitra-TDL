@@ -1,4 +1,4 @@
-product type Kavkis
+product type AppType
 {
     string Name;
     string ReleaseName;
@@ -9,148 +9,148 @@ product type Kavkis
     string ProductInstallerJson;
 }
 
-product "KES for Mac 10 SP2" : Kavkis 
+product "App4 for Mac 10 SP2" : AppType 
 {
-    Name = @"KES for Mac";
+    Name = @"App4 for Mac";
     ReleaseName = @"10";
     Version = @"10.2.0.267";
     ProductType = @"Kes";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KES10SP2";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App410SP2";
     ProductInfoJson = @"kes-10-2.json";
     ProductInstallerJson = @"um/installers/kes10-2-install.json";
 }
 
-product "KES for Mac 10 SP2 MR1" : Kavkis 
+product "App4 for Mac 10 SP2 MR1" : AppType 
 {
-    Name = @"KES for Mac";
+    Name = @"App4 for Mac";
     ReleaseName = @"10";
     Version = @"10.2.1.319";
     ProductType = @"Kes";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KES10SP2MR1";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App410SP2MR1";
     ProductInfoJson = @"kes-10-2.json";
     ProductInstallerJson = @"um/installers/kes10-2-install.json";
 }
 
-product "KIS for Mac 2018 MR1" : Kavkis 
+product "App2 for Mac 2018 MR1" : AppType 
 {
-    Name = @"KIS for Mac";
+    Name = @"App2 for Mac";
     ReleaseName = @"18 MR1";
     Version = @"18.0.1.35";
-    ProductType = @"Kis";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KIS2018MR1";
+    ProductType = @"App2_";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App22018MR1";
     ProductInfoJson = @"kis-18-0.json";
     ProductInstallerJson = @"um/installers/kis18-0-install.json";
 }
 
-product "KIS for Mac 2018 MR2" : Kavkis 
+product "App2 for Mac 2018 MR2" : AppType 
 {
-    Name = @"KIS for Mac";
+    Name = @"App2 for Mac";
     ReleaseName = @"18 MR2";
     Version = @"18.0.2.60";
-    ProductType = @"Kis";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KIS2018MR2";
+    ProductType = @"App2_";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App22018MR2";
     ProductInfoJson = @"kis-18-0.json";
     ProductInstallerJson = @"um/installers/kis18-0-install.json";
 }
 
-product "KIS for Mac 2019" : Kavkis 
+product "App2 for Mac 2019" : AppType 
 {
-    Name = @"KIS for Mac";
+    Name = @"App2 for Mac";
     ReleaseName = @"19";
     Version = @"19.0.0.295";
-    ProductType = @"Kis";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KIS2019";
+    ProductType = @"App2_";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App22019";
     ProductInfoJson = @"kis-19-0.json";
     ProductInstallerJson = @"um/installers/install-activate-kis19.json";
 }
 
-product "KSeCL for Mac 2019" : Kavkis 
+product "App5 for Mac 2019" : AppType 
 {
-    Name = @"KSeCL for Mac";
+    Name = @"App5 for Mac";
     ReleaseName = @"19";
     Version = @"19.0.0.294";
     ProductType = @"Ksecl";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KSeCL2019";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App52019";
     ProductInfoJson = @"ksecl-19-0.json";
     ProductInstallerJson = @"um/installers/ksecl19-0-install.json";
 }
 
-product "KSeCL for Mac 2018 MR1" : Kavkis 
+product "App5 for Mac 2018 MR1" : AppType 
 {
-    Name = @"KSeCL for Mac";
+    Name = @"App5 for Mac";
     ReleaseName = @"18 MR1";
     Version = @"18.0.1.35";
     ProductType = @"Ksecl";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KSeCL2018MR1";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App52018MR1";
     ProductInfoJson = @"ksecl-18-0.json";
     ProductInstallerJson = @"um/installers/ksecl18-0-install.json";
 }
 
-product "KSeCL for Mac 2018 MR2" : Kavkis 
+product "App5 for Mac 2018 MR2" : AppType 
 {
-    Name = @"KSeCL for Mac";
+    Name = @"App5 for Mac";
     ReleaseName = @"18 MR2";
     Version = @"18.0.2.60";
     ProductType = @"Ksecl";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\KSeCL2018MR2";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App52018MR2";
     ProductInfoJson = @"ksecl-18-0.json";
     ProductInstallerJson = @"um/installers/ksecl18-0-install.json";
 }
 
-product "SafeKids for Mac 1.0 MR2" : Kavkis 
+product "App3 for Mac 1.0 MR2" : AppType 
 {
-    Name = @"SafeKids for Mac";
+    Name = @"App3 for Mac";
     ReleaseName = @"1";
     Version = @"1.0.2.282";
-    ProductType = @"SafeKids";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\SafeKids1MR2";
+    ProductType = @"App3";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App31MR2";
     ProductInfoJson = @"safekids-1-0.json";
     ProductInstallerJson = @"um/installers/safekids-install.json";
 }
 
-product "SafeKids for Mac 1.0 MR3" : Kavkis 
+product "App3 for Mac 1.0 MR3" : AppType 
 {
-    Name = @"SafeKids for Mac";
+    Name = @"App3 for Mac";
     ReleaseName = @"1";
     Version = @"1.0.3.253";
-    ProductType = @"SafeKids";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\SafeKids1MR3";
+    ProductType = @"App3";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App31MR3";
     ProductInfoJson = @"safekids-1-0.json";
     ProductInstallerJson = @"um/installers/safekids-install.json";
 }
 
-product "SafeKids for Mac 1.0 MR4" : Kavkis 
+product "App3 for Mac 1.0 MR4" : AppType 
 {
-    Name = @"SafeKids for Mac";
+    Name = @"App3 for Mac";
     ReleaseName = @"1";
     Version = @"1.0.4.73";
-    ProductType = @"SafeKids";
-    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\SafeKids1MR4";
+    ProductType = @"App3";
+    ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App31MR4";
     ProductInfoJson = @"safekids-1-0.json";
     ProductInstallerJson = @"um/installers/safekids-install.json";
 }
 
-product KES : Kavkis  =
-    "KES for Mac 10 SP2",
-    "KES for Mac 10 SP2 MR1";
+product App4 : AppType  =
+    "App4 for Mac 10 SP2",
+    "App4 for Mac 10 SP2 MR1";
 
-product KIS : Kavkis  =
-    "KIS for Mac 2018 MR1",
-    "KIS for Mac 2018 MR2",
-    "KIS for Mac 2019";
+product App2 : AppType  =
+    "App2 for Mac 2018 MR1",
+    "App2 for Mac 2018 MR2",
+    "App2 for Mac 2019";
 
-product KSeCL : Kavkis  =
-    "KSeCL for Mac 2019",
-    "KSeCL for Mac 2018 MR1",
-    "KSeCL for Mac 2018 MR2";
+product App5 : AppType  =
+    "App5 for Mac 2019",
+    "App5 for Mac 2018 MR1",
+    "App5 for Mac 2018 MR2";
 
-product SafeKids : Kavkis  =
-    "SafeKids for Mac 1.0 MR2",
-    "SafeKids for Mac 1.0 MR3",
-    "SafeKids for Mac 1.0 MR4";
+product App3 : AppType  =
+    "App3 for Mac 1.0 MR2",
+    "App3 for Mac 1.0 MR3",
+    "App3 for Mac 1.0 MR4";
 
-product All : Kavkis  =
-    KES,
-    KIS,
-    KSeCL,
-    SafeKids;
+product All : AppType  =
+    App4,
+    App2,
+    App5,
+    App3;

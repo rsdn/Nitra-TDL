@@ -1,0 +1,511 @@
+﻿{
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "Deployments": {
+    "Reboot-00:15:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "00:15:00"
+    },
+    "RebootAgent": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Reboot-00:15:00"
+      ]
+    },
+    "Disable UAC Impl": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "UacAction": "Disable"
+      },
+      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\ManageUAC\\ManageUAC.ps1"
+    },
+    "Disable UAC": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Disable UAC Impl",
+        "RebootAgent"
+      ]
+    },
+    "Install product no uac-1124": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Disable UAC",
+        "Install product NoBackdoor TraceLevel_1000"
+      ]
+    },
+    "Install product NoBackdoor TraceLevel_1000": {
+      "Type": "Select",
+      "Condition": "$(InstallationType)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
+          "_Install product NoBackdoor TraceLevel_1000": {}
+        },
+        "Regular": {
+          "_Install product NoBackdoor TraceLevel_1000": {}
+        },
+        "Upgrade 2019": {
+          "Install 2019 -> Install product NoBackdoor TraceLevel_1000": {}
+        }
+      }
+    },
+    "_Install product NoBackdoor TraceLevel_1000": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
+        "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
+        "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
+        "DumpFolder": "",
+        "AcceptEula": "On",
+        "AcceptKsnAgreement": "On",
+        "AcceptMarketingAgreement": "On",
+        "AcceptSocializationAgreement": "On",
+        "ActivateEmbeddedTrial": false,
+        "ActivationCode": "",
+        "ActivationServerUrl": "",
+        "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2.Main.AdditionalContinuousIntegration",
+        "BundleApp9": "Default",
+        "CollectContinuousProductTraces": true,
+        "CollectionMountType": "File share",
+        "CollectionsNetworkPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Deployment\\App2.Main",
+        "ConfigFilesFamily": "$(ConfigFilesFamily)",
+        "ContinueOnErrors": false,
+        "DefaultUpdateSource": "",
+        "DisableDistribFilesDownloading": false,
+        "DisablePpl": false,
+        "DisableProductInstallation": false,
+        "DisableRestartService": true,
+        "DisableTestModulesInstallation": false,
+        "DisableVSCollectorsDeployment": false,
+        "DriversLogState": "MainEnableBranchDisable",
+        "EnableAntiSpam": false,
+        "EnableAutomaticApp11Downgrade": false,
+        "EnableBssLogs": false,
+        "EnableSslDecoding": false,
+        "ForceDisableAppVerifier": false,
+        "ForceDisableDriverVerifier": false,
+        "ForceInstallCertificates": false,
+        "ForcePreloadDumpWriter": false,
+        "ForceTraceLevel": "1000",
+        "IgnoreNothingToUpdateCode": false,
+        "InstallActivationServerBackdoor": false,
+        "InstallerExecutableFileMask": "",
+        "InstallLib1": false,
+        "InstallLicenceBackdoor": "Off",
+        "IsoImageFileName": "",
+        "KpcActivationCode": "",
+        "KpcCompanyId": "",
+        "KpcOneTimeRegistrationSharedSecret": "",
+        "KPCRegion": "",
+        "KpcUserId": "",
+        "LocalizationCode": "",
+        "PostUpdateServiceStartStop": false,
+        "RegisterAiCom": "Off",
+        "ReplaceDistributiveFromIso": false,
+        "RequestApp8TrialTier": "Default",
+        "RunAtSystemStartup": false,
+        "SaveHashesPath": "",
+        "ScreenshotsFolder": "",
+        "SetProductNameForFacade": true,
+        "Silent": false,
+        "StartService": false,
+        "SuggestApp3": "Off",
+        "TimesToUpdate": 1,
+        "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
+        "TurnOffDumpOnAssert": false,
+        "TurnOffProtection": false,
+        "UpdateChromeToVersion": "",
+        "UpdateFirefoxToVersion": "",
+        "UpdateSource": "",
+        "UseCollections": "On",
+        "UseGDPR": "Default",
+        "UseProxyForUpdate": false,
+        "Verbose": false,
+        "VerboseExternalProcessesOutput": false,
+        "WaitForProductActivation": false
+      },
+      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy.ps1"
+    },
+    "_Install product": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
+        "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
+        "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
+        "DumpFolder": "",
+        "AcceptEula": "On",
+        "AcceptKsnAgreement": "On",
+        "AcceptMarketingAgreement": "On",
+        "AcceptSocializationAgreement": "On",
+        "ActivateEmbeddedTrial": false,
+        "ActivationCode": "",
+        "ActivationServerUrl": "",
+        "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2.Main.AdditionalContinuousIntegration",
+        "BundleApp9": "Default",
+        "CollectContinuousProductTraces": true,
+        "CollectionMountType": "File share",
+        "CollectionsNetworkPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Deployment\\App2.Main",
+        "ConfigFilesFamily": "$(ConfigFilesFamily)",
+        "ContinueOnErrors": false,
+        "DefaultUpdateSource": "",
+        "DisableDistribFilesDownloading": false,
+        "DisablePpl": false,
+        "DisableProductInstallation": false,
+        "DisableRestartService": true,
+        "DisableTestModulesInstallation": false,
+        "DisableVSCollectorsDeployment": false,
+        "DriversLogState": "MainEnableBranchDisable",
+        "EnableAntiSpam": false,
+        "EnableAutomaticApp11Downgrade": false,
+        "EnableBssLogs": false,
+        "EnableSslDecoding": false,
+        "ForceDisableAppVerifier": false,
+        "ForceDisableDriverVerifier": false,
+        "ForceInstallCertificates": false,
+        "ForcePreloadDumpWriter": false,
+        "ForceTraceLevel": "",
+        "IgnoreNothingToUpdateCode": false,
+        "InstallActivationServerBackdoor": false,
+        "InstallerExecutableFileMask": "",
+        "InstallLib1": false,
+        "InstallLicenceBackdoor": "On",
+        "IsoImageFileName": "",
+        "KpcActivationCode": "",
+        "KpcCompanyId": "",
+        "KpcOneTimeRegistrationSharedSecret": "",
+        "KPCRegion": "",
+        "KpcUserId": "",
+        "LocalizationCode": "",
+        "PostUpdateServiceStartStop": false,
+        "RegisterAiCom": "Off",
+        "ReplaceDistributiveFromIso": false,
+        "RequestApp8TrialTier": "Default",
+        "RunAtSystemStartup": false,
+        "SaveHashesPath": "",
+        "ScreenshotsFolder": "",
+        "SetProductNameForFacade": true,
+        "Silent": false,
+        "StartService": false,
+        "SuggestApp3": "Off",
+        "TimesToUpdate": 1,
+        "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
+        "TurnOffDumpOnAssert": false,
+        "TurnOffProtection": false,
+        "UpdateChromeToVersion": "",
+        "UpdateFirefoxToVersion": "",
+        "UpdateSource": "",
+        "UseCollections": "On",
+        "UseGDPR": "Default",
+        "UseProxyForUpdate": false,
+        "Verbose": false,
+        "VerboseExternalProcessesOutput": false,
+        "WaitForProductActivation": false
+      },
+      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy.ps1"
+    },
+    "Install 2019 -> Install product NoBackdoor TraceLevel_1000": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Install Base Product 2019",
+        "_Install product NoBackdoor TraceLevel_1000",
+        "RebootAgent"
+      ]
+    },
+    "Install Base Product 2019": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
+        "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
+        "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
+        "DumpFolder": "",
+        "AcceptEula": "On",
+        "AcceptKsnAgreement": "On",
+        "AcceptMarketingAgreement": "On",
+        "AcceptSocializationAgreement": "On",
+        "ActivateEmbeddedTrial": false,
+        "ActivationCode": "",
+        "ActivationServerUrl": "",
+        "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2019.MP0.AdditionalContinuousIntegration",
+        "BundleApp9": "Default",
+        "CollectContinuousProductTraces": true,
+        "CollectionMountType": "File share",
+        "CollectionsNetworkPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Deployment\\App2.Main",
+        "ConfigFilesFamily": "$(ConfigFilesFamily)",
+        "ContinueOnErrors": false,
+        "DefaultUpdateSource": "",
+        "DisableDistribFilesDownloading": false,
+        "DisablePpl": false,
+        "DisableProductInstallation": false,
+        "DisableRestartService": true,
+        "DisableTestModulesInstallation": true,
+        "DisableVSCollectorsDeployment": true,
+        "DriversLogState": "MainEnableBranchDisable",
+        "EnableAntiSpam": false,
+        "EnableAutomaticApp11Downgrade": false,
+        "EnableBssLogs": false,
+        "EnableSslDecoding": false,
+        "ForceDisableAppVerifier": false,
+        "ForceDisableDriverVerifier": false,
+        "ForceInstallCertificates": false,
+        "ForcePreloadDumpWriter": false,
+        "ForceTraceLevel": "",
+        "IgnoreNothingToUpdateCode": false,
+        "InstallActivationServerBackdoor": true,
+        "InstallerExecutableFileMask": "",
+        "InstallLib1": false,
+        "InstallLicenceBackdoor": "On",
+        "IsoImageFileName": "",
+        "KpcActivationCode": "",
+        "KpcCompanyId": "",
+        "KpcOneTimeRegistrationSharedSecret": "",
+        "KPCRegion": "",
+        "KpcUserId": "",
+        "LocalizationCode": "",
+        "PostUpdateServiceStartStop": false,
+        "RegisterAiCom": "Off",
+        "ReplaceDistributiveFromIso": false,
+        "RequestApp8TrialTier": "Default",
+        "RunAtSystemStartup": false,
+        "SaveHashesPath": "",
+        "ScreenshotsFolder": "",
+        "SetProductNameForFacade": false,
+        "Silent": false,
+        "StartService": true,
+        "SuggestApp3": "Off",
+        "TimesToUpdate": 1,
+        "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
+        "TurnOffDumpOnAssert": true,
+        "TurnOffProtection": false,
+        "UpdateChromeToVersion": "",
+        "UpdateFirefoxToVersion": "",
+        "UpdateSource": "",
+        "UseCollections": "Off",
+        "UseGDPR": "Default",
+        "UseProxyForUpdate": false,
+        "Verbose": false,
+        "VerboseExternalProcessesOutput": false,
+        "WaitForProductActivation": false
+      },
+      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy.ps1"
+    },
+    "Install Base Product": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
+        "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
+        "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
+        "DumpFolder": "",
+        "AcceptEula": "On",
+        "AcceptKsnAgreement": "On",
+        "AcceptMarketingAgreement": "On",
+        "AcceptSocializationAgreement": "On",
+        "ActivateEmbeddedTrial": false,
+        "ActivationCode": "",
+        "ActivationServerUrl": "",
+        "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2.Main.AdditionalContinuousIntegration",
+        "BundleApp9": "Default",
+        "CollectContinuousProductTraces": true,
+        "CollectionMountType": "File share",
+        "CollectionsNetworkPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Deployment\\App2.Main",
+        "ConfigFilesFamily": "$(ConfigFilesFamily)",
+        "ContinueOnErrors": false,
+        "DefaultUpdateSource": "",
+        "DisableDistribFilesDownloading": false,
+        "DisablePpl": false,
+        "DisableProductInstallation": false,
+        "DisableRestartService": true,
+        "DisableTestModulesInstallation": true,
+        "DisableVSCollectorsDeployment": true,
+        "DriversLogState": "MainEnableBranchDisable",
+        "EnableAntiSpam": false,
+        "EnableAutomaticApp11Downgrade": false,
+        "EnableBssLogs": false,
+        "EnableSslDecoding": false,
+        "ForceDisableAppVerifier": false,
+        "ForceDisableDriverVerifier": false,
+        "ForceInstallCertificates": false,
+        "ForcePreloadDumpWriter": false,
+        "ForceTraceLevel": "",
+        "IgnoreNothingToUpdateCode": false,
+        "InstallActivationServerBackdoor": true,
+        "InstallerExecutableFileMask": "",
+        "InstallLib1": false,
+        "InstallLicenceBackdoor": "On",
+        "IsoImageFileName": "",
+        "KpcActivationCode": "",
+        "KpcCompanyId": "",
+        "KpcOneTimeRegistrationSharedSecret": "",
+        "KPCRegion": "",
+        "KpcUserId": "",
+        "LocalizationCode": "",
+        "PostUpdateServiceStartStop": false,
+        "RegisterAiCom": "Off",
+        "ReplaceDistributiveFromIso": false,
+        "RequestApp8TrialTier": "Default",
+        "RunAtSystemStartup": false,
+        "SaveHashesPath": "",
+        "ScreenshotsFolder": "",
+        "SetProductNameForFacade": false,
+        "Silent": false,
+        "StartService": true,
+        "SuggestApp3": "Off",
+        "TimesToUpdate": 1,
+        "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
+        "TurnOffDumpOnAssert": true,
+        "TurnOffProtection": false,
+        "UpdateChromeToVersion": "",
+        "UpdateFirefoxToVersion": "",
+        "UpdateSource": "",
+        "UseCollections": "Off",
+        "UseGDPR": "Default",
+        "UseProxyForUpdate": false,
+        "Verbose": false,
+        "VerboseExternalProcessesOutput": false,
+        "WaitForProductActivation": false
+      },
+      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy.ps1"
+    }
+  },
+  "Platforms": {
+    "platform_group_1": [
+      "w10rs5-x64",
+      "w10rs6-x64",
+      "w10rs5-x86",
+      "w10rs6-x86",
+      "win7-x64",
+      "win7-x86",
+      "win811-x64",
+      "win811-x86"
+    ],
+    "win7-x64": {},
+    "win7-x86": {},
+    "win811-x64": {},
+    "win811-x86": {},
+    "win10-x64": {},
+    "w10rs4-x64": {},
+    "w10rs5-x86": {},
+    "w10rs5-x64": {},
+    "w10rs6-x64": {},
+    "w10rs6-x86": {}
+  },
+  "Products": {
+    "App6": {
+      "Name": "App6",
+      "Parameters": {
+        "Name": "App6",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": false,
+        "SkipRecommendedSettings": false,
+        "InstallerExecutableFileMask": "startup.exe",
+        "InstallationType": "Regular"
+      },
+      "ReleaseName": "Main",
+      "Version": "#(ProductVersion)"
+    }
+  },
+  "Suites": {
+    "BuildAcceptance": {
+      "Parameters": {},
+      "Platforms": [
+        "platform_group_1"
+      ],
+      "Products": [
+        "App6"
+      ],
+      "TestScenarios": [
+        "KpmDownloadAndInstallMultiMachineScenario"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "KpmDownloadAndInstallMultiMachineScenario": {
+      "TestScenarios": [
+        "KpmDownloadAndInstallMultiMachineDevice1",
+        "KpmDownloadAndInstallMultiMachineDevice2"
+      ]
+    },
+    "KpmDownloadAndInstallMultiMachineDevice1": {
+      "Area": "KPMIntergration",
+      "Deployments": [
+        "Install product no uac-1124"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App6"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "aaaaaaab-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+              "Timeout": "00:10:00",
+              "Count": 2
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice"
+          }
+        ]
+      },
+      "TfsId": 891723,
+      "Timeout": "00:40:00",
+      "UniqueId": "3028FAB1-767B-4628-9F20-CCAD45AF16A0",
+      "MultiMachineId": "aaaaaaac-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    },
+    "KpmDownloadAndInstallMultiMachineDevice2": {
+      "Area": "KPMIntergration",
+      "Deployments": [
+        "Disable UAC"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App6"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "WaitForBarrier": {
+              "Id": "aaaaaaab-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+              "Timeout": "00:10:00",
+              "Count": 2
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          }
+        ]
+      },
+      "TfsId": 891723,
+      "Timeout": "00:40:00",
+      "UniqueId": "691F0DCE-96C5-4DC2-96D8-8707D169EB53",
+      "MultiMachineId": "aaaaaaac-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    }
+  },
+  "version": 6
+}

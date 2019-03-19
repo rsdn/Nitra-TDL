@@ -1,9 +1,9 @@
-product "KES 11.1__PURE 2020.MP0" : Kavkis  = "KES 11.1", "PURE 2020.MP0";
+product "App4 11.1__App6 2020.MP0" : AppType  = "App4 11.1", "App6 2020.MP0";
 
 scenario FacadeProductStopStart
 {
     deployment DeployWithDeployer_NoReboot;
-    environments (win10, "KES 11.1__PURE 2020.MP0"), (w10rs4-x64, "PURE 2020.MP0");
+    environments (win10, "App4 11.1__App6 2020.MP0"), (w10rs4-x64, "App6 2020.MP0");
     sequence
     {
       method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart;
@@ -23,19 +23,19 @@ scenario FacadeProductStopStart
 scenario InternetExplorer_CheckDnT
 {
     deployment DeployWithDeployer_NoReboot;
-    environments (win10, "PURE 2020.MP0");
+    environments (win10, "App6 2020.MP0");
     method Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT;
     MaxRebootsCount = 1;
-    UniqueId = @"0fb5a0e1-1b7e-4ae9-9a63-46a27f375546";
+    UniqueId = @"0fb5a0e1-1b7e-4ae9-9a63-46a27f375547";
     Timeout = @"00:20:00";
     RerunCountOnTestFailure = 1;
     TfsId = 1203634;
 }
 
-scenario ScenarioWOAllowReboot
+scenario ScenarioWOAllowReboot // W: Unused scenario.
 {
     deployment DeployWithDeployer_NoReboot;
-    environments (win10, "PURE 2020.MP0");
+    environments (win10, "App6 2020.MP0");
     method Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT;
     UniqueId = @"0fb5a0e1-1b7e-4ae9-9a63-46a27f375546";
     Timeout = @"00:20:00";

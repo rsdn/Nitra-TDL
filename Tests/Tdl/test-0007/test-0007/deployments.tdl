@@ -1,6 +1,6 @@
 
 deployment InstallTestAgent()
-    script @"\\avp.ru\global\Builds2\Ido-Dev\TestAgent.Python-monorep\1.2.0.404\drop\KL.Hive.TestAgent\install_linux.sh"
+    script @"\\domain.com\global\Builds2\Ido-Dev\TestAgent.Python-monorep\1.2.0.404\drop\Domain.Hive.TestAgent\install_linux.sh"
 {
     expected 0;
 }
@@ -16,7 +16,7 @@ deployment InstallProduct(
     string E_AIR_ACCESSKEY = "{AirToken}",
     string E_AIR_CLI = "air-cli",
     string E_BUILD_PKG = "MonrepoHelloWorld",
-    string E_STORAGE = "kesl.avp.ru",
+    string E_STORAGE = "kesl.domain.com",
     string PYLIBS = "pexpect,requests,robotframework"
 )
     script @"$(BuildPath)\$(BuildDir)\$(ProductInstall)"

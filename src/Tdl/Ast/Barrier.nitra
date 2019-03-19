@@ -20,7 +20,7 @@ namespace Tdl
       SpanClass = TdlLang.BarrierSpanClass;
     }
 
-    Symbol.Guid    = Guid.NewGuid();
+    Symbol.Guid    = context.NewGuid();
     Symbol.Timeout = TdlUtils.ConvertStringLiteral(Timeout);
 
     Timeout : CSharp.StringLiteral;

@@ -2,7 +2,7 @@
 suite Interprecz
 {
     platform osx10__osx9;
-    product "KES for Mac 10 SP2";
+    product "App4 for Mac 10 SP2";
     TestSettingsFile = @"\\sdfs\Autotests\Components\TestRuns\Mac\11530_Interprecz.json";
     TestBotPath = @"\\sdfs\storage\CoreTechnologies\AutotestProjectBuilds\MacAutotests\MacAutotests_20190122.3\distrib";
     SamplesPath = @"\\tis-dfs\autotests\Components\CopyToVmMac\common,\\tis-dfs\autotests\Components\CopyToVmMac\interprecz";

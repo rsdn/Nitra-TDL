@@ -30,6 +30,8 @@ namespace Tdl
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan             : NSpan              = NSpan(0);
     
+    public BaseStableGuid : Guid = Guid.Parse("{AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA}");
+    
     public ToTdlContext(this context : DependentPropertyEvalContext) : TdlDependentPropertyEvalContext
     {
       context :> TdlDependentPropertyEvalContext;
@@ -1076,6 +1078,27 @@ namespace Tdl
         return ParsedValue(lit.Span.StartPos);
       
       ParsedValue(lit.Span, int.Parse(lit.GetText()))
+    }
+    
+    public IncrementGuid(guid : Guid, value : uint) : Guid
+    {
+      def bytes1   = guid.ToByteArray();
+      def version  = BitConverter.ToUInt32(bytes1, 0) + value;
+      def bytes2   = BitConverter.GetBytes(version);
+      bytes1[0] = bytes2[0];
+      bytes1[1] = bytes2[1];
+      bytes1[2] = bytes2[2];
+      bytes1[3] = bytes2[3];
+      Guid(bytes1)
+    }
+    
+    public NewGuid(this context : DependentPropertyEvalContext) : Guid
+    {
+      def data = context.ToTdlContext().TdlProjectData;
+      if (data.IsTestMode)
+        IncrementGuid(BaseStableGuid, data.GetStableGuidIncrementalValue());
+      else
+        Guid.NewGuid()
     }
   } // module
 } // namespace

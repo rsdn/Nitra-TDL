@@ -1,4 +1,4 @@
-﻿product type Kavkis
+﻿product type AppType
 {
     string Name;
     string ReleaseName;
@@ -11,26 +11,26 @@
     string SuiteName;
 }
 
-product "PURE 2020.MP0" : Kavkis
+product "App6 2020.MP0" : AppType
 {
-    Name = @"PURE";
+    Name = @"App6";
     ReleaseName = @"20.MP0";
-    Version = KisFullVersion;
-    ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\2020.MP0\PURE.xml";
+    Version = App2_FullVersion;
+    ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\2020.MP0\App6.xml";
     ComponentConfigurationPath = @"\\tis-dfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ComponentConfiguration\2020.MP0\Delivery.xml";
-    DeploymentConditions = @"/KSDE";
-    DistributiveOriginalPath = KisDistributivePath;
-    ModulesPath = KisModulesPath;
-    SuiteName = @"Pure.2020.MP0.Ext.PullRequest";
+    DeploymentConditions = @"/App9";
+    DistributiveOriginalPath = App2_DistributivePath;
+    ModulesPath = App2_ModulesPath;
+    SuiteName = @"App6.2020.MP0.Ext.PullRequest";
 }
 
-product "KES 11.1" : Kavkis 
+product "App4 11.1" : AppType 
 {
-    Name = @"KES";
+    Name = @"App4";
     ReleaseName = @"11.1";
     Version = KesFullVersion;
-    ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\KES11.1.xml";
-    ComponentConfigurationPath = @"\\tis-dfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ComponentConfiguration\KES\Delivery.Kes.xml";
+    ProductConfigurationPath = @"\\sdfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ProductConfiguration\App411.1.xml";
+    ComponentConfigurationPath = @"\\tis-dfs\Autotests\Components\Delivery\BlackBox\AutotestConfiguration\ComponentConfiguration\App4\Delivery.Kes.xml";
     DeploymentConditions = @"/EncryptionEnabled";
     DistributiveOriginalPath = KesDistributivePath;
     ModulesPath = KesModulesPath;

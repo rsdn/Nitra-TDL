@@ -7,18 +7,18 @@
 
 product Kes11_1 : Kes 
 {
-    Name = @"KES";
+    Name = @"App4";
     ReleaseName = @"Main";
     Version = "11.1";
 }
 
 product Kes11_0 : Kes 
 {
-    Name = @"KES";
+    Name = @"App4";
     ReleaseName = @"Main";
     Version = "11.0";
 }
 
-product KES : Kes  =
+product App4 : Kes  =
     Kes11_1,
     Kes11_0;

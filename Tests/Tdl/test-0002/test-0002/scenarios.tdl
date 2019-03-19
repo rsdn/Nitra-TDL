@@ -1,2460 +1,886 @@
-﻿using Autotest.Kis.Suites;
-using Autotest.Kis.Suites.AntiBanner.BannerCheckBlockingTests;
+﻿scenario App1_-Main-BvtPvt-GUI-scenarios = DetailedReportsApp1_App11-2297, ContextMenuOpenApp1_-2298, CheckStartMenuApp2_-2299,
+    CheckApp2_ContextMenuUpdate-2300, TrayContextMenuScan-2361, LaunchAtStartup-2301, App1_MainWindowExpandFeaturesList-2302, OpenMainWindowFromMenu-2303,
+    ProtectionIsDisabled-2304, SomeComponentsAreDisabled-2305, EnableProtection-2306, VideoPlayerWithGamingProfile-2307,
+    App1_MainWindowOpened-2308, App1_AdditionalToolsContextMenu-2309, App1_UcpWelcomePageShownWhenManagementConsoleInvoked-2310,
+    App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked-2311, App1_QuarantineViewShownWhenQuarantineFeatureInvoked-2312,
+    App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked-2313,
+    App1_BrowserConfigurationWizardShownWhenBrowserConfigurationFeatureInvoked-2314,
+    App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked-2315, App1_BrowserOpenWhenRescueDiskFeatureInvoked-2316,
+    App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked-2317, App1_AdditionalToolsCheckHelpButton-2318,
+    App1_AllProductProcessClosedWhenExitItemClicked-2319, App1_CheckContextMenuContent-2320, App1_CheckContextMenuPauseProtection-2321,
+    App1_CheckContextMenuProductBold-2322, App1_CheckContextMenuResumeProtection-2323,
+    App1_ContextMenuAppearsWhenRightClickOnTrayIcon-2324, App1_IconAppearsWhenProductStarted-2325,
+    App1_MainWindowFocusedWhenDoubleLeftClick-2326, App1_MainWindowFocusedWhenOneLeftClick-2327,
+    App1_MainWindowOpenedWhenDoubleLeftClick-2328, App1_MainWindowOpenedWhenOneLeftClick-2329, App1_CheckMainWindowOpened-2330,
+    App1_CheckUpperPanelProductName-2331, App1_CheckUpperPanelHelpButton-2332, App1_CheckUpperPanelCloseButton-2333,
+    App1_CheckUpperPanelMinimizeButton-2334, App1_CheckProtectionStatusGreen-2335, App1_CheckProtectionStatusYellow-2336,
+    App1_CheckProtectionStatusRed-2337, App1_CheckComponentsStatusScan-2338, App1_CheckComponentsStatusUpdate-2339,
+    App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked-2340,
+    App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked-2341,
+    App1_CheckComponentsStatusAdditionalTools-2342, App1_CheckBottomPanelSettings-2343, App1_CheckBottomPanelSupport-2344,
+    App1_CheckBottomPanelMoreProducts-2345, App1_CheckBottomPanelMyCompany-2346, App1_CheckBottomPanelLicenseInfo-2347,
+    CheckApp1_FileProgrammAvailable-2348, CheckApp1_InstantMessengersProgrammAvailable-2349, CheckApp1_MailProgrammAvailable-2350,
+    CheckApp1_MainWindowOpened-2351, CheckApp1_ProtectionSettingsOpened-2352, CheckApp1_SystemWatcherAvailable-2353,
+    CheckApp1_WebProgrammAvailable-2354, ComponentDisabledProblemIgnored-2355, App1_CheckOnlineHelpWhenHelpInProtectionClicked-2356,
+    InteractiveProtection-2357, DefaultPasswordProtectionScope-2358, PasswordProtectionExistingPassword-2359,
+    PasswordForAllOperations-2360;
 
-product KSOS__PURE__PURE_Webpack : Kavkis  = KSOS, PURE, PURE_Webpack;
-platform all_pc__win2012r2 = all_pc, win2012r2;
-platform win7-x64__win811-x86 = win7-x64, win811-x86;
-platform w10rs4-x64__win7-x64__win811-x86 = w10rs4-x64, win7-x64, win811-x86;
-
-scenario TryDisinfectWithoutRestart
+scenario DetailedReportsApp1_App11-2297
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.AdvancedDisinfection.AdvancedDisinfectionAutomaticActionTest.TryDisinfectWithoutRestart;
-    Area = @"AdvancedDisinfection";
-    UniqueId = @"C9E7C8CF-9C40-4F10-A8CE-08FAA7E99BB9";
-    TfsId = 2145098;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 7c2a5099-959a-4734-8c9c-70a4c2b831dc
+    method Autotest.App2.Suites.GUI.ReportWindowTest.DetailedReportsApp1_App11;
+    UniqueId = "5f21572f-bc10-4434-a842-8a8239a882f2";
+    RevertAgentBefore  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 2347643;
 }
 
-scenario CheckBlockBannerByUrl
+scenario ContextMenuOpenApp1_-2298
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method AntiBanner.BannerCheckBlockingTests.CheckBlockBannerByUrl;
-    Area = @"AntiBanner";
-    UniqueId = @"9365B31B-28BA-4D40-A116-304B022A2946";
-    TfsId = 1638532;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: f35100cd-821c-4e2a-a6f0-77ef4ccb0330
+    method Autotest.App2.Suites.GUI.SystemTrayTests.ContextMenuOpenApp1_;
+    UniqueId = "d7ec8287-66b0-40d6-8d34-925c7c6bcc6c";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 187340;
 }
 
-scenario CheckBlockingBannerOnHttps
+scenario CheckStartMenuApp2_-2299
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method CheckBlockingBannerOnHttps;
-    Area = @"AntiBanner";
-    UniqueId = @"E3CA10BC-5C2A-4391-9FC3-A8DC08CDC25C";
-    TfsId = 1651464;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_10, App7);
+    // method guid: c029615a-bd33-4f7d-89cd-23bf5b3754be
+    method Autotest.App2.Suites.GUI.StartMenuTests.CheckStartMenuApp2_;
+    UniqueId = "54aa19d8-3237-4b2d-b665-bfad0a5520df";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 187342;
 }
 
-scenario CheckBlockingBannersFromWhiteList
+scenario CheckApp2_ContextMenuUpdate-2300
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiBanner.BannerCheckBlockingTests.CheckBlockingBannersFromWhiteList;
-    Area = @"AntiBanner";
-    UniqueId = @"9BB07505-9BBF-4095-8483-448EA1BCE668";
-    TfsId = 1638660;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    method Autotest.App2.Suites.GUI.SystemTrayTests.CheckApp2_ContextMenuUpdate;
+    UniqueId = "b9eb4472-c7c5-4c13-a2dc-470842e15a03";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 186134;
 }
 
-scenario CheckBlockingBlackBannersOnWhitePage
+scenario TrayContextMenuScan-2361
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiBanner.BannerCheckBlockingTests.CheckBlockingBlackBannersOnWhitePage;
-    Area = @"AntiBanner";
-    UniqueId = @"6CB32662-4287-43A1-9B2E-08D5609CD623";
-    TfsId = 1653437;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    method Autotest.App2.Suites.GUI.ScanTrayTests.TrayContextMenuScan;
+    UniqueId = "95E39C9D-A9C7-44E3-B78A-4C99888933E5";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 186133;
 }
 
-scenario AntiPhishingAndKsnCombinedWmufTestMock
+scenario LaunchAtStartup-2301
 {
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiSpam.AntiSpamKsnMockTests.AntiPhishingAndKsnCombinedWmufTestMock;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"AntiSpam";
-    UniqueId = @"5DCFE386-9C7D-466D-AAC4-A0EB9181BC49";
-    TfsId = 184726;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    sequence
+    {
+        // method guid: 1c0c760d-589c-4b0c-8b26-e58ee01110d1
+        method Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupEnable;
+            reboot;
+        // method guid: 0c5eecff-cbac-45f7-bdf4-7c44f53bae7b
+        method Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupEnableAftereReboot;
+        // method guid: 8e242d78-dd68-4390-97c8-fc54f277bab1
+        method Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupDisable;
+            reboot;
+        // method guid: 155cfcc5-55c1-40ba-af6c-bbb70f6e69c2
+        method Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupDisableAftereReboot;
+    }
+
+    UniqueId = "72bf1514-bc2f-4105-8da2-83708e5f45ab";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 187596;
 }
 
-scenario AntiPhishingSearchByHashBvt
+scenario App1_MainWindowExpandFeaturesList-2302
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.WebAv.WebAvCommonTests.AntiPhishingSearchByHashBvt;
-    RevertAgentAfter = true;
-    Area = @"WebAv";
-    UniqueId = @"A576AFE9-7D13-465B-AF61-391969A48D1B";
-    TfsId = 187942;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    sequence
+    {
+            reboot;
+        // method guid: a6f3bf38-bbf0-4fa2-9eac-6fdfdca8d09d
+        method Autotest.App2.Suites.GUI.MainWindowTests.App1_MainWindowExpandFeaturesList;
+    }
+
+    UniqueId = "f19eee0c-3c56-47bd-b98b-e242beac68e4";
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 183839;
 }
 
-scenario AntiPhishingSearchByLinkBvt
+scenario OpenMainWindowFromMenu-2303
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.WebAv.WebAvCommonTests.AntiPhishingSearchByLinkBvt;
-    RevertAgentAfter = true;
-    Area = @"WebAv";
-    UniqueId = @"FC232752-A3E8-4A4E-BFD4-B8C33ADA3A95";
-    TfsId = 187941;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 6842d26e-9670-44e4-8ebc-c56aa42e9935
+    method Autotest.App2.Suites.GUI.SystemTrayTests.OpenMainWindowFromMenu;
+    UniqueId = "ca9c0c58-81f5-4067-a2b1-8e71312e2630";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 187667;
 }
 
-scenario FtpDetectEicarFileLessThan1MbBlock
+scenario ProtectionIsDisabled-2304
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.WebAv.WebAvCommonTests.FtpDetectEicarFileLessThan1MbBlock;
-    RevertAgentAfter = true;
-    Area = @"WebAv";
-    UniqueId = @"BA7484E0-4C09-4F54-9376-13F4DDF566EB";
-    TfsId = 184150;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 9bf9e920-f9e7-4dc5-9e52-bc17a0f908af
+    method Autotest.App2.Suites.GUI.ProblemListTests.ProtectionIsDisabled;
+    UniqueId = "4ccc0ec1-0ac7-4162-8072-1ad95769d601";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 187872;
 }
 
-scenario CheckCombinedOperationAntiFishingMessage
+scenario SomeComponentsAreDisabled-2305
 {
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiSpam.AntiSpamTests.CheckCombinedOperationAntiFishingMessage;
-    Area = @"AntiSpam";
-    UniqueId = @"827CCC11-4961-470A-BA82-1E0B4D95381B";
-    TfsId = 187549;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckCombinedOperationAntiFishingVirus
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiSpam.AntiSpamTests.CheckCombinedOperationAntiFishingVirus;
-    Area = @"AntiSpam";
-    UniqueId = @"1C1842C8-087B-442C-A538-248CB0ADA8C7";
-    TfsId = 187549;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckCombinedOperationAntiFishingWmuf
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiSpam.AntiSpamTests.CheckCombinedOperationAntiFishingWmuf;
-    Area = @"AntiSpam";
-    UniqueId = @"4E7D35BB-7FA9-4782-8C6F-75475115DFD3";
-    TfsId = 187549;
-    Timeout = @"00:15:00";
-}
-
-scenario TrafficMonitorEnableDisableEicarHamTest
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiSpam.AntiSpamTests.TrafficMonitorEnableDisableEicarHamTest;
-    Area = @"AntiSpam";
-    UniqueId = @"1D2B4779-A8B9-4877-878C-F34A56EF4C0F";
-    TfsId = 187550;
-    Timeout = @"00:15:00";
-}
-
-scenario TrafficMonitorEnableDisableEicarProbableSpamTest
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiSpam.AntiSpamTests.TrafficMonitorEnableDisableEicarProbableSpamTest;
-    Area = @"AntiSpam";
-    UniqueId = @"3E14E1B5-D44B-4DFB-A124-891F84077775";
-    TfsId = 187550;
-    Timeout = @"00:15:00";
-}
-
-scenario TrafficMonitorEnableDisableEicarSpamTest
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AntiSpam.AntiSpamTests.TrafficMonitorEnableDisableEicarSpamTest;
-    Area = @"AntiSpam";
-    UniqueId = @"9CDA2B3D-15CF-4A01-9206-2BCF809AD30F";
-    TfsId = 187550;
-    Timeout = @"00:15:00";
-}
-
-scenario DetectionDependingOnEmulationLevelScanFilesMedium
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Avs.ScriptEmulatorTests.DetectionDependingOnEmulationLevelScanFilesMedium;
-    Area = @"Avs";
-    UniqueId = @"CB373FFE-0A2E-4AB1-B82E-BA0D1358D469";
-    TfsId = 186320;
-    Timeout = @"00:15:00";
-}
-
-scenario HeuristicAnalysisHigh
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Avs.OasHeuristicAnalysisTests.HeuristicAnalysisHigh;
-    Area = @"Avs";
-    UniqueId = @"1C0980BF-20EF-4B92-9831-21FE6EF4AC09";
-    TfsId = 187443;
-    Timeout = @"00:15:00";
-}
-
-scenario DeleteLocalStorageTest
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Backup.BackupDeleteStorageTests.DeleteLocalStorageTest;
-    Area = @"Backup";
-    UniqueId = @"59295CE6-71F4-436E-B656-08CB56512F86";
-    TfsId = 1042235;
-    Timeout = @"00:15:00";
-}
-
-scenario DeleteTaskWithDataFromLocalStorage
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Backup.BackupDeleteTaskTest.DeleteTaskWithDataFromLocalStorage;
-    Area = @"Backup";
-    UniqueId = @"0A464A55-84E3-4F89-A21B-1EA9D555E3E2";
-    TfsId = 1042305;
-    Timeout = @"00:15:00";
-}
-
-scenario DeleteTaskWithoutDataFromLocalStorage
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Backup.BackupDeleteTaskTest.DeleteTaskWithoutDataFromLocalStorage;
-    Area = @"Backup";
-    UniqueId = @"1B873686-99B7-42CD-A5CA-DFFD6EC067C7";
-    TfsId = 1042305;
-    Timeout = @"00:15:00";
-}
-
-scenario BlockAnalytics
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Dnt.BlockWebAnalytics.BlockAnalytics;
-    Area = @"Dnt";
-    UniqueId = @"AD793953-A78C-49DC-8129-3F4D2DF61A13";
-    TfsId = 1075088;
-    Timeout = @"00:15:00";
-}
-
-scenario BlockTwitter
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Dnt.BlockSocialNetworks.BlockTwitter;
-    Area = @"Dnt";
-    UniqueId = @"02AC7E95-34A1-407E-AFA7-7F5B3F9DC9C7";
-    TfsId = 1075086;
-    Timeout = @"00:15:00";
-}
-
-scenario BlockFacebook
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Dnt.BlockSocialNetworks.BlockFacebook;
-    Area = @"Dnt";
-    UniqueId = @"6B50BE6E-B070-43CD-9B71-A8347DD1DE80";
-    TfsId = 1075086;
-    Timeout = @"00:15:00";
-}
-
-scenario SupportSystemReportAssistance
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AVZ.SupportToolsTests.SupportSystemReportAssistance;
-    Area = @"AVZ";
-    UniqueId = @"62FDA2CA-1B42-47AF-9890-F3F5446B7B02";
-    TfsId = 184838;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckCreateDump
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Dump.WithoutSendingDumpTest.CheckCreateDump;
-    Area = @"Dump";
-    UniqueId = @"7D5FC027-48CC-4807-B94D-CA02DA945701";
-    TfsId = 182944;
-    Timeout = @"00:15:00";
-}
-
-scenario DetectAndDeleteThreatsFromVault
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Encryption.ThreatsInVault.DetectAndDeleteThreatsFromVault;
-    Area = @"Encryption";
-    UniqueId = @"36E42BCC-9B4B-4235-8642-FBB339FD9C38";
-    TfsId = 1058598;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckSendingDumpOnOneFtpServerTest
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Dump.SendingDumpOnOneFtpServerTest.CheckSendingDumpOnOneFtpServerTest;
-    Area = @"Dump";
-    UniqueId = @"9849AE4E-4CFB-4442-913B-81034D43F8D6";
-    TfsId = 182944;
-    Timeout = @"00:15:00";
-}
-
-scenario ShredFileInUse
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.FileShredder.FileShredderTests.ShredFileInUse;
-    Area = @"FileShredder";
-    UniqueId = @"C5CC0271-4339-44BD-9AED-2CF24AD6CE97";
-    TfsId = 1065393;
-    Timeout = @"00:15:00";
-}
-
-scenario ShredFolderWithFileInUse
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.FileShredder.FileShredderTests.ShredFolderWithFileInUse;
-    Area = @"FileShredder";
-    UniqueId = @"F3A30F31-2EE3-44BA-8D68-261084D57260";
-    TfsId = 1065393;
-    Timeout = @"00:15:00";
-}
-
-scenario ShredNonAccessibleFiles
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.FileShredder.FileShredderTests.ShredNonAccessibleFiles;
-    Area = @"FileShredder";
-    UniqueId = @"063CB789-EFD2-4E22-8BA4-59A36DA7657C";
-    TfsId = 1065393;
-    Timeout = @"00:15:00";
-}
-
-scenario ShredNonExistentFiles
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.FileShredder.FileShredderTests.ShredNonExistentFiles;
-    Area = @"FileShredder";
-    UniqueId = @"86AAF994-9CD2-4913-B773-9B821CA77460";
-    TfsId = 1065393;
-    Timeout = @"00:15:00";
-}
-
-scenario ShredProgramFiles
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.FileShredder.FileShredderTests.ShredProgramFiles;
-    Area = @"FileShredder";
-    UniqueId = @"45784AAD-C2CA-4B33-8E0E-E62BE0C41B20";
-    TfsId = 1065393;
-    Timeout = @"00:15:00";
-}
-
-scenario ShredSystemFile
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.FileShredder.FileShredderTests.ShredSystemFile;
-    Area = @"FileShredder";
-    UniqueId = @"F11E4824-CAEB-4761-98F0-F7997F84E7C3";
-    TfsId = 1651464;
-    Timeout = @"00:15:00";
-}
-
-scenario AppRuleTcpIpv4BlockedRemoteHostNotInList
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Firewall.TcpTrafficAppRulesTestsIpv4.AppRuleTcpIpv4BlockedRemoteHostNotInList;
-    Area = @"Firewall";
-    UniqueId = @"964173B8-3A12-4EEB-AB7B-3F84518584BA";
-    TfsId = 187752;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckIdsForTcpIpV4
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Firewall.IdsSmokeTests.CheckIdsForTcpIpV4;
-    RevertAgentBefore = true;
-    Area = @"Firewall";
-    UniqueId = @"EB4E3773-48AE-4D1B-8C5D-93277A0F58AE";
-    TfsId = 187198;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckSilentDetectForTcpIpV4
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Firewall.IntrusionDetectionSystem.CheckSilentDetectForTcpIpV4;
-    Area = @"Firewall";
-    UniqueId = @"69EB081F-8F6F-4A40-9B62-F00360B0AC85";
-    TfsId = 185009;
-    Timeout = @"00:15:00";
-}
-
-scenario HighRestrictedGroupOutcomingIcmpIpv4Blocked
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Firewall.IcmpPackageTestsIpv4.HighRestrictedGroupOutcomingIcmpIpv4Blocked;
-    Area = @"Firewall";
-    UniqueId = @"EBDC0143-8CDE-4C63-8F98-E48F00B1DC94";
-    TfsId = 187644;
-    Timeout = @"00:15:00";
-}
-
-scenario PriorityOfNetworkPackageRulesAllow
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Firewall.TcpTrafficPackageRulesTestsIpv4.PriorityOfNetworkPackageRulesAllow;
-    Area = @"Firewall";
-    UniqueId = @"DA5214D4-4059-4B74-B24C-83D400E593A3";
-    TfsId = 187628;
-    Timeout = @"00:15:00";
-}
-
-scenario PriorityOfNetworkPackageRulesBlock
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Firewall.TcpTrafficPackageRulesTestsIpv4.PriorityOfNetworkPackageRulesBlock;
-    Area = @"Firewall";
-    UniqueId = @"FC4E180C-66B9-48D2-89E9-CC45AB237E80";
-    TfsId = 187628;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckLocalizationFullyTranslated
-{
-    deployment Deploy_Backdoor;
-    environments (win7-x64, KAVKIS);
-    method Autotest.Kis.Suites.GUI.LocalizationTests.CheckLocalizationFullyTranslated;
-    Area = @"GUI";
-    UniqueId = @"94A6C362-A525-4B4D-B018-3BA84EC02BEA";
-    TfsId = 3004163;
-    Timeout = @"00:15:00";
-}
-
-scenario SomeComponentsAreDisabled
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.GUI.ProblemListTests.SomeComponentsAreDisabled;
-    RevertAgentAfter = true;
-    Area = @"GUI";
-    UniqueId = @"25DFB578-FBFA-4B0B-A11C-BF93D7316E94";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 25dfb578-fbfa-4b0b-a11c-bf93d7316e94
+    method Autotest.App2.Suites.GUI.ProblemListTests.SomeComponentsAreDisabled;
+    UniqueId = "5dbe57df-b80d-41ae-a180-4f19c427789d";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
     TfsId = 187871;
-    Timeout = @"00:15:00";
 }
 
-scenario DefaultRightForStartProcess
+scenario EnableProtection-2306
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Hips.StartOtherProcessTests.DefaultRightForStartProcess;
-    RevertAgentBefore = true;
-    RevertAgentAfter = true;
-    Area = @"Hips";
-    UniqueId = @"F954F9CD-8B35-469B-86C1-C968B982B43C";
-    TfsId = 186940;
-    Timeout = @"00:15:00";
-}
-
-scenario HipsObjectsProcessing
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Hips.ObjectsProcessingTests.HipsObjectsProcessing;
-    RevertAgentBefore = true;
-    RevertAgentAfter = true;
-    Area = @"Hips";
-    UniqueId = @"2F57045E-8C79-477F-B758-BC6745DA59B8";
-    TfsId = 1055377;
-    Timeout = @"00:15:00";
-}
-
-scenario ProcessStartBlockedWhenActionBlockSelected
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Hips.StartOtherProcessTests.ProcessStartBlockedWhenActionBlockSelected;
-    RevertAgentAfter = true;
-    Area = @"Hips";
-    UniqueId = @"1BAAE8CD-0B10-4D2F-826E-C978FB2DE86D";
-    TfsId = 186940;
-    Timeout = @"00:15:00";
-}
-
-scenario ProcessStartBlocked
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Hips.StartOtherProcessTests.ProcessStartBlocked;
-    RevertAgentBefore = true;
-    RevertAgentAfter = true;
-    Area = @"Hips";
-    UniqueId = @"DC373CE9-3565-453C-9001-34D63A88A385";
-    TfsId = 186940;
-    Timeout = @"00:15:00";
-}
-
-scenario ScanKlCategoriesCategorizedObject
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Hips.KashellScanKlCategoriesTests.ScanKlCategoriesCategorizedObject;
-    Area = @"Hips";
-    UniqueId = @"90FA4364-62C6-4BA1-8BAE-FE2712707863";
-    TfsId = 2206758;
-    Timeout = @"00:15:00";
-}
-
-scenario ScanKlCategoriesUncategorizedObject
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Hips.KashellScanKlCategoriesTests.ScanKlCategoriesUncategorizedObject;
-    Area = @"Hips";
-    UniqueId = @"65CDE9DB-0B92-44DD-A3A8-C03CE3BDD146";
-    TfsId = 2206887;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckRetrieveWmuf
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Imav.ImavTests.CheckRetrieveWmuf;
-    RevertAgentAfter = true;
-    NeedUnsignedAgent = true;
-    Area = @"Imav";
-    UniqueId = @"E472A0E5-AB35-4A01-8568-4EDA541B5A32";
-    TfsId = 183764;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckSendPhishing
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Imav.ImavTests.CheckSendPhishing;
-    RevertAgentAfter = true;
-    NeedUnsignedAgent = true;
-    Area = @"Imav";
-    UniqueId = @"995E8340-3544-48FF-A3B1-0145B7DC3AD6";
-    TfsId = 183765;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckSendWmuf
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Imav.ImavTests.CheckSendWmuf;
-    RevertAgentAfter = true;
-    NeedUnsignedAgent = true;
-    Area = @"Imav";
-    UniqueId = @"AB0DA1C3-6B71-4179-8B49-0E179EB9EAB5";
-    TfsId = 183764;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckAdditionalFilesAndFoldersExists
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckAdditionalFilesAndFoldersExists;
-    Area = @"Installation";
-    UniqueId = @"E7859823-05F5-4E85-969E-DEA460F647E8";
-    TfsId = 186770;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckAdditionalRegistryKeysExists
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckAdditionalRegistryKeysExists;
-    Area = @"Installation";
-    UniqueId = @"7FDD11E8-4352-4BD7-B1D0-44EE981870E0";
-    TfsId = 186576;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckDownloaderFileSize
-{
-    deployment Deploy_NoInstall;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.DownloaderSizeTests.CheckDownloaderFileSize;
-    Area = @"Installation";
-    UniqueId = @"B7011228-6B6B-48C5-BD0E-700B724E8E95";
-    TfsId = 1698119;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckImportOfExportedSettings
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Installation.SettingsImportForKts.CheckImportOfExportedSettings;
-    RevertAgentBefore = true;
-    RevertAgentAfter = true;
-    Area = @"Installation";
-    UniqueId = @"36242311-4368-4537-9692-E34B2B0863C4";
-    TfsId = 1010106;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckInstallationGui
-{
-    deployment Deploy_NoInstall;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationDeployLessTests.CheckInstallationGui;
-    RevertAgentAfter = true;
-    Area = @"Installation";
-    UniqueId = @"4F6A4B0E-619B-4BFA-9E60-7637BDD29BE4";
-    TfsId = 187373;
-    Timeout = @"00:15:00";
-}
-
-scenario ImportMaxSettingsFromOlderVersionsKts
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Installation.SettingsImportForKts.ImportMaxSettingsFromOlderVersionsKts;
-    RevertAgentAfter = true;
-    Area = @"Installation";
-    UniqueId = @"A650DE37-9E1B-4152-9A62-2EB7DDC1340B";
-    TfsId = 1010106;
-    Timeout = @"00:15:00";
-}
-
-scenario ImportMinSettingsFromOlderVersionsKts
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Installation.SettingsImportForKts.ImportMinSettingsFromOlderVersionsKts;
-    RevertAgentAfter = true;
-    Area = @"Installation";
-    UniqueId = @"49B10D98-5F18-461C-9D78-A1240F0A5F5F";
-    TfsId = 1010106;
-    Timeout = @"00:15:00";
-}
-
-scenario ImportOffSettingsFromOlderVersionsKts
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Installation.SettingsImportForKts.ImportOffSettingsFromOlderVersionsKts;
-    RevertAgentAfter = true;
-    Area = @"Installation";
-    UniqueId = @"49B10D98-5F18-461C-9D78-A1240F0A5F5F";
-    TfsId = 1010106;
-    Timeout = @"00:15:00";
-}
-
-scenario KsnOdsEicarSmoke
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Ksn.KsnOasOdsTests.KsnOdsEicarSmoke;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"Ksn";
-    UniqueId = @"FBE9A35A-38CD-4ACD-A633-ED60EE2AC8B5";
-    TfsId = 185669;
-    Timeout = @"00:15:00";
-}
-
-scenario ActivateCommercialSmoke
-{
-    deployment Deploy_NoBackdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.License.LicenseTests.ActivateCommercialSmoke;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"License";
-    UniqueId = @"6658B774-7A8F-484F-9BFA-73E9B5882681";
-    TfsId = 187372;
-    Timeout = @"00:15:00";
-}
-
-scenario ActivateTrialSmoke
-{
-    deployment Deploy_NoBackdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.License.LicenseTests.ActivateTrialSmoke;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"License";
-    UniqueId = @"455BC9FE-186C-4FDE-B889-2A2208FF9E7E";
-    TfsId = 187371;
-    Timeout = @"00:15:00";
-}
-
-scenario ActivateCommercial
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.LicenseBackdoor.LicenseTestsBackdoor.ActivateCommercial;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"LicenseBackdoor";
-    UniqueId = @"8A299376-A84C-4BA0-833E-130D1D395A80";
-    TfsId = 183592;
-    Timeout = @"00:15:00";
-}
-
-scenario RepeatActualTrialActivation
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.LicenseBackdoor.LicenseTestsBackdoor.RepeatActualTrialActivation;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"LicenseBackdoor";
-    UniqueId = @"2C702393-AB18-4FC8-A255-934ACF8F5822";
-    TfsId = 183575;
-    Timeout = @"00:15:00";
-}
-
-scenario DetectAllTypesOfBodyEicar
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.MailAv.TrafficMonitorTests.DetectAllTypesOfBodyEicar;
-    Area = @"MailAv";
-    UniqueId = @"31F707B4-4E28-4098-AA51-A77CD2D08325";
-    TfsId = 187956;
-    Timeout = @"00:15:00";
-}
-
-scenario DetectAllTypesOfEicar
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.MailAv.TrafficMonitorTests.DetectAllTypesOfEicar;
-    Area = @"MailAv";
-    UniqueId = @"1811B4BF-99D7-4527-99D6-4466C2D9568D";
-    TfsId = 188011;
-    Timeout = @"00:15:00";
-}
-
-scenario SendInfoApplicationControlMock
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ManagementConsole.ManagementConsoleProtectionComponentsMockTests.SendInfoApplicationControlMock;
-    RevertAgentBefore = true;
-    Area = @"ManagementConsole";
-    UniqueId = @"BFAEF220-B650-4472-A4FD-F0382D3A80D2";
-    TfsId = 180481;
-    Timeout = @"00:15:00";
-}
-
-scenario ActionNoSuspicious
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Oas.OasTestsActionCheck.ActionNoSuspicious;
-    Area = @"Oas";
-    UniqueId = @"10706BE7-319F-4BB3-AE54-EB38DF33F208";
-    TfsId = 2610101;
-    Timeout = @"00:15:00";
-}
-
-scenario DetectWithUnpackingLargeCompound
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Oas.OasTestsCompoundsFiles.DetectWithUnpackingLargeCompound;
-    Area = @"Oas";
-    UniqueId = @"9B3BF9DA-76CF-4D26-ADC4-BCB549614EEE";
-    TfsId = 187450;
-    Timeout = @"00:30:00";
-}
-
-scenario DetectWithoutUnpackingLargeCompound
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Oas.OasTestsCompoundsFiles.DetectWithoutUnpackingLargeCompound;
-    Area = @"Oas";
-    UniqueId = @"E13FCA25-5AB5-486C-9FDB-85D9D84B7592";
-    TfsId = 187450;
-    Timeout = @"00:15:00";
-}
-
-scenario ScanFilesByExtension
-{
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Oas.OasTestsSecondPart.ScanFilesByExtension;
-    RevertAgentAfter = true;
-    Area = @"Oas";
-    UniqueId = @"38914011-E432-4032-8EB6-C82844BFBDFE";
-    TfsId = 187453;
-    Timeout = @"00:15:00";
-}
-
-scenario ScanEmailObjectsHeuristic
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Ods.KashellScanEmailObjectsTests.ScanEmailObjectsHeuristic;
-    RevertAgentAfter = true;
-    Area = @"Ods";
-    UniqueId = @"D3BCF576-DBA7-4A56-8819-BC131E56CD13";
-    TfsId = 2206640;
-    Timeout = @"00:15:00";
-}
-
-scenario ScanVulnerabilityAllDetection
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Ods.KashellScanVulnerabilityTests.ScanVulnerabilityAllDetection;
-    RevertAgentAfter = true;
-    Area = @"Ods";
-    UniqueId = @"55B7BD4E-DABA-4EF1-A9BB-34F9142CE07A";
-    TfsId = 2206597;
-    Timeout = @"00:15:00";
-}
-
-scenario ScanVulnerabilityPartialDetection
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Ods.KashellScanVulnerabilityTests.ScanVulnerabilityPartialDetection;
-    RevertAgentAfter = true;
-    Area = @"Ods";
-    UniqueId = @"E5BF4C5E-9D2C-4DC5-825D-3AE13156BB7A";
-    TfsId = 2206598;
-    Timeout = @"00:15:00";
-}
-
-scenario BadWordsInMetaDescriptionViaInternetExplorer
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ParentalControl.ParentalControlInternetTests.BadWordsInMetaDescriptionViaInternetExplorer;
-    Area = @"ParentalControl";
-    UniqueId = @"01AE536C-285F-45A9-9EA0-7A435E7C84A0";
-    TfsId = 186636;
-    Timeout = @"00:15:00";
-}
-
-scenario StartApplicationFromWhiteList
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ParentalControl.ParentalControlApplicationTests.StartApplicationFromWhiteList;
-    Area = @"ParentalControl";
-    UniqueId = @"D53AC245-58C6-46F5-A066-E5C9FAC0EB0F";
-    TfsId = 186719;
-    Timeout = @"00:15:00";
-}
-
-scenario StartBlockedApplication
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ParentalControl.ParentalControlApplicationTests.StartBlockedApplication;
-    Area = @"ParentalControl";
-    UniqueId = @"D8923816-2E40-48C8-8B8D-492428488E1D";
-    TfsId = 186718;
-    Timeout = @"00:15:00";
-}
-
-scenario ScreenshotCreateDcUnderSafeBrowser
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SafeBanking.ScreenshotTests.ScreenshotCreateDcUnderSafeBrowser;
-    RevertAgentBefore = true;
-    Area = @"SafeBanking";
-    UniqueId = @"DE0AF29E-D1CE-49CF-8FD1-5768F05026C9";
-    TfsId = 235537;
-    Timeout = @"00:15:00";
-}
-
-scenario ScreenshotCreateDcUnderUnsafeBrowser
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SafeBanking.ScreenshotTests.ScreenshotCreateDcUnderUnsafeBrowser;
-    Area = @"SafeBanking";
-    UniqueId = @"864A98D5-F1E1-45EF-9700-FAFFC2D9995C";
-    TfsId = 235537;
-    Timeout = @"00:15:00";
-}
-
-scenario ScreenshotKeyboardEventUnderUnsafeBrowser
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SafeBanking.ScreenshotTests.ScreenshotKeyboardEventUnderUnsafeBrowser;
-    Area = @"SafeBanking";
-    UniqueId = @"66FDE918-0C11-4836-A8CB-7D56E32DCDED";
-    TfsId = 235533;
-    Timeout = @"00:15:00";
-}
-
-scenario StartSafeBankingFirefox
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SafeBanking.WebAvSafeBankingOpenInNewWindow.StartSafeBankingFirefox;
-    Area = @"SafeBanking";
-    UniqueId = @"4D555ACD-12DC-4F7B-ABED-01B775A89B07";
-    TfsId = 182168;
-    Timeout = @"00:15:00";
-}
-
-scenario CaptureMetadata
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Screenshotting.ScreenshottingSmoke.CaptureMetadata;
-    RevertAgentAfter = true;
-    Area = @"Screenshotting";
-    UniqueId = @"19D00403-EDA4-4794-85C1-F2EB74A1BD4A";
-    TfsId = 737236;
-    Timeout = @"00:15:00";
-}
-
-scenario CaptureScreenshot
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Screenshotting.ScreenshottingSmoke.CaptureScreenshot;
-    RevertAgentAfter = true;
-    Area = @"Screenshotting";
-    UniqueId = @"DD22957F-ACE5-494B-878A-94101F524344";
-    TfsId = 737236;
-    Timeout = @"00:15:00";
-}
-
-scenario SelfDefenceEnabledMoveFiles
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.SelfDefence.SelfDefenceTestsFiles.SelfDefenceEnabledMoveFiles;
-    Area = @"SelfDefence";
-    UniqueId = @"E81E677B-B7C1-40A1-9EE6-BECD4BBA33FD";
-    TfsId = 187685;
-    Timeout = @"00:15:00";
-}
-
-scenario ProductDisablesPupInCheckboxWhenSccEnabledX86
-{
-    deployment Deploy_Backdoor;
-    environments (win811-x86, KAVKIS);
-    method Autotest.Kis.Suites.SysChangeControl.InstallationAssistantPupCheckboxX86Tests.ProductDisablesPupInCheckboxWhenSccEnabledX86;
-    Area = @"SysChangeControl";
-    UniqueId = @"0FC90012-0FC4-42B0-90B5-AC2789FB3DE2";
-    TfsId = 1682717;
-    Timeout = @"00:15:00";
-}
-
-scenario ProductShowsAlertWhenUserTryingToInstallPupX86
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SysChangeControl.InstallationAssistantPupButtonX86Tests.ProductShowsAlertWhenUserTryingToInstallPupX86;
-    Area = @"SysChangeControl";
-    UniqueId = @"425FCB8C-7F97-45DD-AFE7-C92C534A2338";
-    TfsId = 1682719;
-    Timeout = @"00:15:00";
-}
-
-scenario BssStabilityTestMock
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SystemWatcher.BssStabilityKsnMockTests.BssStabilityTestMock;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"SystemWatcher";
-    UniqueId = @"28FFAEC1-4534-45B6-A259-739668BC81D2";
-    TfsId = 1879219;
-    Timeout = @"00:15:00";
-}
-
-scenario ExactBssDetectAutoActionNoRollback
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.SystemWatcher.SystemWatcherTests.ExactBssDetectAutoActionNoRollback;
-    Area = @"SystemWatcher";
-    UniqueId = @"FB2B8643-0F4A-4C82-861C-A4FCEF7E013C";
-    TfsId = 181503;
-    Timeout = @"00:15:00";
-}
-
-scenario RunUtilityFromUntrustedSourceMock
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SystemWatcher.SystemWatcherKsnMockTests.RunUtilityFromUntrustedSourceMock;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"SystemWatcher";
-    UniqueId = @"B42C8C49-67A7-457F-B23E-C00D5992291A";
-    TfsId = 181477;
-    Timeout = @"00:15:00";
-}
-
-scenario WhitelistDetectAutoActionMock
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.SystemWatcher.SystemWatcherKsnMockTests.WhitelistDetectAutoActionMock;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"SystemWatcher";
-    UniqueId = @"D4974C21-6E2E-45E4-B506-1E183A3542EB";
-    TfsId = 181512;
-    Timeout = @"00:15:00";
-}
-
-scenario DistinguishModulesLoads
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Tam.TamTests.DistinguishModulesLoads;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Area = @"Tam";
-    UniqueId = @"1215EDD9-B686-40C5-A380-6B590B343B27";
-    TfsId = 846251;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckDetectedThreatsActions
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ThreatsManager.ThreatsManagerTestsBvtPvt.CheckDetectedThreatsActions;
-    Area = @"ThreatsManager";
-    UniqueId = @"D2D6A6CE-5DE7-4355-9726-7E50816E2E68";
-    TfsId = 187473;
-    Timeout = @"00:15:00";
-}
-
-scenario IgnoreDetectedThreats
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ThreatsManager.ThreatsManagerTestsBvtPvt.IgnoreDetectedThreats;
-    Area = @"ThreatsManager";
-    UniqueId = @"C24A74B9-DBF2-4681-8EF4-E4AB38F394C8";
-    TfsId = 184530;
-    Timeout = @"00:15:00";
-}
-
-scenario RestoreUncurableArchivesFromQuarantine
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ThreatsManager.QuarantineFixture.RestoreUncurableArchivesFromQuarantine;
-    Area = @"ThreatsManager";
-    UniqueId = @"1A33A4EB-B769-4DBC-93E9-5D7CFE18ECC0";
-    TfsId = 185784;
-    Timeout = @"00:15:00";
-}
-
-scenario CommercialLicenseChange
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.License.UCPMockTests.UcpLicenseTests.CommercialAfterTrial;
-    RevertAgentBefore = true;
-    Area = @"UCPMockTests";
-    UniqueId = @"EB78DEC4-A5CF-4010-B6A4-57B85999EF66";
-    TfsId = 181234;
-    Timeout = @"00:15:00";
-}
-
-scenario AntiPhishingSearchByLinkSmoke
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.WebAv.WebAvCommonTests.AntiPhishingSearchByLinkSmoke;
-    RevertAgentAfter = true;
-    RequireInternet = true;
-    Area = @"WebAv";
-    UniqueId = @"BAB44989-98DC-4A38-BAA8-75870BE4A894";
-    TfsId = 187941;
-    Timeout = @"00:10:00";
-}
-
-scenario CheckIconOnExternalUrl
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.WebAv.WebAvUrlAdvisorTests.CheckIconOnExternalUrl;
-    RequireInternet = true;
-    Area = @"WebAv";
-    UniqueId = @"7179E53F-F7A6-445A-BC2B-365C8097D553";
-    TfsId = 183954;
-    Timeout = @"00:10:00";
-}
-
-scenario HttpDetectEicarFileLessThan1MbBlock
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.WebAv.WebAvCommonTests.HttpDetectEicarFileLessThan1MbBlock;
-    RevertAgentAfter = true;
-    RequireInternet = true;
-    Area = @"WebAv";
-    UniqueId = @"77D890BD-593D-4ADD-9AF6-C516027095AE";
-    TfsId = 182884;
-    Timeout = @"00:10:00";
-}
-
-scenario WmufSearchByHashSmoke
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.WebAv.WebAvCommonTests.WmufSearchByHashSmoke;
-    RevertAgentAfter = true;
-    RequireInternet = true;
-    Area = @"WebAv";
-    UniqueId = @"C5C953A8-7F4F-41B1-8FEE-D220F34B7FED";
-    TfsId = 183836;
-    Timeout = @"00:10:00";
-}
-
-scenario DetectionOnDemandScanHeuristicAnalysisMedium
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Avs.ScanHeuristicAnalysisTests.DetectionOnDemandScanHeuristicAnalysisMedium;
-    Area = @"Avs";
-    UniqueId = @"7DAA02C9-814A-4670-879A-F5C55A4946DC";
-    TfsId = 187917;
-    Timeout = @"00:15:00";
-}
-
-scenario WindowsConfigProblemFix
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.AVZ.AvzWindowsConfigTests.WindowsConfigProblemFix;
-    Area = @"AVZ";
-    UniqueId = @"DBA2CD3F-4487-492A-9DA5-503D0838E35B";
-    TfsId = 186314;
-    Timeout = @"00:15:00";
-}
-
-scenario BackupAllFilesFromMyDocumentsAndDesktop
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Backup.BackupMyDocumentsAndDesktopTests.BackupAllFilesFromMyDocumentsAndDesktop;
-    Area = @"Backup";
-    UniqueId = @"59BFF7EF-EBFE-4A13-AC00-BBBE7ABE8CF1";
-    TfsId = 1042345;
-    Timeout = @"00:15:00";
-}
-
-scenario VaultCreationAndPasswordChanging
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Encryption.EncryptionPasswordChanging.VaultCreationAndPasswordChanging;
-    Area = @"Encryption";
-    UniqueId = @"E540787C-4767-4916-A520-EB2E3A73C62B";
-    TfsId = 1058553;
-    Timeout = @"00:15:00";
-}
-
-scenario ShredFileQuick
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.FileShredder.FileShredderTests.ShredFileQuick;
-    Area = @"FileShredder";
-    UniqueId = @"4DA1A1A1-9C55-47D1-AC74-7464552D972F";
-    TfsId = 1065393;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckBannedComputerList
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Firewall.IntrusionDetectionSystem.CheckBannedComputerList;
-    Area = @"Firewall";
-    UniqueId = @"F90AED43-B9DC-4508-9EA1-B4A396C457C1";
-    TfsId = 187374;
-    Timeout = @"00:15:00";
-}
-
-scenario EnableProtection
-{
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.GUI.ProblemListTests.EnableProtection;
-    Area = @"GUI";
-    UniqueId = @"FE4C1475-F4E4-4E38-A63F-1B21FCA338F3";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: fe4c1475-f4e4-4e38-a63f-1b21fca338f3
+    method Autotest.App2.Suites.GUI.ProblemListTests.EnableProtection;
+    UniqueId = "84936fc7-263c-4ede-b1dc-dbfbde1c71d0";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
     TfsId = 187597;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
 }
 
-scenario CreateFiles
+scenario VideoPlayerWithGamingProfile-2307
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Hips.HipsCreateFilesTests.CreateFiles;
-    Area = @"Hips";
-    UniqueId = @"33399D59-A145-4788-B036-EC27C4F95AE2";
-    TfsId = 186453;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: de19f2e9-ed84-4c6c-b14a-87759893b027
+    method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
+    UniqueId = "8dc732fa-ebe1-4222-974f-fbba3b924656";
+    RevertAgentAfter  = true;
+    Timeout = "00:40:00";
+    Area = "GUI";
+    TfsId = 186283;
 }
 
-scenario StartOtherProcessSmoke
+scenario App1_MainWindowOpened-2308
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Hips.HipsTestsProcessInteraction.StartOtherProcessSmoke;
-    Area = @"Hips";
-    UniqueId = @"581370DA-8DB5-42BE-8397-94B08E809FE8";
-    TfsId = 186940;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 71fe4326-c511-45f4-99f4-394bf0940a41
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_MainWindowOpened;
+    UniqueId = "1541e689-233f-471c-b25a-676d9e2bc4ad";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckRetrievePhishing
+scenario App1_AdditionalToolsContextMenu-2309
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Imav.ImavTests.CheckRetrievePhishing;
-    Area = @"Imav";
-    UniqueId = @"B39E654C-CE2B-4AB6-8E3A-89E6D31EB11F";
-    TfsId = 183765;
-    RevertAgentAfter = true;
-    NeedUnsignedAgent = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 78ac9764-8ff7-408c-a80a-2d8169fb49ad
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_AdditionalToolsContextMenu;
+    UniqueId = "e3f2f9ec-66ca-45da-afea-b8b20e1387c4";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckAvpDumps
+scenario App1_UcpWelcomePageShownWhenManagementConsoleInvoked-2310
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckAvpDumps;
-    Area = @"Installation";
-    UniqueId = @"F63603DE-0BEE-440B-B0D8-E26D34640338";
-    TfsId = 241237;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 14872a47-b7e5-4900-a922-57466419d0b8
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_UcpWelcomePageShownWhenManagementConsoleInvoked;
+    UniqueId = "73669940-9c91-4b24-ab80-e22188486e0c";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckAvpProcesses
+scenario App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked-2311
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationTests.CheckAvpProcesses;
-    Area = @"Installation";
-    UniqueId = @"44E3B89A-9E88-43D3-8CEC-C0CCCE0BD143";
-    TfsId = 814554;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 8248eb6d-b28e-49e0-8137-cbadfaa07fc6
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked;
+    UniqueId = "12c1732e-d842-40a8-bf74-ab6cf9ee593c";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckComponentsStatus
+scenario App1_QuarantineViewShownWhenQuarantineFeatureInvoked-2312
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckComponentsStatus;
-    Area = @"Installation";
-    UniqueId = @"186CC1FC-A663-4589-9E8B-CFBB0F373AB1";
-    TfsId = 241245;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 95ebde18-b228-430b-86a2-4a850535cdf7
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_QuarantineViewShownWhenQuarantineFeatureInvoked;
+    UniqueId = "4a62aa65-19d0-4918-84f5-5aeb12778f31";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckFilesAndFoldersExists
+scenario App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked-2313
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckFilesAndFoldersExists;
-    Area = @"Installation";
-    UniqueId = @"FEA5AF30-D0DC-4ED8-850E-8E568DE19367";
-    TfsId = 186770;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 22c0c72c-7603-4e17-9a76-b1decf105539
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked;
+    UniqueId = "209c9bee-d2ba-461e-b317-cc89354717f5";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckNdisFilter
+scenario App1_BrowserConfigurationWizardShownWhenBrowserConfigurationFeatureInvoked-2314
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationTests.CheckNdisFilter;
-    Area = @"Installation";
-    UniqueId = @"062CFC64-0C23-4194-96F0-548A7020E13A";
-    TfsId = 814562;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: a09f50f1-1612-45e9-b2c4-e25a73616376
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_BrowserConfigurationWizardShownWhenBrowserConfigurationFeatureInvoked;
+    UniqueId = "15996c3b-5308-40fb-99cc-999442536451";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckRegistryKeysExists
+scenario App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked-2315
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckRegistryKeysExists;
-    Area = @"Installation";
-    UniqueId = @"4C3C0781-37F2-48FC-9B48-F2DB2B6DF247";
-    TfsId = 186576;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: d33c9c3e-06c4-4d2b-8712-a7f6618cc2b4
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked;
+    UniqueId = "c660e7e6-2851-41d8-9073-403056e99ef5";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckStartAndStopProduct
+scenario App1_BrowserOpenWhenRescueDiskFeatureInvoked-2316
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckStartAndStopProduct;
-    Area = @"Installation";
-    UniqueId = @"F5A9A511-1FEA-4835-85F8-51E1FDE31A31";
-    TfsId = 180698;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: d531015c-67ad-493a-a3f9-ce26d3f1e42b
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_BrowserOpenWhenRescueDiskFeatureInvoked;
+    UniqueId = "57c4f5f9-a857-4b82-9582-a76930718a93";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario CheckTraceWriting
+scenario App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked-2317
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.InstallationSecondPartTests.CheckTraceWriting;
-    Area = @"Installation";
-    UniqueId = @"D3641601-6852-48A9-AA2D-21EA9F4E47D9";
-    TfsId = 241239;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 5d3317bb-e7b7-42ac-a3d4-18f6429788f7
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked;
+    UniqueId = "82775f7a-b66d-424c-87f8-e846bd30b136";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario UninstallProductWithReboot
+scenario App1_AdditionalToolsCheckHelpButton-2318
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Installation.UninstallationTests.UninstallProductWithReboot;
-    AllowReboot = true;
-    Area = @"Installation";
-    UniqueId = @"EE4ECA0C-7BC9-4ECD-868A-968DD8687064";
-    TfsId = 241267;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: aad48c84-f262-49ae-88f9-b7c10f9dd5c0
+    method Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_AdditionalToolsCheckHelpButton;
+    UniqueId = "01409573-19e8-4dd0-8d72-c8941c5196b1";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171078;
 }
 
-scenario IpmWithActivation
+scenario App1_AllProductProcessClosedWhenExitItemClicked-2319
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KSOS__PURE__PURE_Webpack);
-    method Autotest.Kis.Suites.Ipm.IpmSmokeTests.IpmWithActivation;
-    Area = @"Ipm";
-    UniqueId = @"1060FD55-6134-4E45-899F-5A580E8798FD";
-    TfsId = 182043;
-    RevertAgentBefore = true;
-    Timeout = @"00:10:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: bf50cdb1-f988-4958-9b88-a746865fc66e
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_AllProductProcessClosedWhenExitItemClicked;
+    UniqueId = "235bd904-a78f-430a-b068-bb29d442dc96";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario UpdateFromLocalFolder
+scenario App1_CheckContextMenuContent-2320
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.KashellSuite.KashellUpdateTests.UpdateFromLocalFolder;
-    Area = @"KashellSuite";
-    UniqueId = @"C71E2BC2-F5ED-43D9-BB3E-7DAF2DC97673";
-    TfsId = 2206798;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 6d327fde-b7ab-41c8-9019-19c26052af8d
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_CheckContextMenuContent;
+    UniqueId = "4ff3d7f5-afe2-42e6-9053-b187f5c969dd";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario ChangeStateFileAntivirusMock
+scenario App1_CheckContextMenuPauseProtection-2321
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ManagementConsole.ManagementConsoleProtectionComponentsMockTests.ChangeStateFileAntivirusMock;
-    Area = @"ManagementConsole";
-    UniqueId = @"C24B2BB2-40BF-4B9A-9D97-CB09A6494F6F";
-    TfsId = 879655;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: d207f896-b67d-4e0c-8ccb-c8f69eb87062
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_CheckContextMenuPauseProtection;
+    UniqueId = "67caae98-54e8-405c-a7eb-bb91dc4573d5";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario InteractiveActionMixed
+scenario App1_CheckContextMenuProductBold-2322
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Oas.OasTestsActionCheck.InteractiveActionMixed;
-    Area = @"Oas";
-    UniqueId = @"C8DF6664-B354-4FFB-A42B-AA266B209CD5";
-    TfsId = 186001;
-    Timeout = @"01:00:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 8a88c1ec-83f0-4e85-b5ff-b49b088ae20d
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_CheckContextMenuProductBold;
+    UniqueId = "8ec99e15-57c8-4039-a7f5-63e188accbd6";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario ScanByFormat
+scenario App1_CheckContextMenuResumeProtection-2323
 {
-    deployment Deploy_Backdoor_Without_AppVerifier;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Oas.OasTestsSecondPart.ScanByFormat;
-    Area = @"Oas";
-    UniqueId = @"8F7E9648-B047-4FD1-9E61-355688828163";
-    TfsId = 187454;
-    Timeout = @"00:30:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: f9a6259c-cc6c-455b-abc7-4a74d0592581
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_CheckContextMenuResumeProtection;
+    UniqueId = "b55563cc-d899-40fb-89b4-952258a5b762";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario ScanEmailObjectsSignature
+scenario App1_ContextMenuAppearsWhenRightClickOnTrayIcon-2324
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Ods.KashellScanEmailObjectsTests.ScanEmailObjectsSignature;
-    Area = @"Ods";
-    UniqueId = @"4999ECEC-F1CD-4B02-9E0A-601F57DDE0E0";
-    TfsId = 2206641;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 480128aa-6db2-49f2-831b-19b96c14b23b
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_ContextMenuAppearsWhenRightClickOnTrayIcon;
+    UniqueId = "19d9b46c-dafc-4443-b78f-8c982866b452";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario ScanVulnerabilityClear
+scenario App1_IconAppearsWhenProductStarted-2325
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Ods.KashellScanVulnerabilityTests.ScanVulnerabilityClear;
-    Area = @"Ods";
-    UniqueId = @"391C869F-32E1-43D7-BAAB-FDFE0442D13C";
-    TfsId = 2206599;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: a19398a6-d644-42a5-841a-39eb460ee4f2
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_IconAppearsWhenProductStarted;
+    UniqueId = "aa6344ca-db90-4474-9318-ed49cde02ff2";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario EnableParentalControl
+scenario App1_MainWindowFocusedWhenDoubleLeftClick-2326
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ParentalControl.ParentalControlTests.EnableParentalControl;
-    Area = @"ParentalControl";
-    UniqueId = @"F76463EC-78FF-460F-AF4A-607DFC721B35";
-    TfsId = 186737;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 95812819-5c13-4fc0-9148-a9e06ecf477f
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_MainWindowFocusedWhenDoubleLeftClick;
+    UniqueId = "7bbe686b-436d-41bb-995c-a65fd766030e";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario ScreenshotKeyboardEventUnderSafeBrowser
+scenario App1_MainWindowFocusedWhenOneLeftClick-2327
 {
-    deployment Deploy_Backdoor;
-    environments (win7-x64__win811-x86, KAVKIS);
-    method Autotest.Kis.Suites.SafeBanking.ScreenshotTests.ScreenshotKeyboardEventUnderSafeBrowser;
-    Area = @"SafeBanking";
-    UniqueId = @"7958499D-2687-4A2F-A0A9-00A5AD4DD9B4";
-    TfsId = 235533;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 9924e8ec-bd28-4bfa-a756-d0044921485d
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_MainWindowFocusedWhenOneLeftClick;
+    UniqueId = "04fbaf85-9758-4812-b074-9a3e24cb2df9";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario StartSafeBrowsingFromProduct
+scenario App1_MainWindowOpenedWhenDoubleLeftClick-2328
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SafeBanking.WebAvSafeBankingTests.StartSafeBrowsingFromProduct;
-    Area = @"SafeBanking";
-    UniqueId = @"CA194858-D0B8-4CBE-80F5-97BA32A8EA79";
-    TfsId = 182165;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 228f757a-073a-46f7-9363-0e3e84c3aaec
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_MainWindowOpenedWhenDoubleLeftClick;
+    UniqueId = "c2dafc93-0f3e-4692-8f71-3a6e954792f7";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario SelfDefenceDisabledMoveFiles
+scenario App1_MainWindowOpenedWhenOneLeftClick-2329
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.SelfDefence.SelfDefenceTestsFiles.SelfDefenceDisabledMoveFiles;
-    Area = @"SelfDefence";
-    UniqueId = @"68B3E6EE-D416-4A6D-833B-615348783924";
-    TfsId = 187417;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 7efe1aef-d88c-40d9-91f0-b0b58bb77bf7
+    method Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_MainWindowOpenedWhenOneLeftClick;
+    UniqueId = "329ff034-6323-40c3-bf3c-fbdc6b415dad";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 187341;
 }
 
-scenario SelfDefenceEnabledKillGuiService
+scenario App1_CheckMainWindowOpened-2330
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.SelfDefence.SelfDefenceEnableTestsService.SelfDefenceEnabledKillGuiService;
-    Area = @"SelfDefence";
-    UniqueId = @"A21D04EF-89D9-4B2C-B1B8-18E29816B751";
-    TfsId = 187686;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: cfc47e74-81c4-4bb8-bd59-7ddae3665859
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckMainWindowOpened;
+    UniqueId = "c487d6f2-1791-4a1f-b864-59b5db95955f";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
 }
 
-scenario SystemRestart
+scenario App1_CheckUpperPanelProductName-2331
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Stress.SystemRestartStressTests.SystemRestart;
-    AllowReboot = true;
-    Area = @"Stress";
-    UniqueId = @"49374E76-AB0B-4A9D-AD6D-BB5E33B38080";
-    TfsId = 790602;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 3affd067-c896-4d4c-8c93-62e51697ccad
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelProductName;
+    UniqueId = "c57b1b1d-2ca2-446a-a6b8-31a340ef3e7b";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
 }
 
-scenario ProcessLaunchingDetectWithOnlySw
+scenario App1_CheckUpperPanelHelpButton-2332
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.SystemWatcher.SystemWatcherTests.ProcessLaunchingDetectWithOnlySw;
-    Area = @"SystemWatcher";
-    UniqueId = @"A34569D6-AF65-436B-9212-C31871A43181";
-    TfsId = 181488;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 37c93c5f-3a71-43bb-8471-62b26d4a208a
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelHelpButton;
+    UniqueId = "409450c0-8834-4e83-a58a-8a2c7d1bb83d";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
 }
 
-scenario InventoryOfDifferentFileFormats
+scenario App1_CheckUpperPanelCloseButton-2333
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Tam.TamTests.InventoryOfDifferentFileFormats;
-    Area = @"Tam";
-    UniqueId = @"3A2CF8B5-E60F-47C6-B6CE-9487D2DB1DBD";
-    TfsId = 301486;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: dda2cd6e-4f41-467a-8574-e227acd5d05a
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelCloseButton;
+    UniqueId = "7aee0b2e-e5bc-498c-8d2a-3abdfd9ce4b4";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
 }
 
-scenario RestoreSuspiciousArchivesFromQuarantine
+scenario App1_CheckUpperPanelMinimizeButton-2334
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.ThreatsManager.QuarantineFixture.RestoreSuspiciousArchivesFromQuarantine;
-    Area = @"ThreatsManager";
-    UniqueId = @"D94617CA-0FD5-4DC1-B67D-964DA20D32B5";
-    TfsId = 185784;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: cbdb1944-479e-47e5-a3eb-8a9658b0d22c
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelMinimizeButton;
+    UniqueId = "c9efe13a-fc56-44c2-9631-770d867d7c62";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
 }
 
-scenario ManagementConsole
+scenario App1_CheckProtectionStatusGreen-2335
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.UCP.UCPMockTests.UcpCommonTests.ManagementConsole;
-    Area = @"UCPMockTests";
-    UniqueId = @"545CE1D2-8394-42F3-B621-35568588DC96";
-    TfsId = 894109;
-    RevertAgentAfter = true;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 45f64e88-a647-4885-b780-9d2a7a7a1372
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusGreen;
+    UniqueId = "8977b2b7-c004-419e-be23-cee6297aa36f";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
 }
 
-scenario InteractiveProtection
+scenario App1_CheckProtectionStatusYellow-2336
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.GUI.InteractiveProtectionTests.InteractiveProtection;
-    Area = @"GUI";
-    UniqueId = @"AF2D63E4-5A94-4D05-B376-B0DEBC3CC25F";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 95939d97-2e20-447d-a1ca-d2fb3393c7d5
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusYellow;
+    UniqueId = "a7cc0aae-d434-4aa6-ab09-abb8984bc66c";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckProtectionStatusRed-2337
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: dc154ebf-b80e-4ddc-a820-75723d79d44a
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusRed;
+    UniqueId = "0800a535-9081-4ab2-899e-c8989a8f3233";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckComponentsStatusScan-2338
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: f088d923-a5a9-44e7-8736-6f8883b77bcc
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusScan;
+    UniqueId = "0a630239-5c54-4260-9a67-145609c5bb0f";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckComponentsStatusUpdate-2339
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 9cd74da2-e34d-47d9-9fa8-3db30fca1a75
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusUpdate;
+    UniqueId = "3631c4b0-4274-4047-b7d0-cca2b4740d48";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked-2340
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 5f8591e8-b860-4cb0-bb0e-770044b9edbd
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked;
+    UniqueId = "cb3a57ea-192d-41fd-bbc8-a3356cd24472";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked-2341
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 47719a1d-8a8d-4b4a-898f-7da26b2af681
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked;
+    UniqueId = "336effe9-3009-41f7-afd6-78efa6186cf0";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckComponentsStatusAdditionalTools-2342
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 1b6e0772-cdeb-4ee7-9104-664718ca8dee
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusAdditionalTools;
+    UniqueId = "a29ddfbe-d345-4f5a-b8f6-9cd61dedca2f";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckBottomPanelSettings-2343
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 36d0359e-d002-40ce-a5bd-afaa794d0d20
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelSettings;
+    UniqueId = "7adcfd18-cfaa-431b-b577-147e594d02a0";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckBottomPanelSupport-2344
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: cc82fb61-6377-49dc-9a02-660ed84a0f11
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelSupport;
+    UniqueId = "eeeeb13a-dac2-441c-98c5-f2494a66d014";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckBottomPanelMoreProducts-2345
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 04895c35-74a5-467e-a9c3-e834e24e861a
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelMoreProducts;
+    UniqueId = "c2eacf7b-f49f-44a6-90f7-fef4e82d8ad7";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckBottomPanelMyCompany-2346
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 8e52d305-47b0-4407-9236-fd5a951d6c3a
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelMyCompany;
+    UniqueId = "724b66bb-de70-4d85-96b3-a182ee417aaf";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario App1_CheckBottomPanelLicenseInfo-2347
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: e3e2751e-8d89-4d08-8725-3eeef63d1189
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelLicenseInfo;
+    UniqueId = "a955bab8-caf8-4652-8ef3-aebbcb0dc038";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171073;
+}
+
+scenario CheckApp1_FileProgrammAvailable-2348
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 18d6d845-99a1-4e04-b40d-d4981c04c2f9
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.CheckApp1_FileProgrammAvailable;
+    UniqueId = "bcf2d221-f8b7-41ab-8580-0ae19d1af95a";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario CheckApp1_InstantMessengersProgrammAvailable-2349
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 60ef1b44-0439-4236-bd9f-14c5dfbb6627
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.CheckApp1_InstantMessengersProgrammAvailable;
+    UniqueId = "870fa53b-eb93-40e8-bc1e-8c0bec193cf3";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario CheckApp1_MailProgrammAvailable-2350
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 87eecb2a-3017-4c1b-b11f-f7578ba14a4b
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.CheckApp1_MailProgrammAvailable;
+    UniqueId = "902f0d6b-24e6-4db9-80eb-209af50ada43";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario CheckApp1_MainWindowOpened-2351
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 60ad317d-0130-4d70-b24a-8436f42f81d8
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.CheckApp1_MainWindowOpened;
+    UniqueId = "ddd0bdd7-1bb1-45c1-81f4-e7e401f97fe7";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario CheckApp1_ProtectionSettingsOpened-2352
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: f4c57eda-5089-445d-a8da-879d5f07082e
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.CheckApp1_ProtectionSettingsOpened;
+    UniqueId = "72bde8a6-8d24-449b-ba17-af97d7e23c14";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario CheckApp1_SystemWatcherAvailable-2353
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: baf0ec22-ba3e-4378-a2d5-039c08fbcd88
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.CheckApp1_SystemWatcherAvailable;
+    UniqueId = "b05a1a74-a29d-4b7d-8117-5bd4a03cd702";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario CheckApp1_WebProgrammAvailable-2354
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: a80e4605-fc59-453e-9235-b8b3012838cf
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.CheckApp1_WebProgrammAvailable;
+    UniqueId = "9d6d656e-b69c-4d4c-9019-fb0bcf62a093";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario ComponentDisabledProblemIgnored-2355
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: b091dfc5-dbdf-48a1-8b42-edcfe3fba830
+    method Autotest.App2.Suites.GUI.ComponentDisabledProblemIgnoredTests.ComponentDisabledProblemIgnored;
+    UniqueId = "1c27208c-1b7c-4f93-8050-c3170b1ae224";
+    RevertAgentAfter  = true;
+    Timeout = "00:40:00";
+    Area = "GUI";
+    TfsId = 2159287;
+}
+
+scenario App1_CheckOnlineHelpWhenHelpInProtectionClicked-2356
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: fcddd90b-8b5d-4af3-9d44-ff312cedcfc0
+    method Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.App1_CheckOnlineHelpWhenHelpInProtectionClicked;
+    UniqueId = "92ae2004-0bdc-4d49-9ad7-1448739f5abc";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "App1_";
+    TfsId = 2171108;
+}
+
+scenario InteractiveProtection-2357
+{
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: af2d63e4-5a94-4d05-b376-b0debc3cc25f
+    method Autotest.App2.Suites.GUI.InteractiveProtectionTests.InteractiveProtection;
+    UniqueId = "f3f51cf9-2692-444f-adba-efacd632c2db";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
     TfsId = 185121;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
 }
 
-scenario VerifyDetection
+scenario DefaultPasswordProtectionScope-2358
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc__win2012r2, KAVKIS);
-    method Autotest.Kis.Suites.Ods.OdsTests.VerifyDetection;
-    Area = @"Ods";
-    UniqueId = @"1D0ED9C7-F70C-4E08-BC46-97A4AC9A7B3D";
-    TfsId = 187930;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 02131599-700d-4be5-8028-b1298b90b90e
+    method Autotest.App2.Suites.GUI.PasswordProtectionTestsSuite.DefaultPasswordProtectionScope;
+    UniqueId = "95475de7-9823-492e-9b08-70ff03da9401";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 1963665;
 }
 
-scenario BlockGooglePlus
+scenario PasswordProtectionExistingPassword-2359
 {
-    deployment Deploy_Backdoor;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Dnt.BlockSocialNetworks.BlockGooglePlus;
-    Area = @"Dnt";
-    UniqueId = @"E8DC00CD-72FB-429A-9001-85898EE6CE83";
-    TfsId = 1075086;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: bc22fd4e-23d8-4d06-8861-ce3219ede9e0
+    method Autotest.App2.Suites.GUI.PasswordProtectionTestsSuite.PasswordProtectionExistingPassword;
+    UniqueId = "1822f9d9-5528-48d6-92f2-1dfd2adec2af";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 2204818;
 }
 
-scenario RunCiVisualTests
+scenario PasswordForAllOperations-2360
 {
-    deployment Deploy_Visual;
-    environments (win7-x64, KAVKIS);
-    method Autotest.Kis.Suites.Visual.VisualTests.RunCiVisualTests;
-    Area = @"Visual";
-    UniqueId = @"2BA143A2-7CCA-49B3-86D2-4A8A5120ED19";
-    TfsId = 3019601;
-    Timeout = @"00:15:00";
+    deployment "Install product";
+    environments (platform_group_1, App7);
+    // method guid: 1f573ef9-4632-45b9-94fc-8460387b9b37
+    method Autotest.App2.Suites.GUI.PasswordProtectionTestsSuite.PasswordForAllOperations;
+    UniqueId = "3954235b-5ab4-462a-aaec-b000d91a5f7c";
+    RevertAgentAfter  = true;
+    Timeout = "01:00:00";
+    Area = "GUI";
+    TfsId = 187592;
 }
-
-scenario RunSmokeVisualTests
-{
-    deployment Deploy_Visual;
-    environments (all_pc, KAVKIS);
-    method Autotest.Kis.Suites.Visual.VisualTests.RunSmokeVisualTests;
-    Area = @"Visual";
-    UniqueId = @"B11440C6-3EA9-4B23-A345-2E2A1CD580E0";
-    TfsId = 3019601;
-    Timeout = @"00:15:00";
-}
-
-scenario ExitProductFromTray
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Gui.GuiTests.ExitProductFromTray;
-    Area = @"Gui";
-    UniqueId = @"D72A6E34-F928-406A-BF9B-25AB9358821A";
-    TfsId = 1935131;
-    Timeout = @"00:15:00";
-}
-
-scenario OpenMainWindowFromTray
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Gui.GuiTests.OpenMainWindowFromTray;
-    Area = @"Gui";
-    UniqueId = @"C3D13378-F1EF-44C1-8641-71DCF2B9622D";
-    TfsId = 1935130;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckDownloaderFileSize_KSDE
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.DownloaderSizeTests.CheckDownloaderFileSize;
-    Area = @"Installation";
-    UniqueId = @"D560243B-D537-4AF2-801F-C7E2A0479337";
-    TfsId = 1698119;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckDumps
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckDumps;
-    Area = @"Installation";
-    UniqueId = @"06C825BB-DB2D-4B31-A1E3-F60A8E31C2B8";
-    TfsId = 1582284;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckInstallationGui_KSDE
-{
-    deployment Deploy_NoInstall;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckInstallationGui;
-    Area = @"Installation";
-    UniqueId = @"C98214FB-B928-42D0-9119-55734F09A983";
-    TfsId = 1582253;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckProcess
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckProcess;
-    Area = @"Installation";
-    UniqueId = @"E8D1D399-1BC3-4D21-9B4B-E7B187EF5E8C";
-    TfsId = 1582280;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckProductFilesAndFolders
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckProductFilesAndFolders;
-    Area = @"Installation";
-    UniqueId = @"E41AFE92-396A-4627-82A5-BA4C73268033";
-    TfsId = 1582408;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckProductRegistry
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckProductRegistry;
-    Area = @"Installation";
-    UniqueId = @"7637BEEF-E818-4824-8478-C860B81A44D5";
-    TfsId = 1583119;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckServiceState
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckServiceState;
-    Area = @"Installation";
-    UniqueId = @"F633D57E-A193-4314-9AE8-07E3BFF9FC6F";
-    TfsId = 1582268;
-    RevertAgentBefore = true;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckShortcuts
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckShortcuts;
-    Area = @"Installation";
-    UniqueId = @"D269B89B-CE80-43B3-8920-BE9630692925";
-    TfsId = 1582273;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckSilentMode
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckSilentMode;
-    Area = @"Installation";
-    UniqueId = @"8A677A2E-7FFA-46C8-B829-9DBB08149C80";
-    TfsId = 1583270;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckStartStopProcess
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckStartStopProcess;
-    Area = @"Installation";
-    UniqueId = @"CFDD83E0-570A-40D7-8893-06A148D66AA3";
-    TfsId = 1582290;
-    Timeout = @"00:15:00";
-}
-
-scenario CheckTraces
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.InstallationTests.CheckTraces;
-    Area = @"Installation";
-    UniqueId = @"95FCFC15-5F76-40E8-BF69-928F27BE6217";
-    TfsId = 1582275;
-    Timeout = @"00:15:00";
-}
-
-scenario UninstallProductWithReboot_KSDE
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Installation.UninstallationTests.UninstallProductWithReboot;
-    AllowReboot = true;
-    Area = @"Installation";
-    UniqueId = @"65F6712D-BAAA-4D74-A2D5-400062ABF8E8";
-    TfsId = 1582304;
-    RevertAgentAfter = true;
-    Timeout = @"00:15:00";
-}
-
-scenario RunCiVisualTests_KSDE
-{
-    deployment Deploy_Visual;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Visual.VisualTests.RunCiVisualTests;
-    Area = @"Visual";
-    UniqueId = @"C89A6C28-958D-4DD0-B58A-0FFD73025DAB";
-    TfsId = 737236;
-    Timeout = @"00:15:00";
-}
-
-scenario RunSmokeVisualTests_KSDE
-{
-    deployment Deploy_Visual;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.Visual.VisualTests.RunSmokeVisualTests;
-    Area = @"Visual";
-    UniqueId = @"5E15629F-265D-4F65-9980-AFD0044C7C77";
-    TfsId = 737236;
-    Timeout = @"00:15:00";
-}
-
-scenario UpdateFromLocalFolder_KSDE
-{
-    deployment Deploy_KSDE;
-    environments (w10rs4-x64__win7-x64__win811-x86, KSDE);
-    method Autotest.Ksde.Suites.KashellSuite.KashellUpdateTests.UpdateFromLocalFolder;
-    Area = @"KashellSuite";
-    UniqueId = @"8EF18634-F318-4051-95E5-FE04C65937BE";
-    TfsId = 2206798;
-    Timeout = @"00:15:00";
-}
-
-scenario GateTests_KFA =
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckFilesAndFoldersExists,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting;
-
-scenario GateTests_SAAS =
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckFilesAndFoldersExists,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting;
-
-scenario GateTests_KSDE =
-    CheckDumps,
-    CheckProcess,
-    CheckProductFilesAndFolders,
-    CheckProductRegistry,
-    CheckServiceState,
-    CheckSilentMode,
-    CheckStartStopProcess,
-    CheckTraces,
-    UninstallProductWithReboot_KSDE,
-    RunCiVisualTests_KSDE;
-
-scenario GateTests_KSOS_FS =
-    TryDisinfectWithoutRestart,
-    VaultCreationAndPasswordChanging,
-    InteractiveProtection,
-    CreateFiles,
-    StartOtherProcessSmoke,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckFilesAndFoldersExists,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    VerifyDetection,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService;
-
-scenario GateTests_PURE =
-    TryDisinfectWithoutRestart,
-    CheckBlockBannerByUrl,
-    DetectionOnDemandScanHeuristicAnalysisMedium,
-    WindowsConfigProblemFix,
-    BackupAllFilesFromMyDocumentsAndDesktop,
-    VaultCreationAndPasswordChanging,
-    ShredFileQuick,
-    CheckBannedComputerList,
-    EnableProtection,
-    CreateFiles,
-    StartOtherProcessSmoke,
-    CheckRetrievePhishing,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckFilesAndFoldersExists,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    IpmWithActivation,
-    UpdateFromLocalFolder,
-    ChangeStateFileAntivirusMock,
-    InteractiveActionMixed,
-    ScanByFormat,
-    ScanEmailObjectsSignature,
-    ScanVulnerabilityClear,
-    EnableParentalControl,
-    ScreenshotKeyboardEventUnderSafeBrowser,
-    StartSafeBrowsingFromProduct,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SystemRestart,
-    ProcessLaunchingDetectWithOnlySw,
-    InventoryOfDifferentFileFormats,
-    RestoreSuspiciousArchivesFromQuarantine,
-    ManagementConsole,
-    RunCiVisualTests,
-    BlockGooglePlus;
-
-scenario SmokeTests_PURE =
-    TryDisinfectWithoutRestart,
-    CheckBlockBannerByUrl,
-    CheckBlockingBannerOnHttps,
-    CheckBlockingBannersFromWhiteList,
-    CheckBlockingBlackBannersOnWhitePage,
-    AntiPhishingAndKsnCombinedWmufTestMock,
-    CheckCombinedOperationAntiFishingMessage,
-    CheckCombinedOperationAntiFishingVirus,
-    CheckCombinedOperationAntiFishingWmuf,
-    TrafficMonitorEnableDisableEicarHamTest,
-    TrafficMonitorEnableDisableEicarProbableSpamTest,
-    TrafficMonitorEnableDisableEicarSpamTest,
-    DetectionDependingOnEmulationLevelScanFilesMedium,
-    DetectionOnDemandScanHeuristicAnalysisMedium,
-    HeuristicAnalysisHigh,
-    SupportSystemReportAssistance,
-    WindowsConfigProblemFix,
-    BackupAllFilesFromMyDocumentsAndDesktop,
-    DeleteLocalStorageTest,
-    DeleteTaskWithDataFromLocalStorage,
-    DeleteTaskWithoutDataFromLocalStorage,
-    BlockAnalytics,
-    BlockFacebook,
-    BlockGooglePlus,
-    BlockTwitter,
-    CheckCreateDump,
-    CheckSendingDumpOnOneFtpServerTest,
-    DetectAndDeleteThreatsFromVault,
-    VaultCreationAndPasswordChanging,
-    ShredFileInUse,
-    ShredFileQuick,
-    ShredFolderWithFileInUse,
-    ShredNonAccessibleFiles,
-    ShredNonExistentFiles,
-    ShredProgramFiles,
-    ShredSystemFile,
-    AppRuleTcpIpv4BlockedRemoteHostNotInList,
-    CheckBannedComputerList,
-    CheckIdsForTcpIpV4,
-    CheckSilentDetectForTcpIpV4,
-    HighRestrictedGroupOutcomingIcmpIpv4Blocked,
-    PriorityOfNetworkPackageRulesAllow,
-    PriorityOfNetworkPackageRulesBlock,
-    CheckLocalizationFullyTranslated,
-    EnableProtection,
-    InteractiveProtection,
-    SomeComponentsAreDisabled,
-    CreateFiles,
-    DefaultRightForStartProcess,
-    HipsObjectsProcessing,
-    ProcessStartBlocked,
-    ScanKlCategoriesCategorizedObject,
-    ScanKlCategoriesUncategorizedObject,
-    CheckRetrievePhishing,
-    CheckRetrieveWmuf,
-    CheckSendPhishing,
-    CheckSendWmuf,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckImportOfExportedSettings,
-    CheckInstallationGui,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    ImportMaxSettingsFromOlderVersionsKts,
-    ImportMinSettingsFromOlderVersionsKts,
-    ImportOffSettingsFromOlderVersionsKts,
-    IpmWithActivation,
-    UpdateFromLocalFolder,
-    KsnOdsEicarSmoke,
-    ActivateCommercialSmoke,
-    ActivateTrialSmoke,
-    ActivateCommercial,
-    RepeatActualTrialActivation,
-    DetectAllTypesOfBodyEicar,
-    DetectAllTypesOfEicar,
-    ChangeStateFileAntivirusMock,
-    SendInfoApplicationControlMock,
-    ActionNoSuspicious,
-    DetectWithUnpackingLargeCompound,
-    DetectWithoutUnpackingLargeCompound,
-    InteractiveActionMixed,
-    ScanByFormat,
-    ScanFilesByExtension,
-    ScanEmailObjectsHeuristic,
-    ScanEmailObjectsSignature,
-    ScanVulnerabilityAllDetection,
-    ScanVulnerabilityClear,
-    ScanVulnerabilityPartialDetection,
-    VerifyDetection,
-    BadWordsInMetaDescriptionViaInternetExplorer,
-    EnableParentalControl,
-    StartApplicationFromWhiteList,
-    StartBlockedApplication,
-    ScreenshotCreateDcUnderSafeBrowser,
-    ScreenshotCreateDcUnderUnsafeBrowser,
-    ScreenshotKeyboardEventUnderSafeBrowser,
-    ScreenshotKeyboardEventUnderUnsafeBrowser,
-    StartSafeBankingFirefox,
-    StartSafeBrowsingFromProduct,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    ProductDisablesPupInCheckboxWhenSccEnabledX86,
-    ProductShowsAlertWhenUserTryingToInstallPupX86,
-    BssStabilityTestMock,
-    ExactBssDetectAutoActionNoRollback,
-    ProcessLaunchingDetectWithOnlySw,
-    RunUtilityFromUntrustedSourceMock,
-    WhitelistDetectAutoActionMock,
-    DistinguishModulesLoads,
-    InventoryOfDifferentFileFormats,
-    CheckDetectedThreatsActions,
-    IgnoreDetectedThreats,
-    RestoreSuspiciousArchivesFromQuarantine,
-    RestoreUncurableArchivesFromQuarantine,
-    CommercialLicenseChange,
-    ManagementConsole,
-    AntiPhishingSearchByLinkSmoke,
-    CheckIconOnExternalUrl,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeWebpackTests_PURE =
-    TryDisinfectWithoutRestart,
-    CheckBlockBannerByUrl,
-    CheckBlockingBannerOnHttps,
-    CheckBlockingBannersFromWhiteList,
-    CheckBlockingBlackBannersOnWhitePage,
-    AntiPhishingAndKsnCombinedWmufTestMock,
-    CheckCombinedOperationAntiFishingMessage,
-    CheckCombinedOperationAntiFishingVirus,
-    CheckCombinedOperationAntiFishingWmuf,
-    TrafficMonitorEnableDisableEicarHamTest,
-    TrafficMonitorEnableDisableEicarProbableSpamTest,
-    TrafficMonitorEnableDisableEicarSpamTest,
-    DetectionDependingOnEmulationLevelScanFilesMedium,
-    DetectionOnDemandScanHeuristicAnalysisMedium,
-    HeuristicAnalysisHigh,
-    SupportSystemReportAssistance,
-    WindowsConfigProblemFix,
-    BackupAllFilesFromMyDocumentsAndDesktop,
-    DeleteLocalStorageTest,
-    DeleteTaskWithDataFromLocalStorage,
-    DeleteTaskWithoutDataFromLocalStorage,
-    BlockAnalytics,
-    BlockFacebook,
-    BlockGooglePlus,
-    BlockTwitter,
-    CheckCreateDump,
-    CheckSendingDumpOnOneFtpServerTest,
-    DetectAndDeleteThreatsFromVault,
-    VaultCreationAndPasswordChanging,
-    ShredFileInUse,
-    ShredFileQuick,
-    ShredFolderWithFileInUse,
-    ShredNonAccessibleFiles,
-    ShredNonExistentFiles,
-    ShredProgramFiles,
-    ShredSystemFile,
-    AppRuleTcpIpv4BlockedRemoteHostNotInList,
-    CheckBannedComputerList,
-    CheckIdsForTcpIpV4,
-    CheckSilentDetectForTcpIpV4,
-    HighRestrictedGroupOutcomingIcmpIpv4Blocked,
-    PriorityOfNetworkPackageRulesAllow,
-    PriorityOfNetworkPackageRulesBlock,
-    CheckLocalizationFullyTranslated,
-    EnableProtection,
-    InteractiveProtection,
-    SomeComponentsAreDisabled,
-    CreateFiles,
-    DefaultRightForStartProcess,
-    HipsObjectsProcessing,
-    ProcessStartBlocked,
-    ScanKlCategoriesCategorizedObject,
-    ScanKlCategoriesUncategorizedObject,
-    CheckRetrievePhishing,
-    CheckRetrieveWmuf,
-    CheckSendPhishing,
-    CheckSendWmuf,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckImportOfExportedSettings,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    ImportMaxSettingsFromOlderVersionsKts,
-    ImportMinSettingsFromOlderVersionsKts,
-    ImportOffSettingsFromOlderVersionsKts,
-    IpmWithActivation,
-    UpdateFromLocalFolder,
-    KsnOdsEicarSmoke,
-    ActivateCommercialSmoke,
-    ActivateTrialSmoke,
-    ActivateCommercial,
-    RepeatActualTrialActivation,
-    DetectAllTypesOfBodyEicar,
-    DetectAllTypesOfEicar,
-    ChangeStateFileAntivirusMock,
-    SendInfoApplicationControlMock,
-    ActionNoSuspicious,
-    DetectWithUnpackingLargeCompound,
-    DetectWithoutUnpackingLargeCompound,
-    InteractiveActionMixed,
-    ScanByFormat,
-    ScanFilesByExtension,
-    ScanEmailObjectsHeuristic,
-    ScanEmailObjectsSignature,
-    ScanVulnerabilityAllDetection,
-    ScanVulnerabilityClear,
-    ScanVulnerabilityPartialDetection,
-    VerifyDetection,
-    BadWordsInMetaDescriptionViaInternetExplorer,
-    EnableParentalControl,
-    StartApplicationFromWhiteList,
-    StartBlockedApplication,
-    ScreenshotCreateDcUnderSafeBrowser,
-    ScreenshotCreateDcUnderUnsafeBrowser,
-    ScreenshotKeyboardEventUnderSafeBrowser,
-    ScreenshotKeyboardEventUnderUnsafeBrowser,
-    StartSafeBankingFirefox,
-    StartSafeBrowsingFromProduct,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    ProductDisablesPupInCheckboxWhenSccEnabledX86,
-    ProductShowsAlertWhenUserTryingToInstallPupX86,
-    BssStabilityTestMock,
-    ExactBssDetectAutoActionNoRollback,
-    ProcessLaunchingDetectWithOnlySw,
-    RunUtilityFromUntrustedSourceMock,
-    WhitelistDetectAutoActionMock,
-    DistinguishModulesLoads,
-    InventoryOfDifferentFileFormats,
-    CheckDetectedThreatsActions,
-    IgnoreDetectedThreats,
-    RestoreSuspiciousArchivesFromQuarantine,
-    RestoreUncurableArchivesFromQuarantine,
-    CommercialLicenseChange,
-    ManagementConsole,
-    AntiPhishingSearchByLinkSmoke,
-    CheckIconOnExternalUrl,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeTests_SAAS =
-    TryDisinfectWithoutRestart,
-    CheckBlockBannerByUrl,
-    TrafficMonitorEnableDisableEicarSpamTest,
-    DetectAndDeleteThreatsFromVault,
-    VaultCreationAndPasswordChanging,
-    ShredFileQuick,
-    CheckIdsForTcpIpV4,
-    PriorityOfNetworkPackageRulesAllow,
-    PriorityOfNetworkPackageRulesBlock,
-    CheckLocalizationFullyTranslated,
-    InteractiveProtection,
-    CreateFiles,
-    DefaultRightForStartProcess,
-    HipsObjectsProcessing,
-    ProcessStartBlocked,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckInstallationGui,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    KsnOdsEicarSmoke,
-    DetectAllTypesOfEicar,
-    ScanByFormat,
-    VerifyDetection,
-    ScreenshotKeyboardEventUnderSafeBrowser,
-    StartSafeBankingFirefox,
-    StartSafeBrowsingFromProduct,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    ExactBssDetectAutoActionNoRollback,
-    WhitelistDetectAutoActionMock,
-    AntiPhishingSearchByHashBvt,
-    AntiPhishingSearchByLinkBvt,
-    AntiPhishingSearchByLinkSmoke,
-    CheckIconOnExternalUrl,
-    FtpDetectEicarFileLessThan1MbBlock,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeTests_KIS =
-    TryDisinfectWithoutRestart,
-    CheckBlockBannerByUrl,
-    TrafficMonitorEnableDisableEicarSpamTest,
-    CheckIdsForTcpIpV4,
-    PriorityOfNetworkPackageRulesAllow,
-    PriorityOfNetworkPackageRulesBlock,
-    CheckLocalizationFullyTranslated,
-    InteractiveProtection,
-    CreateFiles,
-    DefaultRightForStartProcess,
-    HipsObjectsProcessing,
-    ProcessStartBlocked,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckInstallationGui,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    KsnOdsEicarSmoke,
-    ActivateCommercialSmoke,
-    ActivateTrialSmoke,
-    DetectAllTypesOfEicar,
-    ScanByFormat,
-    VerifyDetection,
-    EnableParentalControl,
-    ScreenshotKeyboardEventUnderSafeBrowser,
-    StartSafeBankingFirefox,
-    StartSafeBrowsingFromProduct,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    ProductDisablesPupInCheckboxWhenSccEnabledX86,
-    ProductShowsAlertWhenUserTryingToInstallPupX86,
-    ExactBssDetectAutoActionNoRollback,
-    WhitelistDetectAutoActionMock,
-    RunSmokeVisualTests,
-    AntiPhishingSearchByLinkSmoke,
-    CheckIconOnExternalUrl,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeTests_KSOS =
-    TryDisinfectWithoutRestart,
-    CheckBlockBannerByUrl,
-    TrafficMonitorEnableDisableEicarSpamTest,
-    DetectAndDeleteThreatsFromVault,
-    VaultCreationAndPasswordChanging,
-    ShredFileQuick,
-    CheckIdsForTcpIpV4,
-    PriorityOfNetworkPackageRulesAllow,
-    PriorityOfNetworkPackageRulesBlock,
-    CheckLocalizationFullyTranslated,
-    InteractiveProtection,
-    CreateFiles,
-    DefaultRightForStartProcess,
-    HipsObjectsProcessing,
-    ProcessStartBlocked,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckInstallationGui,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    KsnOdsEicarSmoke,
-    ActivateCommercialSmoke,
-    ActivateTrialSmoke,
-    DetectAllTypesOfEicar,
-    ScanByFormat,
-    VerifyDetection,
-    EnableParentalControl,
-    ScreenshotKeyboardEventUnderSafeBrowser,
-    StartSafeBrowsingFromProduct,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    ProductDisablesPupInCheckboxWhenSccEnabledX86,
-    ProductShowsAlertWhenUserTryingToInstallPupX86,
-    ExactBssDetectAutoActionNoRollback,
-    WhitelistDetectAutoActionMock,
-    AntiPhishingSearchByLinkSmoke,
-    CheckIconOnExternalUrl,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeTests_KSOS_FS =
-    TryDisinfectWithoutRestart,
-    DetectAndDeleteThreatsFromVault,
-    VaultCreationAndPasswordChanging,
-    ShredFileQuick,
-    CheckIdsForTcpIpV4,
-    PriorityOfNetworkPackageRulesAllow,
-    PriorityOfNetworkPackageRulesBlock,
-    CheckLocalizationFullyTranslated,
-    InteractiveProtection,
-    CreateFiles,
-    DefaultRightForStartProcess,
-    HipsObjectsProcessing,
-    ProcessStartBlocked,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckInstallationGui,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    KsnOdsEicarSmoke,
-    ActivateCommercialSmoke,
-    ActivateTrialSmoke,
-    ScanByFormat,
-    VerifyDetection,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    ExactBssDetectAutoActionNoRollback,
-    WhitelistDetectAutoActionMock,
-    AntiPhishingSearchByLinkSmoke,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeTests_KAV =
-    TryDisinfectWithoutRestart,
-    CheckIdsForTcpIpV4,
-    CheckLocalizationFullyTranslated,
-    InteractiveProtection,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckInstallationGui,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    KsnOdsEicarSmoke,
-    ActivateCommercialSmoke,
-    ActivateTrialSmoke,
-    DetectAllTypesOfEicar,
-    ScanByFormat,
-    VerifyDetection,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    ExactBssDetectAutoActionNoRollback,
-    AntiPhishingSearchByLinkSmoke,
-    CheckIconOnExternalUrl,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeTests_KFA =
-    TryDisinfectWithoutRestart,
-    CheckIdsForTcpIpV4,
-    CheckLocalizationFullyTranslated,
-    InteractiveProtection,
-    CheckAdditionalFilesAndFoldersExists,
-    CheckAdditionalRegistryKeysExists,
-    CheckAvpDumps,
-    CheckAvpProcesses,
-    CheckComponentsStatus,
-    CheckDownloaderFileSize,
-    CheckFilesAndFoldersExists,
-    CheckInstallationGui,
-    CheckNdisFilter,
-    CheckRegistryKeysExists,
-    CheckStartAndStopProduct,
-    CheckTraceWriting,
-    UninstallProductWithReboot,
-    KsnOdsEicarSmoke,
-    DetectAllTypesOfEicar,
-    ScanByFormat,
-    VerifyDetection,
-    CaptureMetadata,
-    CaptureScreenshot,
-    SelfDefenceDisabledMoveFiles,
-    SelfDefenceEnabledKillGuiService,
-    SelfDefenceEnabledMoveFiles,
-    SystemRestart,
-    AntiPhishingSearchByLinkSmoke,
-    CheckIconOnExternalUrl,
-    HttpDetectEicarFileLessThan1MbBlock,
-    WmufSearchByHashSmoke;
-
-scenario SmokeTests_KSDE =
-    ExitProductFromTray,
-    OpenMainWindowFromTray,
-    CheckDownloaderFileSize_KSDE,
-    CheckDumps,
-    CheckInstallationGui_KSDE,
-    CheckProcess,
-    CheckProductFilesAndFolders,
-    CheckProductRegistry,
-    CheckServiceState,
-    CheckShortcuts,
-    CheckSilentMode,
-    CheckStartStopProcess,
-    CheckTraces,
-    UninstallProductWithReboot_KSDE,
-    UpdateFromLocalFolder_KSDE,
-    RunSmokeVisualTests_KSDE;
 
