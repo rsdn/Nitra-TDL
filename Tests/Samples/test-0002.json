@@ -3,7 +3,7 @@
   "Deployments": {
     "Reboot-00:15:00": {
       "Type": "Reboot",
-      "RebootTimeout": "01:15:00"
+      "RebootTimeout": "00:15:00"
     },
     "Update Firefox => Install product => Disable UAC => Reboot": {
       "Type": "Sequence",
