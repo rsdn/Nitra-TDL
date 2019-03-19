@@ -80,9 +80,9 @@ namespace TestRunner
                 }
 
                 if (failed > 0)
-                    PrintError($"{failed} tests failed! All tests took: {timer.Elapsed}");
+                    PrintError($"{failed} tests failed!  Elapsed time: {timer.Elapsed}");
                 else
-                    Print("All tests passed.", ConsoleColor.Green);
+                    Print($"All tests passed. Elapsed time: {timer.Elapsed}", ConsoleColor.Green);
 
                 Directory.Delete(outputDir, recursive: true);
 
