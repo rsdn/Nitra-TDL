@@ -146,7 +146,7 @@ namespace Tdl2Json
             var resultOpt = Tests.Diff(options.OutputFile, options.SampleOutputFile);
             if (resultOpt != null)
             {
-                PrintError("Test failed: The output file not equals with the sample output file.");
+                Print("Test failed: The output file not equals with the sample output file.", ConsoleColor.Red);
                 PrintTestOutputAndSample(options);
                 PrintDiff(resultOpt.ToString());
                 return -4;

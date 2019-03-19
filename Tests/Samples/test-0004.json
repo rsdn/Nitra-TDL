@@ -7,7 +7,7 @@
     },
     "Reboot-00:40:00": {
       "Type": "Reboot",
-      "RebootTimeout": "00:40:00"
+      "RebootTimeout": "01:40:00"
     },
     "Execute_Deploy": {
       "Type": "Script",
