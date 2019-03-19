@@ -59,8 +59,17 @@ namespace Tdl2Json
     public event OnMessage : MessageHandler;
 
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
-      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc, isCommentCollectingEnabled : bool) : TransformationContext
+      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc, isTestMode : bool) : TransformationContext
     {
+      assert(!(isTestMode && transformatorOpt != null));
+      assert(isTestMode || transformatorOpt != null);
+      def mode =
+        match (isTestMode)
+        {
+          | true                             => CompilerMode.Test
+          | _  when transformatorOpt != null => CompilerMode.Transform
+          | _                                => CompilerMode.Compile
+        };
       def absolutePaths = sourceFiles.Map(f => if(Path.IsPathRooted(f)) f else Path.Combine(workingDirectory, f));
 
       def CheckFilesExists(files, messageformatter : string -> string)
@@ -75,11 +84,11 @@ namespace Tdl2Json
 
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
-      def (rootNamespace, messages, commentBag) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled, isCommentCollectingEnabled || transformatorOpt != null);
+      def (rootNamespace, messages, commentBag) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled, mode);
       def context = TransformationContext(rootNamespace, commentBag, messages, transformatorOutput);
       unless (messages.HasErrors)
       {
-        if (transformatorOpt != null)
+        if (mode == CompilerMode.Transform)
           transformatorOpt(context);
         else
           GenerateJson(rootNamespace, output);
@@ -94,21 +103,18 @@ namespace Tdl2Json
       FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")
     ];
 
-    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, isCommentCollectingEnabled : bool) : NamespaceSymbol * CompilerMessageBag * CommentBag
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, mode : CompilerMode) : NamespaceSymbol * CompilerMessageBag * CommentBag
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
       
-      def commentBag = if (isCommentCollectingEnabled) CommentBag() else null;
-
-      def solution = FsSolution();
-      def project  = FsProject(solution, 
-                               directory, 
-                               files.Map(FsFileWithId(_, TdlLang.Instance, commentBag)),
-                               StandardLibraries.Concat(refs.Select(FileLibReference)).ToArray());
-
+      def commentBag     = if (mode == CompilerMode.Compile) null else CommentBag();
+      def solution       = FsSolution();
+      def project        = FsProject(solution, 
+                                     directory, 
+                                     files.Map(FsFileWithId(_, TdlLang.Instance, commentBag)),
+                                     StandardLibraries.Concat(refs.Select(FileLibReference)).ToArray());
       def stopwatch      = Stopwatch.StartNew();
-
-      def projectSupport = ProjectSupport();
+      def projectSupport = ProjectSupport(testMode=true);
       ReportMessage("Loading types from referenced assemblies...");
       def data           = projectSupport.RefreshReferences(CancellationToken.None, project);
       ReportElapsedTime(stopwatch);
@@ -234,6 +240,19 @@ namespace Tdl2Json
       def type         = method.ContainingType :> ITypeDefinition;
       def unit         = TypeHelper.GetDefiningUnit(type);
       def assemblyName = unit.Name.Value + ".dll";
+      
+      def temp         = Path.GetTempPath();
+      def ns           = (method.ContainingType :> Microsoft.Cci.MetadataReader.ObjectModelImplementation.NamespaceType).ContainingNamespace.ToString();
+      def dir          = Path.Combine(temp, "!", ns);
+      unless (Directory.Exists(dir))
+        _ = Directory.CreateDirectory(dir);
+      def className    = (method.ContainingType :> Microsoft.Cci.MetadataReader.ObjectModelImplementation.TypeBase).TypeName.ToString();
+      def file         = Path.Combine(dir, className);
+      def methods = if (File.Exists(file)) HashSet(File.ReadAllLines(file)) else HashSet();
+      def methodName   = method.Name.Value.ToString();
+      _ = methods.Add(methodName);
+      File.WriteAllLines(file, methods.OrderBy(x => x), Text.Encoding.UTF8);
+      
       def methodName   = method.ContainingType + "." + method.Name.Value;
 
       (assemblyName, methodName)

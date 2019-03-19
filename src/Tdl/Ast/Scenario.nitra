@@ -87,16 +87,16 @@ namespace Tdl
         Scenarios.Scope                 = Scope;
         Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
         Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios);
-        Symbol.MultiMachineId           = if (MultiMachineId.HasValue) MultiMachineId.Value else Guid.Empty;
-        Symbol.IsMultiMachine           = Symbol.MultiMachineId != Guid.Empty;
+        Symbol.MultiMachineId           = if (Symbol.IsMultiMachine) context.NewGuid() else Guid.Empty;
+        Symbol.IsMultiMachine           = IsMultiMachine.HasValue && IsMultiMachine.Value;
 
-        when (MultiMachineId.HasValue)
+        when (Symbol.IsMultiMachine)
           CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
 
         CheckUniquenessOfScenarios(context, Symbol, Symbol.AggregateParametersScope);
         SetUsed(Symbol.Scenarios, Symbol.IsUsed);
 
-        MultiMachineId : Guid;
+        IsMultiMachine : bool;
         Scenarios      : Reference*;
       }
     | ignore-case Generator : Container

@@ -1,6 +1,7 @@
 ﻿using Mono.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -36,6 +37,7 @@ namespace Tdl2Json
         public bool ComilerMessagesTest { get; private set; }
 
         public string SampleOutputFile { get; private set; }
+        public bool IsTestMode => ComilerMessagesTest || SampleOutputFile != null;
 
         public CommandLineOptions()
         {
@@ -114,11 +116,10 @@ namespace Tdl2Json
                 throw new OptionException($"Invalid transformer value '{value}'", "transformer");
             }
 
-            var assembly = value.Substring(0, typeSeparatorIndex);
-
+            var assembly  = value.Substring(0, typeSeparatorIndex);
             var typeStart = typeSeparatorIndex + 1;
-            var type = value.Substring(typeStart, methodSeparatorIndex - typeStart);
-            var method = value.Substring(methodSeparatorIndex + 1);
+            var type      = value.Substring(typeStart, methodSeparatorIndex - typeStart);
+            var method    = value.Substring(methodSeparatorIndex + 1);
 
             Transformers.Add((assembly, type, method));
         }
