@@ -17,7 +17,7 @@ namespace TestRunner
             {
                 if (args.Length != 3)
                 {
-                    Print("Usages: TestRunner.exe path-to-test-root-dir path-to-test-samples-dit path-to-dlls-dit");
+                    Print("Usages: TestRunner.exe path-to-test-root-dir path-to-test-samples-dit path-to-dlls-dit", ConsoleColor.Cyan);
                     return -1;
                 }
 
@@ -27,28 +27,28 @@ namespace TestRunner
 
                 if (!Directory.Exists(pathToTetstRootDir))
                 {
-                    Print($"The path-to-test-root-dir ('{pathToTetstRootDir}') does not exists.");
+                    PrintError($"The path-to-test-root-dir ('{pathToTetstRootDir}') does not exists.");
                     return -4;
                 }
 
                 if (!Directory.Exists(pathToTestSamplesDir))
                 {
-                    Print($"The path-to-test-samples-dit ('{pathToTestSamplesDir}') does not exists.");
+                    PrintError($"The path-to-test-samples-dit ('{pathToTestSamplesDir}') does not exists.");
                     return -4;
                 }
 
                 if (!Directory.Exists(pathToDllsDir))
                 {
-                    Print($"The path-to-dlls-dit ('{pathToDllsDir}') does not exists.");
+                    PrintError($"The path-to-dlls-dit ('{pathToDllsDir}') does not exists.");
                     return -4;
                 }
 
+                var timer          = Stopwatch.StartNew();
                 var currentExePath = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
                 var testUtilPath   = Path.Combine(currentExePath, "Tdl2Json.exe");
                 var outputDir      = Path.Combine(Path.GetTempPath(), "Tdl2Json-" + Guid.NewGuid());
                 var dlls           = Path.Combine(pathToDllsDir, "*.dll");
                 var failed             = 0;
-                var separator      = new string('-', 80);
 
                 Directory.CreateDirectory(outputDir);
 
@@ -58,6 +58,8 @@ namespace TestRunner
 
                     if (fileName.Equals("bin", StringComparison.InvariantCultureIgnoreCase))
                         continue;
+
+                    Console.Write(fileName + " ");
 
                     var outputFilePath        = Path.ChangeExtension(Path.Combine(outputDir, fileName), ".json");
                     var sampleFilePath        = Path.ChangeExtension(Path.Combine(pathToTestSamplesDir, fileName), ".json");
@@ -76,13 +78,14 @@ namespace TestRunner
                     if (exitCode < 0)
                     {
                         failed++;
-                        Console.WriteLine(arguments);
+                        //Console.WriteLine(arguments);
                     }
-                    Console.WriteLine(separator);
                 }
 
                 if (failed > 0)
-                    Console.Error.WriteLine($"{failed} tests failed!");
+                    PrintError($"{failed} tests failed! Test took: {timer.Elapsed}");
+                else
+                    Print("All tests passed.", ConsoleColor.Green);
 
                 //Directory.Delete(outputDir, recursive: true);
 
@@ -95,9 +98,20 @@ namespace TestRunner
             }
         }
 
-        private static void Print(string text)
+        private static void Print(string text, ConsoleColor color)
         {
+            var originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.WriteLine(text);
+            Console.ForegroundColor = originalColor;
+        }
+
+        private static void PrintError(string text)
+        {
+            var originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.Error.WriteLine(text);
+            Console.ForegroundColor = originalColor;
         }
     }
 }
