@@ -98,11 +98,26 @@
 
     public sealed class GTestProgram : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
     {
-        [JsonProperty("ProgramName", Required = Required.Always)]
+        [JsonProperty(Required = Required.Always)]
         public string ProgramName { get; set; }
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string[] Arguments { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
+    }
+
+    public sealed class AndroidJava : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string AndroidTestContainer { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string TestFilter { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
+        public string TestRunnerPath { get; set; }
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public int? MaxRebootsCount { get; set; }

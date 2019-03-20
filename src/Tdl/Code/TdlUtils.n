@@ -270,9 +270,14 @@ namespace Tdl
       if (valueOpt.HasValue) valueOpt.Value.Value else ParsedValue(valueOpt.Span.StartPos)
     }
 
-    public MakeTimeout(valueOpt : DeploymentOption.Timeout.IAstOption) : ParsedValue[string]
+    public ConvertStringLiteral(this valueOpt : DeploymentOption.Timeout.IAstOption) : ParsedValue[string]
     {
       if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value.Value) else ParsedValue(valueOpt.Span.StartPos)
+    }
+
+    public ConvertStringLiteral(this valueOpt : CSharp.StringLiteral.IAstOption) : ParsedValue[string]
+    {
+      if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value) else ParsedValue(valueOpt.Span.StartPos)
     }
 
     public ConvertStringLiteralOrNull(str : CSharp.StringLiteral) : string

@@ -17,30 +17,41 @@ namespace Tdl
     | Script
       {
         ScenarioActions = ScenarioAction.Script(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions), Value);
+          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions), MaxRebootsCountOpt);
 
-        Name        : CSharp.StringLiteral;
-        Arguments   : CSharp.StringLiteral*;
-        Definitions : Definition*;
-        Value       : ParsedValue[int];
+        Name               : CSharp.StringLiteral;
+        Arguments          : CSharp.StringLiteral*;
+        Definitions        : Definition*;
+        MaxRebootsCountOpt : ParsedValue[int];
       }
 
     | Config
       {
-        ScenarioActions = ScenarioAction.Config(Path.Location, TdlUtils.ConvertStringLiteral(Path), Value);
+        ScenarioActions = ScenarioAction.Config(Path.Location, TdlUtils.ConvertStringLiteral(Path), MaxRebootsCountOpt);
 
-        Value                      : ParsedValue[int];
-        Path                       : CSharp.StringLiteral;
+        MaxRebootsCountOpt : ParsedValue[int];
+        Path               : CSharp.StringLiteral;
       }
 
     | GTest
       {
         ScenarioActions = ScenarioAction.GTest(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), Value);
+          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), MaxRebootsCountOpt);
 
-        Name        : CSharp.StringLiteral;
-        Arguments   : CSharp.StringLiteral*;
-        Value       : ParsedValue[int];
+        Name               : CSharp.StringLiteral;
+        Arguments          : CSharp.StringLiteral*;
+        MaxRebootsCountOpt : ParsedValue[int];
+      }
+
+    | Apk
+      {
+        ScenarioActions = ScenarioAction.Apk(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
+          FilterOpt.ConvertStringLiteral(), TdlUtils.ConvertStringLiteral(RunnerPath), MaxRebootsCountOpt);
+
+        Name               : CSharp.StringLiteral;
+        FilterOpt          : CSharp.StringLiteral?;
+        RunnerPath         : CSharp.StringLiteral;
+        MaxRebootsCountOpt : ParsedValue[int];
       }
 
     | Method
@@ -51,10 +62,10 @@ namespace Tdl
         Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = ScenarioAction.Method(Method.Location, MethodRef.Symbol, Value);
+        ScenarioActions         = ScenarioAction.Method(Method.Location, MethodRef.Symbol, MaxRebootsCountOpt);
 
-        Value  : ParsedValue[int];
-        Method : QualifiedReference;
+        MaxRebootsCountOpt : ParsedValue[int];
+        Method             : QualifiedReference;
       }
     | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot

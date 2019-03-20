@@ -561,10 +561,24 @@ namespace JsonToTdl
                     // script "hello_tests.robot" "utf_robot_executor.sh";
                     methods.Add(script);
                 }
+                else if (AcceptProperty("AndroidTestContainer"))
+                {
+                    ExpectString(out var apk);
+                    var filter = "";
+                    if (AcceptProperty("TestFilter"))
+                    {
+                        ExpectString(out filter);
+                        filter = "\r\n        filter " + filter.AsString();
+                    }
+                    ExpectProperty("TestRunnerPath");
+                    ExpectString(out var runnerPath);
+
+                    methods.Add("    apk " + apk.AsString() + filter + "\r\n        runner " + runnerPath.AsString() + ";");
+                }
                 else
                 {
                     ExpectProperty("TestConfigName");
-                    Expect(JsonToken.String, out var value);
+                    ExpectString(out var value);
                     string artifactsCollectionTimeout = null;
                     if (AcceptProperty("ArtifactsCollectionTimeout"))
                     {

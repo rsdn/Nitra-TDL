@@ -61,8 +61,6 @@ namespace Tdl2Json
     public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
       isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc, isTestMode : bool) : TransformationContext
     {
-      assert(!(isTestMode && transformatorOpt != null));
-      assert(isTestMode || transformatorOpt != null);
       def mode =
         match (isTestMode)
         {
@@ -458,6 +456,16 @@ namespace Tdl2Json
                       ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                     }
                 }
+                def makeAndroidJavaAction(c : ScenarioAction.Apk) : AndroidJava
+                {
+                    AndroidJava() <-
+                    {
+                      AndroidTestContainer       = c.Name.Value;
+                      TestFilter                 = c.FilterOpt.ValueOrDefault;
+                      TestRunnerPath             = c.RunnerPath.ValueOrDefault;
+                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                    }
+                }
                 def makeConfigAction(c : ScenarioAction.Config) : TestBot
                 {
                   TestBot() <-
@@ -492,10 +500,11 @@ namespace Tdl2Json
                           Count   = barriersCount.GetValue(b);
                         }
                     }
-                  | Script as s => makeScriptAction(s)
-                  | Config as c => makeConfigAction(c)
-                  | GTest  as g => makeGTestAction(g)
-                  | _ => assert(false, "Unsupported ScenarioAction: " + action)
+                  | Script as s        => makeScriptAction(s)
+                  | Config as c        => makeConfigAction(c)
+                  | GTest  as g        => makeGTestAction(g)
+                  | Apk as a           => makeAndroidJavaAction(a)
+                  | _                  => assert(false, "Unsupported ScenarioAction: " + action)
                 }
                 
                 if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Config)
@@ -504,6 +513,8 @@ namespace Tdl2Json
                   makeScriptAction(r.Actions[0] :> ScenarioAction.Script)
                 else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.GTest)
                   makeGTestAction(r.Actions[0] :> ScenarioAction.GTest)
+                else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Apk)
+                  makeAndroidJavaAction(r.Actions[0] :> ScenarioAction.Apk)
                 else
                   TestMethodSequence() <-
                   {

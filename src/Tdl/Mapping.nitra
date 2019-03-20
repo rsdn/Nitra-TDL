@@ -166,26 +166,37 @@ namespace Tdl
           | None    -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
-        Value = Script.MaxRebootsCountOpt.ToInt();
+        MaxRebootsCountOpt = Script.MaxRebootsCountOpt.ToInt();
       } ]
     | Config   -> 
       [ Action.Config
         {
           Config.Path -> Path;
-          Value       = Config.MaxRebootsCountOpt.ToInt();
+          MaxRebootsCountOpt = Config.MaxRebootsCountOpt.ToInt();
         }
       ]
     | GTest    -> [ Action.GTest
       {
         GTest.Name      -> Name;
         GTest.Arguments -> Arguments;
-        Value = GTest.MaxRebootsCountOpt.ToInt();
+        MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
+      } ]
+    | Apk      -> [ Action.Apk
+      {
+        Apk.Name      -> Name;
+        match (Apk.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        Apk.RunnerPath -> RunnerPath;
+        MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
       } ]
     | Method   -> 
       [ Action.Method
         {
           Method.QualifiedIdentifier -> Method;
-          Value = Method.MaxRebootsCountOpt.ToInt();
+          MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
         }
       ]
     | Sequence -> SequenceActions
@@ -196,7 +207,7 @@ namespace Tdl
     | Method  -> Method
       {
         Method.QualifiedIdentifier -> Method;
-        Value = Method.MaxRebootsCountOpt.ToInt();
+        MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
       }
     | Script ->  Action.Script
       {
@@ -207,18 +218,29 @@ namespace Tdl
           | None -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
-        Value = Script.MaxRebootsCountOpt.ToInt();
+        MaxRebootsCountOpt = Script.MaxRebootsCountOpt.ToInt();
       }
     | Config -> Action.Config
         {
           Config.Path -> Path;
-          Value       = Config.MaxRebootsCountOpt.ToInt();
+          MaxRebootsCountOpt = Config.MaxRebootsCountOpt.ToInt();
         }
     | GTest -> Action.GTest
       {
         GTest.Name      -> Name;
         GTest.Arguments -> Arguments;
-        Value = GTest.MaxRebootsCountOpt.ToInt();
+        MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
+      }
+    | Apk -> Action.Apk
+      {
+        Apk.Name      -> Name;
+        match (Apk.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        Apk.RunnerPath -> RunnerPath;
+        MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
       }
     | Reboot         -> Reboot { }
     | WaitForReboot1 -> WaitForReboot { TimeSpan -> TimeSpan; }
