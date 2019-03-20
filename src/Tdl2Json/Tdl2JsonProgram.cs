@@ -73,10 +73,11 @@ namespace Tdl2Json
                 {
                     var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, isMethodTypingEnabled: true, output: output,
                         transformatorOutput: null, transformatorOpt: null, isTestMode: isTestMode);
-                    Debug.Assert(transformationContext.Comments != null);
 
                     if (isTestMode)
                     {
+                        Debug.Assert(transformationContext.Comments != null);
+
                         if (!TestCompilerMessages(transformationContext, options))
                             return -4;
                         if (output.IsValueCreated && options.SampleOutputFile != null)

@@ -1,0 +1,141 @@
+﻿{
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "Deployments": {
+    "AndroidInstall": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "ScriptPath": "\\\\avp.ru\\Global\\Builds2\\Kaspersky Mobile Security\\Cons-SafeMoney-Mob-SDK\\Android\\Asgard\\ExternalBuild\\5.7.0.1047.3084396\\distrib\\tests\\AndroidInstall.Sdk.ps1",
+      "Timeout": "00:07:00"
+    }
+  },
+  "Platforms": {
+    "w19-droid": {}
+  },
+  "Products": {
+    "MobileSdk": {
+      "Name": "MobileSdk",
+      "Parameters": {
+        "Name": "MobileSdk"
+      },
+      "ReleaseName": "1",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Android": {
+      "Parameters": {},
+      "Platforms": [
+        "w19-droid"
+      ],
+      "Products": [
+        "MobileSdk"
+      ],
+      "TestScenarios": [
+        "AndroidGroup"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "AndroidJavaTestGroupKavsdk": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "TestMethod": {
+        "AndroidTestContainer": "KavSdk-full-debug-androidTest.apk",
+        "TestRunnerPath": "com.kavsdk.test/com.kavsdk.test.TestRunner",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true"
+      },
+      "Timeout": "00:10:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea1"
+    },
+    "AndroidJavaTestGroupKavatintegrationtest": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "TestMethod": {
+        "AndroidTestContainer": "KavAtIntegrationTest-debug-androidTest.apk",
+        "TestRunnerPath": "com.kaspersky.kavatintegrationtest.test/com.kaspersky.kavatintegrationtest.test.TestRunner",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true"
+      },
+      "Timeout": "00:02:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea2"
+    },
+    "AndroidJavaTestGroupAtsdk": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "TestMethod": {
+        "AndroidTestContainer": "AntiTheftSdk-debug-androidTest.apk",
+        "TestRunnerPath": "com.kaspersky.atsdk.test/com.kaspersky.atsdk.test.TestRunner",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true"
+      },
+      "Timeout": "00:02:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea3"
+    },
+    "AndroidJavaTestGroupWhocalls": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "TestMethod": {
+        "AndroidTestContainer": "WhoCallsSdk-debug-androidTest.apk",
+        "TestRunnerPath": "com.kaspersky.whocalls.test/com.kaspersky.whocalls.test.TestRunner",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true"
+      },
+      "Timeout": "00:02:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea4"
+    },
+    "AndroidGroup": {
+      "TestScenarios": [
+        "AndroidJavaTestGroupKavsdk",
+        "AndroidJavaTestGroupKavatintegrationtest",
+        "AndroidJavaTestGroupAtsdk",
+        "AndroidJavaTestGroupWhocalls"
+      ]
+    }
+  },
+  "version": 6
+}

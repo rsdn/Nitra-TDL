@@ -37,7 +37,7 @@ namespace Tdl
     private         _methodScopeFactoryCache    : Dictionary[int, bool] = Dictionary();
     private mutable _stableGuidIncrementalValue : int;
 
-    public GetStableGuidIncrementalValue() : uint { Interlocked.Increment(ref _stableGuidIncrementalValue) :> uint }
+    public GetStableGuidIncrementalValue() : uint { _ = _stableGuidIncrementalValue; Interlocked.Increment(ref _stableGuidIncrementalValue) :> uint }
     
     MethodScopeFactoryImpl(scope : Scope) : Scope
     {

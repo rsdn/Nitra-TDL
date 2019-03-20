@@ -1,0 +1,55 @@
+
+scenario AndroidJavaTestGroupKavsdk
+{
+    deployment AndroidInstall;
+    environments (w19-droid, MobileSdk);
+    apk "KavSdk-full-debug-androidTest.apk"
+        filter "-e pPdkDeliveryTest true -e pPullRequestTest true"
+        runner "com.kavsdk.test/com.kavsdk.test.TestRunner";
+    UniqueId = @"bccd157e-ca69-4304-a3af-ae0c5cb0eea1";
+    NeedUnsignedAgent = true;
+    Timeout = @"00:10:00";
+}
+
+scenario AndroidJavaTestGroupKavatintegrationtest
+{
+    deployment AndroidInstall;
+    environments (w19-droid, MobileSdk);
+    apk "KavAtIntegrationTest-debug-androidTest.apk"
+        filter "-e pPdkDeliveryTest true -e pPullRequestTest true"
+        runner "com.kaspersky.kavatintegrationtest.test/com.kaspersky.kavatintegrationtest.test.TestRunner";
+    UniqueId = @"bccd157e-ca69-4304-a3af-ae0c5cb0eea2";
+    NeedUnsignedAgent = true;
+    Timeout = @"00:02:00";
+}
+
+scenario AndroidJavaTestGroupAtsdk
+{
+    deployment AndroidInstall;
+    environments (w19-droid, MobileSdk);
+    apk "AntiTheftSdk-debug-androidTest.apk"
+        filter "-e pPdkDeliveryTest true -e pPullRequestTest true"
+        runner "com.kaspersky.atsdk.test/com.kaspersky.atsdk.test.TestRunner";
+    UniqueId = @"bccd157e-ca69-4304-a3af-ae0c5cb0eea3";
+    NeedUnsignedAgent = true;
+    Timeout = @"00:02:00";
+}
+
+scenario AndroidJavaTestGroupWhocalls
+{
+    deployment AndroidInstall;
+    environments (w19-droid, MobileSdk);
+    apk "WhoCallsSdk-debug-androidTest.apk"
+        filter "-e pPdkDeliveryTest true -e pPullRequestTest true"
+        runner "com.kaspersky.whocalls.test/com.kaspersky.whocalls.test.TestRunner";
+    UniqueId = @"bccd157e-ca69-4304-a3af-ae0c5cb0eea4";
+    NeedUnsignedAgent = true;
+    Timeout = @"00:02:00";
+}
+
+scenario AndroidGroup =
+    AndroidJavaTestGroupKavsdk,
+    AndroidJavaTestGroupKavatintegrationtest,
+    AndroidJavaTestGroupAtsdk,
+    AndroidJavaTestGroupWhocalls;
+

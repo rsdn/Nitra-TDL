@@ -45,7 +45,7 @@ namespace Tdl
         Symbol.Path                     = TdlUtils.ConvertStringLiteral(Path);
         Symbol.Expected                 = TdlUtils.MakeExpected(Success);
         Symbol.ForReboot                = TdlUtils.MakeForReboot(ForReboot);
-        Symbol.Timeout                  = TdlUtils.MakeTimeout(Timeout);
+        Symbol.Timeout                  = Timeout.ConvertStringLiteral();
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
         Parameters.Scope                = Scope;
         Symbol.IsBase64Encoded          = IsBase64Encoded;
