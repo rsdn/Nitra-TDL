@@ -8,7 +8,7 @@ namespace Tdl.Tests
 {
     internal static class Utils
     {
-        public static string TestsRootDirectory => Path.GetFullPath(Path.Combine(CallerFilePath(), @"..\..\..\Tests"));
+        public static readonly string TestsRootDirectory = Path.GetFullPath(Path.Combine(CallerFilePath(), @"..\..\..\Tests"));
 
         public static (int ExitCode, bool HasStdError) RunProcess(string workingDirectory, string fileName, string arguments)
         {
