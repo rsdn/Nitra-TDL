@@ -55,7 +55,7 @@ namespace Tdl.Tests
 
             var result = Utils.RunProcess(directory, ToolPath, string.Join(" ", arguments));
 
-            Assert.AreEqual(result.ExitCode, 0, "Exit code");
+            Assert.AreEqual(0, result.ExitCode, "Exit code");
             Assert.IsFalse(result.HasStdError, "Stderr");
         }
 
