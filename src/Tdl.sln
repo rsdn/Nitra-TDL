@@ -30,6 +30,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "TestRunner\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDll", "..\Tests\TestDll\TestDll.csproj", "{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{6458B7AF-A3BD-4792-BA61-2E450C4B381B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tdl.Tests", "Tdl.Tests\Tdl.Tests.csproj", "{8F329E51-6FDC-4556-85D6-8D02F52D8689}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6195946D-BACE-4676-8607-9991B4907F14} = {6195946D-BACE-4676-8607-9991B4907F14}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,9 +79,18 @@ Global
 		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F329E51-6FDC-4556-85D6-8D02F52D8689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F329E51-6FDC-4556-85D6-8D02F52D8689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F329E51-6FDC-4556-85D6-8D02F52D8689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F329E51-6FDC-4556-85D6-8D02F52D8689}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E59825C9-0614-455A-AF8D-A94ACF8CD5FC} = {6458B7AF-A3BD-4792-BA61-2E450C4B381B}
+		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43} = {6458B7AF-A3BD-4792-BA61-2E450C4B381B}
+		{8F329E51-6FDC-4556-85D6-8D02F52D8689} = {6458B7AF-A3BD-4792-BA61-2E450C4B381B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B08A547-4C33-49DA-9892-CDC0DFA5017E}

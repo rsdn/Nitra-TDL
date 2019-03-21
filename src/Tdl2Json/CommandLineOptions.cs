@@ -50,6 +50,7 @@ namespace Tdl2Json
                 { "t|transformator=",         "Transformer: path-to.dll|Qualified.Function.Name",        AddTransformer },
                 { "m|compiler-messages-test", "Test comiler meesges by sampels.",                        _ => ComilerMessagesTest = true },
                 { "s|sample=",                "Sammple output file path.",                               v => SampleOutputFile = v },
+                { "d|debug",                  "Start with debugger prompt",                              v => Debugger.Launch() },
                 new ResponseFileSource(),
 
                 // backward compatibility
