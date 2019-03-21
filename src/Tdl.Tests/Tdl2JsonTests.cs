@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Tdl.Tests
@@ -27,6 +28,8 @@ namespace Tdl.Tests
         [TestCaseSource(nameof(GetTestCases))]
         public void Tdl(string directory)
         {
+            directory = Path.Combine(Utils.TestsRootDirectory, directory);
+
             var name = Path.GetFileNameWithoutExtension(directory);
 
             var arguments = new List<string>();
@@ -57,6 +60,7 @@ namespace Tdl.Tests
         }
 
         private static IEnumerable<string> GetTestCases() =>
-            Directory.EnumerateDirectories(Path.Combine(Utils.TestsRootDirectory, "Tdl"));
+            Directory.EnumerateDirectories(Path.Combine(Utils.TestsRootDirectory, "Tdl"))
+                .Select(s => s.Substring(Utils.TestsRootDirectory.Length + 1));
     }
 }
