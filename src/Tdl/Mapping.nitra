@@ -279,7 +279,8 @@ namespace Tdl
     | StringLiteral             -> String                    { StringLiteral -> Value; }
     | True                      -> True                      {  }
     | False                     -> False                     {  }
-    | Reference                 -> Reference                 { this.Reference -> PatameterName; }
+    | Reference                 -> Reference                 { this.Reference -> ParameterName; }
+    | MemberAccess              -> MemberAccess              { Expr-> Expr; Member -> Member; }
     | RealLiteral               = DefExpr.RealLiteral(Location.WithSpan(RealLiteral));
     | DecimalIntegerLiteral     = DefExpr.DecimalIntegerLiteral(Lit.Location);
     | HexadecimalIntegerLiteral = DefExpr.HexadecimalIntegerLiteral(Lit.Location);

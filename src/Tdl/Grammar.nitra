@@ -192,6 +192,8 @@
       | Reference
       //| InterpolatedRegularStringLiteral  = Lit=InterpolatedRegularStringLiteral
       //| InterpolatedVerbatimStringLiteral = Lit=InterpolatedVerbatimStringLiteral
+    precedence MemberAccess:
+      | MemberAccess = Expr=DefExpr "." Member=Reference
     }
 
     syntax MaxRebootsCount = sm "max-reboots" sm Value=DecimalIntegerLiteral;
