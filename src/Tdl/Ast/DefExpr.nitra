@@ -25,11 +25,23 @@ namespace Tdl
       {
         out TypedRef : Ref[TypedDeclarationSymbol];
         
-        PatameterName.Scope = Scope;
-        TypedRef            = PatameterName.Ref.Resolve();
+        ParameterName.Scope = Scope;
+        TypedRef            = ParameterName.Ref.Resolve();
         Type                = TypedRef.Symbol.Type;
 
-        PatameterName : Declarations.Reference;
+        ParameterName : Declarations.Reference;
+      }
+    | MemberAccess
+      {
+        out TypedRef : Ref[TypedDeclarationSymbol];
+        
+        TypedRef     = Member.Ref.Resolve();
+        Type         = TypedRef.Symbol.Type;
+        Expr.Scope   = Scope;
+        Member.Scope = Expr.Type.Scope;
+
+        Expr   : DefExpr;
+        Member : Declarations.Reference;
       }
   }
 }
