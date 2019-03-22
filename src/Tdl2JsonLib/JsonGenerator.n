@@ -257,7 +257,7 @@ namespace Tdl2Json
       (assemblyName, methodName)
     }
 
-    private SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedSymbol, DeclarationSymbol]]
+    private SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedDeclarationSymbol, DeclarationSymbol]]
     {
       if (index < froms.Length)
       {
@@ -277,7 +277,7 @@ namespace Tdl2Json
         yield Dictionary()
     }
     
-    TryResolveVar[T](dic : Dictionary[TypedSymbol, DeclarationSymbol], varOrSymbol : TypedSymbol) :  T
+    TryResolveVar[T](dic : Dictionary[TypedDeclarationSymbol, DeclarationSymbol], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
       mutable result;

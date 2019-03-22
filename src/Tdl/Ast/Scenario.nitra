@@ -104,10 +104,10 @@ namespace Tdl
         symbol
         {
           in Defs       : ImmutableArray[Def];
-          in Deployment : TypedSymbol;
-          in Method     : TypedSymbol;
-          in Platform   : TypedSymbol;
-          in Product    : TypedSymbol;
+          in Deployment : TypedDeclarationSymbol;
+          in Method     : TypedDeclarationSymbol;
+          in Platform   : TypedDeclarationSymbol;
+          in Product    : TypedDeclarationSymbol;
         stage 3:
           in Froms      : ImmutableArray[Code.From];
 
@@ -118,10 +118,10 @@ namespace Tdl
         }
 
       stage 1:
-        out DeploymentRef : Ref[TypedSymbol];
-        out MethodRef     : Ref[TypedSymbol];
-        out PlatformRef   : Ref[TypedSymbol];
-        out ProductRef    : Ref[TypedSymbol];
+        out DeploymentRef : Ref[TypedDeclarationSymbol];
+        out MethodRef     : Ref[TypedDeclarationSymbol];
+        out PlatformRef   : Ref[TypedDeclarationSymbol];
+        out ProductRef    : Ref[TypedDeclarationSymbol];
 
         Froms.Scope                     = Scope;
         Froms.ContainingTable           = Symbol.MemberTable;
