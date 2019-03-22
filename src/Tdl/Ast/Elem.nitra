@@ -20,7 +20,7 @@ namespace Tdl
     | Simple
       {
       stage 1:
-        out TypedRef : Ref[TypedSymbol];
+        out TypedRef : Ref[TypedDeclarationSymbol];
 
         Reference.Scope = Scope;
         TypedRef        = Reference.Ref.Resolve();
