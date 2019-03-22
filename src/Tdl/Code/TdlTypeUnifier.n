@@ -43,5 +43,10 @@ namespace Tdl
         | _ => base.UnifyUnwraped(typeSymbol1, typeSymbol2, ref updatedVariables)
       }
     }
+    
+    protected override IsSubtypeUnwraped(subtype : TypeSymbol, supertype : TypeSymbol) : bool
+    {
+      (subtype is ProductTypeSymbol && supertype is TdlType.ProductSymbol) || base.IsSubtypeUnwraped(subtype, supertype);
+    }
   } // class
 } // namespace

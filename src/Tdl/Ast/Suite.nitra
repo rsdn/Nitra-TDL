@@ -41,7 +41,7 @@ namespace Tdl
     Symbol.Statements           = Statements.Statement;
 
     Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
-    Definitions.Scope           = context.GetExternalSymbolTable();
+    Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
     Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
 
     TypeOpt.Scope               = Scope;

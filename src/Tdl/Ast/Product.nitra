@@ -8,11 +8,10 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Product : NamespaceMember, Typed
+  abstract declaration Product : NamespaceMember, TypedDeclaration
   {
     symbol
     {
-      Type = context.ToTdlContext().ProductType;
     stage 1:
       in ProductType : ProductTypeSymbol;
       SpanClass = TdlLang.ProductSpanClass;
@@ -24,6 +23,7 @@ namespace Tdl
     ProductType.Scope  = Scope;
     ProductTypeRef     = ProductType.Ref.Resolve();
     Symbol.ProductType = ProductTypeRef.Symbol;
+    Symbol.Type        = Symbol.ProductType;
 
     ProductType : Reference;
 

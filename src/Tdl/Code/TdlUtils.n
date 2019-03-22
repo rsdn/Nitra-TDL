@@ -718,8 +718,8 @@ namespace Tdl
     
     public CheckExpected(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, type2 : TypeSymbol) : void
     {
-      if (TdlTypeUnifier.Instance.TryUnify(type1, type2))
-        _ = TdlTypeUnifier.Instance.Unify(type1, type2);
+      if (TdlTypeUnifier.Instance.TryProvide(type1, type2))
+        _ = TdlTypeUnifier.Instance.Provide(type1, type2);
       else
         ast.Error(context, $"Expected '$(TypeToString(type1))' but got '$(TypeToString(type2))'.", 0);
     }
