@@ -76,7 +76,10 @@ namespace TestRunner
                     //var exitCode             = Tdl2Json.Program.Main(new[] { "\"-out:{outputFilePath}\"", "\"{tdls}\"", "\"{dlls}\"", "--log-level=short", option });
                     var exitCode = process.ExitCode;
                     if (exitCode < 0)
+                    {
                         failed++;
+                        Print("Command line: " + startInfo.FileName + " " + startInfo.Arguments, ConsoleColor.Yellow);
+                    }
                 }
 
                 if (failed > 0)
