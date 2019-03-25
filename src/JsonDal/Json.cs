@@ -166,6 +166,9 @@ namespace QuickType
 
         [JsonProperty("Version", NullValueHandling = NullValueHandling.Ignore)]
         public string Version { get; set; }
+
+        [JsonProperty("DumpServerProduct", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string DumpServerProduct { get; set; }
     }
 
     /// <summary>

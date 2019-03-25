@@ -221,10 +221,11 @@ namespace Tdl2Json
           ProductValue() <- 
           {
             Product = Product() <- { 
-              Name        = name;
-              ReleaseName = useAsFixedParameter("ReleaseName");
-              Version     = useAsFixedParameter("Version");
-              Parameters  = parameters;
+              Name              = name;
+              ReleaseName       = useAsFixedParameter("ReleaseName");
+              Version           = useAsFixedParameter("Version");
+              DumpServerProduct = useAsFixedParameter("DumpServerProduct");
+              Parameters        = parameters;
             }
           })
       | Product.SetSymbol as Set => (Set.Name, ProductValue() <- { StringArray = Set.AllProducts.Select(p => p.Name).ToArray(); })   
