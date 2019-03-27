@@ -6,7 +6,7 @@ using Nitra.Declarations;
 
 namespace Tdl
 {
-  declaration Field : BindableAst, TypedDeclaration
+  declaration Field : BindableAst, SelfTypedDeclaration
   {
     symbol
     {
@@ -16,7 +16,6 @@ namespace Tdl
 
     Type.Scope  = Scope;
     TypeRef     = Type.Ref.Resolve();
-    Symbol.Type = TypeRef.Symbol;
 
     Type : QualifiedReference;
   }

@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Platform : NamespaceMember, Typed
+  abstract declaration Platform : NamespaceMember, TypedDeclaration
   {
     symbol
     {
