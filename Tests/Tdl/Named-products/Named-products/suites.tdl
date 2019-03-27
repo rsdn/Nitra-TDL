@@ -8,3 +8,73 @@ suite NamedProduct
     ProductC = MonorepoHelloWorld;
     Test1();
 }
+
+deployment InstallProduct(
+    string Version,
+    MsOfficeProducts ProductA,
+    MsOfficeProducts ProductB,
+    TheProductType   ProductC
+)
+    script @"$(BuildPath)\$(BuildDir)\$(ProductInstall)"
+{
+    PRODUCT_VERSION = Version;
+    Size100         = ProductA.Size;
+    Size42          = ProductB.Size;
+    ReleaseName     = ProductB.ReleaseName;
+    expected 0;
+}
+
+product type TheProductType
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+}
+
+product type MsOfficeProducts
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+    int Size;
+}
+
+product MonorepoHelloWorld : TheProductType
+{
+    Name = "MonorepoHelloWorld";
+    ReleaseName = "MonorepoHelloWorld";
+    Version = ProductVersion;
+}
+
+product Word : MsOfficeProducts
+{
+    Name = "Word";
+    ReleaseName = "Word";
+    Version = ProductVersion;
+    Size = 100;
+}
+
+product Excel : MsOfficeProducts
+{
+    Name = "Excel";
+    ReleaseName = "Excel";
+    Version = ProductVersion;
+    Size = 42;
+}
+
+platform cent75-x64;
+
+external
+{
+    string ProductVersion;
+}
+
+scenario Test1
+{
+    deployment InstallProduct;
+    environments (cent75-x64, MonorepoHelloWorld);
+    script "null-test.ps1";
+    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    Timeout = "00:05:00";
+}

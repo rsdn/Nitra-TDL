@@ -1,4 +1,0 @@
-external
-{
-    string ProductVersion;
-}

@@ -193,6 +193,8 @@ namespace Tdl2Json
           | Tdl.Expr.True          => yield (name, true)
           | Real            as x   => yield (name, x.Value)
           | Integer         as x   => yield (name, x.Value)
+          | Reference       as x when x.Type is Tdl.ProductTypeSymbol 
+                                   => yield (name, x.Name)
           | Reference       as x   => yield (name, "#(" + x.Name + ")")
           | Error           as e   => throw NotSupportedException("Error at: " + e.Location);
           | x                      => throw NotSupportedException("The '" + x + "' is not supported");

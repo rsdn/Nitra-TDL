@@ -1,0 +1,92 @@
+﻿{
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "Deployments": {
+    "InstallProduct": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "Version": "$(Version)",
+        "Size100": "$(Product:ProductA.Size)",
+        "Size42": "$(Product:ProductB.Size)",
+        "ReleaseName": "$(Product:ProductB.ReleaseName)"
+      },
+      "ScriptPath": "$(BuildPath)\\$(BuildDir)\\$(ProductInstall)"
+    }
+  },
+  "Platforms": {
+    "cent75-x64": {}
+  },
+  "Products": {
+    "MonorepoHelloWorld": {
+      "Name": "MonorepoHelloWorld",
+      "Parameters": {
+        "Name": "MonorepoHelloWorld"
+      },
+      "ReleaseName": "MonorepoHelloWorld",
+      "Version": "#(ProductVersion)"
+    },
+    "Word": {
+      "Name": "Word",
+      "Parameters": {
+        "Name": "Word",
+        "Size": 100
+      },
+      "ReleaseName": "Word",
+      "Version": "#(ProductVersion)"
+    },
+    "Excel": {
+      "Name": "Excel",
+      "Parameters": {
+        "Name": "Excel",
+        "Size": 42
+      },
+      "ReleaseName": "Excel",
+      "Version": "#(ProductVersion)"
+    }
+  },
+  "Suites": {
+    "NamedProduct": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "ProductA": "Excel",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld"
+      },
+      "Platforms": [
+        "cent75-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Test1": {
+      "Deployments": [
+        "InstallProduct"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "cent75-x64"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "TestMethod": {
+        "TestScriptName": "null-test.ps1",
+        "TestScriptArgs": "",
+        "Environment": {}
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8"
+    }
+  },
+  "version": 6
+}

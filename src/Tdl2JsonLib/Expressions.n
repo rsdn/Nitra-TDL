@@ -14,13 +14,25 @@ namespace Tdl2Json
     {
         public ToObject(this expression : Tdl.Expr) : object
         {
-            | Error     => "<error>";
-            | False     => false
-            | True      => true
-            | Integer   as i => i.Value
-            | Real      as r => r.Value
-            | Reference as r => "$(" + r.Name + ")"
-            | String    as s => s.Value
+          def loop(expression : Tdl.Expr) : object
+          {
+            | Error             => "<error>";
+            | False             => false
+            | True              => true
+            | Integer      as i => i.Value
+            | Real         as r => r.Value
+            | Reference    as r when r.Type is Tdl.ProductTypeSymbol => "Product:" + r.Name
+            | Reference    as r => r.Name
+            | MemberAccess as m => loop(m.Expr) + "." + m.MemberName
+            | String       as s => s.Value
+          }
+          
+          match (expression)
+          {
+            | Reference
+            | MemberAccess => "$(" + loop(expression) + ")"
+            | _            => loop(expression)
+          }
         }
         
         public ToDictionary[TKey, TValue](this seq : Seq[TKey * TValue]) : Dictionary[TKey, TValue]

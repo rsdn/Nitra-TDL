@@ -3,6 +3,8 @@ using Nemerle.Collections;
 using Nemerle.Text;
 using Nemerle.Utility;
 
+using Nitra.Declarations;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +13,14 @@ namespace Tdl
 {
   public variant Expr
   {
-    | Error     { Location : Nitra.Location; }
-    | String    { Value : string; }
-    | True      { }
-    | False     { }
-    | Real      { Value : double; }
-    | Integer   { Value : int; }
-    | Reference { Name  : string; }
+    | Error        { Location : Nitra.Location; }
+    | String       { Value : string; }
+    | True         { }
+    | False        { }
+    | Real         { Value : double; }
+    | Integer      { Value : int; }
+    | Reference    { Name  : string; Type : TypeSymbol; }
+    | MemberAccess { Expr : Expr;  MemberName  : string; }
 
     public override ToString() : string
     {
@@ -29,7 +32,8 @@ namespace Tdl
         | False          => "false"
         | Real      as x => x.Value.ToString()
         | Integer   as x => x.Value.ToString()
-        | Reference as x => x.Name 
+        | Reference as x => x.Name
+        | MemberAccess as x => $"$(x.Expr).$(x.MemberName)"
       }
     }
   }
