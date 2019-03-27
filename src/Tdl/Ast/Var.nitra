@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  declaration Var : Typed
+  declaration Var : TypedDeclaration
   {
     symbol
     {
