@@ -285,3 +285,12 @@ namespace Autotest.Products.App4_Dev.Suites.Common.GatedChain1
     }
 }
 
+namespace HiveBsodTests
+{
+    [Test]
+    public class Tests
+    {
+        [TestMethod]
+        public void Bsod() { }
+    }
+}

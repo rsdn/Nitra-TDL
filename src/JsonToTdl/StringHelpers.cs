@@ -9,6 +9,14 @@ namespace Utils
 {
     public static class StringHelpers
     {
+        public static string AsName(this object value)
+        {
+            var text = (string)value;
+            if (!char.IsLetter(text.FirstOrDefault()) || text.Any(c => !(char.IsLetterOrDigit(c) || c == '_' || c == '-')))
+                return '"' + text + '"';
+            return text;
+        }
+
         public static string EsqManky(this string value)
         {
             return value.Replace("\"", "\"\"");
