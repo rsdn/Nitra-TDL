@@ -26,12 +26,13 @@ namespace Tdl
       {
         symbol
         {
-          in Defs           : ImmutableArray[Def];
         stage 1:            
           in Actions        : ImmutableArray[ScenarioAction];
           in Deployment     : DeploymentSymbol;
           in Environments   : ImmutableArray[Environment];
           in ParallelSetOpt : Scenario.SetSymbol;
+        stage 3:
+          in Defs           : ImmutableArray[Def];
 
           Kind           = "scenario";
           SpanClass      = TdlLang.ScenarioSpanClass;
@@ -103,12 +104,12 @@ namespace Tdl
       {
         symbol
         {
-          in Defs       : ImmutableArray[Def];
           in Deployment : TypedSymbol;
           in Method     : TypedSymbol;
           in Platform   : TypedSymbol;
           in Product    : TypedSymbol;
         stage 3:
+          in Defs       : ImmutableArray[Def];
           in Froms      : ImmutableArray[Code.From];
 
           Scope          = MemberTable;

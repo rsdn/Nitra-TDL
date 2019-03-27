@@ -12,12 +12,13 @@ namespace Tdl
   {
     symbol
     {
-      in Defs        : ImmutableArray[Def];
       in Platform    : PlatformSymbol;
       in Product     : ProductSymbol;
       in Statements  : ImmutableArray[SuiteStatement];
       in Type        : SuiteTypeSymbol;
       in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
+    stage 3:
+      in Defs        : ImmutableArray[Def];
 
       Kind           = "suite";
       SpanClass      = TdlLang.SuiteSpanClass;

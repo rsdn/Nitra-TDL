@@ -47,7 +47,7 @@ namespace Tdl2Json
     private GenerateDeploymentScript(script : Deployment.ScriptSymbol) : string * QuickType.Deployment
     {
       def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
-      def parameters = script.Parameters.Select(p => (p.Name, getParameterValue(p)));
+      def parameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).Select(p => (p.Name, getParameterValue(p)));
       def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
       def isBase64Encoded = if (script.IsIsBase64EncodedEvaluated && script.IsBase64Encoded.HasValue) script.IsBase64Encoded.Value else false;
       def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();

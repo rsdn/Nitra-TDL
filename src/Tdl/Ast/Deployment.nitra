@@ -30,6 +30,7 @@ namespace Tdl
           in Expected        : ParsedValue[int];
           in ForReboot       : ParsedValue[int];
           in Timeout         : ParsedValue[string];
+        stage 3:
           in Defs            : ImmutableArray[Def2];
 
           Kind           = "deployment";

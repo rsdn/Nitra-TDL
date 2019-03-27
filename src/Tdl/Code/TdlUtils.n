@@ -352,7 +352,9 @@ namespace Tdl
         | x is DefExpr.RealLiteral               => Expr.Real(double.Parse(x.Location.GetText()))
         | x is DefExpr.DecimalIntegerLiteral     => Expr.Integer(int.Parse(x.Location.GetText()))
         | x is DefExpr.HexadecimalIntegerLiteral => Expr.Integer(int.Parse(x.Location.GetText().Substring(2), NumberStyles.HexNumber))
-        | x is DefExpr.Reference                 => Expr.Reference(x.Location.GetText())
+        | x is DefExpr.MemberAccess              => Expr.MemberAccess(ConvertDefExpr(x.Expr), x.Member.Location.GetText())
+        | x is DefExpr.Reference  
+          when x.IsTypedRefEvaluated             => Expr.Reference(x.Location.GetText(), x.Type)
         | x                                      => Expr.Error(x.Location)
       }
     }
