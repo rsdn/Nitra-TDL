@@ -1,0 +1,10 @@
+suite NamedProduct
+{
+    platform cent75-x64;
+    product MonorepoHelloWorld;
+    Version = ProductVersion;
+    ProductA = Excel;
+    ProductB = Word;
+    ProductC = MonorepoHelloWorld;
+    Test1();
+}
