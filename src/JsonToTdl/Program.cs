@@ -251,14 +251,14 @@ namespace JsonToTdl
                 var parms = args.OrderBy(a => a.c != null)
                                 .ThenByDescending(a => a.t)
                                 .ThenBy(a => a.n)
-                                .Select(a => "    " + a.t + AsName(a.n) + (a.c == null ? "" : " = " + a.c))
+                                .Select(a => "    " + a.t + a.n.AsName() + (a.c == null ? "" : " = " + a.c))
                                 .ToArray();
                 _builder.AppendLine(string.Join(",\r\n", parms));
                 _builder.AppendLine(")");
                 _builder.Append("    script ");
                 _builder.AppendLine("@\"" + scriptPath + "\"");
                 _builder.AppendLine("{");
-                var defsStrs = defs.Select(d => "    " + AsName(d.n) + " = " + d.c + ";");
+                var defsStrs = defs.Select(d => "    " + d.n.AsName() + " = " + d.c + ";");
                 foreach (var def in defsStrs)
                     _builder.AppendLine(def);
 
@@ -367,7 +367,7 @@ namespace JsonToTdl
             while (Accept(JsonToken.PropertyName, out var value) && value is string name)
             {
                 _builder.Append("\r\nproduct ");
-                _builder.Append(AsName(name));
+                _builder.Append(name.AsName());
                 _builder.Append($" : {ProductTypeName} ");
 
                 if (Accept(JsonToken.StartObject))
@@ -415,10 +415,10 @@ namespace JsonToTdl
         {
             while (Accept(JsonToken.StartObject))
             {
-                while (Accept(JsonToken.PropertyName, out var value))
+                while (Accept(JsonToken.PropertyName, out var value) && value is string str)
                 {
                     _builder.Append("\r\nscenario ");
-                    _builder.Append((string)value);
+                    _builder.Append(str.AsName());
                     Expect(JsonToken.StartObject);
 
                     if (AcceptProperty("TestScenarios"))
@@ -478,7 +478,7 @@ namespace JsonToTdl
             Expect(JsonToken.StartArray);
             var scenarios = new List<string>();
             while (Accept(JsonToken.String, out var value))
-                scenarios.Add(AsName((string)value));
+                scenarios.Add(value.AsName());
             _builder.Append(" =\r\n    ");
             _builder.Append(string.Join(",\r\n    ", scenarios));
             _builder.AppendLine(";");
@@ -690,9 +690,9 @@ namespace JsonToTdl
             Debug.Assert(set.Count > 0);
 
             if (set.Count == 1)
-                return AsName(set.First());
+                return set.First().AsName();
 
-            var compositSetName = AsName(string.Join("__", set.OrderBy(x => x)));
+            var compositSetName = string.Join("__", set.OrderBy(x => x)).AsName();
 
             if (sets.TryGetValue(compositSetName, out var result))
             {
@@ -736,7 +736,7 @@ namespace JsonToTdl
             while (Accept(JsonToken.PropertyName, out var value))
             {
                 _builder.Append("\r\nsuite ");
-                _builder.AppendLine(AsName(value));
+                _builder.AppendLine(value.AsName());
                 Expect(JsonToken.StartObject);
                 _builder.AppendLine("{");
                 string scenario = null;
@@ -782,14 +782,6 @@ namespace JsonToTdl
             Expect(JsonToken.EndObject);
         }
 
-        private static string AsName(object value)
-        {
-            var text = (string)value;
-            if (!char.IsLetter(text.FirstOrDefault()) || text.Any(c => !(char.IsLetterOrDigit(c) || c == '_' || c == '-')))
-                return '"' + text + '"';
-            return text;
-        }
-
         private static void ConvertParameters(Dictionary<string, JsonToken> parametersCollector = null)
         {
             Expect(JsonToken.StartObject);
@@ -808,7 +800,7 @@ namespace JsonToTdl
                 if (name == "product")
                     _builder.Append($" : {ProductTypeName} ");
                 _builder.Append(" = ");
-                _builder.Append(string.Join(", ", set.Value.OrderBy(x => x).Select(AsName)));
+                _builder.Append(string.Join(", ", set.Value.OrderBy(x => x).Select(StringHelpers.AsName)));
                 _builder.AppendLine(";");
             }
         }
