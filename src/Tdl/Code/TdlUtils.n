@@ -768,7 +768,7 @@ namespace Tdl
             context.CreateFreeTypeVar()
           else
           {
-            def typed = item.Resolve() : Ref[TypedSymbol];
+            def typed = item.Resolve() : Ref[TypedDeclarationSymbol];
             if (typed.IsSymbolEvaluated)
               typed.Symbol.Type
             else
@@ -1058,7 +1058,7 @@ namespace Tdl
       }
     }
 
-    public MakeAggregateParametersScope(deployment : TypedSymbol, froms : ImmutableArray[Code.From]) : ValueOption[Scope]
+    public MakeAggregateParametersScope(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From]) : ValueOption[Scope]
     {
       def deployments = List();
       foreach (from in froms)
