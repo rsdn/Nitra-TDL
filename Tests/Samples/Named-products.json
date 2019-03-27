@@ -5,7 +5,7 @@
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {
-        "Version": "$(Version)",
+        "PRODUCT_VERSION": "$(Version)",
         "Size100": "$(Product:ProductA.Size)",
         "Size42": "$(Product:ProductB.Size)",
         "ReleaseName": "$(Product:ProductB.ReleaseName)"
