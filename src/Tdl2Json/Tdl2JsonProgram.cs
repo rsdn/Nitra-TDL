@@ -19,7 +19,10 @@ namespace Tdl2Json
         /// <summary>
         /// Application entry point. Returns 0 for success.
         /// </summary>
-        public static int Main(string[] args)
+        public static int Main(string[] args) => MainImpl(args);
+
+        // additional method is required by Costura's assembly loading hack under Mono
+        private static int MainImpl(string[] args)
         {
             var timer = Stopwatch.StartNew();
             var options = new CommandLineOptions();
