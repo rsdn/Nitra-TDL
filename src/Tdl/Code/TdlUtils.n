@@ -24,7 +24,7 @@ namespace Tdl
 {
   module TdlUtils
   {
-    static RequiredProductTypeFields : list[string] = ["Name", "ReleaseName", "Version"];
+    static RequiredProductTypeFields : list[string] = ["Name", "Version"];
     
     public NoLocation         : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
@@ -353,8 +353,8 @@ namespace Tdl
         | x is DefExpr.DecimalIntegerLiteral     => Expr.Integer(int.Parse(x.Location.GetText()))
         | x is DefExpr.HexadecimalIntegerLiteral => Expr.Integer(int.Parse(x.Location.GetText().Substring(2), NumberStyles.HexNumber))
         | x is DefExpr.MemberAccess              => Expr.MemberAccess(ConvertDefExpr(x.Expr), x.Member.Location.GetText())
-        | x is DefExpr.Reference  
-          when x.IsTypedRefEvaluated             => Expr.Reference(x.Location.GetText(), x.Type)
+        | x is DefExpr.Reference 
+          when x.IsTypeEvaluated                 => Expr.Reference(x.Location.GetText(), x.Type)
         | x                                      => Expr.Error(x.Location)
       }
     }

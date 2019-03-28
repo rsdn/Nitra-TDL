@@ -1,6 +1,6 @@
 suite NamedProduct
 {
-    platform cent75-x64;
+    platform w10rs5-x64;
     product MonorepoHelloWorld;
     Version = ProductVersion;
     ProductA = Excel;
@@ -15,18 +15,19 @@ deployment InstallProduct(
     MsOfficeProducts ProductB,
     TheProductType   ProductC
 )
-    script @"$(BuildPath)\$(BuildDir)\$(ProductInstall)"
+    script @"\\sdfs\autotests\KIS\DeploymentScripts\TdlTests\null-deployment.ps1"
 {
     PRODUCT_VERSION = Version;
     Size100         = ProductA.Size;
     Size42          = ProductB.Size;
-    ReleaseName     = ProductB.ReleaseName;
-    expected 0;
+    ReleaseName     = ProductB.BranchName;
+    expected 42;
 }
 
 product type TheProductType
 {
     string Name;
+    string BranchName;
     string ReleaseName;
     string Version;
 }
@@ -34,6 +35,7 @@ product type TheProductType
 product type MsOfficeProducts
 {
     string Name;
+    string BranchName;
     string ReleaseName;
     string Version;
     int Size;
@@ -42,6 +44,7 @@ product type MsOfficeProducts
 product MonorepoHelloWorld : TheProductType
 {
     Name = "MonorepoHelloWorld";
+    BranchName = "MonorepoHelloWorld";
     ReleaseName = "MonorepoHelloWorld";
     Version = ProductVersion;
 }
@@ -49,6 +52,7 @@ product MonorepoHelloWorld : TheProductType
 product Word : MsOfficeProducts
 {
     Name = "Word";
+    BranchName = "Word";
     ReleaseName = "Word";
     Version = ProductVersion;
     Size = 100;
@@ -57,12 +61,13 @@ product Word : MsOfficeProducts
 product Excel : MsOfficeProducts
 {
     Name = "Excel";
+    BranchName = "Excel";
     ReleaseName = "Excel";
     Version = ProductVersion;
     Size = 42;
 }
 
-platform cent75-x64;
+platform w10rs5-x64;
 
 external
 {
@@ -72,9 +77,11 @@ external
 scenario Test1
 {
     deployment InstallProduct;
-    environments (cent75-x64, MonorepoHelloWorld);
-    script "null-test.ps1";
+    environments (w10rs5-x64, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
     UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
     RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
     Timeout = "00:05:00";
 }

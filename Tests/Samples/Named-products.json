@@ -3,24 +3,25 @@
   "Deployments": {
     "InstallProduct": {
       "Type": "Script",
-      "ReturnValue": 0,
+      "ReturnValue": 42,
       "ScriptArgs": {
         "PRODUCT_VERSION": "$(Version)",
         "Size100": "$(Product:ProductA.Size)",
         "Size42": "$(Product:ProductB.Size)",
-        "ReleaseName": "$(Product:ProductB.ReleaseName)"
+        "ReleaseName": "$(Product:ProductB.BranchName)"
       },
-      "ScriptPath": "$(BuildPath)\\$(BuildDir)\\$(ProductInstall)"
+      "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
     }
   },
   "Platforms": {
-    "cent75-x64": {}
+    "w10rs5-x64": {}
   },
   "Products": {
     "MonorepoHelloWorld": {
       "Name": "MonorepoHelloWorld",
       "Parameters": {
-        "Name": "MonorepoHelloWorld"
+        "Name": "MonorepoHelloWorld",
+        "BranchName": "MonorepoHelloWorld"
       },
       "ReleaseName": "MonorepoHelloWorld",
       "Version": "#(ProductVersion)"
@@ -29,6 +30,7 @@
       "Name": "Word",
       "Parameters": {
         "Name": "Word",
+        "BranchName": "Word",
         "Size": 100
       },
       "ReleaseName": "Word",
@@ -38,6 +40,7 @@
       "Name": "Excel",
       "Parameters": {
         "Name": "Excel",
+        "BranchName": "Excel",
         "Size": 42
       },
       "ReleaseName": "Excel",
@@ -53,7 +56,7 @@
         "ProductC": "MonorepoHelloWorld"
       },
       "Platforms": [
-        "cent75-x64"
+        "w10rs5-x64"
       ],
       "Products": [
         "MonorepoHelloWorld"
@@ -71,7 +74,7 @@
       "Environments": [
         {
           "Platforms": [
-            "cent75-x64"
+            "w10rs5-x64"
           ],
           "Products": [
             "MonorepoHelloWorld"
@@ -79,13 +82,14 @@
         }
       ],
       "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
       "TestMethod": {
-        "TestScriptName": "null-test.ps1",
-        "TestScriptArgs": "",
-        "Environment": {}
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "00:05:00",
-      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8"
+      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8",
+      "LocalTestBinariesFolder": "C:\\Tests"
     }
   },
   "version": 6
