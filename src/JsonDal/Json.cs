@@ -239,6 +239,9 @@ namespace QuickType
         [JsonProperty("RerunCountOnTestFailure", NullValueHandling = NullValueHandling.Ignore)]
         public long? RerunCountOnTestFailure { get; set; }
 
+        [JsonProperty("ExternalAutotestId", NullValueHandling = NullValueHandling.Ignore)]
+        public int? ExternalAutotestId { get; set; }
+
         /// <summary>
         /// Сколько раз перезапускать зеленый тест
         /// </summary>
