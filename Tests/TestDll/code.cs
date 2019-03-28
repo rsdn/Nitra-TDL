@@ -1,26 +1,15 @@
-
-using System;
-
-public class TestAttribute : Attribute
-{
-    public TestAttribute() {  }
-}
-
-public class TestMethodAttribute : Attribute
-{
-    public TestMethodAttribute() {  }
-}
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Autotest.Common.Suites.Components.Delivery
 {
-    [Test]
+    [TestClass]
     public class AvpComTests
     {
         [TestMethod]
         public void AvpComQscan() {  }
     }
 
-    [Test]
+    [TestClass]
     public class FacadeTests
     {
         [TestMethod]
@@ -32,7 +21,7 @@ namespace Autotest.Common.Suites.Components.Delivery
 
 namespace Autotest.Common.Suites.Components.Delivery.WebBrowserTests
 {
-    [Test]
+    [TestClass]
     public class DoNotTrack
     {
         [TestMethod]
@@ -42,28 +31,28 @@ namespace Autotest.Common.Suites.Components.Delivery.WebBrowserTests
 
 namespace Autotest.App2.Suites.GUI
 {
-    [Test]
+    [TestClass]
     public class ComponentDisabledProblemIgnoredTests
     {
         [TestMethod]
         public void ComponentDisabledProblemIgnored() {  }
     }
 
-    [Test]
+    [TestClass]
     public class GamingProfileTests
     {
         [TestMethod]
         public void VideoPlayerWithGamingProfile() {  }
     }
 
-    [Test]
+    [TestClass]
     public class InteractiveProtectionTests
     {
         [TestMethod]
         public void InteractiveProtection() {  }
     }
 
-    [Test]
+    [TestClass]
     public class LaunchProgramAtComputerStartup
     {
         [TestMethod]
@@ -76,14 +65,14 @@ namespace Autotest.App2.Suites.GUI
         public void LaunchAtStartupEnableAftereReboot() {  }
     }
 
-    [Test]
+    [TestClass]
     public class MainWindowTests
     {
         [TestMethod]
         public void App1_MainWindowExpandFeaturesList() {  }
     }
 
-    [Test]
+    [TestClass]
     public class PasswordProtectionTestsSuite
     {
         [TestMethod]
@@ -94,7 +83,7 @@ namespace Autotest.App2.Suites.GUI
         public void PasswordProtectionExistingPassword() {  }
     }
 
-    [Test]
+    [TestClass]
     public class ProblemListTests
     {
         [TestMethod]
@@ -105,28 +94,28 @@ namespace Autotest.App2.Suites.GUI
         public void SomeComponentsAreDisabled() {  }
     }
 
-    [Test]
+    [TestClass]
     public class ReportWindowTest
     {
         [TestMethod]
         public void DetailedReportsApp1_App11() {  }
     }
 
-    [Test]
+    [TestClass]
     public class ScanTrayTests
     {
         [TestMethod]
         public void TrayContextMenuScan() {  }
     }
 
-    [Test]
+    [TestClass]
     public class StartMenuTests
     {
         [TestMethod]
         public void CheckStartMenuApp2_() {  }
     }
 
-    [Test]
+    [TestClass]
     public class SystemTrayTests
     {
         [TestMethod]
@@ -140,7 +129,7 @@ namespace Autotest.App2.Suites.GUI
 
 namespace Autotest.App2.Suites.GUI.App1_
 {
-    [Test]
+    [TestClass]
     public class App1_AdditionalToolsTests
     {
         [TestMethod]
@@ -167,7 +156,7 @@ namespace Autotest.App2.Suites.GUI.App1_
         public void App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked() {  }
     }
 
-    [Test]
+    [TestClass]
     public class App1_ContextMenuTests
     {
         [TestMethod]
@@ -194,7 +183,7 @@ namespace Autotest.App2.Suites.GUI.App1_
         public void App1_MainWindowOpenedWhenOneLeftClick() {  }
     }
 
-    [Test]
+    [TestClass]
     public class App1_GuiMainWindowTest
     {
         [TestMethod]
@@ -235,7 +224,7 @@ namespace Autotest.App2.Suites.GUI.App1_
         public void App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked() {  }
     }
 
-    [Test]
+    [TestClass]
     public class App1_GuiSettingsTest
     {
         [TestMethod]
@@ -259,7 +248,7 @@ namespace Autotest.App2.Suites.GUI.App1_
 
 namespace Autotest.App2.Suites.KPMIntergration
 {
-    [Test]
+    [TestClass]
     public class KpmDownloadAndInstallMultiMachineTests
     {
         [TestMethod]
@@ -273,7 +262,7 @@ namespace Autotest.App2.Suites.KPMIntergration
 
 namespace Autotest.Products.App4_Dev.Suites.Common.GatedChain1
 {
-    [Test]
+    [TestClass]
     public class GatedTestsChain1
     {
         [TestMethod]
@@ -287,10 +276,23 @@ namespace Autotest.Products.App4_Dev.Suites.Common.GatedChain1
 
 namespace HiveBsodTests
 {
-    [Test]
+    [TestClass]
     public class Tests
     {
         [TestMethod]
         public void Bsod() { }
+    }
+}
+
+namespace Tdl
+{
+    [TestClass]
+    public class IFeelLuck
+    {
+        [TestMethod]
+        public void FailingTest()
+        {
+            Assert.Fail("No luck :(");
+        }
     }
 }
