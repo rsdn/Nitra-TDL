@@ -95,6 +95,9 @@ namespace QuickType
         [JsonProperty("ScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, object> ScriptArgs { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, object> ScriptArgsDefaultValues { get; set; }
+
         [JsonProperty("ScriptPath", NullValueHandling = NullValueHandling.Ignore)]
         public string ScriptPath { get; set; }
 

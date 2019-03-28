@@ -110,9 +110,6 @@ namespace Tdl
 
         Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, CurredParameters.SymbolRef);
 
-        unless (Symbol.BaseDeployment is Deployment.ScriptSymbol || Symbol.BaseDeployment is Deployment.CurryingSymbol)
-          BaseDeployment.Error(context, "The base deployment must be script deployment or deployment partial application.");
-
         BaseDeployment   : Reference;
         CurredParameters : Definition*;
 

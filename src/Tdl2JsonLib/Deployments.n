@@ -32,35 +32,55 @@ namespace Tdl2Json
     {
       match (parameter.Default)
       {
-        | None           => "$(" + parameter.Name + ")"
         | Reference as r => "#(" + r.name + ")"
+        | None           
+        | String   
+        | Bool     
+        | Number   
+        | Decimal  
+        | Double   
+        | Single => "$(" + parameter.Name + ")"
+        | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
+      }
+    }
+
+    private getDefaultValue(parameter : DotNet.FormalParameterSymbol) : object
+    {
+      match (parameter.Default)
+      {
         | String    as s => s.Value
         | Bool      as b => b.Value
         | Number    as n => n.Value
         | Decimal   as d => d.Value
         | Double    as d => d.Value
         | Single    as s => s.Value
+        | None           => null
+        | Reference      => null
         | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
     }
     
     private GenerateDeploymentScript(script : Deployment.ScriptSymbol) : string * QuickType.Deployment
     {
-      def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
-      def parameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).Select(p => (p.Name, getParameterValue(p)));
-      def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
+      def refDefs         = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
+      def refDefs = refDefs;
+      def allParameters   = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
+      def parameters      = allParameters.Select(p => (p.Name, getParameterValue(p)));
+      def defaultes       = allParameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
+      def defs            = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
       def isBase64Encoded = if (script.IsIsBase64EncodedEvaluated && script.IsBase64Encoded.HasValue) script.IsBase64Encoded.Value else false;
-      def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
+      def scriptArgs      = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
       (script.Name, 
         Deployment() <- 
         { 
-            Type           = TypeEnum.Script;
-            ScriptPath     = if (!isBase64Encoded)          script.Path.Value      else null;
-            ScriptData     = if (isBase64Encoded)           script.Path.Value      else null; 
-            ReturnValue    = if (script.Expected.HasValue)  script.Expected.Value  else null;
-            RebootExitCode = if (script.ForReboot.HasValue) script.ForReboot.Value else null;
-            Timeout        = if (script.Timeout.HasValue)   script.Timeout.Value   else null;
-            ScriptArgs     = scriptArgs;
+            Type                    = TypeEnum.Script;
+            ScriptPath              = if (!isBase64Encoded)          script.Path.Value      else null;
+            ScriptData              = if (isBase64Encoded)           script.Path.Value      else null; 
+            ReturnValue             = if (script.Expected.HasValue)  script.Expected.Value  else null;
+            RebootExitCode          = if (script.ForReboot.HasValue) script.ForReboot.Value else null;
+            Timeout                 = if (script.Timeout.HasValue)   script.Timeout.Value   else null;
+            ScriptArgs              = scriptArgs;
+            ScriptArgsDefaultValues = defaultes;
         })
     }
 
@@ -84,30 +104,26 @@ namespace Tdl2Json
             Values    = values;
         })
     }
-    
-    private GenerateDeploymentCurrying2(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
-    {
-      def parametersMap = currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject());
-      def replaceParams(_oldName, deployment)
-      {
-        foreach (arg in parametersMap)
-          deployment.ScriptArgs[arg.Key] = arg.Value;
-        (currying.Name, deployment)
-      }
-      match (currying.BaseDeployment)
-      {
-        | Deployment.ScriptSymbol   as script   => replaceParams(GenerateDeploymentScript(script));
-        | Deployment.CurryingSymbol as currying => replaceParams(GenerateDeploymentCurrying2(currying))
-        | x => assert(false, $"The $(x.GetType().Name) not supporned as base deployment in currying deployment.")
-      }
-    }
+
+     private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
+     {
+       def deployments = Dictionary();
+       deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
+       (currying.Name,
+         Deployment() <-
+         {
+             Type        = TypeEnum.Sequence;
+             Deployments = array[deployments];
+         }
+       )
+     }
 
     private GenerateDeployment(deploymentSymbol : DeploymentSymbol) : string * QuickType.Deployment
     {
       match (deploymentSymbol)
       {
         | Deployment.ScriptSymbol   as script   => GenerateDeploymentScript(script)
-        | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying2(currying)
+        | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying(currying)
         | Deployment.SetSymbol as set =>
           def deployments = set.Deployments.Select(d => d.Name).ToArray();
           (set.Name, 
