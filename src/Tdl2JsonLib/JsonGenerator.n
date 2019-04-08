@@ -54,8 +54,8 @@ namespace Tdl2Json
   {
     public static ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
     
-    static _jsonVersion    = 6;
-    static _isExperimental = false;
+    public static JsonVersion    = 6;
+    public static IsExperimental = ThisAssembly.Git.Branch != "master";
 
     public event OnMessage : MessageHandler;
 
@@ -158,8 +158,8 @@ namespace Tdl2Json
       def symbols = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
       def coordinate = Root() <-
       {
-        Version       = _jsonVersion;
-        Schema        = $<#http://auto-reports.avp.ru/starter-schema/v$_jsonVersion/$(if (_isExperimental) "dev" else "prod")/schema.json#>;
+        Version       = JsonVersion;
+        Schema        = $<#http://auto-reports.avp.ru/starter-schema/v$JsonVersion/$(if (IsExperimental) "dev" else "prod")/schema.json#>;
         Deployments   = Deployments.Generate(symbols);
         Products      = symbols.OfType.[ProductSymbol     ]().Select(GenerateProduct) .ToDictionary();
         Platforms     = symbols.OfType.[PlatformSymbol    ]().Select(GeneratePlatform).ToDictionary();
