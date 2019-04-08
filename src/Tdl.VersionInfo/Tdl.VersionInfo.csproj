@@ -18,6 +18,8 @@
     <OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
     <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
     <BuildRevision Condition=" '$(BuildRevision)' == '' ">0</BuildRevision>
+    <BranchName    Condition=" '$(BranchName)' != '' ">"$(BranchName)"</BranchName>
+    <BranchName    Condition=" '$(BranchName)' == '' ">ThisAssembly.Git.Branch</BranchName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,6 +53,10 @@
       <Value>$(BuildRevision)</Value>
       <Visible>false</Visible>
     </T4ParameterValues>
+    <T4ParameterValues Include="BranchName">
+      <Value>$(BranchName)</Value>
+      <Visible>false</Visible>
+    </T4ParameterValues>
     <None Include="BuildRevision.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BuildRevision.cs</LastGenOutput>
@@ -68,6 +74,7 @@
   </Target>
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="BuildRevision = $(BuildRevision)" />
+    <Message Importance="High" Text="BranchName = $(BranchName)" />
   </Target>
   <Target Name="AfterBuild">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
