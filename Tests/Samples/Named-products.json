@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
   "Deployments": {
     "InstallProduct": {
       "Type": "Script",
@@ -10,6 +10,7 @@
         "Size42": "$(Product:ProductB.Size)",
         "ReleaseName": "$(Product:ProductB.BranchName)"
       },
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
     }
   },

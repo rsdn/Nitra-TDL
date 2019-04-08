@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
   "Deployments": {
     "Reboot-00:20:00": {
       "Type": "Reboot",
@@ -16,6 +16,10 @@
         "ProductDistributivePath": "$(ProductDistributivePath)",
         "ProductModulesPath": "$(ProductModulesPath)",
         "BaseDistribTestModules": "$(BaseDistribTestModules)",
+        "AutotestsPath": "$(AutotestsPath)",
+        "DeploymentSequenceName": "$(DeploymentSequenceName)"
+      },
+      "ScriptArgsDefaultValues": {
         "AutotestsPath": "xyz",
         "DeploymentSequenceName": "abc"
       },
@@ -23,43 +27,34 @@
       "Timeout": "01:00:00"
     },
     "Deploy_Gated": {
-      "Type": "Script",
-      "ReturnValue": 42,
-      "ScriptArgs": {
-        "ProductDistributivePath": "$(ProductDistributivePath)",
-        "ProductModulesPath": "$(ProductModulesPath)",
-        "BaseDistribTestModules": "$(BaseDistribTestModules)",
-        "AutotestsPath": "xyz",
-        "DeploymentSequenceName": "gated"
-      },
-      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\CSharp_Deployer\\executeDeploy.ps1",
-      "Timeout": "01:00:00"
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
+      ]
     },
     "Deploy_Middle": {
-      "Type": "Script",
-      "ReturnValue": 42,
-      "ScriptArgs": {
-        "ProductDistributivePath": "$(ProductDistributivePath)",
-        "ProductModulesPath": "$(ProductModulesPath)",
-        "BaseDistribTestModules": "$(BaseDistribTestModules)",
-        "AutotestsPath": "xyz",
-        "DeploymentSequenceName": "middle"
-      },
-      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\CSharp_Deployer\\executeDeploy.ps1",
-      "Timeout": "01:00:00"
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "middle"
+          }
+        }
+      ]
     },
     "Deploy_Finish": {
-      "Type": "Script",
-      "ReturnValue": 42,
-      "ScriptArgs": {
-        "ProductDistributivePath": "$(ProductDistributivePath)",
-        "ProductModulesPath": "$(ProductModulesPath)",
-        "BaseDistribTestModules": "$(BaseDistribTestModules)",
-        "AutotestsPath": "finish",
-        "DeploymentSequenceName": "middle"
-      },
-      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\CSharp_Deployer\\executeDeploy.ps1",
-      "Timeout": "01:00:00"
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deploy_Middle": {
+            "AutotestsPath": "finish"
+          }
+        }
+      ]
     },
     "DeploymentList": {
       "Type": "Sequence",

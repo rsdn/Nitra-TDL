@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
   "Deployments": {
     "DeployWithDeployer": {
       "Type": "Script",
@@ -8,15 +8,19 @@
       "ScriptArgs": {
         "BuildName": "$(BuildName)",
         "DeployIsNeeded": "$(DeployIsNeeded)",
-        "DeployerTimeoutSec": 900,
+        "DeployerTimeoutSec": "$(DeployerTimeoutSec)",
         "DeployerFlags": "$(DeploymentConditions)",
         "TestSettingsDirectory": "$(InternalTestSettingsDirectory)"
+      },
+      "ScriptArgsDefaultValues": {
+        "DeployerTimeoutSec": 900
       },
       "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\Deploy.ps1"
     },
     "DeployCollectors": {
       "Type": "Script",
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\DeployDataCollectors.ps1"
     },
     "DeployWithDeployer_NoReboot": {

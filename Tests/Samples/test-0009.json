@@ -25,7 +25,9 @@
         "TEST_ARC_PATH": "$(BuildPath)\\$(BuildDir)\\$(TestArchive)",
         "E_TESTS_DIR": "$(TestsDir)",
         "E_BUILD_PATH": "$(BuildPath)\\$(BuildDir)",
-        "E_PRODUCT_VERSION": "$(Version)"
+        "E_PRODUCT_VERSION": "$(Version)",
+        "A": "$(Product:SecondA.Size)",
+        "B": "$(Product:SecondB.Size)"
       },
       "ScriptArgsDefaultValues": {
         "DEPLOY_ROBOT": "hello_deploy.robot",
@@ -56,6 +58,24 @@
       },
       "ReleaseName": "MonorepoHelloWorld",
       "Version": "#(ProductVersion)"
+    },
+    "Word": {
+      "Name": "Word",
+      "Parameters": {
+        "Name": "Word",
+        "Size": 100
+      },
+      "ReleaseName": "Word",
+      "Version": "#(ProductVersion)"
+    },
+    "Excel": {
+      "Name": "Excel",
+      "Parameters": {
+        "Name": "Excel",
+        "Size": 42
+      },
+      "ReleaseName": "Excel",
+      "Version": "#(ProductVersion)"
     }
   },
   "Suites": {
@@ -64,6 +84,8 @@
         "Version": "#(ProductVersion)",
         "BuildPath": "#(BuildPath)",
         "BuildDir": "distrib\\linux-x86_64",
+        "SecondA": "Excel",
+        "SecondB": "Word",
         "ProductInstall": "install_product.sh",
         "TestArchive": "MonrepoHelloWorld-tests.tgz",
         "TestsDir": "/root/autotests"

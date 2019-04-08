@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/dev/schema.json",
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
   "Deployments": {
     "InstallProduct": {
       "Type": "Script",
@@ -12,24 +12,28 @@
         "-settings_file": "$(TestSettingsFile)",
         "-samples_path": "$(SamplesPath)"
       },
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\storage\\CoreTechnologies\\AutotestProjectBuilds\\MacAutotests\\Deployer\\deployer.py"
     },
     "TestUI": {
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_ui.py"
     },
     "TestDeployArtifacts": {
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_deploy_artifacts.py"
     },
     "TestDeployArtifactsWithTimeout": {
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_deploy_artifacts.py",
       "Timeout": "00:00:02"
     },
@@ -37,12 +41,14 @@
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_air_cli.py"
     },
     "EnableSelenium": {
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\enable_selenium.sh"
     },
     "RebootWithScript": {
@@ -50,6 +56,7 @@
       "RebootExitCode": 101,
       "ReturnValue": 42,
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\Reboot\\deployReboot.sh",
       "Timeout": "00:02:00"
     },
@@ -64,6 +71,7 @@
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\run_py_test_deploy.py"
     }
   },
