@@ -55,7 +55,7 @@ namespace Tdl2Json
     public ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
     
     public JsonVersion    = 6;
-    public IsExperimental = ThisAssembly.Git.Branch != "master";
+    public IsExperimental = ThisAssembly.BranchName != "master";
 
     public event OnMessage : MessageHandler;
 
