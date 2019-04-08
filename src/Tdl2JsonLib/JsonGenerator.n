@@ -52,10 +52,10 @@ namespace Tdl2Json
 
   public module JsonGenerator
   {
-    public static ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
+    public ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
     
-    public static JsonVersion    = 6;
-    public static IsExperimental = ThisAssembly.Git.Branch != "master";
+    public JsonVersion    = 6;
+    public IsExperimental = ThisAssembly.Git.Branch != "master";
 
     public event OnMessage : MessageHandler;
 
