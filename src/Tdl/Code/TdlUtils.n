@@ -879,16 +879,19 @@ namespace Tdl
       }
     }
     
-    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : ProductSymbol) : ImmutableArray[FormalParameterSymbol]
+    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : ProductSymbol) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
+        unless (product.IsProductTypeEvaluated)
+          return VNone();
+      
       def productParameters = product.ProductType.MemberTable.GetAllSymbols();
       def filteringScope    = definitionScope :> FilteringScope;
       def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
                                                     .OfType.[FormalParameterSymbol]()
-                                                    .Where(p => p.DeclaredIn is Deployment.SelectSymbol));
+                                                    .Where(p => p.IsDeclaredInEvaluated && p.DeclaredIn is Deployment.SelectSymbol));
                                          
       when (selectParams.Count == 0)
-        return ImmutableArray.Empty;
+        return VSome(ImmutableArray.Empty);
       
       def selectDeployments = HashSet(selectParams.Select(p => p.DeclaredIn :> Deployment.SelectSymbol));
       def paramMap          = Dictionary(ParameterComparer.Instance);
@@ -906,12 +909,20 @@ namespace Tdl
       }
 
       foreach (ds in getAllProducts(product))
+      {
+        unless (ds.IsDefsEvaluated)
+          return VNone();
+
         foreach (d in ds.Defs)
           when (d.Expr is Tdl.Expr.String as str)
             paramMap[d.Symbol] = str.Value;
+      }
 
       foreach (s in selectDeployments)
       {
+        unless (s.IsParametersEvaluated)
+          return VNone();
+          
         def values = array(s.Parameters.Length);
         foreach (p in s.Parameters with k)
         {
@@ -920,11 +931,14 @@ namespace Tdl
             values[k] = value;
         }
         
+        unless (s.IsCasesEvaluated)
+          return VNone();
+          
         mutable isEntryPresent;
         foreach (entry in s.Cases)
         {
           when (entry.Length != values.Length)
-            return ImmutableArray.Empty; // An error message has already been reported.
+            return VSome(ImmutableArray.Empty); // An error message has already been reported.
 
           mutable isEntryMatch = true;
           for (mutable i = 0; i < values.Length; i++)
@@ -941,7 +955,7 @@ namespace Tdl
           def msgs     = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
           using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"The $(s.Name) select deployment has no ..$entryStr entry.", 0))
             root.ReportMessage(CompilerMessageType.Hint, s.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
-          return ImmutableArray.Empty;
+          return VSome(ImmutableArray.Empty);
         }
       }
       
@@ -951,7 +965,7 @@ namespace Tdl
       foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
         builder.Add(p);
       _ = productParameters;
-      builder.ToImmutable()
+      VSome(builder.ToImmutable())
     }
 
     public AsName(text : string) : string
