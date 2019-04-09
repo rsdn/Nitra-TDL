@@ -16,8 +16,8 @@ namespace Tdl
       in Product     : ProductSymbol;
       in Statements  : ImmutableArray[SuiteStatement];
       in Type        : SuiteTypeSymbol;
-      in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
     stage 3:
+      in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
       in Defs        : ImmutableArray[Def];
 
       Kind           = "suite";
@@ -48,7 +48,7 @@ namespace Tdl
     TypeOpt.Scope               = Scope;
     TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
     Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
-    Symbol.DefaultDefs          = Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product);
+    Symbol.DefaultDefs          = await Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product);
 
     SetUsed(Symbol.Statements);
 
