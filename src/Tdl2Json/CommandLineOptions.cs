@@ -36,7 +36,14 @@ namespace Tdl2Json
 
         public bool ComilerMessagesTest { get; private set; }
 
+        public string JsonSchemaType { get; private set; }
+
         public string SampleOutputFile { get; private set; }
+
+        public string DeploymentScriptTemplateFile { get; private set; }
+
+        public string DeploymentToolPath { get; private set; }
+
         public bool IsTestMode => ComilerMessagesTest || SampleOutputFile != null;
 
         public CommandLineOptions()
@@ -46,11 +53,14 @@ namespace Tdl2Json
                 { "?|h|help",                 "Prints this message.",                                    v => NeedHelp = true },
                 { "o|out=",                   "Output file path.",                                       v => OutputFile = v },
                 { "w|working-directory=",     "Working directory.",                                      v => WorkingDirectory = v },
+                { "deployment-template=",     "Deployment script template file path.",                   v => DeploymentScriptTemplateFile = v },
+                { "deployment-tool=",         "Deployment tool file path.",                              v => DeploymentToolPath = v },
                 { "l|log-level=",            $"Logging verbosity: {string.Join(", ", LogLevels.Keys)}.", SetLogLevel },
                 { "t|transformator=",         "Transformer: path-to.dll|Qualified.Function.Name",        AddTransformer },
-                { "m|compiler-messages-test", "Test comiler meesges by sampels.",                        _ => ComilerMessagesTest = true },
-                { "s|sample=",                "Sammple output file path.",                               v => SampleOutputFile = v },
+                { "m|compiler-messages-test", "Test compiler messages by samples.",                      _ => ComilerMessagesTest = true },
+                { "s|sample=",                "Sample output file path.",                                v => SampleOutputFile = v },
                 { "d|debug",                  "Start with debugger prompt",                              v => Debugger.Launch() },
+                { "json-schema-type=",        "JSON schema type.",                                       v => JsonSchemaType = v, true },
                 new ResponseFileSource(),
 
                 // backward compatibility
@@ -90,6 +100,9 @@ namespace Tdl2Json
 
             if (InputFiles.Count == 0)
                 throw new OptionException("At least one input TDL file required.", "");
+
+            if (!string.IsNullOrEmpty(DeploymentScriptTemplateFile) && !File.Exists(DeploymentScriptTemplateFile))
+                throw new OptionException($"Deployment script template file '{DeploymentScriptTemplateFile}' does not exist.", "deployment-template");
         }
 
         public void PrintHelp(TextWriter writer)

@@ -48,6 +48,7 @@
       | Platform          = "platform"          sm Name ";" nl;
       | PlatformSet       = "platform"          sm Name sm "=" sm Platforms=(Reference; "," sm)+ ";" nl;
       | DeploymentScript  = "deployment"        sm Name outline_begin_before Parameters outline_end_before sm "script" sm "data"? ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
+      | DeploymentCode    = "deployment"        sm Name outline_begin_before Parameters outline_end_before nl DeploymentCodeBody;
       | DeploymentSet     = "deployment"        sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
       | Currying          = "deployment"        sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
       | DeploymentSelect  = "select" sm "deployment" sm Name "(" (Parameter; "," sm)+ ")"
@@ -187,6 +188,16 @@
       | ForReboot1 = "expected" sm "for" sm "reboot" sm Value=DecimalIntegerLiteral ";" nl;
       | ForReboot2 = "expected-for-reboot"           sm Value=DecimalIntegerLiteral ";" nl;
       | Timeout    = "timeout"                       sm Value=StringLiteral ";" nl;
+    }
+
+    syntax DeploymentCodeBody = outline_begin_before "{" inl Commands=CommandCall* Options=DeploymentOption* d "}" nl outline_end_before;
+
+    syntax CommandCall = Command=QualifiedIdentifier "(" Arguments=(CommandCallArgument; ","sm)* ")" ";" nl;
+
+    syntax CommandCallArgument
+    {
+      | Input  = ParameterName=Reference ":" sm Value=DefExpr
+      | Output = ParameterName=Reference ":" sm "out" sm "var" sm VariableName=Name
     }
 
     syntax DefDeclaration = Reference sm "=" sm DefExpr ";" nl;

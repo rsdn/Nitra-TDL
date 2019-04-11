@@ -76,6 +76,26 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.MethodScopeFactory
     }
 
+    public GetCommandScopeFactory(this context : DependentPropertyEvalContext) : ScopeFactory
+    {
+      ToTdlContext(context).TdlProjectData.CommandScopeFactory
+    }
+
+    public GetCommandParametersScope(this context : DependentPropertyEvalContext, scope : Scope) : Scope
+    {
+      ToTdlContext(context).TdlProjectData.CommandParametersScopeFactory(scope)
+    }
+
+    public GetCommandParameterValuesScope(this _context : DependentPropertyEvalContext, scope : Scope, stepNumber : int) : Scope
+    {
+      FilteringScope(scope,
+        fun (_)
+        {
+          | CommmandCallOutputArgumentSymbol as s => s.IsStepNumberEvaluated && s.StepNumber < stepNumber
+          | _ => true
+        })
+    }
+
     public PlatformMakeHint(symbolCache : ISymbolCache, symbol : Platform.SetSymbol) : string
     {
       def builder = StringBuilder();
@@ -97,7 +117,7 @@ namespace Tdl
       builder.ToString()
     }
     
-    public DeploymentMakeHint(symbolCache : ISymbolCache, symbol : Deployment.ScriptSymbol) : string
+    public DeploymentMakeHint(symbolCache : ISymbolCache, symbol : DeploymentSymbol) : string
     {
       def builder = StringBuilder();
       try
@@ -224,11 +244,6 @@ namespace Tdl
 
         match (deployment)
         {
-          | s is Deployment.ScriptSymbol   =>
-            unless (s.IsParameterScopeEvaluated)
-              return false;
-            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-            
           | s is Deployment.SelectSymbol   =>
             unless (s.IsParameterScopeEvaluated)
               return false;
@@ -241,14 +256,16 @@ namespace Tdl
             unless (CollectDeployments(visited, ref builder, s.Deployments))
               return false;
 
-          | s is Deployment.CurryingSymbol =>
-            unless (s.IsAggregateParametersScopeEvaluated)
+          | _ is Deployment.ScriptSymbol
+          | _ is Deployment.CodeSymbol
+          | _ is Deployment.CurryingSymbol =>
+            unless (deployment.IsAggregateParametersScopeEvaluated)
               return false;
-            UnionScopeBuilder.Add(s.AggregateParametersScope, ref builder);
-          
+            UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
+
           | _ is DeploymentRebootSymbol    => ()
             
-          | null => assert(false, "The deployment can't be null.")
+          | null => assert(false, "Deployment can not be null.")
           | _    => assert(false, "Not supported deployment type: " + deployment.GetType().Name)
         }
       }
@@ -874,7 +891,7 @@ namespace Tdl
     {
         unless (product.IsProductTypeEvaluated)
           return VNone();
-      
+
       def productParameters = product.ProductType.MemberTable.GetAllSymbols();
       def filteringScope    = definitionScope :> FilteringScope;
       def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
@@ -995,6 +1012,7 @@ namespace Tdl
       def getDescendants(sym : DeploymentSymbol) : Seq[DeploymentSymbol]
       {
           | _ is Deployment.ScriptSymbol   => []
+          | _ is Deployment.CodeSymbol     => []
           | s is Deployment.SetSymbol      => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
           | s is Deployment.SelectSymbol   => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
           | s is Deployment.CurryingSymbol => if (s.IsBaseDeploymentEvaluated) [s.BaseDeployment] else []
@@ -1158,17 +1176,73 @@ namespace Tdl
           _onReference(reference);
       }
     }
-    
+
     public Accept(this ast : IAst, onName : Name -> void, onReference : Reference -> void) : void
     {
       ast.Accept(AstVisitor(onName, onReference));
     }
-    
+
     public SetDeclaredIn(this _ast : IAst, context : DependentPropertyEvalContext, symbols : ImmutableArray[FieldSymbol]) : void
     {
       def declaredIn = context.GetExternalSymbol();
       foreach (symbol in symbols)
         symbol.DeclaredIn = declaredIn;
+    }
+
+    public ValidateCommandParameters(this ast : CommandCall, command : DeclaredTypeSymbol, context : DependentPropertyEvalContext) : void
+    {
+      def projectData = ToTdlContext(context).TdlProjectData;
+      def usedParameters = Dictionary();
+
+      foreach (argument in ast.Arguments)
+      {
+        def name         = argument.ParameterName;
+        def expectedKind =
+          match (argument)
+          {
+            | CommmandCallInputArgument =>
+              mutable initialLocation;
+              if (usedParameters.TryGetValue(name.Id, out initialLocation))
+              {
+                def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
+                using (root = msgs.RootError(name, $"Duplicated assignment of command parameter '$(name.Text)'."))
+                  root.Hint(initialLocation, "First assignment.");
+              }
+              else
+                usedParameters.Add(name.Id, name.Location);
+              CommandSymbolKind.Input
+
+            | CommmandCallOutputArgument => CommandSymbolKind.Output
+            | _                          => CommandSymbolKind.None
+          };
+
+        when (expectedKind != CommandSymbolKind.None && argument.IsPropertyRefEvaluated && argument.PropertyRef.IsSymbolEvaluated)
+        {
+          def kind = projectData.GetCommandSymbolKind(argument.PropertyRef.Symbol);
+          when ((kind & expectedKind) == 0)
+          {
+            def action = if (expectedKind == CommandSymbolKind.Output) "readable" else "writable";
+            name.Error(context, $"Command parameter '$(name)' is not $(action).");
+          }
+        }
+      }
+
+      mutable requiredParameters;
+      foreach ((s, kind) in projectData.GetCommandParameters(command))
+      {
+        when ((kind & CommandSymbolKind.InputRequired) == CommandSymbolKind.InputRequired && !usedParameters.ContainsKey(s.NameId))
+        {
+          when (requiredParameters == null)
+            requiredParameters = List();
+          requiredParameters.Add("'" + s.Name + "'");
+        }
+      }
+
+      when (requiredParameters != null)
+      {
+        def (p1, p2) = if (requiredParameters.Count == 1) ("parameter", "is") else ("parameters", "are");
+        ast.Error(context, $<#Required command $(p1) ..$(requiredParameters; ", ") $(p2) not assigned.#>)
+      }
     }
 
     private sealed class InvocationScope : Scope
@@ -1264,5 +1338,5 @@ namespace Tdl
     {
       InvocationScope(_, _, globalScope)
     }
-} // module
+  } // module
 } // namespace

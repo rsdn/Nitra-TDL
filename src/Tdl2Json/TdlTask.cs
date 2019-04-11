@@ -48,6 +48,18 @@ public class TdlTask : ToolTask
         set;
     }
 
+    public string DeploymentScriptTemplateFile
+    {
+        get;
+        set;
+    }
+
+    public string DeploymentToolPath
+    {
+        get;
+        set;
+    }
+
     protected override string GenerateFullPathToTool()
     {
         return null;
@@ -69,6 +81,14 @@ public class TdlTask : ToolTask
         foreach (var item in References)
         {
             buffer.Add(EscapeFilePath(item.GetMetadata("FullPath")));
+        }
+        if (!string.IsNullOrEmpty(DeploymentScriptTemplateFile))
+        {
+            buffer.Add("-deployment-template:" + EscapeFilePath(DeploymentScriptTemplateFile));
+        }
+        if (!string.IsNullOrEmpty(DeploymentToolPath))
+        {
+            buffer.Add("-deployment-tool:" + EscapeFilePath(DeploymentToolPath));
         }
         buffer.Add("-out:" + EscapeFilePath(OutputFile));
         return string.Join(Environment.NewLine, buffer);

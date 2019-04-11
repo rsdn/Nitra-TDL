@@ -1,0 +1,58 @@
+﻿using Nitra;
+using Nitra.Declarations;
+using Nitra.Serialization2;
+using Nitra.Staging;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl
+{
+  public class ScopeAggregator : ICollector
+  {
+    private mutable builder : UnionScopeBuilder;
+
+    private this(scope : Scope)
+    {
+      UnionScopeBuilder.Add(scope, ref builder);
+    }
+
+    public this(context : DependentPropertyEvalContext)
+    {
+      if (context != null)
+        context.NotifyCollectorCreated(out CreatedOnStage, out CreatedOnPass);
+      else
+      {
+        CreatedOnStage = -1;
+        CreatedOnPass = -1;
+      }
+    }
+
+    public CreatedOnStage : int   { get; }
+    public CreatedOnPass  : int   { get; }
+    public Scope          : Scope { get { builder.ToScope() } }
+
+    [Collect]
+    public Add(scope : Scope) : void
+    {
+      UnionScopeBuilder.Add(scope, ref builder);
+    }
+
+    public Serialize(writer : IO.BinaryWriter, metadataWriter : MetadataWriter) : void
+    {
+      metadataWriter.WriteObject(Scope, writer);
+    }
+
+    public static Deserialize(reader : IO.BinaryReader, metadataReader : MetadataReader) : this
+    {
+      def scope = metadataReader.ReadObject(reader);
+      ScopeAggregator(scope)
+    }
+  }
+}

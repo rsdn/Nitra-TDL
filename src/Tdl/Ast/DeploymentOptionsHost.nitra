@@ -1,0 +1,33 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  abstract declaration DeploymentOptionsHost
+  {
+    symbol
+    {
+      in Expected  : ParsedValue[int];
+      in ForReboot : ParsedValue[int];
+      in Timeout   : ParsedValue[string];
+    }
+
+    Symbol.Expected  = TdlUtils.MakeExpected(Success);
+    Symbol.ForReboot = TdlUtils.MakeForReboot(ForReboot);
+    Symbol.Timeout   = Timeout.ConvertStringLiteral();
+
+    Options : DeploymentOption*;
+
+    decompose Options
+    {
+      Success   : DeploymentOption.Success?;
+      ForReboot : DeploymentOption.ForReboot?;
+      Timeout   : DeploymentOption.Timeout?;
+    }
+  }
+}

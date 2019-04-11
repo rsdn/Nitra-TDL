@@ -6,11 +6,13 @@
 
   <UsingTask TaskName="TdlTask" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
     <ParameterGroup>
-      <ToolPath         ParameterType="System.String" Required="false" />
-      <WorkingDirectory ParameterType="System.String" Required="false" />
-      <Sources          ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <References       ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
-      <OutputFile       ParameterType="System.String" Required="true" Output="true" />
+      <ToolPath                     ParameterType="System.String" Required="false" />
+      <WorkingDirectory             ParameterType="System.String" Required="false" />
+      <DeploymentScriptTemplateFile ParameterType="System.String" Required="false" />
+      <DeploymentToolPath           ParameterType="System.String" Required="false" />
+      <Sources                      ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <References                   ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <OutputFile                   ParameterType="System.String" Required="true" Output="true" />
     </ParameterGroup>
     <Task>
       <Code Language="cs" Source="$(MSBuildThisFileDirectory)TdlTask.cs" />
@@ -33,11 +35,13 @@
           Outputs="$(TdlOutputPath)"
           DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile">
     <TdlTask Condition=" '$(BuildingProject)' != 'false' "
-            ToolPath         = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
-            WorkingDirectory = "$(MSBuildProjectDirectory)"
-            References       = "@(ReferencePath)"
-            Sources          = "@(TdlCompile)"
-            OutputFile       = "$(TdlOutputPath)">
+            ToolPath                     = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
+            WorkingDirectory             = "$(MSBuildProjectDirectory)"
+            DeploymentScriptTemplateFile = "$(TdlDeploymentScriptTemplateFile)"
+            DeploymentToolPath           = "$(TdlDeploymentToolPath)"
+            References                   = "@(ReferencePath)"
+            Sources                      = "@(TdlCompile)"
+            OutputFile                   = "$(TdlOutputPath)">
       <Output TaskParameter="OutputFile" ItemName="TdlOutput" />
       <Output TaskParameter="OutputFile" ItemName="FileWrites"/>
     </TdlTask>

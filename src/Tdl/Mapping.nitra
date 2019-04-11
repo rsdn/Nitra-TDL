@@ -41,6 +41,13 @@ namespace Tdl
         DeploymentScriptBody.Options         -> Options;
         IsBase64Encoded = ParsedValue(KwDataOpt.Span, KwDataOpt.HasValue);
       }
+    | DeploymentCode   -> Deployment.Code
+      {
+        Name                                 -> Name;
+        Parameters.FormalParameters.Item1    -> Parameters;
+        DeploymentCodeBody.Commands          -> Commands;
+        DeploymentCodeBody.Options           -> Options;
+      }
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Deployments.Item1 -> Deployments; }
     | Currying         -> Deployment.Currying { Name -> Name; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
     | DeploymentSelect -> Deployment.Select   { Name -> Name; Parameters.Item1 -> Parameters; Cases -> Cases; }
@@ -293,6 +300,27 @@ namespace Tdl
   {
     Reference -> Reference;
     DefExpr   -> Expr;
+  }
+
+  map syntax Grammar.CommandCall -> CommandCall
+  {
+    Command         -> Command;
+    Arguments.Item1 -> Arguments;
+  }
+
+  map syntax Grammar.CommandCallArgument -> CommandCallArgument
+  {
+    | Input -> CommmandCallInputArgument
+      {
+        ParameterName -> ParameterName;
+        Value         -> Value;
+      }
+
+    | Output -> CommmandCallOutputArgument
+      {
+        VariableName  -> Name;
+        ParameterName -> ParameterName;
+      }
   }
 
   map syntax Grammar.DefExpr -> DefExpr

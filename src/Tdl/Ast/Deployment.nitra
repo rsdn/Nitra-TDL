@@ -21,15 +21,12 @@ namespace Tdl
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
 
-    | ignore-case Script : Parameterizable
+    | ignore-case Script : Parameterizable, DeploymentOptionsHost
       {
         symbol
         {
           in Path            : ParsedValue[string];
           in IsBase64Encoded : ParsedValue[bool];
-          in Expected        : ParsedValue[int];
-          in ForReboot       : ParsedValue[int];
-          in Timeout         : ParsedValue[string];
         stage 3:
           in Defs            : ImmutableArray[Def2];
 
@@ -39,29 +36,37 @@ namespace Tdl
           MakeHint       = TdlUtils.DeploymentMakeHint(symbolCache, this);
         }
 
-
-        Parameters.DeclaredIn           = Symbol;
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
         Symbol.Path                     = TdlUtils.ConvertStringLiteral(Path);
-        Symbol.Expected                 = TdlUtils.MakeExpected(Success);
-        Symbol.ForReboot                = TdlUtils.MakeForReboot(ForReboot);
-        Symbol.Timeout                  = Timeout.ConvertStringLiteral();
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
         Parameters.Scope                = Scope;
         Symbol.IsBase64Encoded          = IsBase64Encoded;
 
         Path            : CSharp.StringLiteral;
         Definitions     : Definition*;
-        Options         : DeploymentOption*;
         IsBase64Encoded : bool;
-
-        decompose Options
+      }
+    | ignore-case Code : Parameterizable, DeploymentOptionsHost
+      {
+        symbol
         {
-          Success   : DeploymentOption.Success?;
-          ForReboot : DeploymentOption.ForReboot?;
-          Timeout   : DeploymentOption.Timeout?;
+          table Variables;
+
+          Kind           = "deployment";
+          SpanClass      = TdlLang.DeploymentSpanClass;
+          IsSameIdentity = candidate is Tdl.Deployment;
+          MakeHint       = TdlUtils.DeploymentMakeHint(symbolCache, this);
         }
+
+        Parameters.Scope                = Scope;
+        Commands.StepNumberIn           = 0;
+        Commands.Variables              = Symbol.Variables;
+        Commands.OuterScope             = Scope;
+        Commands.LocalScope             = Symbol.ParameterScope.UnionWith(Symbol.Variables);
+        Symbol.AggregateParametersScope = Symbol.ParameterScope;
+
+        Commands : CommandCall*;
       }
     | ignore-case Set
       {
@@ -112,7 +117,6 @@ namespace Tdl
 
         BaseDeployment   : Reference;
         CurredParameters : Definition*;
-
       }
     | ignore-case Select : Parameterizable
       {
@@ -126,7 +130,6 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Deployment;
         }
 
-        Parameters.DeclaredIn           = Symbol;
         Symbol.Deployments              = TdlUtils.MakeDeployments(TdlUtils.ResolveDeployments(Cases.Refs));
         Symbol.AggregateParametersScope = await TdlUtils.MakeSelectAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployments);
         Parameters.Scope                = Scope;
