@@ -22,10 +22,8 @@ namespace Tdl.Tests
             Directory.CreateDirectory(OutputPath);
 
         [TearDown]
-        public void TearDown()
-        {
+        public void TearDown() =>
             Directory.Delete(OutputPath, recursive: true);
-        }
 
         [TestCaseSource(nameof(GetTestCases))]
         public void Tdl(string directory)
@@ -51,11 +49,18 @@ namespace Tdl.Tests
             arguments.Add($"-out:{Utils.EscapeCommandLineArgument(outputFilePath)}");
 
             arguments.Add("-log-level=short");
+            arguments.Add("-json-schema-type=prod");
 
             if (Debugger.IsAttached)
                 arguments.Add("-debug");
 
             var result = Utils.RunProcess(directory, ToolPath, string.Join(" ", arguments));
+
+            if (File.Exists(outputFilePath))
+            {
+                TestContext.Out.WriteLine("Output:");
+                TestContext.Out.WriteLine(File.ReadAllText(outputFilePath));
+            }
 
             Assert.AreEqual(0, result.ExitCode, "Exit code");
             Assert.IsFalse(result.HasStdError, "Stderr");

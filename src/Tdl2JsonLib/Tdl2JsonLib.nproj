@@ -171,6 +171,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DeploymentScriptTemplate.ps1">
+      <SubType>Content</SubType>
+    </EmbeddedResource>
     <Content Include="packages.config">
       <SubType>Content</SubType>
     </Content>

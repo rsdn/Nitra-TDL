@@ -8,6 +8,7 @@ using Nemerle.Utility.Pair;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Text;
 using System.Linq;
 
 using Nemerle;
@@ -23,9 +24,9 @@ namespace Tdl2Json
 {
   public module Deployments
   {
-    public Generate(symbols : IEnumerable[DeclarationSymbol]) : Dictionary[string, QuickType.Deployment]
+    public Generate(symbols : IEnumerable[DeclarationSymbol], deploymentScriptTemplate : string, deploymentToolPath : string) : Dictionary[string, QuickType.Deployment]
     {
-      symbols.OfType.[DeploymentSymbol]().Select(GenerateDeployment).ToDictionary()
+      symbols.OfType.[DeploymentSymbol]().Select(GenerateDeployment(_, deploymentScriptTemplate, deploymentToolPath)).ToDictionary()
     }
 
     private getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
@@ -63,7 +64,6 @@ namespace Tdl2Json
     private GenerateDeploymentScript(script : Deployment.ScriptSymbol) : string * QuickType.Deployment
     {
       def refDefs         = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
-      def refDefs = refDefs;
       def allParameters   = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
       def parameters      = allParameters.Select(p => (p.Name, getParameterValue(p)));
       def defaultes       = allParameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
@@ -105,25 +105,134 @@ namespace Tdl2Json
         })
     }
 
-     private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
-     {
-       def deployments = Dictionary();
-       deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
-       (currying.Name,
-         Deployment() <-
-         {
-             Type        = TypeEnum.Sequence;
-             Deployments = array[deployments];
-         }
-       )
-     }
+    private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
+    {
+      def deployments = Dictionary();
+      deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
+      (currying.Name,
+        Deployment() <-
+        {
+            Type        = TypeEnum.Sequence;
+            Deployments = array[deployments];
+        }
+      )
+    }
 
-    private GenerateDeployment(deploymentSymbol : DeploymentSymbol) : string * QuickType.Deployment
+    private GenerateDeploymentCode(code : Deployment.CodeSymbol, deploymentScriptTemplate : string, deploymentToolPath : string) : string * QuickType.Deployment
+    {
+      def scriptArgs = Dictionary();
+      def defaults   = Dictionary();
+
+      def deploymentParameters = StringBuilder();
+      def deploymentCode       = StringBuilder();
+      def deploymentPrologue   = StringBuilder();
+      foreach (parameter in code.Parameters with index)
+      {
+        def parameterValue        = getParameterValue(parameter);
+        def parameterDefaultValue = getDefaultValue(parameter);
+
+        scriptArgs.Add(parameter.Name, parameterValue);
+        when (parameterDefaultValue != null)
+          defaults.Add(parameter.Name, parameterDefaultValue);
+
+        when (index > 0)
+          _ = deploymentParameters.AppendLine(",");
+
+        def parameterName = "$" + parameter.Name;
+
+        _ = deploymentParameters.Append($"  [string] $(parameterName)");
+
+        def appendEmptyValueCheck()
+        {
+          _ = deploymentPrologue.AppendLine($<#if (-not($(parameterName))) { Throw "Value of -$(parameter.Name) is not specified" }#>);
+        }
+
+        match (parameter.Type.FullName)
+        {
+          | "System.String" | "string" =>
+            _ = deploymentPrologue.AppendLine($<#$(parameterName) = ('@"' + $(parameterName).Replace('"', '""') + '"')#>);
+
+          | "System.Boolean" | "bool" =>
+            appendEmptyValueCheck();
+            _ = deploymentPrologue.AppendLine($<#$(parameterName) = ($(parameterName).ToLower())#>);
+
+          | _ => appendEmptyValueCheck();
+        }
+      }
+
+      def ast = code.FirstDeclarationOrDefault :> Tdl.Deployment.Code;
+      foreach (command in ast.Commands)
+      {
+        def commandVariable = "command" + command.StepNumberIn;
+        def commandType     = command.TypeRef.Symbol.FullName;
+        _ = deploymentCode.AppendLine($"var $(commandVariable) = __runtime__.CreateCommand<$(commandType)>();");
+
+        foreach (argument is Tdl.CommmandCallInputArgument in command.Arguments)
+        {
+          def expr = argument.Value;
+          def value =
+            match (expr)
+            {
+              | DefExpr.String
+              | DefExpr.True
+              | DefExpr.False
+              | DefExpr.RealLiteral
+              | DefExpr.DecimalIntegerLiteral
+              | DefExpr.HexadecimalIntegerLiteral => expr.ToString()
+              | x is DefExpr.Reference =>
+                match (x.TypedRef.Symbol)
+                {
+                  | FormalParameterSymbol            => "$" + x.ToString()
+                  | CommmandCallOutputArgumentSymbol => x.ToString()
+                  | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
+                }
+
+              | x => throw NotSupportedException($"Expression '$(x)' is not supported in deployment code.")
+            };
+
+          def parameterName = argument.ParameterName.Text;
+          _ = deploymentCode.AppendLine($"$(commandVariable).$(parameterName) = $(value);");
+        }
+
+        _ = deploymentCode.AppendLine($"__runtime__.ExecuteCommand($(commandVariable));");
+
+        foreach (argument is Tdl.CommmandCallOutputArgument in command.Arguments)
+        {
+          def parameterName = argument.ParameterName.Text;
+          def variableName  = argument.Name.Text;
+          _ = deploymentCode.AppendLine($"var $(variableName) = $(commandVariable).$(parameterName);");
+        }
+      }
+
+      def deploymentScript = StringBuilder(deploymentScriptTemplate)
+        .Replace("{{Parameters}}", deploymentParameters.ToString())
+        .Replace("{{Prologue}}",   deploymentPrologue.ToString())
+        .Replace("{{Name}}",       code.Name)
+        .Replace("{{Source}}",     deploymentCode.ToString())
+        .Replace("{{Tool}}",       deploymentToolPath)
+        .ToString();
+
+      (code.Name,
+        Deployment() <-
+        {
+          Type                    = TypeEnum.Script;
+          ScriptPath              = null;
+          ScriptData              = Convert.ToBase64String(Encoding.UTF8.GetBytes(deploymentScript));
+          ReturnValue             = if (code.Expected.HasValue)  code.Expected.Value  else null;
+          RebootExitCode          = if (code.ForReboot.HasValue) code.ForReboot.Value else null;
+          Timeout                 = if (code.Timeout.HasValue)   code.Timeout.Value   else null;
+          ScriptArgs              = scriptArgs;
+          ScriptArgsDefaultValues = defaults;
+        })
+    }
+
+    private GenerateDeployment(deploymentSymbol : DeploymentSymbol, deploymentScriptTemplate : string, deploymentToolPath : string) : string * QuickType.Deployment
     {
       match (deploymentSymbol)
       {
         | Deployment.ScriptSymbol   as script   => GenerateDeploymentScript(script)
         | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying(currying)
+        | Deployment.CodeSymbol     as code     => GenerateDeploymentCode(code, deploymentScriptTemplate, deploymentToolPath)
         | Deployment.SetSymbol as set =>
           def deployments = set.Deployments.Select(d => d.Name).ToArray();
           (set.Name, 
@@ -132,6 +241,7 @@ namespace Tdl2Json
               Type        = TypeEnum.Sequence;
               Deployments = deployments;
             })
+
         | DeploymentRebootSymbol as reboot => 
           (reboot.Name, 
             Deployment() <-
@@ -140,7 +250,6 @@ namespace Tdl2Json
               RebootTimeout = if (reboot.Timeout.HasValue) reboot.Timeout.ValueOrDefault else "00:30:00";
             }
           )
-        
 
         | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel)
         | _ => ThrowNotSupportedSymbol(deploymentSymbol) 

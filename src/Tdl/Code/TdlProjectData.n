@@ -21,28 +21,33 @@ namespace Tdl
     public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, entityFieldsScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol, isTestMode : bool)
     {
       base(backEnd, context, rootNamespace);
-      ScenarioParameterScope     = scenarioParameterScope;
-      EntityFieldsScope          = entityFieldsScope;
-      RequiredScenarioParameters = requiredScenarioParameters;
-		  ExternalSymbol             = externalSymbol;
-      ExternalSymbolTable        = externalSymbol.MemberTable;
-      MethodScopeFactory         = MethodScopeFactoryImpl;
-		  IsTestMode                 = isTestMode;
-    }    
-    
-    public ScenarioParameterScope     : TableScope                            { get; }
-    public EntityFieldsScope          : TableScope                            { get; }
-    public RequiredScenarioParameters : ImmutableArray[FormalParameterSymbol] { get; }
-    public ExternalSymbolTable        : TableScope                            { get; }
-    public ExternalSymbol             : ExternalSymbol                        { get; }
-    public MethodScopeFactory         : ScopeFactory                          { get; }
-    public IsTestMode                 : bool                                  { get; }
-   
+      ScenarioParameterScope        = scenarioParameterScope;
+      EntityFieldsScope             = entityFieldsScope;
+      RequiredScenarioParameters    = requiredScenarioParameters;
+      ExternalSymbol                = externalSymbol;
+      ExternalSymbolTable           = externalSymbol.MemberTable;
+      MethodScopeFactory            = MethodScopeFactoryImpl;
+      IsTestMode                    = isTestMode;
+      CommandScopeFactory           = fun (scope) { FilteringScope(scope, symbol => GetCommandSymbolKind(symbol) == CommandSymbolKind.NamespaceOrCommand) }
+      CommandParametersScopeFactory = fun (scope) { FilteringScope(scope, symbol => (GetCommandSymbolKind(symbol) & CommandSymbolKind.InputOrOutput) != 0) }
+    }
+
+    public ScenarioParameterScope        : TableScope                            { get; }
+    public EntityFieldsScope             : TableScope                            { get; }
+    public RequiredScenarioParameters    : ImmutableArray[FormalParameterSymbol] { get; }
+    public ExternalSymbolTable           : TableScope                            { get; }
+    public ExternalSymbol                : ExternalSymbol                        { get; }
+    public MethodScopeFactory            : ScopeFactory                          { get; }
+    public IsTestMode                    : bool                                  { get; }
+    public CommandScopeFactory           : ScopeFactory                          { get; }
+    public CommandParametersScopeFactory : ScopeFactory                          { get; }
+
     private         _methodScopeFactoryCache    : Dictionary[int, bool] = Dictionary();
+    private         _commandScopeFactoryCache   : Dictionary[int, CommandSymbolKind] = Dictionary();
     private mutable _stableGuidIncrementalValue : int;
 
     public GetStableGuidIncrementalValue() : uint { _ = _stableGuidIncrementalValue; Interlocked.Increment(ref _stableGuidIncrementalValue) :> uint }
-    
+
     MethodScopeFactoryImpl(scope : Scope) : Scope
     {
       def filter(symbol : DeclarationSymbol) : bool
@@ -101,6 +106,85 @@ namespace Tdl
 
       def filteringScope = FilteringScope(scope, filter);
       filteringScope
+    }
+
+    [Memoize]
+    public GetCommandParameters(symbol : DeclaredTypeSymbol) : ImmutableArray[Member.PropertySymbol * CommandSymbolKind]
+    {
+      mutable builder;
+      foreach (s is Member.PropertySymbol in symbol.Scope.GetAllSymbols())
+      {
+        def kind = GetCommandSymbolKind(s);
+        when ((kind %& CommandSymbolKind.InputOrOutput) != 0)
+        {
+          when (builder == null)
+            builder = ImmutableArray.CreateBuilder();
+
+          builder.Add((s, kind));
+        }
+      }
+
+      if (builder != null)
+        builder.ToImmutable()
+      else
+        ImmutableArray.Empty
+    }
+
+    public GetCommandSymbolKind(symbol : DeclarationSymbol) : CommandSymbolKind
+    {
+      mutable result;
+      when (_commandScopeFactoryCache.TryGetValue(symbol.Id, out result))
+        return result;
+
+      match (symbol)
+      {
+        | NamespaceSymbol as ns =>
+          foreach (m when GetCommandSymbolKind(m) != CommandSymbolKind.None in ns.MemberTable.GetAllSymbols())
+          {
+            result = CommandSymbolKind.NamespaceOrCommand;
+            break;
+          }
+
+        | TopClassSymbol as c when c.IsTypeParametersCountEvaluated && c.TypeParametersCount == 0 =>
+          foreach (a when a.Name == "CommandAttribute" in c.CustomAttributes)
+          {
+            result = CommandSymbolKind.NamespaceOrCommand;
+            break;
+          }
+
+        | Member.PropertySymbol as p =>
+          foreach (a in p.CustomAttributes)
+          {
+            match (a.Name)
+            {
+              | "InputAttribute" =>
+                result = result %| CommandSymbolKind.Input;
+                when (GetInputRequiredFlag(a))
+                  result = result %| CommandSymbolKind.Required;
+
+              | "OutputAttribute" => result = result %| CommandSymbolKind.Output
+              | _ => ()
+            }
+          }
+
+        | _ => ()
+      }
+
+      _commandScopeFactoryCache[symbol.Id] = result;
+
+      result
+    }
+
+    private GetInputRequiredFlag(inputAttribute : DotNet.CustomAttributeSymbol) : bool
+    {
+      foreach (n when n.Name == "Required" in inputAttribute.NamedArguments)
+      {
+        when (n.Expression is CustomAttributeExpression.Bool(value))
+          return value;
+        break;
+      }
+      // default is true
+      true
     }
   }
 }

@@ -1,0 +1,70 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  ast CommandCall
+  {
+    inout StepNumber : int;
+    in Variables     : TableScope;
+    in OuterScope    : Scope;
+    in LocalScope    : Scope;
+
+    StepNumberOut = StepNumberIn + 1;
+
+  stage 1:
+    out TypeRef : Ref[DeclaredTypeSymbol] = Command.Ref.Resolve();
+
+    Command.NameScopeFactory = context.GetCommandScopeFactory();
+    Command.Scope            = OuterScope;
+    Arguments.StepNumber     = StepNumberIn;
+    Arguments.Variables      = Variables;
+    Arguments.LocalScope     = context.GetCommandParameterValuesScope(LocalScope, StepNumberIn);
+    Arguments.CommandScope   = context.GetCommandParametersScope(TypeRef.Scope);
+
+    ValidateCommandParameters(TypeRef.Symbol, context);
+
+    Command   : QualifiedReference;
+    Arguments : CommandCallArgument*;
+  }
+
+  abstract ast CommandCallArgument
+  {
+    in StepNumber   : int;
+    in Variables    : TableScope;
+    in LocalScope   : Scope;
+
+  stage 1:
+    in CommandScope : Scope;
+    out PropertyRef : Ref[Member.PropertySymbol] = ParameterName.Ref.Resolve();
+
+    ParameterName.Scope = CommandScope;
+
+    ParameterName : Reference;
+  }
+
+  ast CommmandCallInputArgument : CommandCallArgument
+  {
+    Value.Scope        = LocalScope;
+    Value.ExpectedType = PropertyRef.Symbol.Type;
+
+    Value : DefExpr;
+  }
+
+  declaration CommmandCallOutputArgument : CommandCallArgument, TypedDeclaration
+  {
+    symbol
+    {
+      in StepNumber : int;
+    }
+
+    ContainingTable   = Variables;
+    Symbol.Type       = PropertyRef.Symbol.Type;
+    Symbol.StepNumber = StepNumber;
+  }
+}

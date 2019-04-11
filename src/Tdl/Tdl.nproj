@@ -89,10 +89,16 @@
     <Compile Include="Ast\Case.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\CommandCall.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ast\DeploymentExpr.nitra">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ast\DeploymentOption.nitra">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ast\DeploymentOptionsHost.nitra">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ast\Elem.nitra">
@@ -158,10 +164,16 @@
     <Compile Include="Ast\Var.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\CommandSymbolKind.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\Def.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\Def2.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\ScopeAggregator.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\Environment.n">

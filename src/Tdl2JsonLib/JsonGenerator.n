@@ -58,8 +58,19 @@ namespace Tdl2Json
 
     public event OnMessage : MessageHandler;
 
-    public Generate([NotNullOrEmpty] workingDirectory : string, [NotNull] sourceFiles : array[string], [NotNull] references : array[string],
-      isMethodTypingEnabled : bool, output : Lazy[TextWriter], transformatorOutput : string, transformatorOpt : TransfomationFunc, isTestMode : bool) : TransformationContext
+    public Generate(
+      [NotNullOrEmpty] workingDirectory         : string,
+      [NotNull]        sourceFiles              : array[string],
+      [NotNull]        references               : array[string],
+               mutable deploymentScriptTemplate : string,
+               mutable deploymentToolPath       : string,
+                       isMethodTypingEnabled    : bool,
+                       output                   : Lazy[TextWriter],
+                       transformatorOutput      : string,
+                       transformatorOpt         : TransfomationFunc,
+                       isTestMode               : bool,
+                       jsonSchemaType           : string
+      ) : TransformationContext
     {
       def mode =
         match (isTestMode)
@@ -89,7 +100,15 @@ namespace Tdl2Json
         if (mode == CompilerMode.Transform)
           transformatorOpt(context);
         else
-          GenerateJson(rootNamespace, output);
+        {
+          when (string.IsNullOrEmpty(deploymentScriptTemplate))
+            deploymentScriptTemplate = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
+
+          when (string.IsNullOrEmpty(deploymentToolPath))
+            deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
+
+          GenerateJson(rootNamespace, output, deploymentScriptTemplate, deploymentToolPath, jsonSchemaType);
+        }
       }
 
       context
@@ -149,17 +168,20 @@ namespace Tdl2Json
       stopwatch.Restart();
     }
 
-    private GenerateJson(root : NamespaceSymbol, output : Lazy[TextWriter]) : void
+    private GenerateJson(root : NamespaceSymbol, output : Lazy[TextWriter], deploymentScriptTemplate : string, deploymentToolPath : string, mutable jsonSchemaType : string) : void
     {
       def stopwatch = Stopwatch.StartNew();
       JsonGenerator.ReportMessage("Generating JSON...");
+
+      when (string.IsNullOrEmpty(jsonSchemaType))
+        jsonSchemaType = if (IsExperimental) "dev" else "prod";
 
       def symbols = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
       def coordinate = Root() <-
       {
         Version       = JsonVersion;
-        Schema        = $<#http://auto-reports.avp.ru/starter-schema/v$JsonVersion/$(if (IsExperimental) "dev" else "prod")/schema.json#>;
-        Deployments   = Deployments.Generate(symbols);
+        Schema        = $<#http://auto-reports.avp.ru/starter-schema/v$JsonVersion/$jsonSchemaType/schema.json#>;
+        Deployments   = Deployments.Generate(symbols, deploymentScriptTemplate, deploymentToolPath);
         Products      = symbols.OfType.[ProductSymbol     ]().Select(GenerateProduct)      .ToDictionary();
         Platforms     = symbols.OfType.[PlatformSymbol    ]().Select(GeneratePlatform)     .ToDictionary();
         Suites        = symbols.OfType.[SuiteSymbol       ]().Select(GenerateSuite)        .ToDictionary();
@@ -703,6 +725,13 @@ namespace Tdl2Json
       };
 
       (suiteSymbol.Name, suite)
+    }
+
+    private ReadStringResource(name : string) : string
+    {
+      using (stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
+      using (reader = System.IO.StreamReader(stream))
+        reader.ReadToEnd();
     }
   } // module
 } // namespace
