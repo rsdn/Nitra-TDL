@@ -72,10 +72,12 @@ platform w10rs5-x64;
 external
 {
     string ProductVersion;
+    bool IsSome;
 }
 
 scenario Test1
 {
+    filter IsSome;
     deployment InstallProduct;
     environments (w10rs5-x64, MonorepoHelloWorld);
     method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;

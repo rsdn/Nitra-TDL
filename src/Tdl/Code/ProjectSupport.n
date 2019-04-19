@@ -151,6 +151,16 @@ namespace Tdl
       data
     }
 
+    public TryIncrementalRefreshProject(cancellationToken : CancellationToken, before : IAst, after : IAst, data : object) : bool
+    {
+      IgnoreParams();
+      def symbols = HashSet();
+      def symbols = symbols;
+      before.Accept(n => _ = symbols.Add(n), null);
+      _ = symbols;
+      false // we not support incremental refresh yet.
+    }
+
     public RefreshProject(cancellationToken : CancellationToken, files : ImmutableArray[FileEvalPropertiesData], data : object) : void
     {
       def projectData           = data :> TdlProjectData;

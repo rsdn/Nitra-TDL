@@ -2,8 +2,11 @@
 {
   syntax module Grammar
   {
+    using DotNet;
     using Nitra.Core;
+    using CSharp.Core;
     using CSharp.CsIdentifiers;
+    using CSharp.Expressions;
     using CSharp.Literals;
     using CSharp.TokenNames;
     using CSharp.TopDeclarations;
@@ -155,9 +158,10 @@
       }
     }
 
-    syntax ScenarioBody = outline_begin_before "{" inl Deployment Environments Action DefDeclaration* d "}" nl outline_end_before
+    syntax ScenarioBody = outline_begin_before "{" inl Filter? Deployment Environments Action DefDeclaration* d "}" nl outline_end_before
     {
       syntax Deployment   = "deployment" sm Reference ";" nl;
+      syntax Filter = "filter" Condition=Expression ";" nl;
     }
 
     syntax ProductBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;

@@ -197,6 +197,9 @@ namespace QuickType
 
     public partial class TestGroup
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string FilterExpression { get; set; }
+
         [JsonProperty("TestScenarios", NullValueHandling = NullValueHandling.Ignore)]
         public string[] TestScenarios { get; set; }
 

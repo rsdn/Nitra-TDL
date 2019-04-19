@@ -54,6 +54,11 @@ namespace Tdl
         ScenarioBody.Action                     -> Actions;
         ScenarioBody.Environments.Elems.Item1   -> Environments;
         ScenarioBody.DefDeclarations            -> Definitions;
+        match (ScenarioBody.FilterOpt)
+        {
+          | Some(x) -> Some(x.Condition)
+          | None()  -> None()
+        } -> FilterOpt;
       }
     | ScenarioGenerator -> Scenario.Generator
       {

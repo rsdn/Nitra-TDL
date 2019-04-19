@@ -69,6 +69,7 @@
   },
   "TestScenarios": {
     "Test1": {
+      "FilterExpression": "((bool)externals[\"IsSome\"])",
       "Deployments": [
         "InstallProduct"
       ],

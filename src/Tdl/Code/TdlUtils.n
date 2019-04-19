@@ -42,6 +42,11 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.ExternalSymbolTable
     }
 
+    public GetExternalSymbol(this context : DependentPropertyEvalContext) : ExternalSymbol
+    {
+      ToTdlContext(context).TdlProjectData.ExternalSymbol
+    }
+
     public GetScenarioParameterScope(this context : DependentPropertyEvalContext) : Scope
     {
       ToTdlContext(context).TdlProjectData.ScenarioParameterScope
@@ -1121,5 +1126,51 @@ namespace Tdl
       else
         Guid.NewGuid()
     }
-  } // module
+    
+    [Record]
+    private class AstVisitor : IAstVisitor
+    {
+      public this(onName : Name -> void, onReference : Reference -> void) { _onReference = onReference; _onName = onName; }
+      
+      private _onReference : Reference -> void;
+      private _onName      : Name      -> void;
+      private _onIRef      : IRef      -> void;
+      private _onIAst      : IAst      -> void;
+      
+      public Visit(ast : IAst)  : void
+      {
+        when (_onIAst != null)
+          _onIAst(ast);
+          
+        ast.Accept(this)
+      }
+      public Visit(r : IRef)    : void
+      {
+        when (_onIRef != null)
+          _onIRef(r);
+      }
+      public Visit(name : Name) : void implements IAstVisitor.Visit
+      {
+        when (_onName != null)
+          _onName(name);
+      }
+      public Visit(reference : Reference) : void implements IAstVisitor.Visit
+      {
+        when (_onReference != null)
+          _onReference(reference);
+      }
+    }
+    
+    public Accept(this ast : IAst, onName : Name -> void, onReference : Reference -> void) : void
+    {
+      ast.Accept(AstVisitor(onName, onReference));
+    }
+    
+    public SetDeclaredIn(this _ast : IAst, context : DependentPropertyEvalContext, symbols : ImmutableArray[FieldSymbol]) : void
+    {
+      def declaredIn = context.GetExternalSymbol();
+      foreach (symbol in symbols)
+        symbol.DeclaredIn = declaredIn;
+    }
+} // module
 } // namespace
