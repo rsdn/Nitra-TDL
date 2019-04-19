@@ -10,8 +10,11 @@ namespace Tdl
   {
     symbol
     {
-      Kind      = "field";
-      SpanClass = TdlLang.FieldSpanClass;
+      in DeclaredIn : DeclarationSymbol;
+
+      Kind          = "field";
+      SpanClass     = TdlLang.FieldSpanClass;
+      DeclaredInOpt = VSome(DeclaredIn);
     }
 
     Type.Scope  = Scope;

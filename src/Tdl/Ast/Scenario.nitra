@@ -33,6 +33,7 @@ namespace Tdl
           in ParallelSetOpt : Scenario.SetSymbol;
         stage 3:
           in Defs           : ImmutableArray[Def];
+          in Filter         : object;
 
           Kind           = "scenario";
           SpanClass      = TdlLang.ScenarioSpanClass;
@@ -58,6 +59,10 @@ namespace Tdl
         Definitions.DefinitionScope     = context.GetScenarioParameterScope();
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
 
+        FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
+        FilterOpt.ExpectedType          = context.GetBooleanType();
+        Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
+
         ReportDuplicateBarrier(context, Symbol.Actions);
 
         when (TdlUtils.IsMissingRequiredOptions(context, Definitions.SymbolRef))
@@ -69,6 +74,7 @@ namespace Tdl
         Environments : EnvironmentAst*;
         Definitions  : Definition*;
         Actions      : Action*;
+        FilterOpt    : DotNet.Expr?;
       }
     | ignore-case Set
       {

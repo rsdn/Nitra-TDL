@@ -10,6 +10,8 @@ namespace Tdl
   {
     Fields.ContainingTable = context.GetExternalSymbolTable();
     Fields.Scope = Scope;
+
+    SetDeclaredIn(context, Fields.Symbol);
     
     Fields : Field*;
   }

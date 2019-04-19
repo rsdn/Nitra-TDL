@@ -23,6 +23,7 @@ namespace Tdl
 		  base(backEnd, context, rootNamespace);
 		  ScenarioParameterScope     = scenarioParameterScope;
 		  RequiredScenarioParameters = requiredScenarioParameters;
+		  ExternalSymbol             = externalSymbol;
 		  ExternalSymbolTable        = externalSymbol.MemberTable;
 		  MethodScopeFactory         = MethodScopeFactoryImpl;
 		  IsTestMode                 = isTestMode;
@@ -31,6 +32,7 @@ namespace Tdl
 	  public ScenarioParameterScope     : TableScope                            { get; }
     public RequiredScenarioParameters : ImmutableArray[FormalParameterSymbol] { get; }
     public ExternalSymbolTable        : TableScope                            { get; }
+    public ExternalSymbol             : ExternalSymbol                        { get; }
     public MethodScopeFactory         : ScopeFactory                          { get; }
     public IsTestMode                 : bool                                  { get; }
    
