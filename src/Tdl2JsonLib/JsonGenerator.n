@@ -585,6 +585,20 @@ namespace Tdl2Json
           | _ => null
         }
         
+      | Expr.LogicalNegation as e => $<#!$(GenerateScenarioFilter(e.Expr1))#>
+      | Expr.BooleanLiteral as e => if (e.Value.Value) "true" else "false"
+      | Expr.ConditionalAnd as e =>
+        def e1 = GenerateScenarioFilter(e.Expr1);
+        def e2 = GenerateScenarioFilter(e.Expr2);
+        $<#($e1 && $e2)#>
+      | Expr.Equal    as e => $<#($(GenerateScenarioFilter(e.Expr1)) == $(GenerateScenarioFilter(e.Expr2)))#>
+      | Expr.NotEqual as e => $<#($(GenerateScenarioFilter(e.Expr1)) != $(GenerateScenarioFilter(e.Expr2)))#>
+      | Expr.GreaterThanOrEqual as x1 with (op = ">=", e1 = x1.Expr1, e2 = x1.Expr2) 
+      | Expr.LessThanOrEqual    as x2 with (op = "<=", e1 = x2.Expr1, e2 = x2.Expr2) 
+      | Expr.Less               as x3 with (op =  "<", e1 = x3.Expr1, e2 = x3.Expr2)
+      | Expr.Greater            as x4 with (op =  ">", e1 = x4.Expr1, e2 = x4.Expr2) =>
+        $<#($(GenerateScenarioFilter(e1)) $op $(GenerateScenarioFilter(e2)))#>
+
       | _ => null
     }
     
