@@ -38,16 +38,18 @@
       | VerbatimStringLiteral = Lit=VerbatimStringLiteral
     }
 
+    syntax Parameters = "(" (FormalParameter; ","sm)* ")";
+
     syntax MemberDeclaration
     {
       | Alias             = "using"             sm Name sm "=" sm QualifiedIdentifier ";" nl;
       | Open              = "using"             sm QualifiedIdentifier ";" nl;
       | Platform          = "platform"          sm Name ";" nl;
       | PlatformSet       = "platform"          sm Name sm "=" sm Platforms=(Reference; "," sm)+ ";" nl;
-      | DeploymentScript  = "deployment"        sm Name outline_begin_before "(" (FormalParameter; ","sm)* ")" outline_end_before sm "script" sm "data"? ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
+      | DeploymentScript  = "deployment"        sm Name outline_begin_before Parameters outline_end_before sm "script" sm "data"? ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
       | DeploymentSet     = "deployment"        sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
       | Currying          = "deployment"        sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
-      | DeploymentSelect  = "select" sm "deployment" sm Name sm "(" (Parameter; "," sm)+ ")"
+      | DeploymentSelect  = "select" sm "deployment" sm Name "(" (Parameter; "," sm)+ ")"
                             "{" inl
                                 Case*  
                             d "}" nl outline_end_before
@@ -58,7 +60,7 @@
       | ProductType       = "product" sm "type" sm Name nl TypeBody;
       | Product           = "product"           sm Name sm ":" Type=Reference nl ProductBody;
       | ProductSet        = "product"           sm Name sm ":" Type=Reference sm "=" sm Products=(Reference; "," sm)+ ";" nl;
-      | Scenario          = "scenario"          sm Name sm ScenarioBody;
+      | Scenario          = "scenario"          sm Name Parameters? nl ScenarioBody;
       | ScenarioSet       = "scenario"          sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
       | ScenarioGenerator = "scenario"          sm Name sm "=" sm From+ sm "select" sm SelectScenario ";" nl;
       | ParallelScenario  = Parallel="parallel" sm "scenario" sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;

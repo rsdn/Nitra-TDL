@@ -22,7 +22,7 @@ namespace Tdl
     unless (Symbol.IsUsed)
       Name.Warning(context, "Unused scenario.");
 
-    | ignore-case Def
+    | ignore-case Def : Parameterizable
       {
         symbol
         {
@@ -43,6 +43,8 @@ namespace Tdl
         out DeploymentRef          : Ref[DeploymentSymbol];
         out MethodConditionalScope : ValueOption[Scope] = if (TdlTypingSettings.IsMethodTypingEnabled) VSome(Scope) else VNone();
 
+        Parameters.DeclaredIn           = Symbol;
+        Parameters.Scope                = Scope;
         Symbol.AggregateParametersScope = Symbol.Deployment.AggregateParametersScope;
 
         Actions.Scope                   = MethodConditionalScope.Value;
@@ -55,7 +57,7 @@ namespace Tdl
         Environments.Scope              = Scope;
         Symbol.Environments             = Environments.Environment;
 
-        Definitions.Scope               = context.GetExternalSymbolTable();
+        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope);
         Definitions.DefinitionScope     = context.GetScenarioParameterScope();
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
 
