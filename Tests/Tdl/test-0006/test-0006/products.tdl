@@ -1,7 +1,7 @@
 product type AppType
 {
     string Name;
-    string ReleaseName;
+    string BranchName;
     string Version;
     string ProductType;
     string ProductPath;
@@ -12,7 +12,7 @@ product type AppType
 product "App4 for Mac 10 SP2" : AppType 
 {
     Name = @"App4 for Mac";
-    ReleaseName = @"10";
+    BranchName = @"10";
     Version = @"10.2.0.267";
     ProductType = @"Kes";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App410SP2";
@@ -23,7 +23,7 @@ product "App4 for Mac 10 SP2" : AppType
 product "App4 for Mac 10 SP2 MR1" : AppType 
 {
     Name = @"App4 for Mac";
-    ReleaseName = @"10";
+    BranchName = @"10";
     Version = @"10.2.1.319";
     ProductType = @"Kes";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App410SP2MR1";
@@ -34,7 +34,7 @@ product "App4 for Mac 10 SP2 MR1" : AppType
 product "App2 for Mac 2018 MR1" : AppType 
 {
     Name = @"App2 for Mac";
-    ReleaseName = @"18 MR1";
+    BranchName = @"18 MR1";
     Version = @"18.0.1.35";
     ProductType = @"App2_";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App22018MR1";
@@ -45,7 +45,7 @@ product "App2 for Mac 2018 MR1" : AppType
 product "App2 for Mac 2018 MR2" : AppType 
 {
     Name = @"App2 for Mac";
-    ReleaseName = @"18 MR2";
+    BranchName = @"18 MR2";
     Version = @"18.0.2.60";
     ProductType = @"App2_";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App22018MR2";
@@ -56,7 +56,7 @@ product "App2 for Mac 2018 MR2" : AppType
 product "App2 for Mac 2019" : AppType 
 {
     Name = @"App2 for Mac";
-    ReleaseName = @"19";
+    BranchName = @"19";
     Version = @"19.0.0.295";
     ProductType = @"App2_";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App22019";
@@ -67,7 +67,7 @@ product "App2 for Mac 2019" : AppType
 product "App5 for Mac 2019" : AppType 
 {
     Name = @"App5 for Mac";
-    ReleaseName = @"19";
+    BranchName = @"19";
     Version = @"19.0.0.294";
     ProductType = @"Ksecl";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App52019";
@@ -78,7 +78,7 @@ product "App5 for Mac 2019" : AppType
 product "App5 for Mac 2018 MR1" : AppType 
 {
     Name = @"App5 for Mac";
-    ReleaseName = @"18 MR1";
+    BranchName = @"18 MR1";
     Version = @"18.0.1.35";
     ProductType = @"Ksecl";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App52018MR1";
@@ -89,7 +89,7 @@ product "App5 for Mac 2018 MR1" : AppType
 product "App5 for Mac 2018 MR2" : AppType 
 {
     Name = @"App5 for Mac";
-    ReleaseName = @"18 MR2";
+    BranchName = @"18 MR2";
     Version = @"18.0.2.60";
     ProductType = @"Ksecl";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App52018MR2";
@@ -100,7 +100,7 @@ product "App5 for Mac 2018 MR2" : AppType
 product "App3 for Mac 1.0 MR2" : AppType 
 {
     Name = @"App3 for Mac";
-    ReleaseName = @"1";
+    BranchName = @"1";
     Version = @"1.0.2.282";
     ProductType = @"App3";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App31MR2";
@@ -111,7 +111,7 @@ product "App3 for Mac 1.0 MR2" : AppType
 product "App3 for Mac 1.0 MR3" : AppType 
 {
     Name = @"App3 for Mac";
-    ReleaseName = @"1";
+    BranchName = @"1";
     Version = @"1.0.3.253";
     ProductType = @"App3";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App31MR3";
@@ -122,7 +122,7 @@ product "App3 for Mac 1.0 MR3" : AppType
 product "App3 for Mac 1.0 MR4" : AppType 
 {
     Name = @"App3 for Mac";
-    ReleaseName = @"1";
+    BranchName = @"1";
     Version = @"1.0.4.73";
     ProductType = @"App3";
     ProductPath = @"\\tis-dfs\Autotests\Components\Temp\Marikyan\MacProducts\App31MR4";

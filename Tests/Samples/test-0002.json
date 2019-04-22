@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "Reboot-00:15:00": {
       "Type": "Reboot",
@@ -5325,7 +5326,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App2_Main": {
@@ -5340,7 +5341,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App7_Main": {
@@ -5355,7 +5356,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App8_Main": {
@@ -5370,7 +5371,7 @@
         "SkipRecommendedSettings": true,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App10_Main": {
@@ -5385,7 +5386,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App10FS_Main": {
@@ -5400,7 +5401,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App6_Main": {
@@ -5415,7 +5416,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App6_Webpack_Main": {
@@ -5430,7 +5431,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "KTS*full.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App9_Main": {
@@ -5445,7 +5446,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App11_MainOn19": {
@@ -5460,7 +5461,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App2_MainOn19": {
@@ -5475,7 +5476,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App7_MainOn19": {
@@ -5490,7 +5491,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App8_MainOn19": {
@@ -5505,7 +5506,7 @@
         "SkipRecommendedSettings": true,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App10_MainOn19": {
@@ -5520,7 +5521,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App10FS_MainOn19": {
@@ -5535,7 +5536,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App6_MainOn19": {
@@ -5550,7 +5551,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App6_Webpack_MainOn19": {
@@ -5565,7 +5566,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "KTS*full.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App9_MainOn19": {
@@ -5580,7 +5581,7 @@
         "SkipRecommendedSettings": false,
         "InstallerExecutableFileMask": "startup.exe"
       },
-      "ReleaseName": "MainFrom19",
+      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     }
   },
@@ -7262,5 +7263,5 @@
       "UniqueId": "3954235b-5ab4-462a-aaec-b000d91a5f7c"
     }
   },
-  "version": 6
+  "TestEntities": {}
 }

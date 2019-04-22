@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "Reboot-00:15:00": {
       "Type": "Reboot",
@@ -284,7 +285,7 @@
         "InstallerExecutableFileMask": "startup.exe",
         "InstallationType": "Regular"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     }
   },
@@ -386,5 +387,5 @@
       "MultiMachineId": "aaaaaaac-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     }
   },
-  "version": 6
+  "TestEntities": {}
 }

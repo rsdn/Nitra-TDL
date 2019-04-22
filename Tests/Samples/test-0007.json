@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "InstallTestAgent": {
       "Type": "Script",
@@ -54,7 +55,7 @@
       "Parameters": {
         "Name": "MonorepoHelloWorld"
       },
-      "ReleaseName": "MonorepoHelloWorld",
+      "BranchName": "MonorepoHelloWorld",
       "Version": "#(ProductVersion)"
     }
   },
@@ -133,5 +134,5 @@
       ]
     }
   },
-  "version": 6
+  "TestEntities": {}
 }

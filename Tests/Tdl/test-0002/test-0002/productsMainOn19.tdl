@@ -1,7 +1,7 @@
 product App11_MainOn19 : AppType 
 {
     Name = @"App11";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -15,7 +15,7 @@ product App11_MainOn19 : AppType
 product App2_MainOn19 : AppType 
 {
     Name = @"App2";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -29,7 +29,7 @@ product App2_MainOn19 : AppType
 product App7_MainOn19 : AppType 
 {
     Name = @"App7";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -43,7 +43,7 @@ product App7_MainOn19 : AppType
 product App8_MainOn19 : AppType 
 {
     Name = @"App8";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -57,7 +57,7 @@ product App8_MainOn19 : AppType
 product App10_MainOn19 : AppType 
 {
     Name = @"App10";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -71,7 +71,7 @@ product App10_MainOn19 : AppType
 product App10FS_MainOn19 : AppType 
 {
     Name = @"App10FS";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -85,7 +85,7 @@ product App10FS_MainOn19 : AppType
 product App6_MainOn19 : AppType 
 {
     Name = @"App6";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -99,7 +99,7 @@ product App6_MainOn19 : AppType
 product App6_Webpack_MainOn19 : AppType 
 {
     Name = @"App6";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*.cab;*.txt";
@@ -113,7 +113,7 @@ product App6_Webpack_MainOn19 : AppType
 product App9_MainOn19 : AppType 
 {
     Name = @"App9";
-    ReleaseName = @"MainFrom19";
+    BranchName = @"MainFrom19";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"kis*.Product.Config;ksm*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe";

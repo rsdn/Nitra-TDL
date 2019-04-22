@@ -1,3 +1,18 @@
+using System.Collections.Generic;
+
+scenario Test1(Dictionary<string, int> list)
+{
+    filter list.ContainsValue(-1) && !IsSome;
+    deployment InstallProduct;
+    environments (w10rs5-x64, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
 suite NamedProduct
 {
     platform w10rs5-x64;
@@ -28,7 +43,6 @@ product type TheProductType
 {
     string Name;
     string BranchName;
-    string ReleaseName;
     string Version;
 }
 
@@ -36,7 +50,6 @@ product type MsOfficeProducts
 {
     string Name;
     string BranchName;
-    string ReleaseName;
     string Version;
     int Size;
 }
@@ -45,7 +58,6 @@ product MonorepoHelloWorld : TheProductType
 {
     Name = "MonorepoHelloWorld";
     BranchName = "MonorepoHelloWorld";
-    ReleaseName = "MonorepoHelloWorld";
     Version = ProductVersion;
 }
 
@@ -53,7 +65,6 @@ product Word : MsOfficeProducts
 {
     Name = "Word";
     BranchName = "Word";
-    ReleaseName = "Word";
     Version = ProductVersion;
     Size = 100;
 }
@@ -62,7 +73,6 @@ product Excel : MsOfficeProducts
 {
     Name = "Excel";
     BranchName = "Excel";
-    ReleaseName = "Excel";
     Version = ProductVersion;
     Size = 42;
 }
@@ -75,15 +85,3 @@ external
     bool IsSome;
 }
 
-scenario Test1
-{
-    filter IsSome;
-    deployment InstallProduct;
-    environments (w10rs5-x64, MonorepoHelloWorld);
-    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
-    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
-    RerunCountOnTestFailure = 0;
-    LocalTestBinariesFolder = @"C:\Tests";
-    ExternalAutotestId = 24;
-    Timeout = "00:05:00";
-}

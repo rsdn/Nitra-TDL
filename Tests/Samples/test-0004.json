@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "Reboot-00:20:00": {
       "Type": "Reboot",
@@ -143,7 +144,7 @@
       "Parameters": {
         "Name": "App4"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "11.1"
     },
     "Kes11_0": {
@@ -151,7 +152,7 @@
       "Parameters": {
         "Name": "App4"
       },
-      "ReleaseName": "Main",
+      "BranchName": "Main",
       "Version": "11.0"
     },
     "App4": [
@@ -523,5 +524,5 @@
       ]
     }
   },
-  "version": 6
+  "TestEntities": {}
 }

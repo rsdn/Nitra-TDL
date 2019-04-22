@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "DeployWithDeployer": {
       "Type": "Script",
@@ -51,7 +52,7 @@
         "ModulesPath": "#(App2_ModulesPath)",
         "SuiteName": "App6.2020.MP0.Ext.PullRequest"
       },
-      "ReleaseName": "20.MP0",
+      "BranchName": "20.MP0",
       "Version": "#(App2_FullVersion)"
     },
     "App4 11.1": {
@@ -65,7 +66,7 @@
         "ModulesPath": "#(KesModulesPath)",
         "SuiteName": "Kes11.1.Ext.PullRequest"
       },
-      "ReleaseName": "11.1",
+      "BranchName": "11.1",
       "Version": "#(KesFullVersion)"
     },
     "App4 11.1__App6 2020.MP0": [
@@ -226,5 +227,5 @@
       ]
     }
   },
-  "version": 6
+  "TestEntities": {}
 }

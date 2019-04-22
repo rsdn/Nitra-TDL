@@ -1,14 +1,14 @@
 product type TheProductType
 {
     string Name;
-    string ReleaseName;
+    string BranchName;
     string Version;
 }
 
 product type MsOfficeProducts
 {
     string Name;
-    string ReleaseName;
+    string BranchName;
     string Version;
     int Size;
 }
@@ -16,14 +16,14 @@ product type MsOfficeProducts
 product MonorepoHelloWorld : TheProductType
 {
     Name = "MonorepoHelloWorld";
-    ReleaseName = "MonorepoHelloWorld";
+    BranchName = "MonorepoHelloWorld";
     Version = ProductVersion;
 }
 
 product Word : MsOfficeProducts
 {
     Name = "Word";
-    ReleaseName = "Word";
+    BranchName = "Word";
     Version = ProductVersion;
     Size = 100;
 }
@@ -31,7 +31,7 @@ product Word : MsOfficeProducts
 product Excel : MsOfficeProducts
 {
     Name = "Excel";
-    ReleaseName = "Excel";
+    BranchName = "Excel";
     Version = ProductVersion;
     Size = 42;
 }

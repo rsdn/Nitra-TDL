@@ -1,7 +1,7 @@
-﻿product type AppType
+product type AppType
 {
     string Name;
-    string ReleaseName;
+    string ReleaseName; // W: Field ReleaseName is obsolete and will be replaced with BranchName field.
     string Version;
     string ProductConfigurationPath;
     string ComponentConfigurationPath;

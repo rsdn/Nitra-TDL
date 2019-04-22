@@ -1,4 +1,4 @@
-﻿suite Gate_App11
+suite Gate_App11
 {
     platform gated_platforms;
     product App4;

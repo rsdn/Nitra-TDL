@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "InstallProduct": {
       "Type": "Script",
@@ -123,7 +124,7 @@
         "ProductInfoJson": "kes-10-2.json",
         "ProductInstallerJson": "um/installers/kes10-2-install.json"
       },
-      "ReleaseName": "10",
+      "BranchName": "10",
       "Version": "10.2.0.267"
     },
     "App4 for Mac 10 SP2 MR1": {
@@ -135,7 +136,7 @@
         "ProductInfoJson": "kes-10-2.json",
         "ProductInstallerJson": "um/installers/kes10-2-install.json"
       },
-      "ReleaseName": "10",
+      "BranchName": "10",
       "Version": "10.2.1.319"
     },
     "App2 for Mac 2018 MR1": {
@@ -147,7 +148,7 @@
         "ProductInfoJson": "kis-18-0.json",
         "ProductInstallerJson": "um/installers/kis18-0-install.json"
       },
-      "ReleaseName": "18 MR1",
+      "BranchName": "18 MR1",
       "Version": "18.0.1.35"
     },
     "App2 for Mac 2018 MR2": {
@@ -159,7 +160,7 @@
         "ProductInfoJson": "kis-18-0.json",
         "ProductInstallerJson": "um/installers/kis18-0-install.json"
       },
-      "ReleaseName": "18 MR2",
+      "BranchName": "18 MR2",
       "Version": "18.0.2.60"
     },
     "App2 for Mac 2019": {
@@ -171,7 +172,7 @@
         "ProductInfoJson": "kis-19-0.json",
         "ProductInstallerJson": "um/installers/install-activate-kis19.json"
       },
-      "ReleaseName": "19",
+      "BranchName": "19",
       "Version": "19.0.0.295"
     },
     "App5 for Mac 2019": {
@@ -183,7 +184,7 @@
         "ProductInfoJson": "ksecl-19-0.json",
         "ProductInstallerJson": "um/installers/ksecl19-0-install.json"
       },
-      "ReleaseName": "19",
+      "BranchName": "19",
       "Version": "19.0.0.294"
     },
     "App5 for Mac 2018 MR1": {
@@ -195,7 +196,7 @@
         "ProductInfoJson": "ksecl-18-0.json",
         "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
       },
-      "ReleaseName": "18 MR1",
+      "BranchName": "18 MR1",
       "Version": "18.0.1.35"
     },
     "App5 for Mac 2018 MR2": {
@@ -207,7 +208,7 @@
         "ProductInfoJson": "ksecl-18-0.json",
         "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
       },
-      "ReleaseName": "18 MR2",
+      "BranchName": "18 MR2",
       "Version": "18.0.2.60"
     },
     "App3 for Mac 1.0 MR2": {
@@ -219,7 +220,7 @@
         "ProductInfoJson": "safekids-1-0.json",
         "ProductInstallerJson": "um/installers/safekids-install.json"
       },
-      "ReleaseName": "1",
+      "BranchName": "1",
       "Version": "1.0.2.282"
     },
     "App3 for Mac 1.0 MR3": {
@@ -231,7 +232,7 @@
         "ProductInfoJson": "safekids-1-0.json",
         "ProductInstallerJson": "um/installers/safekids-install.json"
       },
-      "ReleaseName": "1",
+      "BranchName": "1",
       "Version": "1.0.3.253"
     },
     "App3 for Mac 1.0 MR4": {
@@ -243,7 +244,7 @@
         "ProductInfoJson": "safekids-1-0.json",
         "ProductInstallerJson": "um/installers/safekids-install.json"
       },
-      "ReleaseName": "1",
+      "BranchName": "1",
       "Version": "1.0.4.73"
     },
     "App4": [
@@ -448,5 +449,5 @@
       ]
     }
   },
-  "version": 6
+  "TestEntities": {}
 }

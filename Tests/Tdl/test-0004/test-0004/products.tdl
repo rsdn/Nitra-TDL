@@ -1,21 +1,21 @@
 ﻿product type Kes
 {
     string Name;
-    string ReleaseName;
+    string BranchName;
     string Version;
 }
 
 product Kes11_1 : Kes 
 {
     Name = @"App4";
-    ReleaseName = @"Main";
+    BranchName = @"Main";
     Version = "11.1";
 }
 
 product Kes11_0 : Kes 
 {
     Name = @"App4";
-    ReleaseName = @"Main";
+    BranchName = @"Main";
     Version = "11.0";
 }
 

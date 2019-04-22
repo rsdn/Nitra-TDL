@@ -1,4 +1,4 @@
-﻿external
+external
 {
   string ProductDistributivePath;
   string ProductModulesPath;

@@ -1,7 +1,7 @@
 product type AppType
 {
     string Name;
-    string ReleaseName;
+    string BranchName;
     string Version;
     string AutotestBinariesExcludedFilesMasks;
     string ProductBinariesExcludedFilesMasks;

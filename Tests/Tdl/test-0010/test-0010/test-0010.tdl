@@ -1,4 +1,4 @@
-suite BuildAcceptance
+﻿suite BuildAcceptance
 {
     platform platform_group_1;
     product App6;
@@ -175,7 +175,7 @@ deployment "Install Base Product" = "_Install product"(
 product App6 : AppType
 {
     Name = @"App6";
-    ReleaseName = @"Main";
+    BranchName = @"Main";
     Version = ProductVersion;
     AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
     ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
@@ -190,7 +190,7 @@ product App6 : AppType
 product type AppType
 {
     string Name;
-    string ReleaseName;
+    string BranchName;
     string Version;
     string AutotestBinariesExcludedFilesMasks;
     string ProductBinariesExcludedFilesMasks;

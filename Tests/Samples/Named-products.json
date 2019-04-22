@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "InstallProduct": {
       "Type": "Script",
@@ -21,30 +22,27 @@
     "MonorepoHelloWorld": {
       "Name": "MonorepoHelloWorld",
       "Parameters": {
-        "Name": "MonorepoHelloWorld",
-        "BranchName": "MonorepoHelloWorld"
+        "Name": "MonorepoHelloWorld"
       },
-      "ReleaseName": "MonorepoHelloWorld",
+      "BranchName": "MonorepoHelloWorld",
       "Version": "#(ProductVersion)"
     },
     "Word": {
       "Name": "Word",
       "Parameters": {
         "Name": "Word",
-        "BranchName": "Word",
         "Size": 100
       },
-      "ReleaseName": "Word",
+      "BranchName": "Word",
       "Version": "#(ProductVersion)"
     },
     "Excel": {
       "Name": "Excel",
       "Parameters": {
         "Name": "Excel",
-        "BranchName": "Excel",
         "Size": 42
       },
-      "ReleaseName": "Excel",
+      "BranchName": "Excel",
       "Version": "#(ProductVersion)"
     }
   },
@@ -69,7 +67,7 @@
   },
   "TestScenarios": {
     "Test1": {
-      "FilterExpression": "((bool)externals[\"IsSome\"])",
+      "FilterExpression": "(((System.Collections.Generic.Dictionary<string, int>)globals[\"list\"]).ContainsValue(-1) && !((bool)externals[\"IsSome\"]))",
       "Deployments": [
         "InstallProduct"
       ],
@@ -94,5 +92,5 @@
       "LocalTestBinariesFolder": "C:\\Tests"
     }
   },
-  "version": 6
+  "TestEntities": {}
 }

@@ -1,5 +1,6 @@
 ﻿{
-  "$schema": "http://auto-reports.avp.ru/starter-schema/v6/prod/schema.json",
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "AndroidInstall": {
       "Type": "Script",
@@ -18,7 +19,7 @@
       "Parameters": {
         "Name": "MobileSdk"
       },
-      "ReleaseName": "1",
+      "BranchName": "1",
       "Version": "1.0.0.0"
     }
   },
@@ -138,5 +139,5 @@
       ]
     }
   },
-  "version": 6
+  "TestEntities": {}
 }
