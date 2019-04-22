@@ -167,7 +167,7 @@ namespace QuickType
         [JsonProperty("Parameters", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, object> Parameters { get; set; }
 
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty("BranchName")]
         public string BranchName { get; set; }
 
         [JsonProperty("Version", NullValueHandling = NullValueHandling.Ignore)]
