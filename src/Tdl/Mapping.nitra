@@ -76,7 +76,12 @@ namespace Tdl
     | Suite             -> Suite
       {
         Name                         -> Name;
-        None()                       -> TypeOpt;
+        match (Name) { _ -> None() } -> TypeOpt;
+        match (SuiteBody.EntityOpt)
+        {
+          | Some(x) -> Some(x.Reference)
+          | None    -> None()
+        }-> EntityOpt;
         SuiteBody.Platform.Reference -> Platform;
         SuiteBody.Product.Reference  -> Product;
         SuiteBody.DefDeclarations    -> Definitions;
@@ -86,6 +91,11 @@ namespace Tdl
       {
         Name                         -> Name;
         Some(Type)                   -> TypeOpt;
+        match (SuiteBody.EntityOpt)
+        {
+          | Some(x) -> Some(x.Reference)
+          | None    -> None()
+        }-> EntityOpt;
         SuiteBody.Platform.Reference -> Platform;
         SuiteBody.Product.Reference  -> Product;
         SuiteBody.DefDeclarations    -> Definitions;
@@ -93,6 +103,7 @@ namespace Tdl
       }
     | External -> ExternalAst { ExternalBody.Fields -> Fields; }
     | Barrier  -> Barrier     { Name -> Name; Timeout -> Timeout; }
+    | Entity   -> Entity      { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
   }
 
   map syntax Grammar.MemberDeclaration.DeploymentSelect.Parameter -> FormalParameter

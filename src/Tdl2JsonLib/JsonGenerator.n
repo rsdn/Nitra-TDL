@@ -41,7 +41,6 @@ using Tdl2Json.ExceptionHelper;
 namespace Tdl2Json
 {
   public delegate TransfomationFunc(context : TransformationContext) : void;
-
   public delegate MessageHandler(text : string, importance : MessageImportance) : void;
 
   public enum MessageImportance
@@ -54,7 +53,7 @@ namespace Tdl2Json
   {
     public ParameterDefaultValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
     
-    public JsonVersion    = 6;
+    static JsonVersion : int = 7;
     public IsExperimental = ThisAssembly.BranchName != "master";
 
     public event OnMessage : MessageHandler;
@@ -161,10 +160,12 @@ namespace Tdl2Json
         Version       = JsonVersion;
         Schema        = $<#http://auto-reports.avp.ru/starter-schema/v$JsonVersion/$(if (IsExperimental) "dev" else "prod")/schema.json#>;
         Deployments   = Deployments.Generate(symbols);
-        Products      = symbols.OfType.[ProductSymbol     ]().Select(GenerateProduct) .ToDictionary();
-        Platforms     = symbols.OfType.[PlatformSymbol    ]().Select(GeneratePlatform).ToDictionary();
-        Suites        = symbols.OfType.[SuiteSymbol       ]().Select(GenerateSuite)   .ToDictionary();
+        Products      = symbols.OfType.[ProductSymbol     ]().Select(GenerateProduct)      .ToDictionary();
+        Platforms     = symbols.OfType.[PlatformSymbol    ]().Select(GeneratePlatform)     .ToDictionary();
+        Suites        = symbols.OfType.[SuiteSymbol       ]().Select(GenerateSuite)        .ToDictionary();
         TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol]().SelectMany(GenerateScenarios).ToDictionary();
+        Suites        = symbols.OfType.[SuiteSymbol       ]().Select(GenerateSuite)        .ToDictionary();
+        TestEntities  = symbols.OfType.[EntitySymbol      ]().Select(GenerateEntity)       .ToDictionary();
       };
 
       def settings = ConverterSettings.Settings <- Formatting = Formatting.Indented;
@@ -225,9 +226,10 @@ namespace Tdl2Json
           {
             Product = Product() <- { 
               Name              = name;
-              ReleaseName       = useAsFixedParameter("ReleaseName");
+              BranchName = useAsFixedParameter("ReleaseName") ?? useAsFixedParameter("BranchName"); // 
               Version           = useAsFixedParameter("Version");
               DumpServerProduct = useAsFixedParameter("DumpServerProduct");
+              Parameters  = parameters;
               Parameters        = parameters;
             }
           })
@@ -565,6 +567,20 @@ namespace Tdl2Json
       })
     }
 
+    private GenerateEntity(symbol : EntitySymbol) : string * TestEntity
+    {
+      def parameters = CollectDefs(symbol.Defs).ToDictionary();
+      def entity = TestEntity() <-
+      {
+		    BranchName = parameters["BranchName"].ToString();
+		    Name       = parameters["Name"      ].ToString();
+		    Type       = parameters["Type"      ].ToString();
+		    Version    = parameters["Version"   ].ToString();
+      };
+      
+      (symbol.Name, entity)
+    }
+    
     private GenerateScenarioFilter(expr : DotNet.ExprBase) : string
     {
       | null => null
@@ -607,12 +623,14 @@ namespace Tdl2Json
       def parameters = CollectDefs(suiteSymbol.Defs).ToDictionary();
       foreach (d in suiteSymbol.DefaultDefs)
         parameters.Add(d.Name, ParameterDefaultValue);
+      def entityOpt = suiteSymbol.EntityOpt;
       def suite = TestSuite() <- 
       {
         Platforms     = array[suiteSymbol.Platform.Name];
         Products      = array[suiteSymbol.Product.Name];
         TestScenarios = suiteSymbol.Statements.OfType.[Tdl.SuiteStatement.CallScenario]().Select(s => s.Reference.Name).ToArray();
         Parameters    = parameters;
+		    TestEntity    = if (entityOpt.HasValue) entityOpt.Value.Name else null;
       };
 
       (suiteSymbol.Name, suite)
