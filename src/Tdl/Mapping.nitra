@@ -36,7 +36,7 @@ namespace Tdl
       {
         Name                                 -> Name;
         ScriptPath                           -> Path;
-        FormalParameters.Item1               -> Parameters;
+        Parameters.FormalParameters.Item1    -> Parameters;
         DeploymentScriptBody.DefDeclarations -> Definitions;
         DeploymentScriptBody.Options         -> Options;
         IsBase64Encoded = ParsedValue(KwDataOpt.Span, KwDataOpt.HasValue);
@@ -50,6 +50,11 @@ namespace Tdl
     | Scenario         -> Scenario.Def
       {
         Name                                    -> Name;
+        match (ParametersOpt)
+        {
+          | Some(x) -> x.FormalParameters.Item1
+          | None()  -> []
+        } -> Parameters;
         ScenarioBody.Deployment.Reference       -> Deployment;
         ScenarioBody.Action                     -> Actions;
         ScenarioBody.Environments.Elems.Item1   -> Environments;

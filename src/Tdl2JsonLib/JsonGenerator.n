@@ -580,42 +580,136 @@ namespace Tdl2Json
       
       (symbol.Name, entity)
     }
+
+    private GenerateScenarioFilter() : string
+    {
+      null
+    }
     
     private GenerateScenarioFilter(expr : DotNet.ExprBase) : string
     {
-      | null => null
-      | Expr.QualifiedName as e =>
-        match (e.Member.Symbol)
+      def result = GenerateScenarioFilterImpl(expr);
+      result
+    }
+
+
+    private GenerateBySymbol(symbol : DeclarationSymbol) : string
+    {
+      | FieldSymbol as fld =>
+        match (fld.DeclaredIn)
         {
-          | FieldSymbol as fld =>
-            match (fld.DeclaredIn)
-            {
-              | ExternalSymbol =>
-                def type = fld.Type.FullName;
-                def name = fld.Name;
-                $<#(($type)externals["$name"])#>
-                
-              | _ => null
-            }
+          | ExternalSymbol =>
+            def type = fld.Type.FullName;
+            def name = fld.Name;
+            $<#(($type)externals["$name"])#>
 
-          | _ => null
+          | _ => GenerateScenarioFilter()
         }
-        
-      | Expr.LogicalNegation as e => $<#!$(GenerateScenarioFilter(e.Expr1))#>
-      | Expr.BooleanLiteral as e => if (e.Value.Value) "true" else "false"
-      | Expr.ConditionalAnd as e =>
-        def e1 = GenerateScenarioFilter(e.Expr1);
-        def e2 = GenerateScenarioFilter(e.Expr2);
-        $<#($e1 && $e2)#>
-      | Expr.Equal    as e => $<#($(GenerateScenarioFilter(e.Expr1)) == $(GenerateScenarioFilter(e.Expr2)))#>
-      | Expr.NotEqual as e => $<#($(GenerateScenarioFilter(e.Expr1)) != $(GenerateScenarioFilter(e.Expr2)))#>
-      | Expr.GreaterThanOrEqual as x1 with (op = ">=", e1 = x1.Expr1, e2 = x1.Expr2) 
-      | Expr.LessThanOrEqual    as x2 with (op = "<=", e1 = x2.Expr1, e2 = x2.Expr2) 
-      | Expr.Less               as x3 with (op =  "<", e1 = x3.Expr1, e2 = x3.Expr2)
-      | Expr.Greater            as x4 with (op =  ">", e1 = x4.Expr1, e2 = x4.Expr2) =>
-        $<#($(GenerateScenarioFilter(e1)) $op $(GenerateScenarioFilter(e2)))#>
 
-      | _ => null
+      | FormalParameterSymbol as p => 
+        def type = p.Type.FullName;
+        def name = p.Name;
+        $<#(($type)globals["$name"])#>
+
+      | Member.MethodSymbol as m => m.Name
+      | _ => GenerateScenarioFilter()
+    }
+
+    public static ToFullNameString(symbol : TypeSymbol) : string
+    {
+      | DotNet.TopConstructedTypeSymbol as s =>
+        def fullName = AstUtils.MakeFullName(s.TypeInfo.DeclaredInOpt, s.TypeInfo.Name, s.Args);
+        fullName
+        
+      | _ => GenerateScenarioFilter()
+    }
+    
+    private GenerateScenarioFilterImpl(expr : DotNet.ExprBase) : string
+    {
+      | null => null
+      | Expr.Is as e => $<#($(GenerateScenarioFilterImpl(e.Expr1)) is $(e.TypeNameType))#>
+      | Expr.As as e => $<#($(GenerateScenarioFilterImpl(e.Expr1)) as $(e.Type))#>
+      | DotNet.IntegerLiteral
+      | DotNet.RealLiteral
+      | DotNet.Expr.BooleanLiteral
+      | DotNet.Expr.Char
+      | DotNet.Expr.String => expr.ToString().Trim()
+      | Expr.Invocation as e =>
+        def args = e.Arguments.Map(GenerateScenarioFilterImpl);
+        $<#$(GenerateScenarioFilterImpl(e.Left))(..$args)#>;
+
+      | Expr.IndexerAccess as e =>
+        def args = e.Arguments.Map(GenerateScenarioFilterImpl);
+        $<#$(GenerateScenarioFilterImpl(e.Left))[..$args]#>;
+        
+      | Expr.Parenthesized   as e => GenerateScenarioFilterImpl(e.Expression)
+      | Expr.PostDecrement (Expr1=e) with op = "++"
+      | Expr.PostIncrement (Expr1=e) with op = "--"
+        => $<#$(GenerateScenarioFilterImpl(e))$op#>
+
+      | Expr.PreIncrement    (Expr1=e) with op = "++"
+      | Expr.PreDecrement    (Expr1=e) with op = "--"
+      | Expr.BitwiseNegation (Expr1=e) with op = "~"
+      | Expr.LogicalNegation (Expr1=e) with op = "!"
+      | Expr.Negation        (Expr1=e) with op = "-"
+        => $<#$op$(GenerateScenarioFilterImpl(e))#>
+        
+      | Expr.TypeOf as e => $<#typeof($(e.Type))#>
+      | Expr.GreaterThanOrEqual(Expr1=e1, Expr2=e2)  with op = ">="
+      | Expr.LessThanOrEqual   (Expr1=e1, Expr2=e2)  with op = "<=" 
+      | Expr.Less              (Expr1=e1, Expr2=e2)  with op =  "<"
+      | Expr.Greater           (Expr1=e1, Expr2=e2)  with op =  ">"
+      | Expr.ConditionalAnd    (Expr1=e1, Expr2=e2)  with op = "&&"
+      | Expr.ConditionalOr     (Expr1=e1, Expr2=e2)  with op = "||"
+      | Expr.Equal             (Expr1=e1, Expr2=e2)  with op = "=="
+      | Expr.NotEqual          (Expr1=e1, Expr2=e2)  with op = "!="
+      | Expr.NullCoalescing    (Expr1=e1, Expr2=e2)  with op = "??"
+      | Expr.LogicalOr         (Expr1=e1, Expr2=e2)  with op = "|"
+      | Expr.LogicalAnd        (Expr1=e1, Expr2=e2)  with op = "&"
+      | Expr.LogicalXor        (Expr1=e1, Expr2=e2)  with op = "~"
+      | Expr.ShiftLeft         (Expr1=e1, Expr2=e2)  with op = "<<"
+      | Expr.ShiftRight        (Expr1=e1, Expr2=e2)  with op = ">>"
+      | Expr.Sum               (Expr1=e1, Expr2=e2)  with op = "+"
+      | Expr.Sub               (Expr1=e1, Expr2=e2)  with op = "-"
+      | Expr.Modulus           (Expr1=e1, Expr2=e2)  with op = "%"
+      | Expr.Multiply          (Expr1=e1, Expr2=e2)  with op = "*"
+      | Expr.Divide            (Expr1=e1, Expr2=e2)  with op = "/"
+        => $<#($(GenerateScenarioFilterImpl(e1)) $op $(GenerateScenarioFilterImpl(e2)))#>
+      | Expr.Cast           as e => $<#(($(e.TypeName))$(GenerateScenarioFilterImpl(e.Expression)))#>
+
+      | Expr.Conditional as e =>
+        def type = e.Type.FullName;
+        $<#($(GenerateScenarioFilterImpl(e.Condition)) ? (($type)$(GenerateScenarioFilterImpl(e.Expr1))) : (($type)$(GenerateScenarioFilterImpl(e.Expr2))))#>
+
+      | Expr.QualifiedName as qualifiedName => GenerateQualifiedName(qualifiedName.Key)
+      | Expr.Argument as a => GenerateScenarioFilterImpl(a.Expr)
+      | _ => GenerateScenarioFilter()
+    }
+
+    GenerateQualifiedName(qualifiedName : QualifiedReference) : string
+    {
+      | Simple    as x =>
+        if (x.Ref.IsSymbolEvaluated)
+          GenerateBySymbol(x.Ref.Symbol)
+        else
+          x.Name.Text
+        
+      | Aliased   as x => x.Alias.Text + "::" + GenerateQualifiedName(x.QualifiedName)
+      | Qualified as x =>
+        if (x.Ref.IsSymbolEvaluated)
+          GenerateQualifiedName(x.Qualifier) + "." + GenerateBySymbol(x.Ref.Symbol)
+        else
+          GenerateQualifiedName(x.Qualifier) + "." + x.Name.Text
+          
+      | Generic   as x =>
+        def args = x.Arguments.Map(GenerateQualifiedName);
+        $<#$(GenerateQualifiedName(x.QualifiedName))<..$args>#>
+
+      | Open      as x =>
+        def args = string(',', x.Rank.Value);
+        $<#$(GenerateQualifiedName(x.QualifiedName))<..$args>#>
+
+      | _ => GenerateScenarioFilter()
     }
     
     private GenerateSuite(suiteSymbol : SuiteSymbol) : string * TestSuite
