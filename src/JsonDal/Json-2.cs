@@ -124,4 +124,19 @@
     }
 
     public sealed class ForceReboot { }
+
+    public class TestEntity
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string BranchName { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
+        public string Name { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
+        public string Type { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
+        public string Version { get; set; }
+    }
 }

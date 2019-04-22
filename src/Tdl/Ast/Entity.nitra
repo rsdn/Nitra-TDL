@@ -1,0 +1,29 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  declaration Entity : NamespaceMember, TypedDeclaration
+  {
+    symbol
+    {
+      in Defs : ImmutableArray[Def];
+      
+//      Type = context.ToTdlContext().EntityType;
+      SpanClass = TdlLang.EntitySpanClass;
+    }
+
+    Definitions.DefinitionScope = context.GetEntityFieldsScope();
+    Definitions.Scope           = context.GetExternalSymbolTable();
+    Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
+
+    Name.ChechRequired(context, "field", Definitions.DefinitionScope.GetAllSymbols(), Symbol.Defs);
+    
+    Definitions : Definition*;
+  } // Entity
+}

@@ -42,8 +42,7 @@ namespace Tdl
         Definitions.Scope           = context.GetExternalSymbolTable();
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
 
-        when (TdlUtils.HasUndefinedFieldsInProduct(Symbol.ProductType, Symbol.Defs))
-          Name.Error(context, TdlUtils.ReportProduct(Symbol.ProductType, Symbol.Defs));
+        Name.ChechRequired(context, "field", Symbol.ProductType.MemberTable.GetAllSymbols(), Symbol.Defs);
 
         Definitions : Definition*;
       }

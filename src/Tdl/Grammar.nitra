@@ -67,7 +67,10 @@
       | SuiteTyped        = "suite"             sm Name sm ":" Type=Reference nl SuiteBody;
       | External          = "external"          sm ExternalBody;
       | Barrier           = "barrier"           sm Name "timeout" sm Timeout=StringLiteral ";" nl;
+      | Entity            = "entity" sm Name nl EntityBody;
     }
+
+    syntax EntityBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
 
     syntax Case = "|" sm (Value; "," sm)+ sm "=>" Reference nl
     {
@@ -148,8 +151,9 @@
 
     syntax ParameterCurrying = Reference ":" sm DefExpr;
 
-    syntax SuiteBody = outline_begin_before "{" inl Platform Product DefDeclaration* SuiteStatement+ d "}" nl outline_end_before
+    syntax SuiteBody = outline_begin_before "{" inl Entity? Platform Product DefDeclaration* SuiteStatement+ d "}" nl outline_end_before
     {
+      syntax Entity   = "entity" sm Reference ";" nl;
       syntax Platform = "platform" sm Reference ";" nl;
       syntax Product  = "product"  sm Reference ";" nl;
       syntax SuiteStatement

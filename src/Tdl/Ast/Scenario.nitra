@@ -65,8 +65,7 @@ namespace Tdl
 
         ReportDuplicateBarrier(context, Symbol.Actions);
 
-        when (TdlUtils.IsMissingRequiredOptions(context, Definitions.SymbolRef))
-          Name.Error(context, $"Missing required option: $(TdlUtils.GetMissingRequiredOptionMessage(context, Definitions.SymbolRef))");
+        Name.ChechRequired(context, "option", context.GetRequiredScenarioParameters(), Symbol.Defs);
 
         CheckOptionForDuplicates(context, Definitions.SymbolRef);
 
