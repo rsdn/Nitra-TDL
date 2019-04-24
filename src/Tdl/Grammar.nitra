@@ -11,6 +11,7 @@
     using CSharp.TokenNames;
     using CSharp.TopDeclarations;
     using CSharp.Types;
+    using CSharp.CS7;
 
     keyword regex ['A'..'Z', 'a'..'z', '_'..'_', '-'..'-']+ rule S;
 
