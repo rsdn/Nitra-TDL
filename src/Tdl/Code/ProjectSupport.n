@@ -33,12 +33,27 @@ namespace Tdl
     public TestMode : bool { get; }
     mutable _backEnd : CciBackEnd;
     
-    public this()
+    public this()    
     {
       //assert2(false);
       DotNet.AstUtils.MakeDefault = DotNet.Coverters.MakeDefaultParameters;
+      DotNet.AstUtils2.ExtensionScopeFactory = CreateExtensionScopeFactory;
     }
 
+    public CreateExtensionScopeFactory(globalScope : Scope) : ScopeFactory
+    {
+      def self(scope : Scope)
+      {
+        def globalScope = globalScope;
+        assert(true);
+        _ = globalScope;
+        scope
+      }
+
+      self
+    }
+
+    
     public this(testMode : bool)
     {
       this();

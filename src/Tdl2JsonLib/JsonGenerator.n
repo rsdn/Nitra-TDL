@@ -681,8 +681,10 @@ namespace Tdl2Json
         def type = e.Type.FullName;
         $<#($(GenerateScenarioFilterImpl(e.Condition)) ? (($type)$(GenerateScenarioFilterImpl(e.Expr1))) : (($type)$(GenerateScenarioFilterImpl(e.Expr2))))#>
 
-      | Expr.QualifiedName as qualifiedName => GenerateQualifiedName(qualifiedName.Key)
+      //| Expr.QualifiedName as qualifiedName => GenerateQualifiedName(qualifiedName.Key)
       | Expr.Argument as a => GenerateScenarioFilterImpl(a.Expr)
+      | Expr.MemberAccess1 as e => GenerateScenarioFilterImpl(e.Expr1) + "." + e.Ref.Symbol.Name
+      | Expr.SimpleName as e => e.Ref.Symbol.Name
       | _ => GenerateScenarioFilter()
     }
 
