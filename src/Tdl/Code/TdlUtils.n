@@ -105,11 +105,11 @@ namespace Tdl
         symbolCache?.CacheSymbol(symbol);
         _ = builder.Append("<keyword>").HintMlEscape(symbol.Kind).Append("</keyword> ")
           .SymbolToHintMlWithSubHint(symbol)
-          .Append(" = ");
+          .AppendLine();
 
         def project = symbolCache :> Project;
         
-        def (_, _, rootNs) = (project.Data :> IDotNetBackEnd * DependentPropertyEvalContext * NamespaceSymbol);
+        def rootNs = (project.Data :> TdlProjectData).RootNamespace;
         
         def scenarios = rootNs.MemberTable
           .GetAllSymbols()
@@ -121,9 +121,10 @@ namespace Tdl
           _ = builder.Append(<#Deployment is not used in any scenario.#>);
         else
         {
+          _ = builder.Append(<#Deployment is used in the following scenarios:\n   #>);
           _ = builder.Join(scenarios.Take(10), HintML.SymbolToHintMlWithSubHint(_, _));
           when (scenarios.Count > 10)
-            _ = builder.Append(<#Deployment is not used in any scenario.#>);
+            _ = builder.Append($<#Deployment is used in $(scenarios.Count) scenarios.#>);
         }
 
         _ = builder.MakeLocations(symbol);
