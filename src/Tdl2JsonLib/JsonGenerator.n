@@ -681,39 +681,12 @@ namespace Tdl2Json
         def type = e.Type.FullName;
         $<#($(GenerateScenarioFilterImpl(e.Condition)) ? (($type)$(GenerateScenarioFilterImpl(e.Expr1))) : (($type)$(GenerateScenarioFilterImpl(e.Expr2))))#>
 
-      //| Expr.QualifiedName as qualifiedName => GenerateQualifiedName(qualifiedName.Key)
       | Expr.Argument as a => GenerateScenarioFilterImpl(a.Expr)
       | Expr.MemberAccess1 as e => GenerateScenarioFilterImpl(e.Expr1) + "." + e.Ref.Symbol.Name
-      | Expr.SimpleName as e => e.Ref.Symbol.Name
+      | Expr.SimpleName as e => GenerateBySymbol(e.Ref.Symbol)
       | _ => GenerateScenarioFilter()
     }
 
-    GenerateQualifiedName(qualifiedName : QualifiedReference) : string
-    {
-      | Simple    as x =>
-        if (x.Ref.IsSymbolEvaluated)
-          GenerateBySymbol(x.Ref.Symbol)
-        else
-          x.Name.Text
-        
-      | Aliased   as x => x.Alias.Text + "::" + GenerateQualifiedName(x.QualifiedName)
-      | Qualified as x =>
-        if (x.Ref.IsSymbolEvaluated)
-          GenerateQualifiedName(x.Qualifier) + "." + GenerateBySymbol(x.Ref.Symbol)
-        else
-          GenerateQualifiedName(x.Qualifier) + "." + x.Name.Text
-          
-      | Generic   as x =>
-        def args = x.Arguments.Map(GenerateQualifiedName);
-        $<#$(GenerateQualifiedName(x.QualifiedName))<..$args>#>
-
-      | Open      as x =>
-        def args = string(',', x.Rank.Value);
-        $<#$(GenerateQualifiedName(x.QualifiedName))<..$args>#>
-
-      | _ => GenerateScenarioFilter()
-    }
-    
     private GenerateSuite(suiteSymbol : SuiteSymbol) : string * TestSuite
     {
       def parameters = CollectDefs(suiteSymbol.Defs).ToDictionary();
