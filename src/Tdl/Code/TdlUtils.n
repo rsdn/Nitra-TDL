@@ -1170,5 +1170,99 @@ namespace Tdl
       foreach (symbol in symbols)
         symbol.DeclaredIn = declaredIn;
     }
+
+    private sealed class InvocationScope : Scope
+    {
+      _scope       : Scope;
+      _globalScope : Scope;
+      _type        : TypeSymbol;
+      
+      public this(type : TypeSymbol, scope : Scope, globalScope : Scope)
+      {
+        _type        = type;
+        _scope       = scope;
+        _globalScope = globalScope;
+      }
+
+      private GetExtensionMethodContainers() : Seq[TopClassSymbol]
+      {
+        foreach (c is TopClassSymbol when c.HasExtensionMethod in _globalScope.GetAllSymbols())
+          yield c;
+      }
+      
+      private GetExtensionMethods() : Seq[DeclarationSymbol]
+      {
+        foreach (c in GetExtensionMethodContainers())
+          foreach (m in c.MemberTable.GetAllSymbols())
+            yield m;
+      }
+
+      BindExtensionMethod[TSymbol](reference : Reference, result : ref LightList[TSymbol]) : void
+        where TSymbol : DeclarationSymbol
+      {
+        foreach (c in GetExtensionMethodContainers())
+        {
+          def br = c.Scope.Bind.[TSymbol](reference);
+          when (br.HasResult)
+          {
+            foreach (s in br.GetSymbols())
+            {
+              match (s)
+              {
+                | m is Member.MethodSymbol when m.IsExtensionMethod => result.Add(s);
+                | _ => ()
+              }
+            }
+          }
+        }
+      }
+
+      public override Bind[TSymbol](reference : Reference) : BindResult[TSymbol]
+      {
+        def br = _scope.Bind(reference);
+
+        mutable results = LightList();
+        BindExtensionMethod(reference, ref results);
+
+        if (results.Count > 0)
+        {        
+          when (br.HasResult)
+            foreach (c in br.GetSymbols())
+              results.Add(c);
+              
+          results.ToBindResult()
+        }
+        else
+          br
+      }
+
+      public override Bind[TSymbol](isMatch : Predicate[TSymbol]) : BindResult[TSymbol]
+      {
+        def br = _scope.Bind(isMatch);
+        br
+      }
+      
+      public override GetAllSymbols() : Seq[DeclarationSymbol]
+      {
+        _scope.GetAllSymbols().Concat(GetExtensionMethods())
+      }
+      
+      public override ToDot(nodeToIdMap : System.Collections.Generic.Dictionary[object, int], nodes : System.Collections.Generic.List[string], edges : System.Collections.Generic.List[string]) : void
+      {
+        IgnoreParams();
+        _scope.ToDot(nodeToIdMap, nodes, edges)
+      }
+      
+      public override Serialize(writer : System.IO.BinaryWriter, metadataWriter : Nitra.Serialization2.MetadataWriter) : void
+      {
+        IgnoreParams();
+        throw System.NotImplementedException()
+      }
+    }
+    
+    public BuildInvocationScope(globalScope : Scope) : InvocationScopeBuilder
+    {
+      InvocationScope(_, _, globalScope)
+    }
 } // module
 } // namespace
