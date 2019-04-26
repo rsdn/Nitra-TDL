@@ -61,7 +61,7 @@ namespace Tdl
           foreach (a in m.CustomAttributes)
           {
             def name = a.Name;
-            when (name == "TestMethodAttribute" || name == "TestMethod" )
+            when (name.StartsWith("Test"))
               return true;
           }
           false
