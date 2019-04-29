@@ -218,6 +218,7 @@ namespace Tdl2Json
           Type                    = TypeEnum.Script;
           ScriptPath              = null;
           ScriptData              = Convert.ToBase64String(Encoding.UTF8.GetBytes(deploymentScript));
+          ScriptDataExtension     = ".ps1";
           ReturnValue             = if (code.Expected.HasValue)  code.Expected.Value  else null;
           RebootExitCode          = if (code.ForReboot.HasValue) code.ForReboot.Value else null;
           Timeout                 = if (code.Timeout.HasValue)   code.Timeout.Value   else null;
