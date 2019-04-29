@@ -107,6 +107,9 @@ namespace QuickType
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ScriptData { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string ScriptDataExtension { get; set; }
+
         [JsonProperty("Timeout", NullValueHandling = NullValueHandling.Ignore)]
         public string Timeout { get; set; }
 
