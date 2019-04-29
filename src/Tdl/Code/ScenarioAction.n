@@ -31,9 +31,16 @@ namespace Tdl
         RunnerPath         : ParsedValue[string];
         MaxRebootsCountOpt : ParsedValue[int];
       }
-    | Method        { method : Member.MethodSymbol; MaxRebootsCountOpt : ParsedValue[int]; }
-    | Reboot        { }
-    | WaitForReboot { TimeSpan : string; }
-    | Barrier       { barrier : BarrierSymbol; }
+    | Login
+      {
+        User               : ParsedValue[string];
+        Password           : ParsedValue[string];
+      }
+    | Logoff          { }
+    | LockWorkstation { }
+    | Method          { method : Member.MethodSymbol; MaxRebootsCountOpt : ParsedValue[int]; }
+    | Reboot          { }
+    | WaitForReboot   { TimeSpan : string; }
+    | Barrier         { barrier : BarrierSymbol; }
   }
 }

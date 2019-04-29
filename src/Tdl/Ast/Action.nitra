@@ -54,6 +54,16 @@ namespace Tdl
         MaxRebootsCountOpt : ParsedValue[int];
       }
 
+    | Login
+      {
+        ScenarioActions = TdlUtils.CreateLoginAction(context, this.Location, User, Password);
+
+        User               : CSharp.StringLiteral;
+        Password           : CSharp.StringLiteral;
+      }
+
+    | Logoff          { ScenarioActions = ScenarioAction.Logoff(this.Location); }
+    | LockWorkstation { ScenarioActions = ScenarioAction.LockWorkstation(this.Location); }
     | Method
       {
       stage 1:

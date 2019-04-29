@@ -9,7 +9,8 @@
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         string ArtifactsCollectionTimeout { get; set; }
     }
-    public class TestMethodOrTestSequenceItemImpl : TestMethod, TestSequenceItem
+
+    public abstract class TestMethodOrTestSequenceItemImpl : TestMethodOrTestSequenceItem
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ArtifactsCollectionTimeout { get; set; }
@@ -25,54 +26,62 @@
         public TestSequenceItem[] TestSequence { get; set; }
     }
 
-    public sealed class TestMethodQualifier : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    public sealed class TestMethodQualifier : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string AssemblyName { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string MethodName   { get; set; }
+        public string MethodName { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? MaxRebootsCount { get; set; }
     }
 
-    public sealed class RebootTestStep : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    public sealed class RebootTestStep : TestMethod, TestSequenceItem
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public ForceReboot ForceReboot { get; set; }
+        public Data ForceReboot { get; set; }
+
+        public sealed class Data { }
     }
 
     public sealed class WaitForRebootTestStep : TestSequenceItem
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public WaitForReboot WaitForReboot { get; set; }
+        public Data WaitForReboot { get; set; }
+
+        public sealed class Data
+        {
+            [JsonProperty("RebootTimeout", NullValueHandling = NullValueHandling.Ignore)]
+            public string RebootTimeout { get; set; }
+        }
     }
 
     public sealed class WaitForBarrierTestStep : TestSequenceItem
     {
         [JsonProperty("WaitForBarrier", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public WaitForBarrier WaitForBarrier { get; set; }
-    }
+        public Data WaitForBarrier { get; set; }
 
-    public sealed class WaitForBarrier : TestSequenceItem
-    {
-        [JsonProperty("Id", Required = Required.Always)]
-        public Guid Id { get; set; }
-
-        [JsonProperty("Timeout", Required = Required.Always)]
-        public TimeSpan Timeout { get; set; }
-
-        [JsonProperty("Count", Required = Required.Always)]
-        public int Count { get; set; }
-
-        public override string ToString()
+        public sealed class Data
         {
-            return $"WaitForBarrier(Id={Id}, Count={Count}, Timeout={Timeout})";
+            [JsonProperty("Id", Required = Required.Always)]
+            public Guid Id { get; set; }
+
+            [JsonProperty("Timeout", Required = Required.Always)]
+            public TimeSpan Timeout { get; set; }
+
+            [JsonProperty("Count", Required = Required.Always)]
+            public int Count { get; set; }
+
+            public override string ToString()
+            {
+                return $"WaitForBarrier(Id={Id}, Count={Count}, Timeout={Timeout})";
+            }
         }
     }
 
-    public sealed class TestBot : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    public sealed class TestBot : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty("TestConfigName", Required = Required.Always)]
         public string TestConfigName { get; set; }
@@ -81,7 +90,7 @@
         public int? MaxRebootsCount { get; set; }
     }
 
-    public sealed class UnixScriptRunner : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    public sealed class UnixScriptRunner : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty("TestScriptName", Required = Required.Always)]
         public string TestScriptName { get; set; }
@@ -96,7 +105,7 @@
         public int? MaxRebootsCount { get; set; }
     }
 
-    public sealed class GTestProgram : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    public sealed class GTestProgram : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty(Required = Required.Always)]
         public string ProgramName { get; set; }
@@ -108,7 +117,7 @@
         public int? MaxRebootsCount { get; set; }
     }
 
-    public sealed class AndroidJava : TestMethodOrTestSequenceItemImpl, TestMethodOrTestSequenceItem
+    public sealed class AndroidJava : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty(Required = Required.Always)]
         public string AndroidTestContainer { get; set; }
@@ -123,7 +132,36 @@
         public int? MaxRebootsCount { get; set; }
     }
 
-    public sealed class ForceReboot { }
+    public sealed class LoginTestStep : TestMethod, TestSequenceItem
+    {
+        [JsonProperty(Required = Required.Always)]
+        public Data Login { get; set; }
+
+        public sealed class Data
+        {
+            [JsonProperty(Required = Required.Always)]
+            public string User { get; set; }
+
+            [JsonProperty(Required = Required.Always)]
+            public string Password { get; set; }
+        }
+    }
+
+    public sealed class LogoffTestStep : TestMethod, TestSequenceItem
+    {
+        [JsonProperty(Required = Required.Always)]
+        public Data Logoff { get; set; }
+
+        public sealed class Data { }
+    }
+
+    public sealed class LockWorkstationTestStep : TestMethod, TestSequenceItem
+    {
+        [JsonProperty(Required = Required.Always)]
+        public Data LockWorkstation { get; set; }
+
+        public sealed class Data { }
+    }
 
     public class TestEntity
     {
