@@ -270,10 +270,13 @@ namespace Tdl
         Apk.RunnerPath -> RunnerPath;
         MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
       }
-    | Reboot         -> Reboot { }
-    | WaitForReboot1 -> WaitForReboot { TimeSpan -> TimeSpan; }
-    | WaitForReboot2 -> WaitForReboot { TimeSpan -> TimeSpan; }
-    | Barrier        -> Barrier       { Reference -> Reference; }
+    | Login           -> Login           { User -> User; Password -> Password; }
+    | Logoff          -> Logoff          { }
+    | LockWorkstation -> LockWorkstation { }
+    | Reboot          -> Reboot          { }
+    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; }
+    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; }
+    | Barrier         -> Barrier         { Reference -> Reference; }
   }
 
   map syntax Grammar.DeploymentOption -> DeploymentOption

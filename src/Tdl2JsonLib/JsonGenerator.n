@@ -514,13 +514,13 @@ namespace Tdl2Json
                 }
                 def makeAction(action : ScenarioAction) : TestSequenceItem
                 {
-                  | Reboot             => RebootTestStep() <- { ForceReboot = ForceReboot() }
+                  | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
                   | Method        as m => makeMethodAction(m)
                   | WaitForReboot as x =>                   
                     WaitForRebootTestStep() <- 
                     {
                       WaitForReboot = 
-                        WaitForReboot() <-
+                        WaitForRebootTestStep.Data() <-
                         {
                           RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
                         };
@@ -530,7 +530,7 @@ namespace Tdl2Json
                     WaitForBarrierTestStep() <-
                     {
                       WaitForBarrier = 
-                        WaitForBarrier() <- 
+                        WaitForBarrierTestStep.Data() <- 
                         {
                           Id      = b.Guid;
                           Timeout = TimeSpan.Parse(b.Timeout.Value);
@@ -541,6 +541,9 @@ namespace Tdl2Json
                   | Config as c        => makeConfigAction(c)
                   | GTest  as g        => makeGTestAction(g)
                   | Apk as a           => makeAndroidJavaAction(a)
+                  | Login as login     => LoginTestStep() <- { Login = LoginTestStep.Data() <- { User = login.User.Value; Password = login.Password.Value } }
+                  | Logoff             => LogoffTestStep() <- { Logoff = LogoffTestStep.Data() }
+                  | LockWorkstation    => LockWorkstationTestStep() <- { LockWorkstation = LockWorkstationTestStep.Data() }
                   | _                  => assert(false, "Unsupported ScenarioAction: " + action)
                 }
                 

@@ -111,12 +111,12 @@
       syntax Deployment   = "deployment" sm Reference ";" nl;
     }
 
-    syntax Environments = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
-    syntax Environment  = "(" Platform=Reference "," sm Product=Reference ")";
-    syntax Method       = "method" sm QualifiedIdentifier MaxRebootsCountOpt=MaxRebootsCount? ";" nl;
-    syntax Config       = "config" sm Path=StringLiteral MaxRebootsCount? ";" nl;
-    syntax GTest        = "gtest"  sm Name=StringLiteral Arguments=StringLiteral* MaxRebootsCount? ";" nl;
-    syntax Apk          = "apk"    sm Name=StringLiteral Filter? "runner" RunnerPath=StringLiteral MaxRebootsCount? ";" nl
+    syntax Environments    = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
+    syntax Environment     = "(" Platform=Reference "," sm Product=Reference ")";
+    syntax Method          = "method" sm QualifiedIdentifier MaxRebootsCountOpt=MaxRebootsCount? ";" nl;
+    syntax Config          = "config" sm Path=StringLiteral MaxRebootsCount? ";" nl;
+    syntax GTest           = "gtest"  sm Name=StringLiteral Arguments=StringLiteral* MaxRebootsCount? ";" nl;
+    syntax Apk             = "apk"    sm Name=StringLiteral Filter? "runner" RunnerPath=StringLiteral MaxRebootsCount? ";" nl
     {
       syntax Filter = "filter" Value=StringLiteral;
     }
@@ -141,10 +141,13 @@
       | GTest
       | Apk
       | Script
-      | Reboot         = "reboot" ";"
-      | WaitForReboot1 = "wait" sm  "for" sm "reboot" sm TimeSpan ";"
-      | WaitForReboot2 = "wait-for-reboot"            sm TimeSpan ";"
-      | Barrier        = "barrier" sm Reference ";"
+      | Login           = "login" sm User=StringLiteral sm Password=StringLiteral ";" nl;
+      | Logoff          = "logoff" ";" nl;
+      | LockWorkstation = "lock-workstation" ";" nl;
+      | Reboot          = "reboot" ";"
+      | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan ";"
+      | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan ";"
+      | Barrier         = "barrier" sm Reference ";"
     }
 
     syntax DeploymentExpr

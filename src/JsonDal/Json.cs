@@ -324,11 +324,6 @@ namespace QuickType
         public string AdditionalProperties { get; set; }
     }
 
-    public partial class WaitForReboot
-    {
-        [JsonProperty("RebootTimeout", NullValueHandling = NullValueHandling.Ignore)]
-        public string RebootTimeout { get; set; }
-    }
 
     /// <summary>
     /// Выбор деплоя в зависимости от значения параметра

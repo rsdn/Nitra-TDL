@@ -1,0 +1,77 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "D": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "foobar.cmd"
+    }
+  },
+  "Platforms": {
+    "win7": {}
+  },
+  "Products": {
+    "P": {
+      "Name": "MobileSdk",
+      "Parameters": {
+        "Name": "MobileSdk"
+      },
+      "BranchName": "1",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Android": {
+      "Parameters": {},
+      "Platforms": [
+        "win7"
+      ],
+      "Products": [
+        "P"
+      ],
+      "TestScenarios": [
+        "S"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S": {
+      "Deployments": [
+        "D"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "P"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "Logoff": {}
+          },
+          {
+            "Login": {
+              "User": "admin",
+              "Password": "asdf"
+            }
+          },
+          {
+            "LockWorkstation": {}
+          }
+        ]
+      },
+      "Timeout": "00:10:00",
+      "UniqueId": "BA3F8DAF-012B-4E51-89D9-07724B9AF038"
+    }
+  },
+  "TestEntities": {}
+}

@@ -1189,6 +1189,17 @@ namespace Tdl
         symbol.DeclaredIn = declaredIn;
     }
 
+    public CreateLoginAction(context : DependentPropertyEvalContext, location : Location, user : CSharp.StringLiteral, password : CSharp.StringLiteral) : ScenarioAction.Login
+    {
+      def userValue     = ConvertStringLiteral(user);
+      def passwordValue = ConvertStringLiteral(password);
+
+      when (string.IsNullOrEmpty(userValue.Value))
+        user.Error(context, "User name must be non empty string.");
+
+      ScenarioAction.Login(location, userValue, passwordValue)
+    }
+
     public ValidateCommandParameters(this ast : CommandCall, command : DeclaredTypeSymbol, context : DependentPropertyEvalContext) : void
     {
       def projectData = ToTdlContext(context).TdlProjectData;
