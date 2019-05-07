@@ -1,0 +1,305 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Linq;
+
+using SCG = System.Collections.Generic;
+
+namespace DotNet
+{
+  class SubstExtensionMethods
+  {
+    private _typeParamsMap : Hashtable[int, TypeSymbol];
+    private _subst         : ExtensionMethodSymbol;
+    private _origin        : Member.MethodSymbol;
+
+    public this(method : Member.MethodSymbol, args : ImmutableArray[TypeSymbol])
+    {
+      assert(method.IsExtensionMethod);
+      assert(method.Parameters.Length > 0);
+
+      _origin = method;
+      
+      def typeParams    = method.TypeParameters;
+      def typeParamsMap = Hashtable();
+
+      assert2(args.Length == typeParams.Length);
+      
+      foreach (tp in typeParams with i)
+        typeParamsMap[tp.Id] = args[i];
+
+      _typeParamsMap = typeParamsMap;
+      
+      def subst = ExtensionMethodSymbol();
+      def thisParameter = SubstFormalParameter(method.Parameters[0]);
+      thisParameter.DeclaredIn = subst;
+      thisParameter.Default = DefaultValue.None();
+      subst.This = thisParameter;
+      subst.IsExtensionMethod = false;
+      _subst = subst;
+    }
+
+    public Subst : ExtensionMethodSymbol { get { _subst }}
+    public This  : FormalParameterSymbol { get { _subst.This }}
+
+    [Memoize]
+    public SubstExtensionMethod() : ExtensionMethodSymbol
+    {
+      def subst  = _subst;
+      def origin = _origin;
+
+      CopyDeclaration         (subst, origin);
+      SubstCustomAttributeHost(subst, origin);
+      SubstModifierHost       (subst, origin);
+      SubstTypeMember         (subst, origin);
+      SubstFunctional         (subst, origin);
+      SubstGenericEntity      (subst, origin);
+      subst
+    }
+
+    private TrySubst(origin : TypeSymbol) : TypeSymbol
+    {
+      match (origin)
+      {
+        | TypeParameterSymbol as parameterSymbol => TrySubstTypeParameterSymbol(parameterSymbol)
+        | FunctionTypeSymbol as func => TrySubst(func)
+        | ConstructedTypeSymbol as cts =>
+          def typeInfo      = cts.TypeInfo;
+          def args          = cts.Args;
+          def substArgs     = TrySubsts(args);
+          def isNotChanged  = args.Equals(substArgs);
+          match (cts)
+          {
+            | TopConstructedTypeSymbol when isNotChanged => cts
+            | TopConstructedTypeSymbol           => AstUtils.CreateConstructedTypeSymbol(typeInfo, substArgs, DependentPropertyEvalContext(null))
+            //| NestedConstructedTypeSymbol as cts when isNotChanged
+            | NestedConstructedTypeSymbol as cts =>  AstUtils.CreateNestedConstructedTypeSymbol(cts.Parent, typeInfo, substArgs, DependentPropertyEvalContext(null))
+            | _ => assert2(false); assert(false)
+          }
+
+        | _ => origin
+      }
+    }
+
+    private TrySubsts(types : ImmutableArray[TypeSymbol]) : ImmutableArray[TypeSymbol]
+    {
+      def builder = ImmutableArray.CreateBuilder(types.Length);
+      foreach (type in types)
+        builder.Add(TrySubst(type));
+      builder.MoveToImmutable()
+    }
+    
+    private TrySubst(origin : FunctionTypeSymbol) : FunctionTypeSymbol
+    {
+      mutable isNotChanged;
+      mutable parameterTypesSubsts;
+      mutable returnSubst;
+
+      when (origin.IsParametersEvaluated)
+      {
+        parameterTypesSubsts = TrySubsts(origin.Parameters);
+
+        isNotChanged = parameterTypesSubsts.SequenceEqual(origin.Parameters);
+      }
+
+      when (origin.IsReturnEvaluated)
+      {
+        returnSubst = TrySubst(origin.Return);
+        isNotChanged &= returnSubst.Equals(origin.Return);
+      }
+
+      if (isNotChanged)
+        origin
+      else
+      {
+        def subst = FunctionTypeSymbol();
+        CopyDeclaration(subst, origin);
+        when (!parameterTypesSubsts.IsDefault)
+          subst.Parameters = parameterTypesSubsts;
+        when (returnSubst != null)
+          subst.Return = returnSubst;
+        subst.EvalProperties(DependentPropertyEvalContext(null));
+        subst
+      }
+    }
+
+    private TrySubstExtension(origin : FunctionTypeSymbol) : FunctionTypeSymbol
+    {
+      def subst = FunctionTypeSymbol();
+
+      when (origin.IsParametersEvaluated)
+      {
+        subst.Parameters = TrySubsts(ImmutableArray.Create(origin.Parameters, 1, origin.Parameters.Length - 1));
+      }
+
+      when (origin.IsReturnEvaluated)
+      {
+        subst.Return = TrySubst(origin.Return);
+      }
+
+      CopyDeclaration(subst, origin);
+      subst.EvalProperties(DependentPropertyEvalContext(null));
+      subst
+    }
+
+    private TrySubstTypeParameters(typeParameters : ImmutableArray[TypeSymbol]) : ImmutableArray[TypeSymbol]
+    {
+      def builder = ImmutableArray.CreateBuilder(typeParameters.Length);
+      foreach (type in typeParameters)
+        builder.Add(TrySubst(type));
+      builder.MoveToImmutable()
+    }
+
+    private static CopyDeclaration(subst : DeclarationSymbol, origin : DeclarationSymbol) : void
+    {
+      foreach (decl in origin.GetDeclarationsUntyped())
+        subst.AddDeclaration(decl);
+
+      when (origin.IsKindEvaluated)
+      {
+        subst.Kind                   = origin.Kind;
+        subst.Kind_Location          = origin.Kind_Location;
+      }
+      when (origin.IsSpanClassEvaluated)
+      {
+        subst.SpanClass              = origin.SpanClass;
+        subst.SpanClass_Location     = origin.SpanClass_Location;
+      }
+      when (origin.IsScopeEvaluated)
+      {
+        subst.Scope                  = origin.Scope;
+        subst.Scope_Location         = origin.Scope_Location;
+      }
+      when (origin.IsDeclaredInOptEvaluated)
+      {
+        subst.DeclaredInOpt          = origin.DeclaredInOpt;
+        subst.DeclaredInOpt_Location = origin.DeclaredInOpt_Location;
+      }
+    }
+
+    private SubstCustomAttributeHost(subst : CustomAttributeHostDeclarationSymbol, origin : CustomAttributeHostDeclarationSymbol) : void
+    {
+      when (origin.IsCustomAttributesEvaluated)
+      {
+        subst.CustomAttributes          = origin.CustomAttributes;
+        subst.CustomAttributes_Location = origin.CustomAttributes_Location;
+      }
+    }
+
+    private SubstModifierHost(subst : ModifierHostSymbol, origin : ModifierHostSymbol) : void
+    {
+      when (origin.IsFlagsEvaluated)
+      {
+        subst.Flags = origin.Flags;
+        subst.Flags_Location = origin.Flags_Location;
+      }
+    }
+
+    private SubstFormalParameter(origin : FormalParameterSymbol) : FormalParameterSymbol
+    {
+      def subst = FormalParameterSymbol();
+      CopyDeclaration(subst, origin);
+      SubstCustomAttributeHost(subst, origin);
+      when (origin.IsTypeEvaluated)
+      {
+        subst.Type = TrySubst(origin.Type);
+        subst.Type_Location = origin.Type_Location;
+      }
+      when (origin.IsModifierEvaluated)
+      {
+        subst.Modifier = origin.Modifier;
+        subst.Modifier_Location = origin.Modifier_Location;
+      }
+      when (origin.IsIndexEvaluated)
+      {
+        subst.Index = origin.Index;
+        subst.Index_Location = origin.Index_Location;
+      }
+      subst.EvalProperties(DependentPropertyEvalContext(null));
+      subst
+    }
+
+    private SubstFormalParameters(parameters : ImmutableArray[FormalParameterSymbol]) : ImmutableArray[FormalParameterSymbol]
+    {
+      def builder = ImmutableArray.CreateBuilder(parameters.Length - 1);
+      foreach (type when i != 0 in parameters with i)
+        builder.Add(SubstFormalParameter(type));
+      builder.MoveToImmutable()
+    }
+
+    private SubstTypeMember(subst : TypeMemberSymbol, origin : TypeMemberSymbol) : void
+    {
+      when (origin.IsDeclaredInEvaluated)
+      {
+        subst.DeclaredIn = origin.DeclaredIn;
+        subst.DeclaredIn_Location = origin.DeclaredIn_Location;
+      }
+    }
+
+    private SubstParameterizable(subst : ExtensionMethodSymbol, origin : FunctionalSymbol) : void
+    {
+      // TODO: Надо сделать подстановку для table ParameterScope;
+      when (origin.IsParametersEvaluated)
+      {
+        subst.Parameters = SubstFormalParameters(origin.Parameters);
+        subst.Parameters_Location = origin.Parameters_Location;
+      }
+    }
+
+    private SubstFunctional(subst : ExtensionMethodSymbol, origin : FunctionalSymbol) : void
+    {
+      SubstParameterizable(subst, origin);
+
+      when (origin.IsReturnTypeEvaluated)
+      {
+        subst.ReturnType = TrySubst(origin.ReturnType);
+        subst.ReturnType_Location = origin.ReturnType_Location;
+      }
+      when (origin.IsFunctionTypeEvaluated)
+      {
+        subst.FunctionType = TrySubstExtension(origin.FunctionType);
+        subst.FunctionType_Location = origin.FunctionType_Location;
+      }
+      when (origin.IsTypeEvaluated)
+      {
+        subst.Type = subst.FunctionType;
+        subst.Type_Location = origin.Type_Location;
+      }
+    }
+
+    private SubstGenericEntity(subst : GenericEntitySymbol, origin : GenericEntitySymbol) : void
+    {
+      when (origin.IsTypeParametersCountEvaluated)
+      {
+        subst.TypeParametersCount = origin.TypeParametersCount;
+        subst.TypeParametersCount_Location = origin.TypeParametersCount_Location;
+      }
+      when (origin.IsTypeParametersEvaluated)
+      {
+        subst.TypeParameters = TrySubstTypeParameters(origin.TypeParameters);
+        subst.TypeParameters_Location = origin.TypeParameters_Location;
+      }
+    }
+
+    public TrySubstTypeParameterSymbol(parameterSymbol : TypeParameterSymbol) : TypeSymbol
+    {
+      mutable result;
+      if (_typeParamsMap.TryGetValue(parameterSymbol.Id, out result))
+        result
+      else
+      {
+        assert2(false, "Unmapped TypeParameterSymbol!");
+        parameterSymbol
+      }
+    }
+  } // module
+} // namespace

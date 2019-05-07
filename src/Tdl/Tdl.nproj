@@ -221,6 +221,15 @@
     <Compile Include="Code\TdlUtils.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\Typing\ExtensionMethodSymbol.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\Typing\InvocationScope.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\Typing\SubstExtensionMethods.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Grammar.nitra">
       <SubType>Code</SubType>
     </Compile>
@@ -234,6 +243,7 @@
   <ItemGroup>
     <Folder Include="Code" />
     <Folder Include="Ast" />
+    <Folder Include="Code\Typing" />
     <Folder Include="Properties" />
   </ItemGroup>
   <ItemGroup>
