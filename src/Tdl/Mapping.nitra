@@ -35,11 +35,10 @@ namespace Tdl
     | DeploymentScript -> Deployment.Script
       {
         Name                                 -> Name;
-        ScriptPath                           -> Path;
+        DeploymentScriptContent              -> Content;
         Parameters.FormalParameters.Item1    -> Parameters;
         DeploymentScriptBody.DefDeclarations -> Definitions;
         DeploymentScriptBody.Options         -> Options;
-        IsBase64Encoded = ParsedValue(KwDataOpt.Span, KwDataOpt.HasValue);
       }
     | DeploymentCode   -> Deployment.Code
       {
@@ -125,6 +124,13 @@ namespace Tdl
     []           -> Attributes;
     QualifiedReference.Simple { Name = Reference(Name.Location.FromEnd(), "string"); } -> Type;
     Modifier = ParsedValue(Name.Span.FromEnd(), ParameterModifier.None);
+  }
+
+  map syntax Grammar.DeploymentScriptContent -> DeploymentScriptContent
+  {
+    | FilePath   -> FilePath   { Path -> Path; }
+    | Base64     -> Base64     { Data -> Data; Extension -> Extension; }
+    | SourceCode -> SourceCode { Text -> Text; Extension -> Extension; }
   }
 
   map syntax Grammar.Case -> Case

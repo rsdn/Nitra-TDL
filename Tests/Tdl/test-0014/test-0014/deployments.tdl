@@ -1,0 +1,12 @@
+deployment Base64Encoded()
+  base64 "ZXhpdCA0Mg==" extension ".ps1"
+{
+  expected 0;
+}
+
+deployment SourceCode()
+  source @"exit 42"
+  extension ".ps1"
+{
+  expected 42;
+}

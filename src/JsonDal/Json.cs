@@ -105,7 +105,7 @@ namespace QuickType
         public string ScriptPath { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string ScriptData { get; set; }
+        public byte[] ScriptData { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string ScriptDataExtension { get; set; }

@@ -25,8 +25,10 @@ namespace Tdl
       {
         symbol
         {
-          in Path            : ParsedValue[string];
-          in IsBase64Encoded : ParsedValue[bool];
+          in Path      : ParsedValue[string];
+          in Extension : ParsedValue[string];
+          in Base64    : ParsedValue[array[byte]];
+
         stage 3:
           in Defs            : ImmutableArray[Def2];
 
@@ -36,16 +38,14 @@ namespace Tdl
           MakeHint       = TdlUtils.DeploymentMakeHint(symbolCache, this);
         }
 
+        Content.Symbol                  = Symbol;
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
-        Symbol.Path                     = TdlUtils.ConvertStringLiteral(Path);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
         Parameters.Scope                = Scope;
-        Symbol.IsBase64Encoded          = IsBase64Encoded;
 
-        Path            : CSharp.StringLiteral;
+        Content         : DeploymentScriptContent;
         Definitions     : Definition*;
-        IsBase64Encoded : bool;
       }
     | ignore-case Code : Parameterizable, DeploymentOptionsHost
       {
