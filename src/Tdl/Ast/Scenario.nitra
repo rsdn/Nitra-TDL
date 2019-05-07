@@ -62,7 +62,7 @@ namespace Tdl
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
 
         FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
-        FilterOpt.BuildInvocationScope  = TdlUtils.BuildInvocationScope(Scope);
+        FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
         FilterOpt.ExpectedType          = context.GetBooleanType();
         Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
 

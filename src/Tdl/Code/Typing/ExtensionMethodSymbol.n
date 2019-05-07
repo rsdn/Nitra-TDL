@@ -1,0 +1,25 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DotNet
+{
+  public class ExtensionMethodSymbol : Member.MethodSymbol
+  {
+    private mutable _this : FormalParameterSymbol;
+    public This : FormalParameterSymbol
+    {
+      get { _this }
+      set
+      {
+        assert(_this == null);
+        _this = value;
+      }
+    }
+  }
+}

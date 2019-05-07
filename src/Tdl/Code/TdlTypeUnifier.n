@@ -40,7 +40,27 @@ namespace Tdl
 
           true
 
-        | _ => base.UnifyUnwraped(typeSymbol1, typeSymbol2, ref updatedVariables)
+        | _ =>
+          when (typeSymbol1 : object is ConstructedTypeSymbol(TypeInfo=ti1, Args=args1))
+          when (ti1 : object is SupportsInheritanceTypeSymbol(IsBaseTypeSetEvaluated=true, BaseTypeSet=baseTypeSet))
+          {
+            when (baseTypeSet.AncestorTypes.Contains(typeSymbol2))
+              return true;
+            when (typeSymbol2 is TypeVarSymbol(IsBaseTypeConstraintEvaluated=true, BaseTypeConstraint=ConstructedTypeSymbol(TypeInfo=ti2, Args=args2)) as tv2)
+            when (baseTypeSet.AncestorTypes.Contains(ti2))
+            {
+              unless(UnifyAll(args1, args2, ref updatedVariables))
+              {
+                return false;
+              }
+              unless (tv2.IsDerivedTypeConstraintEvaluated)
+              {
+                tv2.DerivedTypeConstraint = typeSymbol1;
+              }
+              return true;
+            }
+          }
+          base.UnifyUnwraped(typeSymbol1, typeSymbol2, ref updatedVariables)
       }
     }
     
