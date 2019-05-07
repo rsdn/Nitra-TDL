@@ -68,17 +68,17 @@ namespace Tdl2Json
       def parameters      = allParameters.Select(p => (p.Name, getParameterValue(p)));
       def defaultes       = allParameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
       def defs            = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
-      def isBase64Encoded = if (script.IsIsBase64EncodedEvaluated && script.IsBase64Encoded.HasValue) script.IsBase64Encoded.Value else false;
       def scriptArgs      = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
       (script.Name, 
         Deployment() <- 
         { 
             Type                    = TypeEnum.Script;
-            ScriptPath              = if (!isBase64Encoded)          script.Path.Value      else null;
-            ScriptData              = if (isBase64Encoded)           script.Path.Value      else null; 
-            ReturnValue             = if (script.Expected.HasValue)  script.Expected.Value  else null;
-            RebootExitCode          = if (script.ForReboot.HasValue) script.ForReboot.Value else null;
-            Timeout                 = if (script.Timeout.HasValue)   script.Timeout.Value   else null;
+            ScriptPath              = if (script.IsPathEvaluated)      script.Path.Value      else null;
+            ScriptData              = if (script.IsBase64Evaluated)    script.Base64.Value    else null;
+            ScriptDataExtension     = if (script.IsExtensionEvaluated) script.Extension.Value else null;
+            ReturnValue             = if (script.Expected.HasValue)    script.Expected.Value  else null;
+            RebootExitCode          = if (script.ForReboot.HasValue)   script.ForReboot.Value else null;
+            Timeout                 = if (script.Timeout.HasValue)     script.Timeout.Value   else null;
             ScriptArgs              = scriptArgs;
             ScriptArgsDefaultValues = defaultes;
         })
@@ -217,7 +217,7 @@ namespace Tdl2Json
         {
           Type                    = TypeEnum.Script;
           ScriptPath              = null;
-          ScriptData              = Convert.ToBase64String(Encoding.UTF8.GetBytes(deploymentScript));
+          ScriptData              = Encoding.UTF8.GetBytes(deploymentScript);
           ScriptDataExtension     = ".ps1";
           ReturnValue             = if (code.Expected.HasValue)  code.Expected.Value  else null;
           RebootExitCode          = if (code.ForReboot.HasValue) code.ForReboot.Value else null;

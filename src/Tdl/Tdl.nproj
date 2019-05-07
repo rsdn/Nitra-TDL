@@ -164,6 +164,12 @@
     <Compile Include="Ast\Var.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\From.nitra">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ast\DeploymentScriptContent.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\CommandSymbolKind.n">
       <SubType>Code</SubType>
     </Compile>
@@ -236,11 +242,6 @@
       <Project>{ed94b486-ebb3-49b3-aa7d-3d9ac3d0a2ef}</Project>
       <Private>False</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Ast\From.nitra">
-      <SubType>Content</SubType>
-    </Compile>
   </ItemGroup>
   <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" />
 </Project>

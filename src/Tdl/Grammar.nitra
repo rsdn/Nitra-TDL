@@ -13,7 +13,7 @@
     using CSharp.Types;
     using CSharp.CS7;
 
-    keyword regex ['A'..'Z', 'a'..'z', '_'..'_', '-'..'-']+ rule S;
+    keyword regex ['A'..'Z', 'a'..'z', '_'..'_', '-'..'-']+ ['0'..'9']* rule S;
 
     [StartRule]
     syntax Module = MemberDeclaration*;
@@ -32,7 +32,7 @@
       | String = '\"' Body=(!NotAllowedRegularStringLiteralChar Any)+ '\"'
       | ListStyle = Body=LispIdent
     }
-    
+
     syntax StringLiteral
     {
       | RegularStringLiteral  = Lit=RegularStringLiteral
@@ -41,13 +41,20 @@
 
     syntax Parameters = "(" (FormalParameter; ","sm)* ")";
 
+    syntax DeploymentScriptContent
+    {
+      | FilePath   = "script" sm Path=StringLiteral
+      | Base64     = "base64" sm Data=StringLiteral nl "extension" sm Extension=StringLiteral
+      | SourceCode = "source" sm Text=StringLiteral nl "extension" sm Extension=StringLiteral
+    }
+
     syntax MemberDeclaration
     {
       | Alias             = "using"             sm Name sm "=" sm QualifiedIdentifier ";" nl;
       | Open              = "using"             sm QualifiedIdentifier ";" nl;
       | Platform          = "platform"          sm Name ";" nl;
       | PlatformSet       = "platform"          sm Name sm "=" sm Platforms=(Reference; "," sm)+ ";" nl;
-      | DeploymentScript  = "deployment"        sm Name outline_begin_before Parameters outline_end_before sm "script" sm "data"? ScriptPath=StringLiteral sm  nl DeploymentScriptBody;
+      | DeploymentScript  = "deployment"        sm Name outline_begin_before Parameters outline_end_before nl DeploymentScriptContent nl DeploymentScriptBody;
       | DeploymentCode    = "deployment"        sm Name outline_begin_before Parameters outline_end_before nl DeploymentCodeBody;
       | DeploymentSet     = "deployment"        sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
       | Currying          = "deployment"        sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
