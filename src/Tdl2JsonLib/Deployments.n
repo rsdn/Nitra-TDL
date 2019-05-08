@@ -144,7 +144,7 @@ namespace Tdl2Json
 
         def appendEmptyValueCheck()
         {
-          _ = deploymentPrologue.AppendLine($<#if (-not($(parameterName))) { Throw "Value of -$(parameter.Name) is not specified" }#>);
+          _ = deploymentPrologue.AppendLine($<#if ([System.String]::IsNullOrEmpty($(parameterName))) { Throw "Value of -$(parameter.Name) is not specified" }#>);
         }
 
         match (parameter.Type.FullName)

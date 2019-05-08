@@ -16,7 +16,7 @@ $TdlDeploymentName = @'
 {{Name}}
 '@
 
-$TdlTempFile = New-TemporaryFile
+$TdlTempFile = [System.IO.Path]::GetTempFileName()
 
 Set-Content -Path $TdlTempFile -Encoding UTF8 -Value $TdlDeploymentSource
 
