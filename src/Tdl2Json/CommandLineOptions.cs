@@ -40,7 +40,7 @@ namespace Tdl2Json
 
         public string SampleOutputFile { get; private set; }
 
-        public string DeploymentScriptTemplateFile { get; private set; }
+        public string DeploymentScriptHeader { get; private set; }
 
         public string DeploymentToolPath { get; private set; }
 
@@ -53,7 +53,7 @@ namespace Tdl2Json
                 { "?|h|help",                 "Prints this message.",                                    v => NeedHelp = true },
                 { "o|out=",                   "Output file path.",                                       v => OutputFile = v },
                 { "w|working-directory=",     "Working directory.",                                      v => WorkingDirectory = v },
-                { "deployment-template=",     "Deployment script template file path.",                   v => DeploymentScriptTemplateFile = v },
+                { "deployment-header=",       "Deployment script header.",                               v => DeploymentScriptHeader = v },
                 { "deployment-tool=",         "Deployment tool file path.",                              v => DeploymentToolPath = v },
                 { "l|log-level=",            $"Logging verbosity: {string.Join(", ", LogLevels.Keys)}.", SetLogLevel },
                 { "t|transformator=",         "Transformer: path-to.dll|Qualified.Function.Name",        AddTransformer },
@@ -100,9 +100,6 @@ namespace Tdl2Json
 
             if (InputFiles.Count == 0)
                 throw new OptionException("At least one input TDL file required.", "");
-
-            if (!string.IsNullOrEmpty(DeploymentScriptTemplateFile) && !File.Exists(DeploymentScriptTemplateFile))
-                throw new OptionException($"Deployment script template file '{DeploymentScriptTemplateFile}' does not exist.", "deployment-template");
         }
 
         public void PrintHelp(TextWriter writer)
