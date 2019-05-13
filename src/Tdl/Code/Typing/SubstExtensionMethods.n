@@ -63,6 +63,8 @@ namespace DotNet
       SubstTypeMember         (subst, origin);
       SubstFunctional         (subst, origin);
       SubstGenericEntity      (subst, origin);
+      def context = DependentPropertyEvalContext(null);
+      subst.EvalProperties(context);
       subst
     }
 

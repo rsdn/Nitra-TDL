@@ -21,5 +21,10 @@ namespace DotNet
         _this = value;
       }
     }
+    
+    public override ToString() : string
+    {
+      base.ToString()
+    }
   }
 }

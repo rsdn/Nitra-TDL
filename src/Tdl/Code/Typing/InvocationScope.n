@@ -48,8 +48,22 @@ namespace DotNet
       private GetExtensionMethods() : Seq[DeclarationSymbol]
       {
         foreach (c in GetExtensionMethodContainers())
-          foreach (m in c.MemberTable.GetAllSymbols())
-            yield m;
+        {
+          foreach (x in c.MemberTable.GetAllSymbols())
+          {
+            | m is Member.MethodSymbol when m.IsExtensionMethod =>
+              def typeArgs = _context.CreateFreeTypeVars(m.TypeParameters.Length);
+              def subst = SubstExtensionMethods(m, typeArgs);
+              def unifier = TdlTypeUnifier.Instance;
+              when (unifier.TryRequire(_type, subst.This.Type))
+              {
+                def extMethod = subst.SubstExtensionMethod();
+                yield extMethod;
+              }
+                  
+            | _ => ()
+          }
+        }
       }
 
       BindExtensionMethod[TSymbol](reference : Reference, result : ref LightList[TSymbol]) : void
@@ -113,7 +127,11 @@ namespace DotNet
       
       public override GetAllSymbols() : Seq[DeclarationSymbol]
       {
-        _scope.GetAllSymbols().Concat(GetExtensionMethods())
+        foreach (s in _scope.GetAllSymbols())
+          yield s;
+        
+        foreach (s in GetExtensionMethods())
+          yield s;
       }
       
       public override ToDot(nodeToIdMap : System.Collections.Generic.Dictionary[object, int], nodes : System.Collections.Generic.List[string], edges : System.Collections.Generic.List[string]) : void
