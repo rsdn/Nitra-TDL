@@ -48,7 +48,7 @@ public class TdlTask : ToolTask
         set;
     }
 
-    public string DeploymentScriptTemplateFile
+    public string DeploymentScriptHeader
     {
         get;
         set;
@@ -82,9 +82,9 @@ public class TdlTask : ToolTask
         {
             buffer.Add(EscapeFilePath(item.GetMetadata("FullPath")));
         }
-        if (!string.IsNullOrEmpty(DeploymentScriptTemplateFile))
+        if (!string.IsNullOrEmpty(DeploymentScriptHeader))
         {
-            buffer.Add("-deployment-template:" + EscapeFilePath(DeploymentScriptTemplateFile));
+            buffer.Add("-deployment-header:" + EscapeFilePath(DeploymentScriptHeader));
         }
         if (!string.IsNullOrEmpty(DeploymentToolPath))
         {

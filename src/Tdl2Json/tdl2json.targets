@@ -8,7 +8,7 @@
     <ParameterGroup>
       <ToolPath                     ParameterType="System.String" Required="false" />
       <WorkingDirectory             ParameterType="System.String" Required="false" />
-      <DeploymentScriptTemplateFile ParameterType="System.String" Required="false" />
+      <DeploymentScriptHeader       ParameterType="System.String" Required="false" />
       <DeploymentToolPath           ParameterType="System.String" Required="false" />
       <Sources                      ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <References                   ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
@@ -37,7 +37,7 @@
     <TdlTask Condition=" '$(BuildingProject)' != 'false' "
             ToolPath                     = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
             WorkingDirectory             = "$(MSBuildProjectDirectory)"
-            DeploymentScriptTemplateFile = "$(TdlDeploymentScriptTemplateFile)"
+            DeploymentScriptHeader       = "$(TdlDeploymentScriptHeader)"
             DeploymentToolPath           = "$(TdlDeploymentToolPath)"
             References                   = "@(ReferencePath)"
             Sources                      = "@(TdlCompile)"

@@ -57,10 +57,6 @@ namespace Tdl2Json
                 var output = new Lazy<TextWriter>(() => new StreamWriter(options.OutputFile, false, Encoding.UTF8));
                 CompilerMessageBag messages;
 
-                string deploymentScriptTemplate = null;
-                if (!string.IsNullOrEmpty(options.DeploymentScriptTemplateFile))
-                    deploymentScriptTemplate = File.ReadAllText(options.DeploymentScriptTemplateFile);
-
                 if (options.Transformers.Count > 0)
                 {
                     Print($"Using custom transformers", ConsoleColor.Magenta);
@@ -68,7 +64,7 @@ namespace Tdl2Json
                     foreach (var t in options.Transformers)
                     {
                         var transformatorFunc = LoadTransformator(t.assembly, t.type, t.method);
-                        var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, deploymentScriptTemplate, options.DeploymentToolPath,
+                        var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, options.DeploymentScriptHeader, options.DeploymentToolPath,
                             isMethodTypingEnabled: true, output: null, transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc, isTestMode: true,
                             jsonSchemaType: options.JsonSchemaType);
                         messages.AddRange(transformationContext.Messages);
@@ -79,7 +75,7 @@ namespace Tdl2Json
                 }
                 else
                 {
-                    var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, deploymentScriptTemplate, options.DeploymentToolPath,
+                    var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, options.DeploymentScriptHeader, options.DeploymentToolPath,
                         isMethodTypingEnabled: true, output: output, transformatorOutput: null, transformatorOpt: null, isTestMode: isTestMode,
                         jsonSchemaType: options.JsonSchemaType);
 
