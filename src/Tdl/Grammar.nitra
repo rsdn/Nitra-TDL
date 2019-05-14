@@ -76,9 +76,37 @@
       | SuiteType         = "suite" sm "type"   sm Name nl TypeBody;
       | Suite             = "suite"             sm Name nl SuiteBody;
       | SuiteTyped        = "suite"             sm Name sm ":" Type=Reference nl SuiteBody;
+      | SuiteList         = "suite"             sm Name sm "=" sm Suites=(Reference; "," sm)+ ";" nl;
+      | SuiteGenerator    = "suite"             sm Name sm "=" sm From+ sm "select" sm SuiteScenario ";" nl;
       | External          = "external"          sm ExternalBody;
       | Barrier           = "barrier"           sm Name "timeout" sm Timeout=StringLiteral ";" nl;
       | Entity            = "entity" sm Name nl EntityBody;
+    }
+
+    syntax SuiteScenario = outline_begin_before
+      "{" inl
+          Entity?
+          Platform
+          Product
+          DefDeclaration*
+          SuiteStatement+
+    d "}" nl outline_end_before
+    {
+      syntax Entity   = "entity" sm Reference ";" nl;
+      syntax Platform = "platform" sm Reference ";" nl;
+      syntax Product  = "product"  sm Reference ";" nl;
+    }
+
+    syntax SuiteBody = outline_begin_before "{" inl Entity? Platform Product DefDeclaration* SuiteStatement+ d "}" nl outline_end_before
+    {
+      syntax Entity   = "entity" sm Reference ";" nl;
+      syntax Platform = "platform" sm Reference ";" nl;
+      syntax Product  = "product"  sm Reference ";" nl;
+    }
+
+    syntax SuiteStatement
+    {
+      | CallTest = Scenario=Reference "(" ")" ";" nl;
     }
 
     syntax EntityBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
@@ -164,17 +192,6 @@
     }
 
     syntax ParameterCurrying = Reference ":" sm DefExpr;
-
-    syntax SuiteBody = outline_begin_before "{" inl Entity? Platform Product DefDeclaration* SuiteStatement+ d "}" nl outline_end_before
-    {
-      syntax Entity   = "entity" sm Reference ";" nl;
-      syntax Platform = "platform" sm Reference ";" nl;
-      syntax Product  = "product"  sm Reference ";" nl;
-      syntax SuiteStatement
-      {
-        | CallTest = Scenario=Reference "(" ")" ";" nl;
-      }
-    }
 
     syntax ScenarioBody = outline_begin_before "{" inl Filter? Deployment Environments Action DefDeclaration* d "}" nl outline_end_before
     {

@@ -481,14 +481,58 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
     
-    public Resolve(platformRefs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[Ref[PlatformSymbol]]
+    public Resolve[TSymbol](refs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[Ref[TSymbol]]
+      where TSymbol : DeclarationSymbol
     {
-      def builder = ImmutableArray.CreateBuilder(platformRefs.Length);
-      foreach (platformRef in platformRefs)
-        builder.Add(platformRef.Resolve());
+      def builder = ImmutableArray.CreateBuilder(refs.Length);
+      foreach (r in refs)
+        builder.Add(r.Resolve());
       builder.TryMoveToImmutable()
     }
 
+    /// Skip unresolved symbols.
+    public ToSymbol[T](symbols : ImmutableArray[Ref[T]]) : ImmutableArray[T]
+      where T : DeclarationSymbol
+    {
+      def builder = ImmutableArray.CreateBuilder(symbols.Length);
+      foreach (r when r.IsSymbolEvaluated in symbols)
+        builder.Add(r.Symbol);
+
+      builder.TryMoveToImmutable()
+    }
+
+    public Flatten(symbols : ImmutableArray[SuiteSymbol]) : ImmutableArray[Suite.DefSymbol]
+    {
+      def getChildren(symbol)
+      {
+        | sx is Suite.ListSymbol => sx.Suites
+        | _                      => ImmutableArray.Empty
+      }
+      Flatten(symbols, getChildren)
+    }
+    
+    public Flatten[TBase, TDef](symbols : ImmutableArray[TBase], getChildren : TBase -> ImmutableArray[TBase]) : ImmutableArray[TDef]
+      where TBase : DeclarationSymbol
+      where TDef  : DeclarationSymbol
+    {
+      def builder = ImmutableArray.CreateBuilder(symbols.Length);
+      def visited = HashSet();
+
+      def loop(symbols : ImmutableArray[TBase])
+      {
+        foreach (symbol in symbols)
+        {
+          | _ when !visited.Add(symbol) => ()
+          | d is TDef => builder.Add(d);
+          | _ => loop(getChildren(symbol))
+        }
+      }
+
+      loop(symbols);
+
+      builder.TryMoveToImmutable()
+    }
+    
     public ToSymbol(it : PlatformSymbol, platforms : ImmutableArray[Ref[PlatformSymbol]]) : ImmutableArray[PlatformSymbol]
     {
       def builder = ImmutableArray.CreateBuilder(platforms.Length);
@@ -796,7 +840,7 @@ namespace Tdl
       }
     }
     
-    public MakeTupleType(this context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : TypeSymbol
+    public MakeTupleType(this context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : ValueOption[TypeSymbol]
     {
       def builder = ImmutableArray.CreateBuilder(items.Length);
       foreach (item in items)
@@ -806,11 +850,14 @@ namespace Tdl
             context.CreateFreeTypeVar()
           else
           {
-            def typed = item.Resolve() : Ref[TypedDeclarationSymbol];
-            if (typed.IsSymbolEvaluated)
-              typed.Symbol.Type
-            else
-              context.CreateFreeTypeVar()
+            def typed =
+              if (item.IsResolvedToEvaluated)
+                item.ResolvedTo :> Ref[TypedDeclarationSymbol]
+              else
+                item.Resolve();
+            when (!typed.IsSymbolEvaluated || !typed.Symbol.IsTypeEvaluated)
+              return VNone();
+            typed.Symbol.Type
           };
         builder.Add(t);
       }
@@ -818,7 +865,7 @@ namespace Tdl
       def tuple = TdlType.TupleSymbol();
       tuple.Args = builder.MoveToImmutable();
       tuple.EvalProperties(context);
-      tuple
+      VSome(tuple)
     }
     
     TypeToString(type : TypeSymbol) : string
@@ -917,12 +964,40 @@ namespace Tdl
       }
     }
     
-    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : ProductSymbol) : ValueOption[ImmutableArray[FormalParameterSymbol]]
+    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
-        unless (product.IsProductTypeEvaluated)
-          return VNone();
+      def getAllProducts(product : TypedDeclarationSymbol) : Seq[Product.DefSymbol]
+      {
+        | Product.DefSymbol as ds => [ds]
+        | Product.SetSymbol as ss => ss.AllProducts.OfType.[Product.DefSymbol]()
+        | _ => assert(false);
+      }
 
-      def productParameters = product.ProductType.MemberTable.GetAllSymbols();
+      MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
+    }
+    
+    public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, froms : ImmutableArray[Tdl.Code.From]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
+    {
+      def getAllProducts(product : TypedDeclarationSymbol) : Seq[Product.DefSymbol]
+      {
+        | Product.DefSymbol as ds => [ds]
+        | Product.SetSymbol as ss => ss.AllProducts.OfType.[Product.DefSymbol]()
+        | VarSymbol as v =>
+          foreach (from in froms)
+          foreach (var when v.Id == var.Id in from.Vars with i)
+          {
+            def xs = from.Elems[i];
+            return xs.OfType.[TypedDeclarationSymbol]().SelectMany(x => getAllProducts(x));
+          }
+          []
+        | _ => assert(false);
+      }
+
+      MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
+    }
+    
+    MakeDefaultDefs(ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, getAllProducts : TypedDeclarationSymbol -> Seq[Product.DefSymbol]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
+    {
       def filteringScope    = definitionScope :> FilteringScope;
       def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
                                                     .OfType.[FormalParameterSymbol]()
@@ -938,13 +1013,6 @@ namespace Tdl
       foreach (d in defs)
         when (d.Expr is Tdl.Expr.String as str)
           paramMap[d.Symbol] = str.Value;
-
-      def getAllProducts(product : ProductSymbol) : Seq[Product.DefSymbol]
-      {
-        | Product.DefSymbol as ds => [ds]
-        | Product.SetSymbol as ss => ss.AllProducts.OfType.[Product.DefSymbol]()
-        | _ => assert(false);
-      }
 
       foreach (ds in getAllProducts(product))
       {
@@ -1002,7 +1070,7 @@ namespace Tdl
       def builder = ImmutableArray.CreateBuilder(distinctSelectParams.Count);
       foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
         builder.Add(p);
-      _ = productParameters;
+
       VSome(builder.ToImmutable())
     }
 
@@ -1014,12 +1082,23 @@ namespace Tdl
       text
     }
 
+    public CheckForRecursionSuite(this ast : IAst, context : DependentPropertyEvalContext, symbol : SuiteSymbol, _depend : object) : void
+    {
+      def getDescendants(sym : SuiteSymbol) : Seq[SuiteSymbol]
+      {
+          | _ is Suite.DefSymbol  => []
+          | s is Suite.ListSymbol => if (s.IsSuitesEvaluated) s.Suites else []
+          | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
+      }
+      _ = CheckForRecursion(ast, context, symbol, getDescendants, _depend)
+    }
+
     public CheckForRecursionProduct(this ast : IAst, context : DependentPropertyEvalContext, symbol : ProductSymbol, _depend : object) : void
     {
       def getDescendants(sym : ProductSymbol) : Seq[ProductSymbol]
       {
-          | _ is Product.DefSymbol   => []
-          | s is Product.SetSymbol      => if (s.IsProductsEvaluated) s.Products else []
+          | _ is Product.DefSymbol => []
+          | s is Product.SetSymbol => if (s.IsProductsEvaluated) s.Products else []
           | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
       }
       _ = CheckForRecursion(ast, context, symbol, getDescendants, _depend)

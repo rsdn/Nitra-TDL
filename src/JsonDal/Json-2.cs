@@ -177,4 +177,10 @@
         [JsonProperty(Required = Required.Always)]
         public string Version { get; set; }
     }
+
+    public class SuiteGroup
+    {
+        [JsonProperty(Required = Required.Always)]
+        public List<string> Suites { get; set; }
+    }
 }

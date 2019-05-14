@@ -35,7 +35,7 @@ namespace Tdl
     | Tuple
       {
         Items.Scope = Scope;
-        Type        = context.MakeTupleType(Items.Ref);
+        Type        = await context.MakeTupleType(Items.Ref);
         Symbols     = context.MakeTuple(Items.Ref);
 
         CheckExpectedForTuple(context, Items, ExpectedType, Type);
