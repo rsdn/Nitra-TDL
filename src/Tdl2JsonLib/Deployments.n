@@ -24,9 +24,11 @@ namespace Tdl2Json
 {
   public module Deployments
   {
-    public Generate(symbols : IEnumerable[DeclarationSymbol], deploymentScriptTemplate : string, deploymentToolPath : string) : Dictionary[string, QuickType.Deployment]
+    private DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
+
+    public Generate(symbols : IEnumerable[DeclarationSymbol], deploymentScriptHeader : string, deploymentToolPath : string) : Dictionary[string, QuickType.Deployment]
     {
-      symbols.OfType.[DeploymentSymbol]().Select(GenerateDeployment(_, deploymentScriptTemplate, deploymentToolPath)).ToDictionary()
+      symbols.OfType.[DeploymentSymbol]().Select(GenerateDeployment(_, deploymentScriptHeader, deploymentToolPath)).ToDictionary()
     }
 
     private getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
@@ -118,14 +120,17 @@ namespace Tdl2Json
       )
     }
 
-    private GenerateDeploymentCode(code : Deployment.CodeSymbol, deploymentScriptTemplate : string, deploymentToolPath : string) : string * QuickType.Deployment
+    private GenerateDeploymentCode(code : Deployment.CodeSymbol, deploymentScriptHeader : string, deploymentToolPath : string) : string * QuickType.Deployment
     {
       def scriptArgs = Dictionary();
       def defaults   = Dictionary();
 
       def deploymentParameters = StringBuilder();
       def deploymentCode       = StringBuilder();
-      def deploymentPrologue   = StringBuilder();
+      def deploymentPrologue   = StringBuilder().AppendLine(deploymentScriptHeader);
+
+      def getParameterReference(name) { "$_csharp_" + name }
+
       foreach (parameter in code.Parameters with index)
       {
         def parameterValue        = getParameterValue(parameter);
@@ -139,25 +144,18 @@ namespace Tdl2Json
           _ = deploymentParameters.AppendLine(",");
 
         def parameterName = "$" + parameter.Name;
+        def parameterReference = getParameterReference(parameter.Name);
 
-        _ = deploymentParameters.Append($"  [string] $(parameterName)");
+        def (type, value) =
+          match (parameter.Type.FullName)
+          {
+            | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
+            | "System.Boolean" | "bool"   => ("switch", $<#if ($(parameterName)) {"true"} else {"false"}#>);
+            | type                        => (type,     $<#$(parameterName).ToString("", [System.Globalization.CultureInfo]::InvariantCulture)#>)
+          };
 
-        def appendEmptyValueCheck()
-        {
-          _ = deploymentPrologue.AppendLine($<#if ([System.String]::IsNullOrEmpty($(parameterName))) { Throw "Value of -$(parameter.Name) is not specified" }#>);
-        }
-
-        match (parameter.Type.FullName)
-        {
-          | "System.String" | "string" =>
-            _ = deploymentPrologue.AppendLine($<#$(parameterName) = ('@"' + $(parameterName).Replace('"', '""') + '"')#>);
-
-          | "System.Boolean" | "bool" =>
-            appendEmptyValueCheck();
-            _ = deploymentPrologue.AppendLine($<#$(parameterName) = ($(parameterName).ToLower())#>);
-
-          | _ => appendEmptyValueCheck();
-        }
+        _ = deploymentParameters.Append($"  [$(type)] $(parameterName)");
+        _ = deploymentPrologue.AppendLine($<#$(parameterReference) = $(value)#>);
       }
 
       def ast = code.FirstDeclarationOrDefault :> Tdl.Deployment.Code;
@@ -182,7 +180,7 @@ namespace Tdl2Json
               | x is DefExpr.Reference =>
                 match (x.TypedRef.Symbol)
                 {
-                  | FormalParameterSymbol            => "$" + x.ToString()
+                  | FormalParameterSymbol            => getParameterReference(x.ToString())
                   | CommmandCallOutputArgumentSymbol => x.ToString()
                   | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
                 }
@@ -204,7 +202,7 @@ namespace Tdl2Json
         }
       }
 
-      def deploymentScript = StringBuilder(deploymentScriptTemplate)
+      def deploymentScript = StringBuilder(DeploymentScriptTemplate)
         .Replace("{{Parameters}}", deploymentParameters.ToString())
         .Replace("{{Prologue}}",   deploymentPrologue.ToString())
         .Replace("{{Name}}",       code.Name)
@@ -227,13 +225,13 @@ namespace Tdl2Json
         })
     }
 
-    private GenerateDeployment(deploymentSymbol : DeploymentSymbol, deploymentScriptTemplate : string, deploymentToolPath : string) : string * QuickType.Deployment
+    private GenerateDeployment(deploymentSymbol : DeploymentSymbol, deploymentScriptHeader : string, deploymentToolPath : string) : string * QuickType.Deployment
     {
       match (deploymentSymbol)
       {
         | Deployment.ScriptSymbol   as script   => GenerateDeploymentScript(script)
         | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying(currying)
-        | Deployment.CodeSymbol     as code     => GenerateDeploymentCode(code, deploymentScriptTemplate, deploymentToolPath)
+        | Deployment.CodeSymbol     as code     => GenerateDeploymentCode(code, deploymentScriptHeader, deploymentToolPath)
         | Deployment.SetSymbol as set =>
           def deployments = set.Deployments.Select(d => d.Name).ToArray();
           (set.Name, 
@@ -255,6 +253,13 @@ namespace Tdl2Json
         | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel)
         | _ => ThrowNotSupportedSymbol(deploymentSymbol) 
       }
+    }
+
+    private ReadStringResource(name : string) : string
+    {
+      using (stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
+      using (reader = System.IO.StreamReader(stream))
+        reader.ReadToEnd();
     }
   } // module
 } // namespace
