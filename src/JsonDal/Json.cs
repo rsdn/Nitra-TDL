@@ -65,6 +65,9 @@ namespace QuickType
         [JsonProperty("Suites", NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, TestSuite> Suites { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, SuiteGroup> SuiteGroups { get; set; }
+
         /// <summary>
         /// Описания тестов и групп
         /// </summary>

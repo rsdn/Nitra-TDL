@@ -1,0 +1,160 @@
+using System.Collections.Generic;
+using System.Linq;
+
+suite GeneratedSuiteList =
+    from (Deployment , Platform) in (MonorepoHelloWorld, w10rs4-x64), (Word, w10rs4-x86), (Excel, win_10_rs3) 
+    select
+    {
+      platform Platform;
+      product Deployment;
+      Version = ProductVersion;
+      ProductA = Excel;
+      ProductB = Word;
+      ProductC = MonorepoHelloWorld;
+      Test1();
+    };
+
+suite SuiteList = Suite1, Suite2, SuiteList1;
+
+suite SuiteList1 = Suite1, Suite3;
+
+suite Suite1
+{
+    platform w10rs5-x64;
+    product MonorepoHelloWorld;
+    //List = [1, 2];
+    Version = ProductVersion;
+    ProductA = Excel;
+    ProductB = Word;
+    ProductC = MonorepoHelloWorld;
+    Test1();
+}
+
+suite Suite2
+{
+    platform w10rs5-x64;
+    product MonorepoHelloWorld;
+    //List = [1, 2];
+    Version = ProductVersion;
+    ProductA = Excel;
+    ProductB = Word;
+    ProductC = MonorepoHelloWorld;
+    Test1();
+}
+
+suite Suite3
+{
+    platform w10rs5-x64;
+    product MonorepoHelloWorld;
+    //List = [1, 2];
+    Version = ProductVersion;
+    ProductA = Excel;
+    ProductB = Word;
+    ProductC = MonorepoHelloWorld;
+    Test1();
+}
+
+scenario Test1(List<int> List/*, Suite suit*/)
+{
+    filter List.Any(x => x > 0);
+    deployment InstallProduct;
+    environments (w10rs5-x64, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+deployment InstallProduct(
+    string Version,
+    MsOfficeProducts ProductA,
+    MsOfficeProducts ProductB,
+    TheProductType   ProductC
+)
+    script @"\\sdfs\autotests\KIS\DeploymentScripts\TdlTests\null-deployment.ps1"
+{
+    PRODUCT_VERSION = Version;
+    Size100         = ProductA.Size;
+    Size42          = ProductB.Size;
+    ReleaseName     = ProductB.BranchName;
+    expected 42;
+}
+
+product type TheProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product type MsOfficeProducts
+{
+    string Name;
+    string BranchName;
+    string Version;
+    int Size;
+}
+
+product MonorepoHelloWorld : TheProductType
+{
+    Name = "MonorepoHelloWorld";
+    BranchName = "MonorepoHelloWorld";
+    Version = ProductVersion;
+}
+
+product Word : MsOfficeProducts
+{
+    Name = "Word";
+    BranchName = "Word";
+    Version = ProductVersion;
+    Size = 100;
+}
+
+product Excel : MsOfficeProducts
+{
+    Name = "Excel";
+    BranchName = "Excel";
+    Version = ProductVersion;
+    Size = 42;
+}
+
+external
+{
+    string ProductVersion;
+    bool IsSome;
+}
+
+platform win7-x86;
+platform win7-x64;
+platform win811-x86;
+platform win811-x64;
+platform w10rs3-x86;
+platform w10rs3-x64;
+platform w10rs4-x86;
+platform w10rs4-x64;
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform win2008r2;
+platform win2012r2;
+platform win_10_rs3 =
+    w10rs3-x86,
+    w10rs3-x64;
+    
+deployment Execute_Deploy(
+    string ProductDistributivePath,
+    string ProductModulesPath,
+    string BaseDistribTestModules,
+    string AutotestsPath = "xyz",
+    string DeploymentSequenceName = "abc"
+)
+    script @"\\tis-dfs.company.ru\Autotests\App2\CSharp_Deployer\executeDeploy.ps1"
+{
+    timeout "01:00:00";
+    expected 42;
+}
+
+deployment Deploy_Gated  = Execute_Deploy(DeploymentSequenceName: "gated");
+deployment Deploy_Middle = Execute_Deploy(DeploymentSequenceName: "middle");
+deployment Deploy_Finish = Deploy_Middle(AutotestsPath: "finish");

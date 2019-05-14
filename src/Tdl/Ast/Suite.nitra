@@ -8,61 +8,157 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  ignore-case declaration Suite : NamespaceMember
+  abstract declaration Suite : NamespaceMember
   {
-    symbol
-    {
-      in Platform    : PlatformSymbol;
-      in Product     : ProductSymbol;
-      in Statements  : ImmutableArray[SuiteStatement];
-      in Type        : SuiteTypeSymbol;
-      in EntityOpt    : ValueOption[EntitySymbol];
-    stage 3:
-      in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
-      in Defs        : ImmutableArray[Def];
+    | ignore-case Def
+      {
+        symbol
+        {
+          in Platform    : PlatformSymbol;
+          in Product     : ProductSymbol;
+          in Statements  : ImmutableArray[SuiteStatement];
+          in Type        : SuiteTypeSymbol;
+          in EntityOpt   : ValueOption[EntitySymbol];
+        stage 3:
+          in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
+          in Defs        : ImmutableArray[Def];
 
-      Kind           = "suite";
-      SpanClass      = TdlLang.SuiteSpanClass;
-      IsSameIdentity = candidate is Tdl.Suite;
-    }
+          Kind           = "suite";
+          SpanClass      = TdlLang.SuiteSpanClass;
+          IsSameIdentity = candidate is Tdl.Suite;
+        }
 
-    out PlatformRef  : Ref[PlatformSymbol];
-    out ProductRef   : Ref[ProductSymbol];
-    out TypeRef      : Ref[DeclarationSymbol];
-    out EntityRefOpt : ValueOption[Ref[EntitySymbol]];
+        out PlatformRef  : Ref[PlatformSymbol];
+        out ProductRef   : Ref[ProductSymbol];
+        out TypeRef      : Ref[DeclarationSymbol];
+        out EntityRefOpt : ValueOption[Ref[EntitySymbol]];
 
-    Platform.Scope              = Scope;
-    PlatformRef                 = Platform.Ref.Resolve();
-    Symbol.Platform             = PlatformRef.Symbol;
+        Platform.Scope              = Scope;
+        PlatformRef                 = Platform.Ref.Resolve();
+        Symbol.Platform             = PlatformRef.Symbol;
 
-    Product.Scope               = Scope;
-    ProductRef                  = Product.Ref.Resolve();
-    Symbol.Product              = ProductRef.Symbol;
+        Product.Scope               = Scope;
+        ProductRef                  = Product.Ref.Resolve();
+        Symbol.Product              = ProductRef.Symbol;
 
-    Statements.Scope            = Scope;
-    Statements.ScopeIn          = EmptyScope.Instance;
-    Symbol.Statements           = Statements.Statement;
+        Statements.Scope            = Scope;
+        Statements.ScopeIn          = EmptyScope.Instance;
+        Symbol.Statements           = Statements.Statement;
 
-    Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
-    Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
-    Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
+        Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
+        Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
+        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
 
-    TypeOpt.Scope               = Scope;
-    TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
-    Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
-    Symbol.DefaultDefs          = await Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product);
+        TypeOpt.Scope               = Scope;
+        TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
+        Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
+        Symbol.DefaultDefs          = await Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product);
 
-    EntityOpt.Scope             = Scope;
-    EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
-    Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
+        EntityOpt.Scope             = Scope;
+        EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
+        Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
 
-    SetUsed(Symbol.Statements);
+        SetUsed(Symbol.Statements);
 
-    EntityOpt   : Reference?;
-    TypeOpt     : Reference?;
-    Platform    : Reference;
-    Product     : Reference;
-    Definitions : Definition*;
-    Statements  : SuiteStatementAst*;
+        EntityOpt   : Reference?;
+        TypeOpt     : Reference?;
+        Platform    : Reference;
+        Product     : Reference;
+        Definitions : Definition*;
+        Statements  : SuiteStatementAst*;
+      }
+
+    | ignore-case List
+      {
+        symbol
+        {
+        stage 2:
+          in AllSuites : ImmutableArray[Suite.DefSymbol];
+        stage 1:
+          in Suites    : ImmutableArray[SuiteSymbol];
+
+          Kind           = "suites";
+          SpanClass      = TdlLang.SuiteSpanClass;
+          IsSameIdentity = candidate is Suite.List;
+        }
+        stage 1:
+          in SuitesRefs : ImmutableArray[Ref[SuiteSymbol]];
+
+        SuitesRefs       = TdlUtils.Resolve(Suites.Ref);
+        Symbol.Suites    = TdlUtils.ToSymbol(SuitesRefs);
+        Symbol.AllSuites = TdlUtils.Flatten(Symbol.Suites);
+
+        Suites.Scope  = Scope;
+
+        CheckForRecursionSuite(context, Symbol, Symbol.AllSuites);
+
+        Suites : Reference*;
+      }
+    | ignore-case Generator : Container
+      {
+        symbol
+        {
+          in Statements  : ImmutableArray[SuiteStatement];
+          in Platform    : TypedDeclarationSymbol;
+          in Product     : TypedDeclarationSymbol;
+          in Type        : SuiteTypeSymbol;
+          in EntityOpt   : ValueOption[EntitySymbol];
+        stage 3          :
+          in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
+          in Defs        : ImmutableArray[Def];
+          in Froms       : ImmutableArray[Code.From];
+
+          Scope          = MemberTable;
+          Kind           = "scenario generator";
+          IsSameIdentity = candidate is Tdl.Scenario;
+          SpanClass      = TdlLang.ScenarioSpanClass;
+        }
+      stage 1:
+        out PlatformRef  : Ref[TypedDeclarationSymbol];
+        out ProductRef   : Ref[TypedDeclarationSymbol];
+        out TypeRef      : Ref[DeclarationSymbol];
+        out EntityRefOpt : ValueOption[Ref[EntitySymbol]];
+
+        Froms.Scope                 = Scope;
+        Froms.ContainingTable       = Symbol.MemberTable;
+        Symbol.Froms                = await TdlUtils.MakeFroms(Froms);
+
+        Statements.Scope            = Scope;
+        Statements.ScopeIn          = EmptyScope.Instance;
+        Symbol.Statements           = Statements.Statement;
+
+        Platform.Scope              = Scope.HideWith(Symbol.MemberTable);
+        PlatformRef                 = Platform.Ref.Resolve();
+        Symbol.Platform             = PlatformRef.Symbol;
+
+        Product.Scope               = Platform.Scope;
+        ProductRef                  = Product.Ref.Resolve();
+        Symbol.Product              = ProductRef.Symbol;
+
+        Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
+        Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
+        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
+
+        TypeOpt.Scope               = Scope;
+        TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
+        Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
+        Symbol.DefaultDefs          = await Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product, Symbol.Froms);
+
+        EntityOpt.Scope             = Scope;
+        EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
+        Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
+
+        Platform.  CheckExpected(context, context.ToTdlContext().PlatformType,   PlatformRef.Symbol.Type);
+        Product.   CheckExpected(context, context.ToTdlContext().ProductType,    ProductRef.Symbol.Type);
+        SetUsed(Symbol.Statements);
+
+        Froms        : From*;
+        EntityOpt    : Reference?;
+        TypeOpt      : Reference?;
+        Platform     : Reference;
+        Product      : Reference;
+        Definitions  : Definition*;
+        Statements   : SuiteStatementAst*;
+      }
   }
 }

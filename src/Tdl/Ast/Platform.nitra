@@ -29,7 +29,7 @@ namespace Tdl
         symbol
         {
         stage 1:
-          in PlatformsRefs : ImmutableArray[Ref[PlatformSymbol]];
+          in PlatformsRefs : ImmutableArray[Ref[PlatformSymbol]]; // TODO: Убрать из символа!
         stage 2:
           in Platforms : ImmutableArray[PlatformSymbol];
 
@@ -42,7 +42,8 @@ namespace Tdl
         Symbol.PlatformsRefs = TdlUtils.Resolve(Platforms.Ref);
         Symbol.Platforms     = TdlUtils.ToSymbol(Symbol, Symbol.PlatformsRefs);
 
-        Platforms.Scope = Scope;
+        Platforms.Scope      = Scope;
+
         Platforms : Reference*;
       }
   }

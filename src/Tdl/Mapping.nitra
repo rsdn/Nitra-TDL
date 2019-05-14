@@ -84,7 +84,7 @@ namespace Tdl
     | ScenarioSet       -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Span.StartPos);  }
     | ParallelScenario  -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Parallel, true); }
     | SuiteType         -> SuiteType    { Name -> Name; TypeBody.Fields -> Fields; }
-    | Suite             -> Suite
+    | Suite             -> Suite.Def
       {
         Name                         -> Name;
         match (Name) { _ -> None() } -> TypeOpt;
@@ -98,7 +98,27 @@ namespace Tdl
         SuiteBody.DefDeclarations    -> Definitions;
         SuiteBody.SuiteStatements    -> Statements;
       }
-    | SuiteTyped       -> Suite
+    | SuiteList        -> Suite.List
+      {
+        Name         -> Name;
+        Suites.Item1 -> Suites;
+      }
+    | SuiteGenerator   -> Suite.Generator
+      {
+        Name                         -> Name;
+        Froms                        -> Froms;
+        match (Name) { _ -> None() } -> TypeOpt;
+        match (SuiteScenario.EntityOpt)
+        {
+          | Some(x) -> Some(x.Reference)
+          | None    -> None()
+        }-> EntityOpt;
+        SuiteScenario.Platform.Reference -> Platform;
+        SuiteScenario.Product.Reference  -> Product;
+        SuiteScenario.DefDeclarations    -> Definitions;
+        SuiteScenario.SuiteStatements    -> Statements;
+      }
+    | SuiteTyped       -> Suite.Def
       {
         Name                         -> Name;
         Some(Type)                   -> TypeOpt;
@@ -350,7 +370,7 @@ namespace Tdl
     AnyType -> Type;
   }
 
-  map syntax Grammar.SuiteBody.SuiteStatement -> SuiteStatementAst
+  map syntax Grammar.SuiteStatement -> SuiteStatementAst
   {
     | CallTest -> CallScenario { Scenario -> Scenario; }
   }
