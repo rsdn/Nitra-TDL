@@ -6,6 +6,7 @@ using Nemerle.Utility;
 using Nemerle.Utility.Pair;
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
@@ -71,19 +72,31 @@ namespace Tdl2Json
       def defaultes       = allParameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
       def defs            = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
       def scriptArgs      = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
-      (script.Name, 
-        Deployment() <- 
-        { 
-            Type                    = TypeEnum.Script;
-            ScriptPath              = if (script.IsPathEvaluated)      script.Path.Value      else null;
-            ScriptData              = if (script.IsBase64Evaluated)    script.Base64.Value    else null;
-            ScriptDataExtension     = if (script.IsExtensionEvaluated) script.Extension.Value else null;
-            ReturnValue             = if (script.Expected.HasValue)    script.Expected.Value  else null;
-            RebootExitCode          = if (script.ForReboot.HasValue)   script.ForReboot.Value else null;
-            Timeout                 = if (script.Timeout.HasValue)     script.Timeout.Value   else null;
-            ScriptArgs              = scriptArgs;
-            ScriptArgsDefaultValues = defaultes;
-        })
+
+      def deploymentModel = Deployment() <- 
+      {
+        Type                    = TypeEnum.Script;
+        ReturnValue             = if (script.Expected.HasValue)    script.Expected.Value  else null;
+        RebootExitCode          = if (script.ForReboot.HasValue)   script.ForReboot.Value else null;
+        Timeout                 = if (script.Timeout.HasValue)     script.Timeout.Value   else null;
+        ScriptArgs              = scriptArgs;
+        ScriptArgsDefaultValues = defaultes;
+      };
+
+      if (script.IsEmbedPathEvaluated)
+      {
+        def fileName                        = script.EmbedPath.Value;
+        deploymentModel.ScriptData          = File.ReadAllBytes(fileName);
+        deploymentModel.ScriptDataExtension = Path.GetExtension(fileName);
+      }
+      else
+      {
+        deploymentModel.ScriptPath          = if (script.IsPathEvaluated)      script.Path.Value      else null;
+        deploymentModel.ScriptData          = if (script.IsBase64Evaluated)    script.Base64.Value    else null;
+        deploymentModel.ScriptDataExtension = if (script.IsExtensionEvaluated) script.Extension.Value else null;
+      }
+
+      (script.Name, deploymentModel)
     }
 
     private GenerateDeploymentSelect(sel : Deployment.SelectSymbol) : string * QuickType.Deployment
