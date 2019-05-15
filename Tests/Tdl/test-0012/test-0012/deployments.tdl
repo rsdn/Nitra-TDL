@@ -1,6 +1,6 @@
-deployment D(string title, bool isVerbose = false)
+deployment D(string Message, bool isVerbose = false)
 {
-  KL.Autotests.Commands.LogMessage(Message: title);
+  KL.Autotests.Commands.LogMessage(Message);
   KL.Autotests.Commands.ComplexOperation(IsVerbose: isVerbose, Result: out var result);
   KL.Autotests.Commands.LogMessage(Severity: 2, Message: result);
   expected 0;
@@ -10,7 +10,7 @@ suite Android
 {
     platform w19-droid;
     product MobileSdk;
-    title = "C# deployment";
+    Message = "C# deployment";
     AndroidJavaTestGroupKavsdk();
 }
 

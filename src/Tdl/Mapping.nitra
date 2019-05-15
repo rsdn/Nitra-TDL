@@ -151,6 +151,7 @@ namespace Tdl
     | FilePath   -> FilePath   { Path -> Path; }
     | Base64     -> Base64     { Data -> Data; Extension -> Extension; }
     | SourceCode -> SourceCode { Text -> Text; Extension -> Extension; }
+    | EmbedFile  -> EmbedFile  { Path -> Path; }
   }
 
   map syntax Grammar.Case -> Case
@@ -349,6 +350,12 @@ namespace Tdl
       {
         VariableName  -> Name;
         ParameterName -> ParameterName;
+      }
+
+    | InputShort -> CommmandCallInputArgument
+      {
+        Reference -> ParameterName;
+        DefExpr.Reference { Reference -> ParameterName; } -> Value;
       }
   }
 
