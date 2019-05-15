@@ -28,10 +28,14 @@
       <TdlCompile Include="@(None)"    Condition=" '%(Extension)' == '.tdl' " />
       <TdlCompile Include="@(Content)" Condition=" '%(Extension)' == '.tdl' " />
     </ItemGroup>
+    <ItemGroup>
+      <TdlDependency Include="@(None)"    Condition=" '%(Extension)' == '.ps1' " />
+      <TdlDependency Include="@(Content)" Condition=" '%(Extension)' == '.ps1' " />
+    </ItemGroup>
   </Target>
 
   <Target Name="CoreCompile"
-          Inputs="$(MSBuildAllProjects);@(TdlCompile);@(ReferencePath)"
+          Inputs="$(MSBuildAllProjects);@(TdlCompile);@(TdlDependency);@(ReferencePath)"
           Outputs="$(TdlOutputPath)"
           DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile">
     <TdlTask Condition=" '$(BuildingProject)' != 'false' "
