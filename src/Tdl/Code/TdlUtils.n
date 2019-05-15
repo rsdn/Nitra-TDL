@@ -13,6 +13,7 @@ using Nemerle.Text;
 using Nemerle.Utility;
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -398,6 +399,33 @@ namespace Tdl
       }
       else
         ParsedValue(data.Span.StartPos)
+    }
+
+    public CreateEmbedFilePath(str : CSharp.StringLiteral, context : DependentPropertyEvalContext) : ParsedValue[string]
+    {
+      def rawValue = ConvertStringLiteral(str);
+
+      when (!rawValue.HasValue || string.IsNullOrEmpty(rawValue.Value))
+      {
+        str.Error(context, "Deployment file path required.");
+        return rawValue
+      }
+
+      try
+      {
+        def path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(str.Location.Source.File.FullName), rawValue.Value));
+
+        unless (File.Exists(path))
+          str.Error(context, $"Deployment file '$(path)' not found.");
+
+        ParsedValue(rawValue.Span, path)
+      }
+      catch
+      {
+        | e is Exception =>
+          str.Error(context, $"Failed to process deployment file path ($(e.GetType())): $(e.Message)");
+          rawValue
+      }
     }
 
     public CreateBase64Literal(str : CSharp.StringLiteral) : ParsedValue[array[byte]]

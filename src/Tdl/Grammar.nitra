@@ -46,6 +46,7 @@
       | FilePath   = "script" sm Path=StringLiteral
       | Base64     = "base64" sm Data=StringLiteral nl "extension" sm Extension=StringLiteral
       | SourceCode = "source" sm Text=StringLiteral nl "extension" sm Extension=StringLiteral
+      | EmbedFile  = "file"   sm Path=StringLiteral
     }
 
     syntax MemberDeclaration
@@ -225,6 +226,7 @@
     {
       | Input  = ParameterName=Reference ":" sm Value=DefExpr
       | Output = ParameterName=Reference ":" sm "out" sm "var" sm VariableName=Name
+      | InputShort = Reference
     }
 
     syntax DefDeclaration = Reference sm "=" sm DefExpr ";" nl;

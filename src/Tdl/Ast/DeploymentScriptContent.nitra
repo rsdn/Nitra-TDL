@@ -36,5 +36,12 @@ namespace Tdl
         Text      : CSharp.StringLiteral;
         Extension : CSharp.StringLiteral;
       }
+
+    | EmbedFile
+      {
+        Symbol.EmbedPath = TdlUtils.CreateEmbedFilePath(Path, context);
+
+        Path : CSharp.StringLiteral;
+      }
   }
 }

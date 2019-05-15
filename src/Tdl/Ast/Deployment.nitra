@@ -26,6 +26,7 @@ namespace Tdl
         symbol
         {
           in Path      : ParsedValue[string];
+          in EmbedPath : ParsedValue[string];
           in Extension : ParsedValue[string];
           in Base64    : ParsedValue[array[byte]];
 
