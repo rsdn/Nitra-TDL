@@ -350,6 +350,12 @@ namespace Tdl
         VariableName  -> Name;
         ParameterName -> ParameterName;
       }
+
+    | InputShort -> CommmandCallInputArgument
+      {
+        Reference -> ParameterName;
+        DefExpr.Reference { Reference -> ParameterName; } -> Value;
+      }
   }
 
   map syntax Grammar.DefExpr -> DefExpr
