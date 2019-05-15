@@ -179,7 +179,7 @@ namespace Tdl2Json
       foreach (g is Suite.GeneratorSymbol in symbols)
         GenerateSuiteGenerator(g, suites, suiteGroups);
 
-      def suiteGroups = symbols.OfType.[Suite.ListSymbol     ]().Select(GenerateSuiteGroup).Concat(suiteGroups).ToDictionary();
+      def suiteGroups = symbols.OfType.[Suite.ListSymbol]().Select(GenerateSuiteGroup).Concat(suiteGroups).ToDictionary();
         
       def coordinate = Root() <-
       {

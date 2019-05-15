@@ -232,6 +232,7 @@
 
     syntax DefExpr
     {
+      | ListLiteral = "[" Elements=(DefExpr; "," sm; ?)* "]"
       | StringLiteral
       | "true"
       | "false"

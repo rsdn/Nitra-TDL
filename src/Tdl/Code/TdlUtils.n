@@ -586,7 +586,13 @@ namespace Tdl
     
     public MakeParameterScope(scope : Scope) : Scope
     {
-      FilteringScope(scope, HashSet(ParameterComparer()).Add)
+      def used = HashSet(ParameterComparer());
+      def isUsed(x)
+      {
+        def res = used.Add(x);
+        res
+      }
+      FilteringScope(scope, isUsed)
     }
     
     public TryMoveToImmutable[T](this builder : ImmutableArray[T].Builder) : ImmutableArray[T]
@@ -1368,6 +1374,90 @@ namespace Tdl
     public BuildInvocationScope(this context : DependentPropertyEvalContext, globalScope : Scope) : InvocationScopeBuilder
     {
       InvocationScope(_, _, globalScope, context)
+    }
+
+    public RequiredTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : TypeSymbol
+    {
+      def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
+      Require(ast, context, type, baseType);
+      baseTypeParam
+    }
+    
+    public ProvidedTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedTypeFullTypeName : string, derivedTypeParam : TypeSymbol) : TypeSymbol
+    {
+      def derivedType = context.ConstractType(derivedTypeFullTypeName, derivedTypeParam);
+      Provide(ast, context, type, derivedType);
+      derivedTypeParam
+    }
+    
+    public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : void
+    {
+      def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
+      Require(ast, context, type1, baseType)
+    }
+    
+    public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeConstraint : TypeSymbol) : void
+    {
+      unless (TdlTypeUnifier.Instance.TryRequire(type1, baseTypeConstraint))
+        ast.Error(context, $"$type1 is not subtype of $baseTypeConstraint");
+      _ = TdlTypeUnifier.Instance.Require(type1, baseTypeConstraint);
+    }
+    
+    public Provide(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, derivedFullTypeName : string, derivedTypeParam : TypeSymbol) : void
+    {
+      def derivedType = context.ConstractType(derivedFullTypeName, derivedTypeParam);
+      Provide(ast, context, type1, derivedType)
+    }
+    
+    public Provide(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, derivedType : TypeSymbol) : void
+    {
+      unless (TdlTypeUnifier.Instance.TryProvide(type1, derivedType))
+        ast.Error(context, $"$type1 is not derived from $derivedType");
+      _ = TdlTypeUnifier.Instance.Provide(type1, derivedType);
+    }
+    
+    public ConstractType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParam : TypeSymbol) : TypeSymbol
+    {
+      def typeInfo = context.BindType(fullTypeName : string, 1);
+      def type = TopConstructedTypeSymbol();
+      type.TypeInfo = typeInfo;
+      type.Args = ImmutableArray.Create(typeParam);
+      type
+    }
+    
+    public BindType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParamCount : int = 0) : GenericTypeSymbol
+    {
+      def bindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
+      {
+        //assert2(false);
+        def res = Reference(Location.Default, name).Bind.[NamespaceSymbol](scope);
+        assert2(!res.IsUnresolved);
+        assert2(!res.IsAmbiguous);
+        assert2(res.Symbols.Length == 1);
+        res
+      }
+      def bindType(scope : Scope, name : string) : TopGenericTypeSymbol
+      {
+        def res = Reference(Location.Default, name).Bind.[TopGenericTypeSymbol](scope);
+        assert2(!res.IsUnresolved);
+        assert2(!res.IsAmbiguous);
+        foreach (symbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
+          return symbol;
+        assert2(false);
+        assert(false);
+      }      
+      def data  = context.Project.Data :> DotNetProjectData;
+      def names = fullTypeName.SplitToList('.');
+      def loop(scope : Scope, names) : GenericTypeSymbol
+      {
+        match (names)
+        {
+          | name :: []    => bindType(scope, name)
+          | name :: rest  => loop(bindNs(scope, name).Symbol.Scope, rest)
+          | _             => assert(false);
+        }
+      }
+      loop(data.RootNamespace.Scope, names)
     }
   } // module
 } // namespace

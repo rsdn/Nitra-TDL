@@ -45,7 +45,7 @@ namespace Tdl
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
-        Symbol.AggregateParametersScope = Symbol.Deployment.AggregateParametersScope;
+        Symbol.AggregateParametersScope = Symbol.ParameterScope.UnionWith(Symbol.Deployment.AggregateParametersScope);
 
         Actions.Scope                   = MethodConditionalScope.Value;
         Symbol.Actions                  = Actions.ScenarioActions;

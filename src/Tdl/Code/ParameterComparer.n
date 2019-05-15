@@ -34,11 +34,11 @@ namespace Tdl
       
       public GetHashCode(obj : DeclarationSymbol) : int
       {
-        | x is FormalParameterSymbol => 
+        | x is FormalParameterSymbol when x.IsTypeEvaluated && x.IsDefaultEvaluated => 
           def result = x.Name.GetHashCode() ^ x.Type.GetHashCode() ^ HashCode(x.Default);
           result
           
-        | x is FieldSymbol => 
+        | x is FieldSymbol when x.IsTypeEvaluated => 
           def result = x.Name.GetHashCode() ^ x.Type.GetHashCode() ^ HashCode(DefaultValue.None());
           result
           
