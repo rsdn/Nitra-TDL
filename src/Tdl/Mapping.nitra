@@ -354,6 +354,7 @@ namespace Tdl
 
   map syntax Grammar.DefExpr -> DefExpr
   {
+    | ListLiteral               -> ListLiteral               { Elements.Item1 -> Elements; }
     | StringLiteral             -> String                    { StringLiteral -> Value; }
     | True                      -> True                      {  }
     | False                     -> False                     {  }

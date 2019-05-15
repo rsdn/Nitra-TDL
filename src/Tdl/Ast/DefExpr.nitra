@@ -15,6 +15,19 @@ namespace Tdl
     unless (Type.IsSubtypeOf(ExpectedType))
       Error(context, $"Expected $(self.ExpectedType), got $(self.Type)");
 
+    | ListLiteral
+      {
+      stage 2:
+        out ElementType : TypeSymbol;
+
+        ElementType = RequiredTypeParam1(context, Type, "System.Collections.Generic.IEnumerable", context.CreateFreeTypeVar());
+        Provide(context, Type, ExpectedType);
+        Elements.ExpectedType = ElementType;
+        Elements.Scope = Scope;
+        Type = context.CreateFreeTypeVar();
+
+        Elements : DefExpr*;
+      }
     | String                    { Type = context.GetStringType(); Value : CSharp.StringLiteral; }
     | True                      { Type = context.GetBooleanType(); }
     | False                     { Type = context.GetBooleanType(); }

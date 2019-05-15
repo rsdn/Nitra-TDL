@@ -64,10 +64,26 @@ namespace Tdl
           base.UnifyUnwraped(typeSymbol1, typeSymbol2, ref updatedVariables)
       }
     }
-    
-    protected override IsSubtypeUnwraped(subtype : TypeSymbol, supertype : TypeSymbol) : bool
+
+    protected TryUnifyAll(ts1 : IList[TypeSymbol], ts2 : IList[TypeSymbol]) : bool
     {
-      (subtype is ProductTypeSymbol && supertype is TdlType.ProductSymbol) || base.IsSubtypeUnwraped(subtype, supertype);
+      mutable updatedVariables;
+      def result = UnifyAll(ts1, ts2, ref updatedVariables);
+      ResetTypeVars(ref updatedVariables);
+      result
+    }
+    
+    protected override SubtypeUnifyUnwraped(subtype : TypeSymbol, supertype : TypeSymbol, updatedVariables : ref LightList[TypeVarSymbol]) : bool
+    {
+      match(subtype, supertype)
+      {
+        | (_ is ProductTypeSymbol, _ is TdlType.ProductSymbol) => true
+        | (sub is TopConstructedTypeSymbol, super is TopConstructedTypeSymbol) =>
+          SubtypeUnifyUnwraped(sub.TypeInfo, super.TypeInfo, ref updatedVariables)
+          && UnifyAll(sub.Args, super.Args, ref updatedVariables)
+        
+        |_ => base.SubtypeUnifyUnwraped(subtype, supertype, ref updatedVariables)
+      }
     }
   } // class
 } // namespace
