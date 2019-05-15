@@ -225,6 +225,7 @@
     {
       | Input  = ParameterName=Reference ":" sm Value=DefExpr
       | Output = ParameterName=Reference ":" sm "out" sm "var" sm VariableName=Name
+      | InputShort = Reference
     }
 
     syntax DefDeclaration = Reference sm "=" sm DefExpr ";" nl;
