@@ -16,7 +16,7 @@ namespace Tdl
 {
   public class ScopeAggregator : ICollector
   {
-    private mutable builder : UnionScopeBuilder;
+    private mutable builder : UnionScopeBuilder = default(UnionScopeBuilder);
 
     private this(scope : Scope)
     {

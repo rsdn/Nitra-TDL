@@ -450,6 +450,7 @@ namespace Tdl
         | x is DefExpr.MemberAccess              => Expr.MemberAccess(ConvertDefExpr(x.Expr), x.Member.Location.GetText())
         | x is DefExpr.Reference 
           when x.IsTypeEvaluated                 => Expr.Reference(x.Location.GetText(), x.Type)
+        | x is DefExpr.ListLiteral               => Expr.List(x.Elements.Select(ConvertDefExpr).ToImmutableArray(), x.ElementType)
         | x                                      => Expr.Error(x.Location)
       }
     }
@@ -1411,30 +1412,39 @@ namespace Tdl
       baseTypeParam
     }
     
-    public ProvidedTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedTypeFullTypeName : string, derivedTypeParam : TypeSymbol) : TypeSymbol
-    {
-      def derivedType = context.ConstractType(derivedTypeFullTypeName, derivedTypeParam);
-      Provide(ast, context, type, derivedType);
-      derivedTypeParam
-    }
+    //public ProvidedTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedTypeFullTypeName : string, derivedTypeParam : TypeSymbol) : TypeSymbol
+    //{
+    //  def derivedType = context.ConstractType(derivedTypeFullTypeName, derivedTypeParam);
+    //  Provide(ast, context, type, derivedType);
+    //  derivedTypeParam
+    //}
+    //
+    //public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : void
+    //{
+    //  def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
+    //  Require(ast, context, type1, baseType)
+    //}
+    //
+    //public Provide(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, derivedFullTypeName : string, derivedTypeParam : TypeSymbol) : void
+    //{
+    //  def derivedType = context.ConstractType(derivedFullTypeName, derivedTypeParam);
+    //  Provide(ast, context, type1, derivedType)
+    //}
     
-    public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : void
+    public SubtypeUnify[T1, T2](this symbol1 : T1, symbol2 : T2) : bool
+      where T1: class, TypeSymbol
+      where T2: class, TypeSymbol
     {
-      def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
-      Require(ast, context, type1, baseType)
+      assert2(symbol1 != null, "Symbol of type " + typeof(T1).Name + " is null!");
+      assert2(symbol2 != null, "Symbol of type " + typeof(T2).Name + " is null!");
+      TypeUnifier.Instance.SubtypeUnify(symbol1, symbol2)
     }
-    
+
     public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeConstraint : TypeSymbol) : void
     {
       unless (TdlTypeUnifier.Instance.TryRequire(type1, baseTypeConstraint))
         ast.Error(context, $"$type1 is not subtype of $baseTypeConstraint");
       _ = TdlTypeUnifier.Instance.Require(type1, baseTypeConstraint);
-    }
-    
-    public Provide(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, derivedFullTypeName : string, derivedTypeParam : TypeSymbol) : void
-    {
-      def derivedType = context.ConstractType(derivedFullTypeName, derivedTypeParam);
-      Provide(ast, context, type1, derivedType)
     }
     
     public Provide(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, derivedType : TypeSymbol) : void
@@ -1450,6 +1460,7 @@ namespace Tdl
       def type = TopConstructedTypeSymbol();
       type.TypeInfo = typeInfo;
       type.Args = ImmutableArray.Create(typeParam);
+      type.EvalProperties(context);
       type
     }
     
@@ -1486,6 +1497,33 @@ namespace Tdl
         }
       }
       loop(data.RootNamespace.Scope, names)
+    }
+
+    public DefinePredefinedFields(this _ast : IAst, context : DependentPropertyEvalContext, table : TableScope) : void
+    {
+      //def baseSuiteType = SuiteTypeSymbol();
+      //def baseTypeSet = BaseTypeReferenceSet(context);
+      //baseTypeSet.AddParent();
+      //symbol.BaseTypeSet = baseTypeSet;
+      def name = "Products";
+      def name = Name(Location.Default, name);
+      def prop = ExternalDeclaration.[Member.PropertySymbol](name).DefineSymbol(table);
+      def flags = ModifierSet(context);
+      flags.Add(Modifiers.Public);
+      prop.Flags = flags;
+      prop.Type = context.ConstractType("System.Collections.Generic.HashSet", context.GetStringType());
+      prop.CustomAttributes = array(0);
+      prop.EvalProperties(context);
+
+      def name = "Platforms";
+      def name = Name(Location.Default, name);
+      def prop = ExternalDeclaration.[Member.PropertySymbol](name).DefineSymbol(table);
+      def flags = ModifierSet(context);
+      flags.Add(Modifiers.Public);
+      prop.Flags = flags;
+      prop.Type = context.ConstractType("System.Collections.Generic.HashSet", context.GetStringType());
+      prop.CustomAttributes = array(0);
+      prop.EvalProperties(context);
     }
   } // module
 } // namespace

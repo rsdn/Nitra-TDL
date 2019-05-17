@@ -6,17 +6,20 @@ using Nitra.Declarations;
 
 namespace Tdl
 {
-  ignore-case declaration SuiteType : NamespaceMember, Container
+  ignore-case declaration SuiteType : NamespaceMember, Container, Type//, SupportsInheritanceType
   {
     symbol
     {
-      Scope     = MemberTable;
-      Kind      = "scenario type";
-      SpanClass = TdlLang.TdlTypeSpanClass;
+      Scope          = MemberTable;
+      Kind           = "scenario type";
+      IsSameIdentity = candidate is Tdl.SuiteType;
+      SpanClass      = TdlLang.TdlTypeSpanClass;
     }
 
     Fields.ContainingTable = Symbol.MemberTable;
     Fields.Scope = Scope;
+
+    DefinePredefinedFields(context, Symbol.MemberTable);
     
     Fields : Field*;
   }

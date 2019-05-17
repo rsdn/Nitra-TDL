@@ -7,6 +7,7 @@ using Nitra.Declarations;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Tdl
@@ -21,6 +22,7 @@ namespace Tdl
     | Integer      { Value : int; }
     | Reference    { Name  : string; Type : TypeSymbol; }
     | MemberAccess { Expr : Expr;  MemberName  : string; }
+    | List         { Elems : ImmutableArray[Expr]; Type : TypeSymbol; }
 
     public override ToString() : string
     {
@@ -34,6 +36,7 @@ namespace Tdl
         | Integer   as x => x.Value.ToString()
         | Reference as x => x.Name
         | MemberAccess as x => $"$(x.Expr).$(x.MemberName)"
+        | List         as xs => def elems = xs.Elems.Select(_.ToString());  $<#[..$elems]#>
       }
     }
   }

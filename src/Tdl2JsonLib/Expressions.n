@@ -25,6 +25,7 @@ namespace Tdl2Json
             | Reference    as r => r.Name
             | MemberAccess as m => loop(m.Expr) + "." + m.MemberName
             | String       as s => s.Value
+            | List         as xs => def elems = xs.Elems.Select(loop);  $<#[..$elems]#>
           }
           
           match (expression)
