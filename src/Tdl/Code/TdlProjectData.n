@@ -44,7 +44,7 @@ namespace Tdl
 
     private         _methodScopeFactoryCache    : Dictionary[int, bool] = Dictionary();
     private         _commandScopeFactoryCache   : Dictionary[int, CommandSymbolKind] = Dictionary();
-    private mutable _stableGuidIncrementalValue : int;
+    private mutable _stableGuidIncrementalValue : int = 0;
 
     public GetStableGuidIncrementalValue() : uint { _ = _stableGuidIncrementalValue; Interlocked.Increment(ref _stableGuidIncrementalValue) :> uint }
 

@@ -65,7 +65,7 @@ namespace Tdl
       }
     }
 
-    protected TryUnifyAll(ts1 : IList[TypeSymbol], ts2 : IList[TypeSymbol]) : bool
+    public TryUnifyAll(ts1 : IList[TypeSymbol], ts2 : IList[TypeSymbol]) : bool
     {
       mutable updatedVariables;
       def result = UnifyAll(ts1, ts2, ref updatedVariables);
@@ -82,7 +82,8 @@ namespace Tdl
           SubtypeUnifyUnwraped(sub.TypeInfo, super.TypeInfo, ref updatedVariables)
           && UnifyAll(sub.Args, super.Args, ref updatedVariables)
         
-        |_ => base.SubtypeUnifyUnwraped(subtype, supertype, ref updatedVariables)
+        | _ when TryUnify(subtype, supertype) => UnifyUnwraped(subtype, supertype, ref updatedVariables)
+        | _ => base.SubtypeUnifyUnwraped(subtype, supertype, ref updatedVariables)
       }
     }
   } // class

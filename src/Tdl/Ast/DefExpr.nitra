@@ -12,7 +12,7 @@ namespace Tdl
     in  ExpectedType : TypeSymbol;
     out Type         : TypeSymbol;
 
-    unless (Type.IsSubtypeOf(ExpectedType))
+    unless (Type.SubtypeUnify(ExpectedType))
       Error(context, $"Expected $(self.ExpectedType), got $(self.Type)");
 
     | ListLiteral
