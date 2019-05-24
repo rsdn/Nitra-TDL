@@ -216,9 +216,9 @@ namespace Tdl2Json
       | True             => true
       | Real      as x   => x.Value
       | Integer   as x   => x.Value
-      | Reference as x when x.Type is Tdl.ProductTypeSymbol 
-                          => x.Name
-      | Reference as x   => "#(" + x.Name + ")"
+      | Reference as x when x.Symbol.Type is Tdl.ProductTypeSymbol 
+                         => x.Symbol.Name
+      | Reference as x   => "#(" + x.Symbol.Name + ")"
       | Error     as e   => throw NotSupportedException("Error at: " + e.Location);
       | List      as xs  => xs.Elems.Select(toJson).ToArray()
       | x                => throw NotSupportedException("The '" + x + "' is not supported");
@@ -291,19 +291,23 @@ namespace Tdl2Json
       (assemblyName, methodName)
     }
 
-    private SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedDeclarationSymbol, DeclarationSymbol]]
+    private SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedDeclarationSymbol, Tdl.Expr]]
     {
       if (index < froms.Length)
       {
         def from = froms[index];
         foreach (dictionary in SubstituteVariables(froms, index + 1))
         {
-          foreach (values in from.Elems)
+          foreach (expr in from.Elems.GetExprList())
           {
-            foreach (var in from.Vars with i)
-              dictionary[var] = values[i];
+            | Expr.Tuple as t =>
+              foreach (var in from.Vars with i)
+                dictionary[var] = t.Elems[i];
 
-            yield dictionary
+            | _ =>
+              assert2(from.Vars.Length == 1);
+              def var = from.Vars[0];
+              dictionary[var] = expr;
           }
         }
       }
@@ -311,12 +315,17 @@ namespace Tdl2Json
         yield Dictionary()
     }
     
-    TryResolveVar[T](dic : Dictionary[TypedDeclarationSymbol, DeclarationSymbol], varOrSymbol : TypedDeclarationSymbol) :  T
+    TryResolveVar[T](dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
       mutable result;
       if (dic.TryGetValue(varOrSymbol, out result))
-        result :> T
+      {
+        if (result is Tdl.Expr.Reference as r)
+          r.Symbol :> T
+        else
+          result.GetValue() :> T
+      }
       else
         varOrSymbol :> T
     }
@@ -735,7 +744,7 @@ namespace Tdl2Json
       
       foreach (dic in SubstituteVariables(g.Froms, 0))
       {
-        def name = $<#$nameBase-..$(dic.Values; "-"; _.Name)#>;
+        def name = $<#$nameBase-..$(dic.Values; "-")#>;
         names.Add(name);
         def platform   = TryResolveVar(dic, g.Platform) : PlatformSymbol;
         def product    = TryResolveVar(dic, g.Product)  : ProductSymbol;

@@ -16,9 +16,9 @@ namespace Tdl
     Vars.ContainingTable = ContainingTable;
     List.Scope           = Scope;
     Type                 = context.MakeTuple(Vars.Type);
-    List.ExpectedType    = Type;
+    List.ExpectedType    = context.ConstractFromListExpectedType(List.Result, Type);
 
     Vars : Var*;
-    List : Elem*;
+    List : DefExpr;
   }
 }

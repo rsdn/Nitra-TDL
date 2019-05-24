@@ -121,18 +121,12 @@
       }
     }
 
-    syntax From = "from" VarDecl "in" List=(VarRef; "," sm; ?)+
+    syntax From = "from" VarDecl "in" List=DefExpr
     {
       syntax VarDecl
       {
         | Name
         | Tuple = "(" (Name; "," sm)+ ")"
-      }
-
-      syntax VarRef
-      {
-        | Ref   = QualifiedIdentifier
-        | Tuple = "(" (Ref=QualifiedIdentifier; "," sm; ?)+ ")"
       }
     }
 
@@ -242,6 +236,7 @@
       | DecimalIntegerLiteral     = Lit=DecimalIntegerLiteral
       | HexadecimalIntegerLiteral = Lit=HexadecimalIntegerLiteral
       | Reference
+      | Tuple = "(" Items=(DefExpr; "," sm; ?)+ ")"
       //| InterpolatedRegularStringLiteral  = Lit=InterpolatedRegularStringLiteral
       //| InterpolatedVerbatimStringLiteral = Lit=InterpolatedVerbatimStringLiteral
     precedence MemberAccess:

@@ -6,7 +6,7 @@ using Nitra.Declarations;
 
 namespace Tdl
 {
-  ignore-case declaration ProductType : NamespaceMember, Container, Type
+  ignore-case declaration ProductType : NamespaceMember, Container, Type, SupportsInheritanceType
   {
     symbol
     {
@@ -17,6 +17,8 @@ namespace Tdl
     }
 
     Name.ReportProductTypeFields(context, Fields.Symbol);
+
+    Symbol.BaseTypeSet |= context.GetProductTypeSymbol();
 
     Fields.ContainingTable = Symbol.MemberTable;
     Fields.Scope = Scope;

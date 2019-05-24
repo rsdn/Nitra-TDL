@@ -21,8 +21,8 @@ namespace Tdl2Json
             | True              => true
             | Integer      as i => i.Value
             | Real         as r => r.Value
-            | Reference    as r when r.Type is Tdl.ProductTypeSymbol => "Product:" + r.Name
-            | Reference    as r => r.Name
+            | Reference    as r when r.Symbol.Type is Tdl.ProductTypeSymbol => "Product:" + r.Symbol.Name
+            | Reference    as r => r.Symbol.Name
             | MemberAccess as m => loop(m.Expr) + "." + m.MemberName
             | String       as s => s.Value
             | List         as xs => def elems = xs.Elems.Select(loop);  $<#[..$elems]#>

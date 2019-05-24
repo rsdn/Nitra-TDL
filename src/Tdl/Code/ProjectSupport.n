@@ -159,12 +159,13 @@ namespace Tdl
       initTypeSymbol(productType);
       initTypeSymbol(entityType);
 
-      
+
+      def baseProductType            = MakeBaseProductTypeSymbol(context, rootNamespace);
       def externalSymbol             = MakeExternalSymbol(context, rootNamespace);
       def scenarioParameterScope     = TableScope("ScenarioParameterScope");
       def requiredScenarioParameters = MakeScenarioParametersScope(backEnd, context, scenarioParameterScope);
       def entityFieldsScope          = MakeEntityFieldsScope(backEnd, context, TableScope("EntityFieldsScope"));
-      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, entityFieldsScope, requiredScenarioParameters, externalSymbol, TestMode);
+      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, entityFieldsScope, requiredScenarioParameters, externalSymbol, TestMode, baseProductType);
       context.TdlProjectData         = data;
       data
     }
@@ -365,6 +366,14 @@ namespace Tdl
       data :> TdlProjectData
     }
 
+    public MakeBaseProductTypeSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : ProductTypeSymbol
+    {
+      def symbol = ExternalDeclaration.[ProductTypeSymbol](Name(NoLocation, "BaseProductType")).DefineSymbol(rootNamespace.MemberTable);
+      symbol.BaseTypeSet = BaseTypeReferenceSet(null);
+      symbol.EvalProperties(context);
+      symbol
+    }
+    
     public MakeExternalSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : ExternalSymbol
     {
       def parameterName = Name(NoLocation, "external");
