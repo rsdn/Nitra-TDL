@@ -1,0 +1,155 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deploy_MyK_CIWD_Certificates": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "PathToCerts": "$(PathToCerts)"
+      },
+      "ScriptArgsDefaultValues": {
+        "PathToCerts": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs"
+      },
+      "ScriptPath": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs\\installCertificates.ps1"
+    },
+    "Deploy_MyK_Autotests": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "AutotestsPath": "$(AutotestsPath)",
+        "TargetFolder": "$(TargetFolder)",
+        "Browser": "$(Browser)",
+        "UserCountry": "$(UserCountry)",
+        "UserLanguage": "$(UserLanguage)",
+        "UcpInstanceType": "$(UcpInstanceType)"
+      },
+      "ScriptArgsDefaultValues": {
+        "AutotestsPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\BinaryStorage\\Autotests\\Win\\Portal",
+        "TargetFolder": "C:\\Autotests"
+      },
+      "ScriptPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\Hive\\Deployments\\Portal\\Scripts\\GetPortalAutotestsByPath.ps1"
+    },
+    "Deploy_CIWD_Autotests": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "AutotestsPath": "$(AutotestsPath)",
+        "TargetFolder": "$(TargetFolder)",
+        "Browser": "$(Browser)",
+        "UserCountry": "$(UserCountry)",
+        "UserLanguage": "$(UserLanguage)",
+        "UcpInstanceType": "$(UcpInstanceType)"
+      },
+      "ScriptArgsDefaultValues": {
+        "AutotestsPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\BinaryStorage\\Autotests\\Win\\CIWD",
+        "TargetFolder": "C:\\Autotests"
+      },
+      "ScriptPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\Hive\\Deployments\\Portal\\Scripts\\GetPortalAutotestsByPath.ps1"
+    },
+    "Deployment_MyK_CIWD": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Deploy_MyK_CIWD_Certificates",
+        "Deploy_MyK_Autotests",
+        "Deploy_CIWD_Autotests"
+      ]
+    }
+  },
+  "Platforms": {
+    "win7-x64": {},
+    "w10rs5-x64": {},
+    "osx13-x64": {},
+    "iOS-9": {},
+    "Android-9": {},
+    "AllPlatforms": [
+      "win7-x64",
+      "w10rs5-x64",
+      "osx13-x64"
+    ]
+  },
+  "Products": {
+    "MyK": {
+      "Name": "MyK",
+      "Parameters": {
+        "Name": "MyK",
+        "Browser": "Chrome",
+        "UserCountry": "RussianFederation",
+        "UserLanguage": "RussianRU",
+        "UcpInstanceType": "Prod"
+      },
+      "BranchName": "Frontend",
+      "Version": "Latest"
+    },
+    "CIWD": {
+      "Name": "CIWD",
+      "Parameters": {
+        "Name": "CIWD",
+        "Browser": "Chrome",
+        "UserCountry": "RussianFederation",
+        "UserLanguage": "RussianRU",
+        "UcpInstanceType": "Prod"
+      },
+      "BranchName": "Frontend",
+      "Version": "Latest"
+    },
+    "MyK_CIWD": [
+      "MyK",
+      "CIWD"
+    ]
+  },
+  "Suites": {
+    "Debug": {
+      "Parameters": {},
+      "Platforms": [
+        "AllPlatforms"
+      ],
+      "Products": [
+        "MyK_CIWD"
+      ],
+      "TestScenarios": [
+        "debug_Run_tests_for_two_product"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "debug_Run_tests_for_two_product": {
+      "Area": "Program",
+      "Deployments": [
+        "Deployment_MyK_CIWD"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5-x64"
+          ],
+          "Products": [
+            "MyK_CIWD"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "CIWD.AutoTests.Tests.Downloads.CheckHomeProductDownloadTests.CheckHomeProductDownload01"
+          }
+        ]
+      },
+      "TfsId": 2145098,
+      "Timeout": "00:15:00",
+      "UniqueId": "C9E7C8CF-9C40-4F10-A8CE-08FAA7E99B11",
+      "LocalTestBinariesFolder": "C:\\Autotests"
+    },
+    "Debug": {
+      "TestScenarios": [
+        "debug_Run_tests_for_two_product"
+      ]
+    }
+  },
+  "TestEntities": {}
+}

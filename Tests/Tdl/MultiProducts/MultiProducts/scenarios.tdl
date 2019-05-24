@@ -1,0 +1,15 @@
+﻿scenario "debug_Run_tests_for_two_product"
+{
+    deployment Deployment_MyK_CIWD;
+    environments (w10rs5-x64, MyK_CIWD);
+    sequence
+    {
+        method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;
+        method CIWD.AutoTests.Tests.Downloads.CheckHomeProductDownloadTests.CheckHomeProductDownload01;
+    }
+    Area ="Program";
+    UniqueId = @"C9E7C8CF-9C40-4F10-A8CE-08FAA7E99B11";
+    TfsId = 2145098;
+    Timeout = @"00:15:00";
+    LocalTestBinariesFolder = @"C:\Autotests";
+}
