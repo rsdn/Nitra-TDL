@@ -101,9 +101,6 @@
     <Compile Include="Ast\DeploymentOptionsHost.nitra">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Ast\Elem.nitra">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Ast\Entity.nitra">
       <SubType>Code</SubType>
     </Compile>
@@ -225,6 +222,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\Typing\InvocationScope.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\Typing\NamespaceType.nitra">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\Typing\NamespaceTypeSymbol.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\Typing\SubstExtensionMethods.n">

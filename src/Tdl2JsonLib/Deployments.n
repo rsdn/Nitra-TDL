@@ -66,7 +66,7 @@ namespace Tdl2Json
     
     private GenerateDeploymentScript(script : Deployment.ScriptSymbol) : string * QuickType.Deployment
     {
-      def refDefs         = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Name));
+      def refDefs         = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
       def allParameters   = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
       def parameters      = allParameters.Select(p => (p.Name, getParameterValue(p)));
       def defaultes       = allParameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();

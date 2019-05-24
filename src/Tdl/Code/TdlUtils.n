@@ -57,6 +57,11 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.ExternalSymbolTable
     }
 
+    public GetProductTypeSymbol(this context : DependentPropertyEvalContext) : ProductTypeSymbol
+    {
+      ToTdlContext(context).TdlProjectData.BaseProductType
+    }
+
     public GetExternalSymbol(this context : DependentPropertyEvalContext) : ExternalSymbol
     {
       ToTdlContext(context).TdlProjectData.ExternalSymbol
@@ -173,7 +178,7 @@ namespace Tdl
       builder.MoveToImmutable()
     }
     
-    public MakeAllProducts(it : ProductSymbol, products : ImmutableArray[ProductSymbol]) : ImmutableArray[ProductSymbol]
+    public MakeAllProducts(it : ProductSymbol, products : ImmutableArray[ProductSymbol]) : ImmutableArray[Product.DefSymbol]
     {
       def builder = ImmutableArray.CreateBuilder();
       def visited = HashSet();
@@ -437,29 +442,11 @@ namespace Tdl
         ParsedValue(data.Span.StartPos)
     }
 
-    private ConvertDefExpr(expr : DefExpr) : Expr
-    {
-      match (expr)
-      {
-        | x is DefExpr.String                    => Expr.String(ConvertStringLiteral(x.Value).Value)
-        | _ is DefExpr.True                      => Expr.True()
-        | _ is DefExpr.False                     => Expr.False()
-        | x is DefExpr.RealLiteral               => Expr.Real(double.Parse(x.Location.GetText()))
-        | x is DefExpr.DecimalIntegerLiteral     => Expr.Integer(int.Parse(x.Location.GetText()))
-        | x is DefExpr.HexadecimalIntegerLiteral => Expr.Integer(int.Parse(x.Location.GetText().Substring(2), NumberStyles.HexNumber))
-        | x is DefExpr.MemberAccess              => Expr.MemberAccess(ConvertDefExpr(x.Expr), x.Member.Location.GetText())
-        | x is DefExpr.Reference 
-          when x.IsTypeEvaluated                 => Expr.Reference(x.Location.GetText(), x.Type)
-        | x is DefExpr.ListLiteral               => Expr.List(x.Elements.Select(ConvertDefExpr).ToImmutableArray(), x.ElementType)
-        | x                                      => Expr.Error(x.Location)
-      }
-    }
-
     public MakeDefinitions(definitions : Definition.IAstList, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in definitions)
-        builder.Add(Def(definition.SymbolRef.Symbol, ConvertDefExpr(definition.Expr)));
+        builder.Add(Def(definition.SymbolRef.Symbol, definition.Expr.Result));
       builder.TryMoveToImmutable()
     }
 
@@ -476,7 +463,7 @@ namespace Tdl
             mutable found;
             def index = sel.Parameters.IndexOf(p);
             assert2(index >= 0);
-            def value = ConvertDefExpr(definition.Expr);
+            def value = definition.Expr.Result;
             when (value is Tdl.Expr.String as str)
             {
               foreach (case when index < case.Length in sel.Cases)
@@ -497,7 +484,9 @@ namespace Tdl
             }
           }
         }
-        builder.Add(Def(sym, ConvertDefExpr(definition.Expr)));
+
+        when (definition.Expr.IsResultEvaluated)
+          builder.Add(Def(sym, definition.Expr.Result));
       }
       builder.TryMoveToImmutable()
     }
@@ -506,7 +495,7 @@ namespace Tdl
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
       foreach (definition in definitions)
-        builder.Add(Def2(definition.Reference.Text, ConvertDefExpr(definition.Expr)));
+        builder.Add(Def2(definition.Reference.Text, definition.Expr.Result));
       builder.TryMoveToImmutable()
     }
     
@@ -843,7 +832,7 @@ namespace Tdl
         ast.Error(context, $"Expected '$(TypeToString(type1))' but got '$(TypeToString(type2))'.", 0);
     }
 
-    public CheckExpectedForTuple(this ast : IAst, context : DependentPropertyEvalContext, items : QualifiedReference.IAstList, expectedType : TypeSymbol, type : TypeSymbol) : void
+    public CheckExpectedForTuple(this ast : IAst, context : DependentPropertyEvalContext, items : DefExpr.IAstList, expectedType : TypeSymbol, type : TypeSymbol) : void
     {
       match (expectedType, type)
       {
@@ -875,30 +864,10 @@ namespace Tdl
       }
     }
     
-    public MakeTupleType(this context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : ValueOption[TypeSymbol]
+    public MakeTupleType(this context : DependentPropertyEvalContext, items : ImmutableArray[TypeSymbol]) : ValueOption[TypeSymbol]
     {
-      def builder = ImmutableArray.CreateBuilder(items.Length);
-      foreach (item in items)
-      {
-        def t =
-          if (item.IsAmbiguous || item.IsUnresolved)
-            context.CreateFreeTypeVar()
-          else
-          {
-            def typed =
-              if (item.IsResolvedToEvaluated)
-                item.ResolvedTo :> Ref[TypedDeclarationSymbol]
-              else
-                item.Resolve();
-            when (!typed.IsSymbolEvaluated || !typed.Symbol.IsTypeEvaluated)
-              return VNone();
-            typed.Symbol.Type
-          };
-        builder.Add(t);
-      }
-      
-      def tuple = TdlType.TupleSymbol();
-      tuple.Args = builder.MoveToImmutable();
+      def tuple  = TdlType.TupleSymbol();
+      tuple.Args = items;
       tuple.EvalProperties(context);
       VSome(tuple)
     }
@@ -926,19 +895,14 @@ namespace Tdl
       def builder = ImmutableArray.CreateBuilder(froms.Count);
       foreach (from in froms)
       {
-        when (!from.Vars.IsSymbolEvaluated || !from.List.IsSymbolsEvaluated)
+        when (!from.Vars.IsSymbolEvaluated || !from.List.IsResultEvaluated)
           return VNone();
           
-        def result = Code.From(from.Vars.Symbol, from.List.Symbols);
+        def result = Code.From(from.Vars.Symbol, from.List.Result);
         builder.Add(result);
       }
       
       VSome(builder.MoveToImmutable())
-    }
-
-    public MakeTuple(this _context : DependentPropertyEvalContext, items : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[DeclarationSymbol]
-    {
-       items.Select(x => if (x.IsSymbolEvaluated) x.Symbol else null).ToImmutableArray();
     }
 
     public CheckOptionForDuplicates(this _ast : IAst, context : DependentPropertyEvalContext, options : ImmutableArray[Ref[TypedDeclarationSymbol]]) : void
@@ -1010,7 +974,7 @@ namespace Tdl
 
       MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
     }
-    
+
     public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, froms : ImmutableArray[Tdl.Code.From]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
       def getAllProducts(product : TypedDeclarationSymbol) : Seq[Product.DefSymbol]
@@ -1021,14 +985,20 @@ namespace Tdl
           foreach (from in froms)
           foreach (var when v.Id == var.Id in from.Vars with i)
           {
-            def xs = from.Elems[i];
-            return xs.OfType.[TypedDeclarationSymbol]().SelectMany(x => getAllProducts(x));
+            def list = from.Elems.GetExprListForVar(i);
+            def toSymbol(e : Expr) : ProductSymbol
+            {
+              | Reference(Symbol=ProductSymbol as symbol) => symbol
+              | _ => null
+            }
+            return list.Select(toSymbol).Where(_ == null).SelectMany(getAllProducts);
           }
           []
         | _ => assert(false);
       }
 
-      MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
+      try MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
+      catch VNone()
     }
     
     MakeDefaultDefs(ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, getAllProducts : TypedDeclarationSymbol -> Seq[Product.DefSymbol]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
@@ -1228,15 +1198,24 @@ namespace Tdl
     public MakeAggregateParametersScope(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From]) : ValueOption[Scope]
     {
       def deployments = List();
-      foreach (from in froms)
-      foreach (var when var.Id == deployment.Id in from.Vars with i)
+      match (deployment)
       {
-        foreach (elem in from.Elems)
-        {
-          when (elem[i] is DeploymentSymbol as d)
-            deployments.Add(d);
-        }
-        break;
+        | DeploymentSymbol as d when d.IsAllDeploymentsEvaluated => return VNone();
+        | DeploymentSymbol as d => deployments.AddRange(d.AllDeployments);
+        | VarSymbol as v =>
+          foreach (from in froms)
+          foreach (var when v.Id == var.Id in from.Vars with i)
+          {
+            def list = from.Elems.GetExprListForVar(i);
+            foreach (x in list)
+            {
+              | Reference(Symbol=DeploymentSymbol as d) when d.IsAllDeploymentsEvaluated => return VNone();
+              | Reference(Symbol=DeploymentSymbol as d) => deployments.AddRange(d.AllDeployments);
+              | _ => ()
+            }
+            break;
+          }        
+        | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
       }
       MakeAggregateParametersScope(deployments)
     }
@@ -1405,20 +1384,20 @@ namespace Tdl
       InvocationScope(_, _, globalScope, context)
     }
 
-    public RequiredTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : TypeSymbol
+    //public RequiredTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : TypeSymbol
+    //{
+    //  def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
+    //  Require(ast, context, type, baseType);
+    //  baseTypeParam
+    //}
+    
+    public ProvidedTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedTypeFullTypeName : string, derivedTypeParam : TypeSymbol) : TypeSymbol
     {
-      def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
-      Require(ast, context, type, baseType);
-      baseTypeParam
+      def derivedType = context.ConstractType(derivedTypeFullTypeName, derivedTypeParam);
+      Provide(ast, context, type, derivedType);
+      derivedTypeParam
     }
     
-    //public ProvidedTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedTypeFullTypeName : string, derivedTypeParam : TypeSymbol) : TypeSymbol
-    //{
-    //  def derivedType = context.ConstractType(derivedTypeFullTypeName, derivedTypeParam);
-    //  Provide(ast, context, type, derivedType);
-    //  derivedTypeParam
-    //}
-    //
     //public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : void
     //{
     //  def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
@@ -1431,27 +1410,27 @@ namespace Tdl
     //  Provide(ast, context, type1, derivedType)
     //}
     
-    public SubtypeUnify[T1, T2](this symbol1 : T1, symbol2 : T2) : bool
+    public SubtypeUnifyOf[T1, T2](this subtype : T1, supertype : T2) : bool
       where T1: class, TypeSymbol
       where T2: class, TypeSymbol
     {
-      assert2(symbol1 != null, "Symbol of type " + typeof(T1).Name + " is null!");
-      assert2(symbol2 != null, "Symbol of type " + typeof(T2).Name + " is null!");
-      TypeUnifier.Instance.SubtypeUnify(symbol1, symbol2)
+      assert2(subtype != null, "Symbol of type " + typeof(T1).Name + " is null!");
+      assert2(supertype != null, "Symbol of type " + typeof(T2).Name + " is null!");
+      TypeUnifier.Instance.SubtypeUnify(subtype, supertype)
     }
 
-    public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeConstraint : TypeSymbol) : void
+    public Require(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, baseTypeConstraint : TypeSymbol) : void
     {
-      unless (TdlTypeUnifier.Instance.TryRequire(type1, baseTypeConstraint))
-        ast.Error(context, $"$type1 is not subtype of $baseTypeConstraint");
-      _ = TdlTypeUnifier.Instance.Require(type1, baseTypeConstraint);
+      unless (TdlTypeUnifier.Instance.TryRequire(type, baseTypeConstraint))
+        ast.Error(context, $"$(Esc(type)) is not subtype of $(Esc(baseTypeConstraint))");
+      _ = TdlTypeUnifier.Instance.Require(type, baseTypeConstraint);
     }
     
-    public Provide(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, derivedType : TypeSymbol) : void
+    public Provide(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedType : TypeSymbol) : void
     {
-      unless (TdlTypeUnifier.Instance.TryProvide(type1, derivedType))
-        ast.Error(context, $"$type1 is not derived from $derivedType");
-      _ = TdlTypeUnifier.Instance.Provide(type1, derivedType);
+      unless (TdlTypeUnifier.Instance.TryProvide(type, derivedType))
+        ast.Error(context, $"$(Esc(type)) is not derived from $(Esc(derivedType))");
+      _ = TdlTypeUnifier.Instance.Provide(type, derivedType);
     }
     
     public ConstractType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParam : TypeSymbol) : TypeSymbol
@@ -1524,6 +1503,20 @@ namespace Tdl
       prop.Type = context.ConstractType("System.Collections.Generic.HashSet", context.GetStringType());
       prop.CustomAttributes = array(0);
       prop.EvalProperties(context);
+    }
+
+    public ConstractFromListExpectedType(this context : DependentPropertyEvalContext, list : Expr, type : TypeSymbol) : TypeSymbol
+    {
+      match (list)
+      {
+        | Expr.Reference(Symbol=Product.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
+        | _ => context.ConstractType("System.Collections.Generic.IEnumerable", type)
+      }
+    }
+
+    public Esc(this self : TypeSymbol) : string
+    {
+      HintML.XmlEscape(self.ToString())
     }
   } // module
 } // namespace

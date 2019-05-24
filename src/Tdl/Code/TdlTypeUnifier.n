@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Tdl
 {
-  class TdlTypeUnifier : DotNet.TypeUnifier
+  public class TdlTypeUnifier : DotNet.TypeUnifier
   {
     public new static InitInstance() : void
     {
@@ -81,7 +81,19 @@ namespace Tdl
         | (sub is TopConstructedTypeSymbol, super is TopConstructedTypeSymbol) =>
           SubtypeUnifyUnwraped(sub.TypeInfo, super.TypeInfo, ref updatedVariables)
           && UnifyAll(sub.Args, super.Args, ref updatedVariables)
-        
+
+        | (TypeVarSymbol(IsTypeEvaluated=false, IsDerivedTypeConstraintEvaluated=true) as sub, _) =>
+          unless (SubtypeUnifyUnwraped(sub.DerivedTypeConstraint, supertype, ref updatedVariables))
+            return false;
+
+          if (sub.IsBaseTypeConstraintEvaluated)
+            SubtypeUnifyUnwraped(supertype, sub.BaseTypeConstraint, ref updatedVariables)
+          else
+          {
+            sub.BaseTypeConstraint = supertype;
+            true
+          }
+          
         | _ when TryUnify(subtype, supertype) => UnifyUnwraped(subtype, supertype, ref updatedVariables)
         | _ => base.SubtypeUnifyUnwraped(subtype, supertype, ref updatedVariables)
       }

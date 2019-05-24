@@ -50,7 +50,7 @@ namespace Tdl
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Deployments.Item1 -> Deployments; }
     | Currying         -> Deployment.Currying { Name -> Name; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
     | DeploymentSelect -> Deployment.Select   { Name -> Name; Parameters.Item1 -> Parameters; Cases -> Cases; }
-    | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; }
+    | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; [] -> TypeBase; }
     | Product          -> Product.Def         { Name -> Name; Type -> ProductType; ProductBody.DefDeclarations -> Definitions; }
     | ProductSet       -> Product.Set         { Name -> Name; Type -> ProductType; Products.Item1 -> Products; }
     | Scenario         -> Scenario.Def
@@ -168,8 +168,8 @@ namespace Tdl
 
   map syntax Grammar.From -> From
   {
-    VarDecl    -> Vars;
-    List.Item1 -> List;
+    VarDecl -> Vars;
+    List    -> List;
   }
   
   map syntax Grammar.From.VarDecl -> Var*
@@ -191,12 +191,6 @@ namespace Tdl
       items[index] = Var(n.Location, n);
     Var.AstList(names.Location, items);
   };
-
-  map syntax Grammar.From.VarRef -> Elem
-  {
-    | Ref   -> Elem.Simple { QualifiedIdentifier -> Reference; }
-    | Tuple -> Elem.Tuple  { Refs.Item1          -> Items; }
-  }
 
   map syntax Grammar.DeploymentExpr -> DeploymentExpr
   {
@@ -355,7 +349,7 @@ namespace Tdl
     | InputShort -> CommmandCallInputArgument
       {
         Reference -> ParameterName;
-        DefExpr.Reference { Reference -> ParameterName; } -> Value;
+        DefExpr.Reference { Reference -> Reference; } -> Value;
       }
   }
 
@@ -365,8 +359,9 @@ namespace Tdl
     | StringLiteral             -> String                    { StringLiteral -> Value; }
     | True                      -> True                      {  }
     | False                     -> False                     {  }
-    | Reference                 -> Reference                 { this.Reference -> ParameterName; }
+    | Reference                 -> Reference                 { this.Reference -> Reference; }
     | MemberAccess              -> MemberAccess              { Expr-> Expr; Member -> Member; }
+    | Tuple                     -> Tuple                     { Items.Item1 -> Items; }
     | RealLiteral               = DefExpr.RealLiteral(Location.WithSpan(RealLiteral));
     | DecimalIntegerLiteral     = DefExpr.DecimalIntegerLiteral(Lit.Location);
     | HexadecimalIntegerLiteral = DefExpr.HexadecimalIntegerLiteral(Lit.Location);

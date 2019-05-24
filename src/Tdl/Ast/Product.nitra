@@ -51,7 +51,7 @@ namespace Tdl
         symbol
         {
           stage 2:
-            in AllProducts : ImmutableArray[ProductSymbol];
+            in AllProducts : ImmutableArray[Product.DefSymbol];
           stage 1:
             in Products    : ImmutableArray[ProductSymbol];
 

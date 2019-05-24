@@ -17,6 +17,6 @@ namespace Tdl.Code
   public class From
   {
     public Vars  : ImmutableArray[VarSymbol];
-    public Elems : ImmutableArray[ImmutableArray[DeclarationSymbol]];
+    public Elems : Expr;
   }
 }
