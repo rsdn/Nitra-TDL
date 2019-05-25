@@ -58,24 +58,18 @@ namespace Tdl
     | HexadecimalIntegerLiteral { Type = context.GetInt32Type();   Result = Expr.Integer(int.Parse(Location.GetText().Substring(2), NumberStyles.HexNumber)); }
     | Reference
       {
-        out TypedRef : Ref[TypedDeclarationSymbol];
-        
+        Result          = Expr.Reference(Reference.Ref.Symbol);
+        Type            = await context.MakeType(Reference.Ref.Symbol);
         Reference.Scope = Scope;
-        TypedRef        = Reference.Ref.Resolve();
-        Type            = TypedRef.Symbol.Type;
-        Result          = Expr.Reference(TypedRef.Symbol);
 
         Reference : Declarations.Reference;
       }
     | MemberAccess
       {
-        out TypedRef : Ref[TypedDeclarationSymbol];
-        
-        TypedRef     = Member.Ref.Resolve();
-        Type         = TypedRef.Symbol.Type;
+        Type         = await context.MakeType(Member.Ref.Symbol);
         Expr.Scope   = Scope;
         Member.Scope = Expr.Type.Scope;
-        Result       = Expr.MemberAccess(Expr.Result, Member.Location.GetText(), Type);
+        Result       = Expr.MemberAccess(Expr.Result, Member.Ref.Symbol, Type);
 
         Expr   : DefExpr;
         Member : Declarations.Reference;

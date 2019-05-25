@@ -224,10 +224,7 @@
     <Compile Include="Code\Typing\InvocationScope.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Code\Typing\NamespaceType.nitra">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Typing\NamespaceTypeSymbol.n">
+    <Compile Include="Code\Typing\SelfTypeBase.nitra">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\Typing\SubstExtensionMethods.n">

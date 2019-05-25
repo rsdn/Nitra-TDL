@@ -216,8 +216,7 @@ namespace Tdl2Json
       | True             => true
       | Real      as x   => x.Value
       | Integer   as x   => x.Value
-      | Reference as x when x.Symbol.Type is Tdl.ProductTypeSymbol 
-                         => x.Symbol.Name
+      | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s) => /*"Product:" +*/ s.Name
       | Reference as x   => "#(" + x.Symbol.Name + ")"
       | Error     as e   => throw NotSupportedException("Error at: " + e.Location);
       | List      as xs  => xs.Elems.Select(toJson).ToArray()
@@ -303,16 +302,18 @@ namespace Tdl2Json
             | Expr.Tuple as t =>
               foreach (var in from.Vars with i)
                 dictionary[var] = t.Elems[i];
+              yield dictionary;
 
             | _ =>
               assert2(from.Vars.Length == 1);
               def var = from.Vars[0];
               dictionary[var] = expr;
+              yield dictionary;
           }
         }
       }
       else
-        yield Dictionary()
+        yield Dictionary();
     }
     
     TryResolveVar[T](dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
@@ -323,6 +324,8 @@ namespace Tdl2Json
       {
         if (result is Tdl.Expr.Reference as r)
           r.Symbol :> T
+        else if (result is Tdl.Expr.MemberAccess as m)
+          m.Symbol :> T
         else
           result.GetValue() :> T
       }
@@ -335,88 +338,88 @@ namespace Tdl2Json
       mutable counter : uint = 0;
       match(scenarioSymbol)
       {
-            | Tdl.Scenario.GeneratorSymbol as g =>
-              def getString(name : string) : string
-              {
-                g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
-              }
-              def getBool(name : string) : bool?
-              {
-                g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
-                  .Map(fun(expr)
-                    {
-                      | Tdl.Expr.True  => Nullable(true)
-                      | Tdl.Expr.False => Nullable(false)
-                      | _              => throw NotSupportedException()
-                    })
-                  .WithDefault(null);
-              }
-              def getLong(name : string) : long?
-              {
-                  g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
-              }
-              def getInt(name : string) : int?
-              {
-                  g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
-              }
-              def incGuid(guid : Guid) : Guid
-              {
-                def bytes1   = guid.ToByteArray();
-                def version  = BitConverter.ToUInt32(bytes1, 0) + counter;
-                def bytes2   = BitConverter.GetBytes(version);
-                bytes1[0] = bytes2[0];
-                bytes1[1] = bytes2[1];
-                bytes1[2] = bytes2[2];
-                bytes1[3] = bytes2[3];
-                Guid(bytes1)
-              }
-              mutable uniqueId = Guid.Parse(getString("UniqueId"));
-              def names = List();
-              foreach (dic in SubstituteVariables(g.Froms, 0))
-              {
-                counter++;
-                def deployment = TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
-                def method     = TryResolveVar(dic, g.Method)     : Member.MethodSymbol;
-                def platform   = TryResolveVar(dic, g.Platform)   : PlatformSymbol;
-                def product    = TryResolveVar(dic, g.Product)    : ProductSymbol;
-                def getTestMethod() : TestMethod
+        | Tdl.Scenario.GeneratorSymbol as g =>
+          def getString(name : string) : string
+          {
+            g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+          }
+          def getBool(name : string) : bool?
+          {
+            g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
+              .Map(fun(expr)
                 {
-                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method);
-                  TestMethodQualifier() <- 
-                  {
-                    AssemblyName = assemblyName;
-                    MethodName   = methodName;
-                  }
-                }
-                def name = scenarioSymbol.Name + "-" + counter;
+                  | Tdl.Expr.True  => Nullable(true)
+                  | Tdl.Expr.False => Nullable(false)
+                  | _              => throw NotSupportedException()
+                })
+              .WithDefault(null);
+          }
+          def getLong(name : string) : long?
+          {
+              g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
+          }
+          def getInt(name : string) : int?
+          {
+              g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
+          }
+          def incGuid(guid : Guid) : Guid
+          {
+            def bytes1   = guid.ToByteArray();
+            def version  = BitConverter.ToUInt32(bytes1, 0) + counter;
+            def bytes2   = BitConverter.GetBytes(version);
+            bytes1[0] = bytes2[0];
+            bytes1[1] = bytes2[1];
+            bytes1[2] = bytes2[2];
+            bytes1[3] = bytes2[3];
+            Guid(bytes1)
+          }
+          mutable uniqueId = Guid.Parse(getString("UniqueId"));
+          def names = List();
+          foreach (dic in SubstituteVariables(g.Froms, 0))
+          {
+            counter++;
+            def deployment = TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
+            def method     = TryResolveVar(dic, g.Method)     : Member.MethodSymbol;
+            def platform   = TryResolveVar(dic, g.Platform)   : PlatformSymbol;
+            def product    = TryResolveVar(dic, g.Product)    : ProductSymbol;
+            def getTestMethod() : TestMethod
+            {
+              def (assemblyName, methodName) = GetAssemblyAndMethodName(method);
+              TestMethodQualifier() <- 
+              {
+                AssemblyName = assemblyName;
+                MethodName   = methodName;
+              }
+            }
+            def name = scenarioSymbol.Name + "-" + counter;
                 
-                names.Add(name);
+            names.Add(name);
                 
-                def testGroup =
-                  TestGroup() <- 
-                  {
-                    Deployments             = array[TestGroupDeployment() <- String = deployment.Name];
-                    Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
-                    TestMethod              = getTestMethod();
-                    Area                    = getString("Area");
-                    ExternalAutotestId      = getInt   ("ExternalAutotestId");
-                    LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
-                    NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
-                    RequireInternet         = getBool  ("RequireInternet");
-                    RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
-                    RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
-                    Responsible             = getString("Responsible");
-                    RevertAgentAfter        = getBool  ("RevertAgentAfter");
-                    RevertAgentBefore       = getBool  ("RevertAgentBefore");
-                    TfsId                   = getLong  ("TfsId");
-                    Timeout                 = getString("Timeout");
-                    UniqueId                = uniqueId.ToString();
-                    ProductGroupName        = getString("ProductGroupName");
-                  };
+            def testGroup =
+              TestGroup() <- 
+              {
+                Deployments             = array[TestGroupDeployment() <- String = deployment.Name];
+                Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
+                TestMethod              = getTestMethod();
+                Area                    = getString("Area");
+                ExternalAutotestId      = getInt   ("ExternalAutotestId");
+                LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
+                NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
+                RequireInternet         = getBool  ("RequireInternet");
+                RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
+                RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
+                Responsible             = getString("Responsible");
+                RevertAgentAfter        = getBool  ("RevertAgentAfter");
+                RevertAgentBefore       = getBool  ("RevertAgentBefore");
+                TfsId                   = getLong  ("TfsId");
+                Timeout                 = getString("Timeout");
+                UniqueId                = uniqueId.ToString();
+                ProductGroupName        = getString("ProductGroupName");
+              };
 
                 yield (name, TestCase() <- { TestGroup = testGroup; });
-                uniqueId = incGuid(uniqueId);
-              }
+            uniqueId = incGuid(uniqueId);
+          }
               
               yield (scenarioSymbol.Name, TestCase() <- { TestGroup = TestGroup() <- { TestScenarios = names.ToArray() }; });
 

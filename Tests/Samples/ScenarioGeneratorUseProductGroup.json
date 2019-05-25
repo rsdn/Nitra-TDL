@@ -1,0 +1,2720 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "DeployDataCollectors": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "\\\\tis-dfs\\autotests\\Components\\UserScenarios\\Hive\\HiveDeploy\\DeployDataCollectors.ps1"
+    },
+    "DeployMultiProduct": {
+      "Type": "Script",
+      "RebootExitCode": 101,
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "MultiProductConfigFile": "$(MultiProductConfig)",
+        "DeployerFlags": "$(DeploymentConditions)",
+        "UpdateSource": "$(UpdateSourceAddress)"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\DeployMultiProduct.ps1"
+    },
+    "ApplyDplScript": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "DplScript": "$(PrepareForTestScript)",
+        "OverrideTestSettings": "$(OverrideTestSettingsDirectory)"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
+    },
+    "ApplyDplScriptKsm60": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "DplScript": "\\\\sdfs\\autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\KfpAutotestModeEnable.dpl",
+        "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\KSM6.0"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
+    },
+    "ApplyDplScriptKsm65": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "DplScript": "\\\\sdfs\\autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\KfpAutotestModeEnable.dpl",
+        "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\KSM6.5"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
+    },
+    "ApplyDplScriptApp2_19": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "DplScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\App219"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
+    },
+    "DeployMultiProductWithDeployerAndPreparingKsm60": {
+      "Type": "Sequence",
+      "Deployments": [
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
+      ]
+    },
+    "DeployMultiProductWithDeployerAndPreparingKsm65": {
+      "Type": "Sequence",
+      "Deployments": [
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
+      ]
+    },
+    "DeployMultiProductWithDeployerAndPreparingApp2_19": {
+      "Type": "Sequence",
+      "Deployments": [
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
+      ]
+    }
+  },
+  "Platforms": {
+    "win7-x86": {},
+    "win7-x64": {},
+    "win7": [
+      "win7-x86",
+      "win7-x64"
+    ],
+    "win8-x86": {},
+    "win8-x64": {},
+    "win8": [
+      "win8-x86",
+      "win8-x64"
+    ],
+    "win81-x86": {},
+    "win81-x64": {},
+    "win81": [
+      "win81-x86",
+      "win81-x64"
+    ],
+    "w10rs4-x86": {},
+    "w10rs4-x64": {},
+    "w10rs4": [
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ],
+    "w10rs5-x86": {},
+    "w10rs5-x64": {},
+    "w10rs5": [
+      "w10rs5-x86",
+      "w10rs5-x64"
+    ],
+    "w10": [
+      "w10rs4-x86",
+      "w10rs4-x64",
+      "w10rs5-x86",
+      "w10rs5-x64"
+    ],
+    "all": [
+      "win7-x86",
+      "win7-x64",
+      "win81-x86",
+      "win81-x64",
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ],
+    "test": [
+      "w10rs4-x64",
+      "win7-x86"
+    ]
+  },
+  "Products": {
+    "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests": {
+      "Name": "App112019wApp93.0+Ksu2.0+Kfp6.5+App3MR4+Kpm9.0",
+      "Parameters": {
+        "Name": "App112019wApp93.0+Ksu2.0+Kfp6.5+App3MR4+Kpm9.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\1.App112019wApp93.0+Ksu2.0+Kfp6.5+App3MR4+Kpm9.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests": {
+      "Name": "Kfp6.5+App1_2019wApp93.0+Kpm9.0+Ksu2.0+App3MR4",
+      "Parameters": {
+        "Name": "Kfp6.5+App1_2019wApp93.0+Kpm9.0+Ksu2.0+App3MR4",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\2.Kfp6.5+App1_2019wApp93.0+Kpm9.0+Ksu2.0+App3MR4.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests": {
+      "Name": "App3MR4+Kfp6.5+Ksu2.0+App2_2019wApp93.0+Kpm9.0",
+      "Parameters": {
+        "Name": "App3MR4+Kfp6.5+Ksu2.0+App2_2019wApp93.0+Kpm9.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\3.App3MR4+Kfp6.5+Ksu2.0+App2_2019wApp93.0+Kpm9.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests": {
+      "Name": "Ksu2.0+Kpm9.0+Kfp6.5+App3MR4+App62019wApp93.0",
+      "Parameters": {
+        "Name": "Ksu2.0+Kpm9.0+Kfp6.5+App3MR4+App62019wApp93.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\4.Ksu2.0+Kpm9.0+Kfp6.5+App3MR4+App62019wApp93.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests": {
+      "Name": "Kfp6.5+Ks2.0wApp93.0+Kpm9.0+App3MR4+Ksu2.0",
+      "Parameters": {
+        "Name": "Kfp6.5+Ks2.0wApp93.0+Kpm9.0+App3MR4+Ksu2.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\5.Kfp6.5+Ks2.0wApp93.0+Kpm9.0+App3MR4+Ksu2.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App93_Kpm9_App106_Kfp65_FuncTests": {
+      "Name": "App93.0+Kpm9.0+App106.0+Kfp6.5",
+      "Parameters": {
+        "Name": "App93.0+Kpm9.0+App106.0+Kfp6.5",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\6.App93.0+Kpm9.0+App106.0+Kfp6.5.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests": {
+      "Name": "Ks2.0+Ksu2.0+Kpm9.0+App92.0+App3MR3",
+      "Parameters": {
+        "Name": "Ks2.0+Ksu2.0+Kpm9.0+App92.0+App3MR3",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\7.Ks2.0+Ksu2.0+Kpm9.0+App92.0+App3MR3.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests": {
+      "Name": "Kfp6.0+App62019+App3MR3+Kpm9.0+Ksu2.0",
+      "Parameters": {
+        "Name": "Kfp6.0+App62019+App3MR3+Kpm9.0+Ksu2.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\8.Kfp6.0+App62019+App3MR3+Kpm9.0+Ksu2.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests": {
+      "Name": "Kfp6.0+App106.0+App92.0+Ksu2.0+Kpm9.0",
+      "Parameters": {
+        "Name": "Kfp6.0+App106.0+App92.0+Ksu2.0+Kpm9.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\9.Kfp6.0+App106.0+App92.0+Ksu2.0+Kpm9.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App92_Kfp6_Kpm9_App112019_FuncTests": {
+      "Name": "App92.0+Kfp6.0+Kpm9.0+App112019",
+      "Parameters": {
+        "Name": "App92.0+Kfp6.0+Kpm9.0+App112019",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\10.App92.0+Kfp6.0+Kpm9.0+App112019.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kpm9_App92_Kfp65_App2_2019_FuncTests": {
+      "Name": "Kpm9.0+App92.0+Kfp6.5+App2_2019",
+      "Parameters": {
+        "Name": "Kpm9.0+App92.0+Kfp6.5+App2_2019",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\11.Kpm9.0+App92.0+Kfp6.5+App2_2019.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests": {
+      "Name": "App3MR4+Kpm9.0+App1_2019+Kfp6.0+App92.0",
+      "Parameters": {
+        "Name": "App3MR4+Kpm9.0+App1_2019+Kfp6.0+App92.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\12.App3MR4+Kpm9.0+App1_2019+Kfp6.0+App92.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App3MR3_App112019_FuncTests": {
+      "Name": "App3MR3+App112019",
+      "Parameters": {
+        "Name": "App3MR3+App112019",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\13.App3MR3+App112019.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests": {
+      "Name": "App93.0+Kpm9.0+App2_2019+App3MR3+Kfp6.0",
+      "Parameters": {
+        "Name": "App93.0+Kpm9.0+App2_2019+App3MR3+Kfp6.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\14.App93.0+Kpm9.0+App2_2019+App3MR3+Kfp6.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests": {
+      "Name": "Ksu2.0+Kfp6.0+App93.0+Ks2.0+App3MR4",
+      "Parameters": {
+        "Name": "Ksu2.0+Kfp6.0+App93.0+Ks2.0+App3MR4",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\15.Ksu2.0+Kfp6.0+App93.0+Ks2.0+App3MR4.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App93_App3MR3_App1_2019_FuncTests": {
+      "Name": "App93.0+App3MR3+App1_2019",
+      "Parameters": {
+        "Name": "App93.0+App3MR3+App1_2019",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\16.App93.0+App3MR3+App1_2019.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kpm9_App62019_App92_FuncTests": {
+      "Name": "Kpm9.0+App62019+App92.0",
+      "Parameters": {
+        "Name": "Kpm9.0+App62019+App92.0",
+        "MultiProductConfig": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\17.Kpm9.0+App62019+App92.0.txt",
+        "PrepareForTestScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\sdfs\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Sbs2019Func": [
+      "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests",
+      "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests",
+      "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests",
+      "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests",
+      "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests",
+      "App93_Kpm9_App106_Kfp65_FuncTests",
+      "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests",
+      "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests",
+      "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests",
+      "App92_Kfp6_Kpm9_App112019_FuncTests",
+      "Kpm9_App92_Kfp65_App2_2019_FuncTests",
+      "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests",
+      "App3MR3_App112019_FuncTests",
+      "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests",
+      "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests",
+      "App93_App3MR3_App1_2019_FuncTests",
+      "Kpm9_App62019_App92_FuncTests"
+    ]
+  },
+  "Suites": {
+    "SbsTestsSuite": {
+      "Parameters": {
+        "AutotestAssemblies": "\\\\sdfs\\storage\\CoreTechnologies\\AutotestProjectBuilds\\Components.Autotest\\LatestBuild.txt",
+        "UpdateSourceAddress": "",
+        "UseSecondaryUpdateSource": false,
+        "SecondaryUpdateSource": "",
+        "DeploymentConditions": "/Update",
+        "BugsRobotStatus": 0
+      },
+      "Platforms": [
+        "all"
+      ],
+      "Products": [
+        "Sbs2019Func"
+      ],
+      "TestScenarios": [
+        "SbSFuncScenarios1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "SbSFuncScenarios1-1": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb73-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-2": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb74-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-3": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb76-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-4": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb79-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-5": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb7d-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-6": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb82-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-7": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb88-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-8": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb8f-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-9": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb97-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-10": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcba0-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-11": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbaa-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-12": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbb5-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-13": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbc1-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-14": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbce-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-15": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbdc-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-16": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbeb-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-17": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbfb-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-18": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc0c-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-19": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc1e-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-20": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc31-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-21": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc45-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-22": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc5a-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-23": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc70-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-24": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc87-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-25": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc9f-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-26": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddccb8-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-27": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddccd2-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-28": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcced-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-29": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcd09-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-30": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcd26-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-31": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcd44-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-32": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcd63-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-33": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcd83-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-34": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcda4-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-35": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcdc6-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-36": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcde9-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-37": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddce0d-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-38": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddce32-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-39": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddce58-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-40": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddce7f-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-41": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcea7-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-42": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddced0-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-43": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcefa-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-44": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcf25-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-45": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcf51-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-46": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcf7e-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-47": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcfac-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-48": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcfdb-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-49": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd00b-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-50": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd03c-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-51": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd06e-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-52": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd0a1-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-53": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd0d5-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-54": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kfp6_App106_App92_Ksu2_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd10a-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-55": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App92_Kfp6_Kpm9_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd140-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-56": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App92_Kfp6_Kpm9_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd177-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-57": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App92_Kfp6_Kpm9_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd1af-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-58": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App92_Kfp6_Kpm9_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd1e8-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-59": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App92_Kfp6_Kpm9_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd222-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-60": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App92_Kfp6_Kpm9_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd25d-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-61": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App92_Kfp65_App2_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd299-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-62": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App92_Kfp65_App2_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd2d6-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-63": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App92_Kfp65_App2_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd314-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-64": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App92_Kfp65_App2_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd353-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-65": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App92_Kfp65_App2_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd393-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-66": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App92_Kfp65_App2_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd3d4-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-67": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd416-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-68": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd459-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-69": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd49d-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-70": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd4e2-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-71": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd528-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-72": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd56f-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-73": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR3_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd5b7-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-74": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR3_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd600-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-75": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR3_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd64a-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-76": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR3_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd695-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-77": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR3_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd6e1-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-78": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App3MR3_App112019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd72e-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-79": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd77c-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-80": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd7cb-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-81": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd81b-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-82": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd86c-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-83": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd8be-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-84": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd911-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-85": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd965-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-86": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddd9ba-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-87": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddda10-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-88": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddda67-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-89": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddabf-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-90": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddb18-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-91": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_App3MR3_App1_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddb72-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-92": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_App3MR3_App1_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddbcd-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-93": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_App3MR3_App1_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddc29-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-94": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_App3MR3_App1_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddc86-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-95": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_App3MR3_App1_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddce4-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-96": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "App93_App3MR3_App1_2019_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddd43-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-97": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App62019_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddda3-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-98": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App62019_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddde04-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-99": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App62019_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddde66-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-100": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App62019_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddec9-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-101": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm65"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App62019_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddf2d-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1-102": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7"
+          ],
+          "Products": [
+            "Kpm9_App62019_App92_FuncTests"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42dddf92-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "SbSFuncScenarios1": {
+      "TestScenarios": [
+        "SbSFuncScenarios1-1",
+        "SbSFuncScenarios1-2",
+        "SbSFuncScenarios1-3",
+        "SbSFuncScenarios1-4",
+        "SbSFuncScenarios1-5",
+        "SbSFuncScenarios1-6",
+        "SbSFuncScenarios1-7",
+        "SbSFuncScenarios1-8",
+        "SbSFuncScenarios1-9",
+        "SbSFuncScenarios1-10",
+        "SbSFuncScenarios1-11",
+        "SbSFuncScenarios1-12",
+        "SbSFuncScenarios1-13",
+        "SbSFuncScenarios1-14",
+        "SbSFuncScenarios1-15",
+        "SbSFuncScenarios1-16",
+        "SbSFuncScenarios1-17",
+        "SbSFuncScenarios1-18",
+        "SbSFuncScenarios1-19",
+        "SbSFuncScenarios1-20",
+        "SbSFuncScenarios1-21",
+        "SbSFuncScenarios1-22",
+        "SbSFuncScenarios1-23",
+        "SbSFuncScenarios1-24",
+        "SbSFuncScenarios1-25",
+        "SbSFuncScenarios1-26",
+        "SbSFuncScenarios1-27",
+        "SbSFuncScenarios1-28",
+        "SbSFuncScenarios1-29",
+        "SbSFuncScenarios1-30",
+        "SbSFuncScenarios1-31",
+        "SbSFuncScenarios1-32",
+        "SbSFuncScenarios1-33",
+        "SbSFuncScenarios1-34",
+        "SbSFuncScenarios1-35",
+        "SbSFuncScenarios1-36",
+        "SbSFuncScenarios1-37",
+        "SbSFuncScenarios1-38",
+        "SbSFuncScenarios1-39",
+        "SbSFuncScenarios1-40",
+        "SbSFuncScenarios1-41",
+        "SbSFuncScenarios1-42",
+        "SbSFuncScenarios1-43",
+        "SbSFuncScenarios1-44",
+        "SbSFuncScenarios1-45",
+        "SbSFuncScenarios1-46",
+        "SbSFuncScenarios1-47",
+        "SbSFuncScenarios1-48",
+        "SbSFuncScenarios1-49",
+        "SbSFuncScenarios1-50",
+        "SbSFuncScenarios1-51",
+        "SbSFuncScenarios1-52",
+        "SbSFuncScenarios1-53",
+        "SbSFuncScenarios1-54",
+        "SbSFuncScenarios1-55",
+        "SbSFuncScenarios1-56",
+        "SbSFuncScenarios1-57",
+        "SbSFuncScenarios1-58",
+        "SbSFuncScenarios1-59",
+        "SbSFuncScenarios1-60",
+        "SbSFuncScenarios1-61",
+        "SbSFuncScenarios1-62",
+        "SbSFuncScenarios1-63",
+        "SbSFuncScenarios1-64",
+        "SbSFuncScenarios1-65",
+        "SbSFuncScenarios1-66",
+        "SbSFuncScenarios1-67",
+        "SbSFuncScenarios1-68",
+        "SbSFuncScenarios1-69",
+        "SbSFuncScenarios1-70",
+        "SbSFuncScenarios1-71",
+        "SbSFuncScenarios1-72",
+        "SbSFuncScenarios1-73",
+        "SbSFuncScenarios1-74",
+        "SbSFuncScenarios1-75",
+        "SbSFuncScenarios1-76",
+        "SbSFuncScenarios1-77",
+        "SbSFuncScenarios1-78",
+        "SbSFuncScenarios1-79",
+        "SbSFuncScenarios1-80",
+        "SbSFuncScenarios1-81",
+        "SbSFuncScenarios1-82",
+        "SbSFuncScenarios1-83",
+        "SbSFuncScenarios1-84",
+        "SbSFuncScenarios1-85",
+        "SbSFuncScenarios1-86",
+        "SbSFuncScenarios1-87",
+        "SbSFuncScenarios1-88",
+        "SbSFuncScenarios1-89",
+        "SbSFuncScenarios1-90",
+        "SbSFuncScenarios1-91",
+        "SbSFuncScenarios1-92",
+        "SbSFuncScenarios1-93",
+        "SbSFuncScenarios1-94",
+        "SbSFuncScenarios1-95",
+        "SbSFuncScenarios1-96",
+        "SbSFuncScenarios1-97",
+        "SbSFuncScenarios1-98",
+        "SbSFuncScenarios1-99",
+        "SbSFuncScenarios1-100",
+        "SbSFuncScenarios1-101",
+        "SbSFuncScenarios1-102"
+      ]
+    }
+  },
+  "TestEntities": {}
+}

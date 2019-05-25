@@ -160,7 +160,7 @@ namespace Tdl2Json
         def parameterReference = getParameterReference(parameter.Name);
 
         def (type, value) =
-          match (parameter.Type.FullName)
+          match (parameter.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
           {
             | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
             | "System.Boolean" | "bool"   => ("switch", $<#if ($(parameterName)) {"true"} else {"false"}#>);
@@ -190,8 +190,8 @@ namespace Tdl2Json
               | DefExpr.RealLiteral
               | DefExpr.DecimalIntegerLiteral
               | DefExpr.HexadecimalIntegerLiteral => expr.ToString()
-              | x is DefExpr.Reference =>
-                match (x.TypedRef.Symbol)
+              | DefExpr.Reference as x =>
+                match (x.Reference.Ref.Symbol)
                 {
                   | FormalParameterSymbol            => getParameterReference(x.ToString())
                   | CommmandCallOutputArgumentSymbol => x.ToString()
