@@ -1200,7 +1200,7 @@ namespace Tdl
       def deployments = List();
       match (deployment)
       {
-        | DeploymentSymbol as d when d.IsAllDeploymentsEvaluated => return VNone();
+        | DeploymentSymbol as d when !d.IsAllDeploymentsEvaluated => return VNone();
         | DeploymentSymbol as d => deployments.AddRange(d.AllDeployments);
         | VarSymbol as v =>
           foreach (from in froms)
@@ -1209,7 +1209,7 @@ namespace Tdl
             def list = from.Elems.GetExprListForVar(i);
             foreach (x in list)
             {
-              | Reference(Symbol=DeploymentSymbol as d) when d.IsAllDeploymentsEvaluated => return VNone();
+              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAllDeploymentsEvaluated => return VNone();
               | Reference(Symbol=DeploymentSymbol as d) => deployments.AddRange(d.AllDeployments);
               | _ => ()
             }
@@ -1517,6 +1517,25 @@ namespace Tdl
     public Esc(this self : TypeSymbol) : string
     {
       HintML.XmlEscape(self.ToString())
+    }
+
+    public MakeType(this context : DependentPropertyEvalContext, symbol : DeclarationSymbol) : ValueOption[TypeSymbol]
+    {
+      match (symbol)
+      {
+        | TypedDeclarationSymbol as t  when !t.IsTypeEvaluated => VNone()
+        | TypedDeclarationSymbol as t => VSome(t.Type)
+        | TypeSymbol as t => VSome(t)
+        | NamespaceSymbol as ns when !ns.IsScopeEvaluated => VNone()
+        | NamespaceSymbol as ns =>
+          def type = SelfTypeBaseSymbol();
+          type.Kind = "namespace";
+          type.Scope = ns.Scope;
+          type.EvalProperties(context);
+          VSome(type)
+
+        | _ => assert(false)
+      }
     }
   } // module
 } // namespace

@@ -22,20 +22,27 @@ namespace Tdl
     | False        { }
     | Real         { Value : double; }
     | Integer      { Value : int; }
-    | Reference    { Symbol : TypedDeclarationSymbol; }
-    | MemberAccess { Expr : Expr;  MemberName  : string; Type : TypeSymbol; }
+    | Reference    { Symbol : DeclarationSymbol; }
+    | MemberAccess { Expr : Expr;  Symbol : DeclarationSymbol; Type : TypeSymbol; }
     | List         { Elems : ImmutableArray[Expr]; Type : TypeSymbol; }
     | Tuple        { Elems : ImmutableArray[Expr]; Type : TypeSymbol; }
 
     public GetExprListForVar(varIndex : int) : Seq[Expr]
     {
-      match (this)
+      def it = this;
+      match (it)
       {
-        | Reference(Symbol=Product.SetSymbol    as s) when varIndex == 1 => s.AllProducts   .Select(Expr.Reference)
-        | Reference(Symbol=Platform.SetSymbol   as s) when varIndex == 1 => s.Platforms     .Select(Expr.Reference)
-        | Reference(Symbol=Deployment.SetSymbol as s) when varIndex == 1 => s.AllDeployments.Select(Expr.Reference)
-        | List as list                                when varIndex == 1 => list.Elems
-        | List as list                                                   => list.Elems.Select(e => (e :> Expr.Tuple).Elems[varIndex])
+        | Reference(Symbol=Product.SetSymbol    as s) when varIndex == 0 => s.AllProducts   .Select(Expr.Reference)
+        | Reference(Symbol=Platform.SetSymbol   as s) when varIndex == 0 => s.Platforms     .Select(Expr.Reference)
+        | Reference(Symbol=Deployment.SetSymbol as s) when varIndex == 0 => s.AllDeployments.Select(Expr.Reference)
+        | List as list =>
+          def getElem(e : Expr) : Expr
+          {
+            | Reference as r => r
+            | Tuple as t => t.Elems[varIndex]
+            | _ => e
+          }
+          list.Elems.Select(getElem)
         | _ => assert(false, $"Unsupporten expressoin type $(GetType().FullName)")
       }
     }
@@ -97,7 +104,7 @@ namespace Tdl
         | Real          as x => x.Value.ToString()
         | Integer       as x => x.Value.ToString()
         | Reference     as x => x.Symbol.InitialName
-        | MemberAccess as x  => $"$(x.Expr).$(x.MemberName)"
+        | MemberAccess as x  => $"$(x.Expr).$(x.Symbol.Name)"
         | List         as xs => def elems = xs.Elems.Select(_.ToString());  $<#[..$elems]#>
         | Tuple        as x  => def elems =  x.Elems.Select(_.ToString());  $<#(..$elems)#>
       }
