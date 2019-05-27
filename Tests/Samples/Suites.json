@@ -160,23 +160,6 @@
         "Test1"
       ]
     },
-    "GeneratedSuiteList-MonorepoHelloWorld-w10rs4-x64": {
-      "Parameters": {
-        "Version": "#(ProductVersion)",
-        "ProductA": "Excel",
-        "ProductB": "Word",
-        "ProductC": "MonorepoHelloWorld"
-      },
-      "Platforms": [
-        "w10rs4-x64"
-      ],
-      "Products": [
-        "MonorepoHelloWorld"
-      ],
-      "TestScenarios": [
-        "Test1"
-      ]
-    },
     "GeneratedSuiteList-Word-w10rs4-x86": {
       "Parameters": {
         "Version": "#(ProductVersion)",
@@ -228,7 +211,6 @@
     },
     "GeneratedSuiteList": {
       "Suites": [
-        "GeneratedSuiteList-MonorepoHelloWorld-w10rs4-x64",
         "GeneratedSuiteList-Word-w10rs4-x86",
         "GeneratedSuiteList-Excel-win_10_rs3"
       ]

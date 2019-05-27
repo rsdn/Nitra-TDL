@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 suite GeneratedSuiteList =
-    from (Deployment , Platform) in (MonorepoHelloWorld, w10rs4-x64), (Word, w10rs4-x86), (Excel, win_10_rs3) 
+    from (Deployment , Platform) in [/*(MonorepoHelloWorld, w10rs4-x64),*/ (Word, w10rs4-x86), (Excel, win_10_rs3)]
     select
     {
       platform Platform;
