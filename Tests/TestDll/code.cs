@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Autotest.Common.Suites.Components.Delivery
 {
@@ -293,6 +293,30 @@ namespace Tdl
         public void FailingTest()
         {
             Assert.Fail("No luck :(");
+        }
+    }
+}
+
+namespace UCPAutoTests.Tests.Pmc
+{
+    [TestClass]
+    public class AccountTests
+    {
+        [TestMethod]
+        public void CreateMasterAccount()
+        {
+        }
+    }
+}
+
+namespace CIWD.AutoTests.Tests.Downloads
+{
+    [TestClass]
+    public class CheckHomeProductDownloadTests
+    {
+        [TestMethod]
+        public void CheckHomeProductDownload01()
+        {
         }
     }
 }
