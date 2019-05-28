@@ -320,3 +320,24 @@ namespace CIWD.AutoTests.Tests.Downloads
         }
     }
 }
+
+namespace Ns1
+{
+    [TestClass]
+    public class BaseClass
+    {
+        [TestMethod]
+        public void Method1()
+        {
+        }
+    }
+
+    [TestClass]
+    public class DerivedClass : BaseClass
+    {
+        [TestMethod]
+        public void Method2()
+        {
+        }
+    }
+}
