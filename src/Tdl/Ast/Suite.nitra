@@ -136,7 +136,7 @@ namespace Tdl
         Symbol.Product              = ProductRef.Symbol;
 
         Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
-        Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
+        Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable).HideWith(Symbol.MemberTable);
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
 
         TypeOpt.Scope               = Scope;
