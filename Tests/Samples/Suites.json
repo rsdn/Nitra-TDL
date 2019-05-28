@@ -6,6 +6,7 @@
       "Type": "Script",
       "ReturnValue": 42,
       "ScriptArgs": {
+        "IntValue": "$(IntValue)",
         "PRODUCT_VERSION": "$(Version)",
         "Size100": "$(Product:ProductA.Size)",
         "Size42": "$(Product:ProductB.Size)",
@@ -160,10 +161,11 @@
         "Test1"
       ]
     },
-    "GeneratedSuiteList-Word-w10rs4-x86": {
+    "GeneratedSuiteList-Word-w10rs4-x86-1": {
       "Parameters": {
         "Version": "#(ProductVersion)",
-        "ProductA": "Excel",
+        "IntValue": 1,
+        "ProductA": "Word",
         "ProductB": "Word",
         "ProductC": "MonorepoHelloWorld"
       },
@@ -177,9 +179,10 @@
         "Test1"
       ]
     },
-    "GeneratedSuiteList-Excel-win_10_rs3": {
+    "GeneratedSuiteList-Excel-win_10_rs3-2": {
       "Parameters": {
         "Version": "#(ProductVersion)",
+        "IntValue": 2,
         "ProductA": "Excel",
         "ProductB": "Word",
         "ProductC": "MonorepoHelloWorld"
@@ -211,8 +214,8 @@
     },
     "GeneratedSuiteList": {
       "Suites": [
-        "GeneratedSuiteList-Word-w10rs4-x86",
-        "GeneratedSuiteList-Excel-win_10_rs3"
+        "GeneratedSuiteList-Word-w10rs4-x86-1",
+        "GeneratedSuiteList-Excel-win_10_rs3-2"
       ]
     }
   },

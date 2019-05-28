@@ -494,7 +494,7 @@ namespace Tdl
     public MakeDefinitions(definitions : Definition.IAstList) : ImmutableArray[Def2]
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
-      foreach (definition in definitions)
+      foreach (definition when definition.Expr.IsResultEvaluated in definitions)
         builder.Add(Def2(definition.Reference.Text, definition.Expr.Result));
       builder.TryMoveToImmutable()
     }
