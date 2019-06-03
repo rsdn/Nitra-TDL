@@ -1,0 +1,126 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deploy1": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "PathToCerts": "$(PathToCerts)"
+      },
+      "ScriptArgsDefaultValues": {
+        "PathToCerts": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs"
+      },
+      "ScriptPath": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs\\installCertificates.ps1"
+    }
+  },
+  "Platforms": {
+    "w10rs5-x64": {}
+  },
+  "Products": {
+    "MonorepoHelloWorld": {
+      "Name": "MonorepoHelloWorld",
+      "Parameters": {
+        "Name": "MonorepoHelloWorld"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {},
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Tests"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Tests": {
+      "TestScenarios": [
+        "Test1",
+        "Test2",
+        "Test3"
+      ]
+    },
+    "Test1": {
+      "Deployments": [
+        "Deploy1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5-x64"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Ns1.BaseClass.Method1"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    },
+    "Test2": {
+      "Deployments": [
+        "Deploy1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5-x64"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Ns1.DerivedClass.Method2"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E7",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    },
+    "Test3": {
+      "Deployments": [
+        "Deploy1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5-x64"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Ns1.DerivedClass.VirtualMethod"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E9",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    }
+  },
+  "TestEntities": {}
+}

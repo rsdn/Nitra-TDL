@@ -330,6 +330,11 @@ namespace Ns1
         public void Method1()
         {
         }
+
+        [TestMethod]
+        public virtual void VirtualMethod()
+        {
+        }
     }
 
     [TestClass]
@@ -337,6 +342,11 @@ namespace Ns1
     {
         [TestMethod]
         public void Method2()
+        {
+        }
+
+        [TestMethod]
+        public override void VirtualMethod()
         {
         }
     }
