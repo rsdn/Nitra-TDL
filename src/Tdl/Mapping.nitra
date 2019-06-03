@@ -87,7 +87,11 @@ namespace Tdl
     | Suite             -> Suite.Def
       {
         Name                         -> Name;
-        match (Name) { _ -> None() } -> TypeOpt;
+        match (BaseTypeOpt)
+        {
+          | Some(x) -> Some(x.Type)
+          | None    -> None()
+        }-> TypeOpt;
         match (SuiteBody.EntityOpt)
         {
           | Some(x) -> Some(x.Reference)
@@ -107,7 +111,11 @@ namespace Tdl
       {
         Name                         -> Name;
         Froms                        -> Froms;
-        match (Name) { _ -> None() } -> TypeOpt;
+        match (BaseTypeOpt)
+        {
+          | Some(x) -> Some(x.Type)
+          | None    -> None()
+        }-> TypeOpt;
         match (SuiteScenario.EntityOpt)
         {
           | Some(x) -> Some(x.Reference)
@@ -117,20 +125,6 @@ namespace Tdl
         SuiteScenario.Product.Reference  -> Product;
         SuiteScenario.DefDeclarations    -> Definitions;
         SuiteScenario.SuiteStatements    -> Statements;
-      }
-    | SuiteTyped       -> Suite.Def
-      {
-        Name                         -> Name;
-        Some(Type)                   -> TypeOpt;
-        match (SuiteBody.EntityOpt)
-        {
-          | Some(x) -> Some(x.Reference)
-          | None    -> None()
-        }-> EntityOpt;
-        SuiteBody.Platform.Reference -> Platform;
-        SuiteBody.Product.Reference  -> Product;
-        SuiteBody.DefDeclarations    -> Definitions;
-        SuiteBody.SuiteStatements    -> Statements;
       }
     | External -> ExternalAst { ExternalBody.Fields -> Fields; }
     | Barrier  -> Barrier     { Name -> Name; Timeout -> Timeout; }

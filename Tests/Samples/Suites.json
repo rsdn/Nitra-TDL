@@ -167,7 +167,8 @@
         "IntValue": 1,
         "ProductA": "Word",
         "ProductB": "Word",
-        "ProductC": "MonorepoHelloWorld"
+        "ProductC": "MonorepoHelloWorld",
+        "AutotestAssemblies": "lib.dll"
       },
       "Platforms": [
         "w10rs4-x86"
@@ -185,7 +186,8 @@
         "IntValue": 2,
         "ProductA": "Excel",
         "ProductB": "Word",
-        "ProductC": "MonorepoHelloWorld"
+        "ProductC": "MonorepoHelloWorld",
+        "AutotestAssemblies": "lib.dll"
       },
       "Platforms": [
         "win_10_rs3"

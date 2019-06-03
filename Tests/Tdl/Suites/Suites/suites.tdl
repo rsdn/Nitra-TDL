@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-suite GeneratedSuiteList =
+suite GeneratedSuiteList : SuiteType1 =
     from (Product, Platform, Value) in [/*(MonorepoHelloWorld, w10rs4-x64),*/ (Word, w10rs4-x86, 1), (Excel, win_10_rs3, 2)]
     select
     {
@@ -12,6 +12,7 @@ suite GeneratedSuiteList =
       ProductA = Product;
       ProductB = Word;
       ProductC = MonorepoHelloWorld;
+      AutotestAssemblies = "lib.dll";
       Test1();
     };
 
@@ -19,7 +20,12 @@ suite SuiteList = Suite1, Suite2, SuiteList1;
 
 suite SuiteList1 = Suite1, Suite3;
 
-suite Suite1
+suite type SuiteType1
+{
+  string AutotestAssemblies;
+}
+
+suite Suite1 : SuiteType1
 {
     platform w10rs5-x64;
     product MonorepoHelloWorld;

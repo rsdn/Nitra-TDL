@@ -119,7 +119,8 @@ namespace Tdl
       def productType           = TdlType.ProductSymbol();
       def entityType            = TdlType.EntitySymbol();
       def methodType            = FunctionTypeSymbol();
-      def context               = TdlDependentPropertyEvalContext(project, deploymentType, platformType, productType, entityType, methodType);
+      def scenarioType          = TdlType.ScenarioSymbol();
+      def context               = TdlDependentPropertyEvalContext(project, deploymentType, platformType, productType, entityType, methodType, scenarioType);
       def rootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
       def systemNsRef   = bindNs(rootNamespace.Scope, "System");
       when (systemNsRef.IsSymbolEvaluated)
@@ -158,6 +159,7 @@ namespace Tdl
       initTypeSymbol(methodType);
       initTypeSymbol(productType);
       initTypeSymbol(entityType);
+      initTypeSymbol(scenarioType);
 
 
       def baseProductType            = MakeBaseProductTypeSymbol(context, rootNamespace);
