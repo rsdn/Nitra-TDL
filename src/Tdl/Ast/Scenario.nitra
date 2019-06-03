@@ -9,12 +9,14 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Scenario : NamespaceMember, UsedDeclaration
+  abstract declaration Scenario : NamespaceMember, UsedDeclaration, TypedDeclaration
   {
     symbol
     {
     stage 3:
       in AggregateParametersScope : Scope;
+
+      Type = context.ToTdlContext().ScenarioType;
     }
     
     CheckForRecursionScenario(context, Symbol, Symbol.AggregateParametersScope);
