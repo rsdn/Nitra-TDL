@@ -43,7 +43,7 @@ namespace Tdl
             | _ => e
           }
           list.Elems.Select(getElem)
-        | _ => assert(false, $"Unsupporten expressoin type $(GetType().FullName)")
+        | _ => assert(false, $"Unsupported expression type $(GetType().FullName)")
       }
     }
 
