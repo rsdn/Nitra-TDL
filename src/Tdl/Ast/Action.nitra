@@ -72,7 +72,7 @@ namespace Tdl
         Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = ScenarioAction.Method(Method.Location, MethodRef.Symbol, MaxRebootsCountOpt);
+        ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt);
 
         MaxRebootsCountOpt : ParsedValue[int];
         Method             : QualifiedReference;
