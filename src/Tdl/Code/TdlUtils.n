@@ -1537,5 +1537,15 @@ namespace Tdl
         | _ => VNone()
       }
     }
+
+    public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ParsedValue[int]) : ValueOption[ScenarioAction.Method]
+    {
+      match (methodAst)
+      {
+        | Qualified as q when q.Qualifier.IsRefEvaluated && q.Qualifier.Ref.IsSymbolEvaluated =>
+          VSome(ScenarioAction.Method(methodAst.Location, q.Qualifier.Ref.Symbol, methodSymbol, maxRebootsCountOpt))
+        | _ => VNone()
+      }
+    }
   } // module
 } // namespace

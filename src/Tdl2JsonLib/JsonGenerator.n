@@ -270,27 +270,16 @@ namespace Tdl2Json
       | _ => ThrowNotSupportedSymbol(productSymbol)
     }
 
-    private GetAssemblyAndMethodName(method : Member.MethodSymbol) : string * string
+    private GetAssemblyAndMethodName(typeSymbolOpt : DeclarationSymbol, [NotNull] methodSymbol : Member.MethodSymbol) : string * string
     {
-      def decl         = method.GetDeclarationsOfType.[ExternalMethodDeclaration]();
+      def decl         = methodSymbol.GetDeclarationsOfType.[ExternalMethodDeclaration]();
       def method       = decl.First().Method;
-      def type         = method.ContainingType :> ITypeDefinition;
+      def typeSymbol   = typeSymbolOpt :> SymbolBase;
+      def type         = if (typeSymbol == null) method.ContainingType :> ITypeDefinition
+                         else typeSymbol.GetDeclarationsOfType.[ExternalTopTypeDeclaration.[TopClassSymbol]]().First().Type;
       def unit         = TypeHelper.GetDefiningUnit(type);
       def assemblyName = unit.Name.Value + ".dll";
-      
-      def temp         = Path.GetTempPath();
-      def ns           = (method.ContainingType :> Microsoft.Cci.MetadataReader.ObjectModelImplementation.NamespaceType).ContainingNamespace.ToString();
-      def dir          = Path.Combine(temp, "!", ns);
-      unless (Directory.Exists(dir))
-        _ = Directory.CreateDirectory(dir);
-      def className    = (method.ContainingType :> Microsoft.Cci.MetadataReader.ObjectModelImplementation.TypeBase).TypeName.ToString();
-      def file         = Path.Combine(dir, className);
-      def methods = if (File.Exists(file)) HashSet(File.ReadAllLines(file)) else HashSet();
-      def methodName   = method.Name.Value.ToString();
-      _ = methods.Add(methodName);
-      File.WriteAllLines(file, methods.OrderBy(x => x), Text.Encoding.UTF8);
-      
-      def methodName   = method.ContainingType + "." + method.Name.Value;
+      def methodName   = type + "." + method.Name.Value;
 
       (assemblyName, methodName)
     }
@@ -428,7 +417,7 @@ namespace Tdl2Json
       def product    = TryResolveVar(dic, g.Product)    : ProductSymbol;
       def getTestMethod() : TestMethod
       {
-        def (assemblyName, methodName) = GetAssemblyAndMethodName(method);
+        def (assemblyName, methodName) = GetAssemblyAndMethodName(null, method);
         TestMethodQualifier() <- 
         {
           AssemblyName = assemblyName;
@@ -501,7 +490,7 @@ namespace Tdl2Json
                 when (r.Actions.Length == 1)
                 when (r.Actions[0] is ScenarioAction.Method as method)
                 {
-                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
+                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.type, method.method);
                   return TestMethodQualifier() <- 
                   {
                     AssemblyName               = assemblyName;
@@ -512,7 +501,7 @@ namespace Tdl2Json
                 }
                 def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
                 {
-                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.method);
+                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.type, method.method);
                   TestMethodQualifier() <- 
                   {
                     AssemblyName               = assemblyName;

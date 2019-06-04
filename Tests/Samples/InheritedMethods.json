@@ -67,7 +67,7 @@
       "ExternalAutotestId": 24,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Ns1.BaseClass.Method1"
+        "MethodName": "Ns1.DerivedClass.Method1"
       },
       "Timeout": "00:05:00",
       "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8",
