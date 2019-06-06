@@ -102,7 +102,7 @@ namespace Tdl
           in Platform    : TypedDeclarationSymbol;
           in Product     : TypedDeclarationSymbol;
           in Type        : SuiteTypeSymbol;
-          in EntityOpt   : ValueOption[EntitySymbol];
+          in EntityOpt   : ValueOption[TypedDeclarationSymbol];
         stage 3          :
           in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
           in Defs        : ImmutableArray[Def];
@@ -117,7 +117,7 @@ namespace Tdl
         out PlatformRef  : Ref[TypedDeclarationSymbol];
         out ProductRef   : Ref[TypedDeclarationSymbol];
         out TypeRef      : Ref[DeclarationSymbol];
-        out EntityRefOpt : ValueOption[Ref[EntitySymbol]];
+        out EntityRefOpt : ValueOption[Ref[TypedDeclarationSymbol]];
 
         Froms.Scope                 = Scope;
         Froms.ContainingTable       = Symbol.MemberTable;
@@ -144,7 +144,7 @@ namespace Tdl
         Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
         Symbol.DefaultDefs          = await Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product, Symbol.Froms);
 
-        EntityOpt.Scope             = Scope;
+        EntityOpt.Scope             = Platform.Scope;
         EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
         Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
 
