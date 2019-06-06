@@ -765,13 +765,18 @@ namespace Tdl2Json
 
       foreach (dic in SubstituteVariables(g.Froms, 0))
       {
-        def name = $<#$nameBase-..$(dic.Values; "-")#>;
+        def toString(e : Tdl.Expr) : string
+        {
+          | String as s => s.Value
+          | _ => e.ToString()
+        }
+        def name = $<#$nameBase-..$(dic.Values; "-"; toString)#>;
         names.Add(name);
         def platform   = TryResolveVar(dic, g.Platform) : PlatformSymbol;
         def product    = TryResolveVar(dic, g.Product)  : ProductSymbol;
 
         def parameters = CollectDefs(g.Defs, dic).ToDictionary();
-        foreach (d in g.DefaultDefs)
+        foreach (d when !parameters.ContainsKey(d.Name) in g.DefaultDefs)
           parameters.Add(d.Name, ParameterDefaultValue);
         
         def entityOpt = g.EntityOpt;
