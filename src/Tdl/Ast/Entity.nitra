@@ -14,7 +14,7 @@ namespace Tdl
     {
       in Defs : ImmutableArray[Def];
       
-//      Type = context.ToTdlContext().EntityType;
+      Type = context.ToTdlContext().EntityType;
       SpanClass = TdlLang.EntitySpanClass;
     }
 
