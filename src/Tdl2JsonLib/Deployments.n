@@ -59,19 +59,19 @@ namespace Tdl2Json
         | Double    as d => d.Value
         | Single    as s => s.Value
         | None           => null
-        | Reference      => null
+        | Reference as r => r.name
         | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
     }
     
     private GenerateDeploymentScript(script : Deployment.ScriptSymbol) : string * QuickType.Deployment
     {
-      def refDefs         = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
-      def allParameters   = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
-      def parameters      = allParameters.Select(p => (p.Name, getParameterValue(p)));
-      def defaultes       = allParameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
-      def defs            = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
-      def scriptArgs      = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
+      def refDefs          = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
+      def simpleParameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
+      def parameters       = simpleParameters.Select(p => (p.Name, getParameterValue(p)));
+      def defaultes        = script.Parameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
+      def defs             = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
+      def scriptArgs       = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
       def deploymentModel = Deployment() <- 
       {
