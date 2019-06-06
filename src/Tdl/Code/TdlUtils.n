@@ -1003,6 +1003,7 @@ namespace Tdl
     
     MakeDefaultDefs(ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, getAllProducts : TypedDeclarationSymbol -> Seq[Product.DefSymbol]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
+      mutable isUsedVar = false;
       def filteringScope    = definitionScope :> FilteringScope;
       def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
                                                     .OfType.[FormalParameterSymbol]()
@@ -1016,17 +1017,25 @@ namespace Tdl
       
       // We fill the values explicitly specified.
       foreach (d in defs)
-        when (d.Expr is Tdl.Expr.String as str)
-          paramMap[d.Symbol] = str.Value;
-
+          match (d.Expr)
+          {
+            | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
+            | Tdl.Expr.Reference => isUsedVar = true;
+            | _ => ()
+          }
+          
       foreach (ds in getAllProducts(product))
       {
         unless (ds.IsDefsEvaluated)
           return VNone();
 
         foreach (d in ds.Defs)
-          when (d.Expr is Tdl.Expr.String as str)
-            paramMap[d.Symbol] = str.Value;
+          match (d.Expr)
+          {
+            | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
+            | Tdl.Expr.Reference => isUsedVar = true;
+            | _ => ()
+          }
       }
 
       foreach (s in selectDeployments)
@@ -1060,7 +1069,7 @@ namespace Tdl
           }
           isEntryPresent |= isEntryMatch;
         }
-        unless (isEntryPresent)
+        when (!isEntryPresent && !isUsedVar)
         {
           def entryStr = values.Select(v => if (v == null) "_" else <#"#> + v + '"');
           def msgs     = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
