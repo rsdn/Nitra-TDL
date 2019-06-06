@@ -18,7 +18,7 @@ namespace Tdl
 
       Type = context.ToTdlContext().ScenarioType;
     }
-    
+
     CheckForRecursionScenario(context, Symbol, Symbol.AggregateParametersScope);
 
     unless (Symbol.IsUsed)
@@ -47,7 +47,7 @@ namespace Tdl
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
-        Symbol.AggregateParametersScope = Symbol.ParameterScope.UnionWith(Symbol.Deployment.AggregateParametersScope);
+        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context);
 
         Actions.Scope                   = MethodConditionalScope.Value;
         Symbol.Actions                  = Actions.ScenarioActions;
@@ -97,7 +97,7 @@ namespace Tdl
 
         Scenarios.Scope                 = Scope;
         Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
-        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios);
+        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios, context);
         Symbol.MultiMachineId           = if (Symbol.IsMultiMachine) context.NewGuid() else Guid.Empty;
         Symbol.IsMultiMachine           = IsMultiMachine.HasValue && IsMultiMachine.Value;
 
@@ -154,7 +154,7 @@ namespace Tdl
         Symbol.Product                  = ProductRef   .Symbol;
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployment, Symbol.Froms);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployment, Symbol.Froms, context);
         
         Deployment.CheckExpected(context, context.ToTdlContext().DeploymentType, DeploymentRef.Symbol.Type);
         Method.    CheckExpected(context, context.ToTdlContext().MethodType,     MethodRef.Symbol.Type);
