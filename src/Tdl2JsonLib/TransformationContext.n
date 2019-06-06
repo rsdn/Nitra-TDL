@@ -20,7 +20,9 @@ namespace Tdl2Json
     public Comments : CommentBag { get; }
 
     public Messages : CompilerMessageBag { get; }
-    
+
+    public InitialDeployment : Tdl.DeploymentSymbol { get; }
+
     public OutputPath : string { get; }
   }
 }

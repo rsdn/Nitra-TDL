@@ -1,0 +1,13 @@
+﻿deployment DeployP1(string DeploymentParameter)
+  script "deploy.ps1"
+{
+}
+
+initial select deployment Setup(InitialDeploymentParameter)
+{
+  | "A" => A
+  | "B" => B
+}
+
+deployment A() script "A.ps1" {}
+deployment B() script "A.ps1" {}

@@ -93,9 +93,8 @@ namespace Tdl2Json
 
       CheckFilesExists(absolutePaths, m => $"File not found: $m");
 
-      def (rootNamespace, messages, commentBag) = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled, mode);
-      def context = TransformationContext(rootNamespace, commentBag, messages, transformatorOutput);
-      unless (messages.HasErrors)
+      def context = Compile(workingDirectory, absolutePaths, references, isMethodTypingEnabled, mode, transformatorOutput);
+      unless (context.Messages.HasErrors)
       {
         if (mode == CompilerMode.Transform)
           transformatorOpt(context);
@@ -104,7 +103,7 @@ namespace Tdl2Json
           when (string.IsNullOrEmpty(deploymentToolPath))
             deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
 
-          GenerateJson(rootNamespace, output, deploymentScriptHeader, deploymentToolPath, jsonSchemaType);
+          GenerateJson(context.RootNamespace, context.InitialDeployment, output, deploymentScriptHeader, deploymentToolPath, jsonSchemaType);
         }
       }
 
@@ -117,7 +116,7 @@ namespace Tdl2Json
       FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")
     ];
 
-    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, mode : CompilerMode) : NamespaceSymbol * CompilerMessageBag * CommentBag
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, mode : CompilerMode, transformatorOutput : string) : TransformationContext
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
       
@@ -150,8 +149,9 @@ namespace Tdl2Json
       foreach (file in project.Files)
         _ = messages.AddRange(file.GetCompilerMessages());
 
-      def namespaceSymbol = (data :> TdlProjectData).RootNamespace;
-      (namespaceSymbol, messages, commentBag)
+      def tdlProjectData = data :> TdlProjectData;
+      def evalContext    = tdlProjectData.Context :> TdlDependentPropertyEvalContext;
+      TransformationContext(tdlProjectData.RootNamespace, commentBag, messages, evalContext.InitialDeployment, transformatorOutput)
     }
 
     internal ReportMessage(msg : string, importance : MessageImportance = MessageImportance.High) : void
@@ -165,7 +165,7 @@ namespace Tdl2Json
       stopwatch.Restart();
     }
 
-    private GenerateJson(root : NamespaceSymbol, output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string) : void
+    private GenerateJson(root : NamespaceSymbol, initialDeployment : DeploymentSymbol, output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string) : void
     {
       def stopwatch = Stopwatch.StartNew();
       JsonGenerator.ReportMessage("Generating JSON...");
@@ -189,7 +189,7 @@ namespace Tdl2Json
         Products      = symbols.OfType.[ProductSymbol        ]().Select(GenerateProduct)             .ToDictionary();
         Platforms     = symbols.OfType.[PlatformSymbol       ]().Select(GeneratePlatform)            .ToDictionary();
         Suites        = symbols.OfType.[Suite.DefSymbol      ]().Select(GenerateSuite).Concat(suites).ToDictionary();
-        TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol   ]().SelectMany(GenerateScenarios)       .ToDictionary();
+        TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol   ]().SelectMany(GenerateScenarios(_, initialDeployment)).ToDictionary();
         SuiteGroups   = if (suiteGroups.Count == 0) null else suiteGroups;
         TestEntities  = symbols.OfType.[EntitySymbol         ]().Select(GenerateEntity)              .ToDictionary();
       };
@@ -332,7 +332,7 @@ namespace Tdl2Json
       g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
     }
     
-    private GenerateScenarios(scenarioSymbol : ScenarioSymbol) : Seq[string * TestCase]
+    private GenerateScenarios(scenarioSymbol : ScenarioSymbol, initialDeployment : DeploymentSymbol) : Seq[string * TestCase]
     {
       mutable counter : uint = 0;
       match(scenarioSymbol)
@@ -356,18 +356,18 @@ namespace Tdl2Json
             counter++;
             def name = scenarioSymbol.Name + "-" + counter;
             names.Add(name);
-            def testGroup = GenerateSuite(g, uniqueId, dic);
+            def testGroup = GenerateSuite(g, uniqueId, dic, initialDeployment);
             yield (name, TestCase() <- { TestGroup = testGroup; });
             uniqueId = incGuid(uniqueId);
           }
               
           yield (scenarioSymbol.Name, TestCase() <- { TestGroup = TestGroup() <- { TestScenarios = names.ToArray() }; });
 
-        | _ => yield GenerateScenario(scenarioSymbol);
+        | _ => yield GenerateScenario(scenarioSymbol, initialDeployment);
       }
     }
 
-    private GenerateSuite(g : Tdl.Scenario.GeneratorSymbol, uniqueId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : TestGroup
+    private GenerateSuite(g : Tdl.Scenario.GeneratorSymbol, uniqueId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], initialDeployment : DeploymentSymbol) : TestGroup
     {
       def getString(name : string) : string
       {
@@ -427,7 +427,7 @@ namespace Tdl2Json
       def testGroup =
         TestGroup() <- 
         {
-          Deployments             = array[TestGroupDeployment() <- String = deployment.Name];
+          Deployments             = GetTestGroupDeployments(initialDeployment, deployment);
           Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
           TestMethod              = getTestMethod();
           Area                    = getString("Area");
@@ -449,7 +449,7 @@ namespace Tdl2Json
       testGroup
     }
 
-    private GenerateScenario(scenarioSymbol : ScenarioSymbol) : string * TestCase
+    private GenerateScenario(scenarioSymbol : ScenarioSymbol, initialDeployment : DeploymentSymbol) : string * TestCase
     {
       (scenarioSymbol.Name, 
         TestCase() <- {
@@ -606,7 +606,7 @@ namespace Tdl2Json
               
               TestGroup() <- 
               {
-                  Deployments             = array[TestGroupDeployment() <- String = r.Deployment.Name];
+                  Deployments             = GetTestGroupDeployments(initialDeployment, r.Deployment);
                   Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
                   TestMethod              = getTestMethod();
                   Area                    = getString("Area");
@@ -633,15 +633,25 @@ namespace Tdl2Json
       })
     }
 
+    private GetTestGroupDeployments(initialDeployment : DeploymentSymbol, scenarioDeployment : DeploymentSymbol) : array[TestGroupDeployment]
+    {
+      def makeReference(d : DeploymentSymbol) { TestGroupDeployment() <- String = d.Name }
+
+      if (initialDeployment != null && !initialDeployment.Equals(scenarioDeployment))
+        array[makeReference(initialDeployment), makeReference(scenarioDeployment)]
+      else
+        array[makeReference(scenarioDeployment)]
+    }
+
     private GenerateEntity(symbol : EntitySymbol) : string * TestEntity
     {
       def parameters = CollectDefs(symbol.Defs).ToDictionary();
       def entity = TestEntity() <-
       {
-		    BranchName = parameters["BranchName"].ToString();
-		    Name       = parameters["Name"      ].ToString();
-		    Type       = parameters["Type"      ].ToString();
-		    Version    = parameters["Version"   ].ToString();
+        BranchName = parameters["BranchName"].ToString();
+        Name       = parameters["Name"      ].ToString();
+        Type       = parameters["Type"      ].ToString();
+        Version    = parameters["Version"   ].ToString();
       };
       
       (symbol.Name, entity)
@@ -657,7 +667,6 @@ namespace Tdl2Json
       def result = GenerateScenarioFilterImpl(expr);
       result
     }
-
 
     private GenerateBySymbol(symbol : DeclarationSymbol) : string
     {

@@ -196,6 +196,7 @@ namespace Tdl
       def rootNamespace         = projectData.RootNamespace;
       context.CancellationToken = cancellationToken;
       backEnd.CancellationToken = cancellationToken;
+      context.InitialDeployment = null;
 
       def removeParsedSymbols(tableScope : TableScope)
       {
