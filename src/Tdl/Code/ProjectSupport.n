@@ -36,7 +36,13 @@ namespace Tdl
     public this()    
     {
       //assert2(false);
-      DotNet.AstUtils.MakeDefault = DotNet.Coverters.MakeDefaultParameters;
+      def makeDefaultParameters(ast : ExprBase) : ValueOption[DefaultValue]
+      {
+        | x   is DotNet.Expr.SimpleName when !x.IsRefEvaluated || !x.Ref.IsSymbolEvaluated => VNone()
+        | x   is DotNet.Expr.SimpleName when x.IsRefEvaluated && x.Ref.IsSymbolEvaluated => VSome(DefaultValue.Reference(x.Ref.Symbol.Name))
+        | _ => DotNet.Coverters.MakeDefaultParametersOpt(ast)
+      }
+      DotNet.AstUtils.MakeDefault = makeDefaultParameters;
       DotNet.AstUtils2.ExtensionScopeFactory = CreateExtensionScopeFactory;
     }
 
