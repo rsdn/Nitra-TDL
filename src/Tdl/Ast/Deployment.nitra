@@ -21,6 +21,11 @@ namespace Tdl
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
 
+    InitialKeyword : NSpan;
+
+    unless (InitialKeyword.IsEmpty)
+      SetInitialDeployment(Symbol, context);
+
     | ignore-case Script : Parameterizable, DeploymentOptionsHost
       {
         symbol

@@ -278,10 +278,15 @@ namespace Tdl
       true
     }
 
-    public MakeAggregateParametersScope(scenarios : ImmutableArray[ScenarioSymbol]) : Scope
+    public MakeAggregateParametersScope(scenarios : ImmutableArray[ScenarioSymbol], context : DependentPropertyEvalContext) : Scope
     {
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
+
+      def initialDeployment = context.ToTdlContext().InitialDeployment;
+      when (initialDeployment != null && initialDeployment.IsAggregateParametersScopeEvaluated)
+        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
+
       CollectScenarios(visited, ref builder, scenarios);
       builder.ToScope()
     }
@@ -1096,6 +1101,24 @@ namespace Tdl
       text
     }
 
+    public SetInitialDeployment(this deployment : Deployment, symbol : DeploymentSymbol, context : DependentPropertyEvalContext) : void
+    {
+      def context = context.ToTdlContext();
+      def initialDeployment = context.InitialDeployment;
+      if (initialDeployment == null)
+        context.InitialDeployment = symbol
+      else
+      {
+        def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, deployment);
+        using (root = msgs.RootError(deployment.Name, $"Redefinition of initial deployment, first is '$(initialDeployment)'."))
+        {
+          def firstDefinition = initialDeployment.FirstParsedDeclarationOrDefault;
+          when (firstDefinition != null)
+            root.Hint(firstDefinition.Name.Location, "First definition.");
+        }
+      }
+    }
+
     public CheckForRecursionSuite(this ast : IAst, context : DependentPropertyEvalContext, symbol : SuiteSymbol, _depend : object) : void
     {
       def getDescendants(sym : SuiteSymbol) : Seq[SuiteSymbol]
@@ -1204,9 +1227,25 @@ namespace Tdl
       }
     }
 
-    public MakeAggregateParametersScope(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From]) : ValueOption[Scope]
+    public MakeAggregateParametersScope(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
+    {
+      mutable builder;
+      UnionScopeBuilder.Add(parametersScope, ref builder);
+      UnionScopeBuilder.Add(deploymentScope, ref builder);
+
+      def initialDeployment = context.ToTdlContext().InitialDeployment;
+      when (initialDeployment != null && initialDeployment.IsAggregateParametersScopeEvaluated)
+        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
+
+      builder.ToScope();
+    }
+
+    public MakeAggregateParametersScope(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       def deployments = List();
+      def initialDeployment = context.ToTdlContext().InitialDeployment;
+      when (initialDeployment != null)
+        deployments.Add(initialDeployment);
       match (deployment)
       {
         | DeploymentSymbol as d when !d.IsAllDeploymentsEvaluated => return VNone();
