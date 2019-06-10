@@ -36,6 +36,9 @@
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public int? MaxRebootsCount { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string LocalTestBinariesFolder { get; set; }
     }
 
     public sealed class RebootTestStep : TestMethod, TestSequenceItem

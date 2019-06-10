@@ -497,6 +497,7 @@ namespace Tdl2Json
                     MethodName                 = methodName;
                     MaxRebootsCount            = method.MaxRebootsCountOpt.ToNulable();
                     ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+                    LocalTestBinariesFolder    = if (method.binariesFolderOpt.HasValue) method.binariesFolderOpt.Value else null;
                   };
                 }
                 def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
@@ -508,6 +509,7 @@ namespace Tdl2Json
                     MethodName                 = methodName;
                     MaxRebootsCount            = method.MaxRebootsCountOpt.ToNulable();
                     ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+                    LocalTestBinariesFolder    = if (method.binariesFolderOpt.HasValue) method.binariesFolderOpt.Value else null;
                   }
                 }
                 def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
