@@ -72,10 +72,11 @@ namespace Tdl
         Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt);
+        ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt, BinariesFolderOpt);
 
-        MaxRebootsCountOpt : ParsedValue[int];
         Method             : QualifiedReference;
+        MaxRebootsCountOpt : ParsedValue[int];
+        BinariesFolderOpt  : CSharp.StringLiteral?;
       }
     | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot

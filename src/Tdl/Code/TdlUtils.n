@@ -1547,12 +1547,16 @@ namespace Tdl
       }
     }
 
-    public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ParsedValue[int]) : ValueOption[ScenarioAction.Method]
+    public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ParsedValue[int], binariesFolderOpt : CSharp.StringLiteral.IAstOption) : ValueOption[ScenarioAction.Method]
     {
       match (methodAst)
       {
         | Qualified as q when q.Qualifier.IsRefEvaluated && q.Qualifier.Ref.IsSymbolEvaluated =>
-          VSome(ScenarioAction.Method(methodAst.Location, q.Qualifier.Ref.Symbol, methodSymbol, maxRebootsCountOpt))
+          VSome(ScenarioAction.Method(methodAst.Location,
+                                      q.Qualifier.Ref.Symbol,
+                                      methodSymbol,
+                                      maxRebootsCountOpt,
+                                      binariesFolderOpt.ConvertStringLiteral()))
         | _ => VNone()
       }
     }

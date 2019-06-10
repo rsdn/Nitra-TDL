@@ -144,7 +144,7 @@
 
     syntax Environments    = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
     syntax Environment     = "(" Platform=Reference "," sm Product=Reference ")";
-    syntax Method          = "method" sm QualifiedIdentifier MaxRebootsCountOpt=MaxRebootsCount? ";" nl;
+    syntax Method          = "method" sm QualifiedIdentifier MaxRebootsCount? BinariesFolder? ";" nl;
     syntax Config          = "config" sm Path=StringLiteral MaxRebootsCount? ";" nl;
     syntax GTest           = "gtest"  sm Name=StringLiteral Arguments=StringLiteral* MaxRebootsCount? ";" nl;
     syntax Apk             = "apk"    sm Name=StringLiteral Filter? "runner" RunnerPath=StringLiteral MaxRebootsCount? ";" nl
@@ -245,5 +245,7 @@
     }
 
     syntax MaxRebootsCount = sm "max-reboots" sm Value=DecimalIntegerLiteral;
+
+    syntax BinariesFolder = sm "bins" sm Value=StringLiteral;
   }
 }

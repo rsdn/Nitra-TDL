@@ -1,0 +1,50 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+
+suite Suite1
+{
+    platform w10rs5-x64;
+    product MonorepoHelloWorld;
+    Version = ProductVersion;
+    Test1();
+}
+
+scenario Test1()
+{
+    deployment InstallProduct;
+    environments (w10rs5-x64, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers 
+           bins @"\\avp.ru\global\Boxes\Vladislav Chistyakov\Public\TestDeployer\";
+    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    Timeout = "00:05:00";
+}
+
+deployment InstallProduct(string Version)
+    script @"\\sdfs\autotests\KIS\DeploymentScripts\TdlTests\null-deployment.ps1"
+{
+    expected 42;
+}
+
+product type TheProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product MonorepoHelloWorld : TheProductType
+{
+    Name = "MonorepoHelloWorld";
+    BranchName = "MonorepoHelloWorld";
+    Version = ProductVersion;
+}
+
+external
+{
+    string ProductVersion;
+    bool IsSome;
+}
+
+platform w10rs5-x64;

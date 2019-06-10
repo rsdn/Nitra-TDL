@@ -1,0 +1,71 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "InstallProduct": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "Version": "$(Version)"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
+    }
+  },
+  "Platforms": {
+    "w10rs5-x64": {}
+  },
+  "Products": {
+    "MonorepoHelloWorld": {
+      "Name": "MonorepoHelloWorld",
+      "Parameters": {
+        "Name": "MonorepoHelloWorld"
+      },
+      "BranchName": "MonorepoHelloWorld",
+      "Version": "#(ProductVersion)"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {
+        "Version": "#(ProductVersion)"
+      },
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Test1": {
+      "Deployments": [
+        "InstallProduct"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5-x64"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers",
+        "LocalTestBinariesFolder": "\\\\avp.ru\\global\\Boxes\\Vladislav Chistyakov\\Public\\TestDeployer\\"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    }
+  },
+  "TestEntities": {}
+}

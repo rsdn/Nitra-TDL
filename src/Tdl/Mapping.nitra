@@ -239,6 +239,11 @@ namespace Tdl
       [ Action.Method
         {
           Method.QualifiedIdentifier -> Method;
+          match (Method.BinariesFolderOpt)
+          {
+            | None    -> None()
+            | Some(x) -> Some(x)
+          } -> BinariesFolderOpt;
           MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
         }
       ]
@@ -250,6 +255,11 @@ namespace Tdl
     | Method  -> Method
       {
         Method.QualifiedIdentifier -> Method;
+        match (Method.BinariesFolderOpt)
+        {
+          | None    -> None()
+          | Some(x) -> Some(x)
+        } -> BinariesFolderOpt;
         MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
       }
     | Script ->  Action.Script
@@ -384,4 +394,6 @@ namespace Tdl
   map syntax Grammar.StringLiteral.RegularStringLiteral -> CSharp.StringLiteral { Lit }
 
   map syntax Grammar.StringLiteral.VerbatimStringLiteral -> CSharp.StringLiteral { Lit }
+
+  map syntax Grammar.BinariesFolder -> CSharp.StringLiteral { Value }
 }
