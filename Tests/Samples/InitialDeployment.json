@@ -1,0 +1,193 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "DeployP1": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "DeploymentParameter": "$(DeploymentParameter)"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "deploy.ps1"
+    },
+    "Setup": {
+      "Type": "Select",
+      "Condition": "$(InitialDeploymentParameter)",
+      "Values": {
+        "A": {
+          "A": {}
+        },
+        "B": {
+          "B": {}
+        }
+      }
+    },
+    "A": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "A.ps1"
+    },
+    "B": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "A.ps1"
+    }
+  },
+  "Platforms": {
+    "win7-x64": {}
+  },
+  "Products": {
+    "P1": {
+      "Name": "P1",
+      "Parameters": {
+        "Name": "P1"
+      },
+      "BranchName": null,
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {
+        "InitialDeploymentParameter": "A",
+        "DeploymentParameter": "value for normal deployment"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    },
+    "Suite2": {
+      "Parameters": {
+        "InitialDeploymentParameter": "B",
+        "DeploymentParameter": "value for normal deployment"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario2"
+      ]
+    },
+    "Suite3": {
+      "Parameters": {
+        "InitialDeploymentParameter": "B",
+        "DeploymentParameter": "value for normal deployment"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario3"
+      ]
+    },
+    "Suite4": {
+      "Parameters": {
+        "InitialDeploymentParameter": "B"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario4"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "Deployments": [
+        "Setup",
+        "DeployP1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "P1"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "ProgramName": "foo.exe",
+        "Arguments": []
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "7E9EDB31-B4C7-431A-AD51-EAAA52498E6A"
+    },
+    "Scenario2": {
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    },
+    "Scenario3-1": {
+      "Deployments": [
+        "Setup",
+        "DeployP1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "P1"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "93586316-7b2f-4418-b069-7838d6d407b3"
+    },
+    "Scenario3": {
+      "TestScenarios": [
+        "Scenario3-1"
+      ]
+    },
+    "Scenario4": {
+      "Deployments": [
+        "Setup"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "P1"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "ProgramName": "foo.exe",
+        "Arguments": []
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "6ADCB4F5-751B-48F6-9A78-FE9E6AFB176E"
+    }
+  },
+  "TestEntities": {}
+}

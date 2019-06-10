@@ -16,12 +16,16 @@ namespace Tdl
   public class TdlDependentPropertyEvalContext : DependentPropertyEvalContext
   {
     [RecordIgnore]
-    public TdlProjectData  : TdlProjectData { get; set; }
-    public DeploymentType  : TdlType.DeploymentSymbol;
-    public PlatformType    : TdlType.PlatformSymbol;
-    public ProductType     : TdlType.ProductSymbol;
-    public EntityType      : TdlType.EntitySymbol;
-    public MethodType      : FunctionTypeSymbol;
-    public ScenarioType    : TdlType.ScenarioSymbol;
+    public TdlProjectData    : TdlProjectData { get; set; }
+
+    [RecordIgnore]
+    public InitialDeployment : DeploymentSymbol { get; set; }
+
+    public DeploymentType    : TdlType.DeploymentSymbol;
+    public PlatformType      : TdlType.PlatformSymbol;
+    public ProductType       : TdlType.ProductSymbol;
+    public EntityType        : TdlType.EntitySymbol;
+    public MethodType        : FunctionTypeSymbol;
+    public ScenarioType      : TdlType.ScenarioSymbol;
   }
 }
