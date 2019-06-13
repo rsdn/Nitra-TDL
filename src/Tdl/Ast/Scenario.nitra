@@ -15,11 +15,12 @@ namespace Tdl
     {
     stage 3:
       in AggregateParametersScope : Scope;
+      in AllScenarios             : ImmutableArray[ScenarioSymbol];
 
       Type = context.ToTdlContext().ScenarioType;
     }
 
-    CheckForRecursionScenario(context, Symbol, Symbol.AggregateParametersScope);
+    Symbol.AllScenarios = TdlUtils.CheckForRecursionScenario(self, context, Symbol, Symbol.AggregateParametersScope);
 
     unless (Symbol.IsUsed)
       Name.Warning(context, "Unused scenario.");
@@ -105,7 +106,7 @@ namespace Tdl
           CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
 
         CheckUniquenessOfScenarios(context, Symbol, Symbol.AggregateParametersScope);
-        SetUsed(Symbol.Scenarios, Symbol.IsUsed);
+        SetUsed(Symbol.AllScenarios, Symbol.IsUsed);
 
         IsMultiMachine : bool;
         Scenarios      : Reference*;
