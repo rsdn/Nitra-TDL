@@ -1,6 +1,15 @@
+scenario Unused // W: Unused scenario
+{
+	deployment DeployMultiProductWithDeployerAndPreparingKsm60;
+	environments (win7, AllProducts), (win81, AllProducts);
+	method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
+	UniqueId = "4DAAA89F-DADE-4541-A8A7-E8CB1AC8C7DD";
+	ProductGroupName = "SbSKavkis";
+	Timeout  = "01:00:00";
+}
+
 scenario SbSKfp6CUndocSafeBrowserScreenshotProtection_Gdi32BitBlt_InternetExplorer
 {
-	//filter suite.Products.Contains("KSM2017");
 	deployment DeployMultiProductWithDeployerAndPreparingKsm60;
 	environments (win7, AllProducts), (win81, AllProducts);
 	method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
@@ -11,7 +20,6 @@ scenario SbSKfp6CUndocSafeBrowserScreenshotProtection_Gdi32BitBlt_InternetExplor
 
 scenario SbSKfp6CheckProductAfterReboot
 {
-	//filter suite.Products.Contains("KSM2017");
     deployment DeployMultiProductWithDeployerAndPreparingKsm60;
     environments (win81, AllProducts);
 	method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry max-reboots 1;
