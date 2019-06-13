@@ -1,4 +1,4 @@
-﻿entity SideBySide_KAVKIS2019_Patch
+entity SideBySide_KAVKIS2019_Patch
 {
     Name = "KAVKIS";
     BranchName = "2019";
@@ -33,7 +33,7 @@ suite type Ext
 }
 
 suite "Compatibility.Self" =
-    from Product in PURE2020wKSDE4_KSM2017, KSM2017_KIS2020, PURE2020wKSDE4_KSDE3
+    from Product in [PURE2020wKSDE4_KSM2017, KSM2017_KIS2020, PURE2020wKSDE4_KSDE3]
 select
 {
     entity SideBySide_KAVKIS2020_SIDRV;
