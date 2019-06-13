@@ -1141,7 +1141,7 @@ namespace Tdl
       _ = CheckForRecursion(ast, context, symbol, getDescendants, _depend)
     }
 
-    public CheckForRecursionScenario(this ast : IAst, context : DependentPropertyEvalContext, symbol : ScenarioSymbol, _depend : object) : void
+    public CheckForRecursionScenario(ast : IAst, context : DependentPropertyEvalContext, symbol : ScenarioSymbol, _depend : object) : ImmutableArray[ScenarioSymbol]
     {
       def getDescendants(sym : ScenarioSymbol) : Seq[ScenarioSymbol]
       {
@@ -1150,7 +1150,7 @@ namespace Tdl
           | _ is Scenario.GeneratorSymbol => [] // 
           | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
       }
-      _ = CheckForRecursion(ast, context, symbol, getDescendants, _depend)
+      CheckForRecursion(ast, context, symbol, getDescendants, _depend)
     }
     
     public CheckForRecursionDeployment(this ast : IAst, context : DependentPropertyEvalContext, symbol : DeploymentSymbol, _depend : object) : ImmutableArray[DeploymentSymbol]

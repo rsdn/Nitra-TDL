@@ -1,0 +1,68 @@
+﻿entity SideBySide_KAVKIS2019_Patch
+{
+    Name = "KAVKIS";
+    BranchName = "2019";
+    Version = "Patch L";
+    Type = "SelfCompatibility";
+}
+
+entity SideBySide_KAVKIS2020_Patch
+{
+    Name = "KAVKIS";
+    BranchName = "2020";
+    Version = "Patch B";
+    Type = "SelfCompatibility";
+}
+
+entity SideBySide_KAVKIS2020_SIDRV
+{
+    Name = "KAVKIS";
+    BranchName = "2020";
+    Version = "SIDRV_testing";
+    Type = "SelfCompatibility";
+}
+
+suite type Ext
+{
+    string AutotestAssemblies;
+    string UpdateSourceAddress;
+    string UseSecondaryUpdateSource;
+    string SecondaryUpdateSource;
+    string DeploymentConditions;
+    string BugsRobotStatus;
+}
+
+suite "Compatibility.Self" =
+    from Product in PURE2020wKSDE4_KSM2017, KSM2017_KIS2020, PURE2020wKSDE4_KSDE3
+select
+{
+    entity SideBySide_KAVKIS2020_SIDRV;
+    platform all;
+    product Product;
+    AutotestAssemblies = @"\\sdfs\storage\CoreTechnologies\AutotestProjectBuilds\Components.Autotest\LatestBuild.txt";
+    UpdateSourceAddress = "http://iro.kaspersky-labs.com/";
+    DeploymentConditions = "/Update";
+
+    //ProductA = ???;
+    //ProductB = ???;
+
+    Sbs2020Group();
+};
+
+suite "Self.MultiProductSuite" : Ext
+{
+    entity SideBySide_KAVKIS2020_SIDRV;
+    platform all;
+    product KSM2017_PURE2020wKSDE4;
+    AutotestAssemblies = @"\\sdfs\storage\CoreTechnologies\AutotestProjectBuilds\Components.Autotest\LatestBuild.txt";
+    UpdateSourceAddress = "http://iro.kaspersky-labs.com/";
+    UseSecondaryUpdateSource = "false";
+    SecondaryUpdateSource = "";
+    DeploymentConditions = "/Update";
+    BugsRobotStatus = "0";
+
+    productA = KSM2017;
+    productB = PURE2020wKSDE4;
+
+    Sbs2020Group();
+}

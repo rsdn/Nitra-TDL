@@ -1,0 +1,61 @@
+scenario SbSKfp6CUndocSafeBrowserScreenshotProtection_Gdi32BitBlt_InternetExplorer
+{
+	//filter suite.Products.Contains("KSM2017");
+	deployment DeployMultiProductWithDeployerAndPreparingKsm60;
+	environments (win7, AllProducts), (win81, AllProducts);
+	method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
+	UniqueId = "4DAAA89F-DADE-4541-A8A7-E8CB1AC8C7DA";
+	ProductGroupName = "SbSKavkis";
+	Timeout  = "01:00:00";
+}
+
+scenario SbSKfp6CheckProductAfterReboot
+{
+	//filter suite.Products.Contains("KSM2017");
+    deployment DeployMultiProductWithDeployerAndPreparingKsm60;
+    environments (win81, AllProducts);
+	method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry max-reboots 1;
+    UniqueId = "5D626DC6-2647-4B6C-8F4F-AAC6FFCE9170";
+	ProductGroupName = "SbSKavkis";
+    Timeout  = "01:00:00";
+}
+
+scenario SbSKfp6 = SbSKfp6CUndocSafeBrowserScreenshotProtection_Gdi32BitBlt_InternetExplorer, SbSKfp6CheckProductAfterReboot;
+
+
+scenario SbS20CheckProductAfterReboot
+{
+    deployment DeployMultiProductWithDeployerAndPreparingKis2020;
+    environments (all, AllProducts);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation max-reboots 1;
+    UniqueId = "F0C9D7E0-2A75-4991-BDB8-04F02775C015";
+	ProductGroupName = "SbSKavkis";
+    Timeout  = "01:00:00";
+}
+
+scenario SbS20FacadeProductStopStart
+{
+    deployment DeployMultiProductWithDeployerAndPreparingKis2020;
+    environments (all, AllProducts);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
+    UniqueId = "099A0D79-4DEA-4F1E-AB75-A1F847F177B4";
+	ProductGroupName = "SbSKavkis";
+    Timeout  = "01:00:00";
+}
+
+scenario SbS20KsnOdsScanEicarCom
+{
+    deployment DeployMultiProductWithDeployerAndPreparingKis2020;
+    environments (w10, AllProducts);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    UniqueId = "5FC711AE-1888-4665-8C2D-37C3875B0AF3";
+	ProductGroupName = "SbSKavkis";
+    Timeout  = "01:00:00";
+}
+
+scenario SbS20Kavkis = 
+	SbS20CheckProductAfterReboot,
+	SbS20FacadeProductStopStart,
+	SbS20KsnOdsScanEicarCom;
+
+scenario Sbs2020Group = SbS20Kavkis, SbSKfp6;
