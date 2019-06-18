@@ -684,11 +684,19 @@ namespace Tdl2Json
         }
 
       | FormalParameterSymbol as p => 
-        def type = p.Type.FullName;
+        def type =
+          match (p.Type)
+          {
+            | SuiteTypeSymbol => "TestSuite"
+            | _ => p.Type.FullName
+          };
+        
         def name = p.Name;
         $<#(($type)globals["$name"])#>
 
       | Member.MethodSymbol as m => m.Name
+      | PlatformSymbol as p => $<#config.Platforms["$(p.Name)"]#>
+      | ProductSymbol  as p => $<#config.Products["$(p.Name)"]#>
       | _ => GenerateScenarioFilter()
     }
 
