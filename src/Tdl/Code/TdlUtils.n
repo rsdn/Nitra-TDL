@@ -1532,23 +1532,26 @@ namespace Tdl
       //def baseTypeSet = BaseTypeReferenceSet(context);
       //baseTypeSet.AddParent();
       //symbol.BaseTypeSet = baseTypeSet;
+      def collectionName = "System.Collections.Generic.ICollection";
+      def baseProductType = GetProductTypeSymbol(context);
       def name = "Products";
       def name = Name(Location.Default, name);
       def prop = ExternalDeclaration.[Member.PropertySymbol](name).DefineSymbol(table);
       def flags = ModifierSet(context);
       flags.Add(Modifiers.Public);
       prop.Flags = flags;
-      prop.Type = context.ConstractType("System.Collections.Generic.HashSet", context.GetStringType());
+      prop.Type = context.ConstractType(collectionName, baseProductType);
       prop.CustomAttributes = array(0);
       prop.EvalProperties(context);
 
       def name = "Platforms";
+      def platformType = ToTdlContext(context).PlatformType;
       def name = Name(Location.Default, name);
       def prop = ExternalDeclaration.[Member.PropertySymbol](name).DefineSymbol(table);
       def flags = ModifierSet(context);
       flags.Add(Modifiers.Public);
       prop.Flags = flags;
-      prop.Type = context.ConstractType("System.Collections.Generic.HashSet", context.GetStringType());
+      prop.Type = context.ConstractType(collectionName, platformType);
       prop.CustomAttributes = array(0);
       prop.EvalProperties(context);
     }
