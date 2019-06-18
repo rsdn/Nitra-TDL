@@ -450,7 +450,7 @@ namespace Tdl
     public MakeDefinitions(definitions : Definition.IAstList, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
-      foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in definitions)
+      foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
         builder.Add(Def(definition.SymbolRef.Symbol, definition.Expr.Result));
       builder.TryMoveToImmutable()
     }
@@ -458,7 +458,7 @@ namespace Tdl
     public MakeDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
-      foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in definitions)
+      foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
       {
         def sym = definition.SymbolRef.Symbol;
         when (sym is FormalParameterSymbol as p when p.IsDeclaredInEvaluated)
@@ -490,8 +490,7 @@ namespace Tdl
           }
         }
 
-        when (definition.Expr.IsResultEvaluated)
-          builder.Add(Def(sym, definition.Expr.Result));
+        builder.Add(Def(sym, definition.Expr.Result));
       }
       builder.TryMoveToImmutable()
     }
