@@ -16,9 +16,18 @@
     }
   },
   "Platforms": {
-    "w10rs5-x64": {}
+    "w10rs5": [
+      "w10rs5-x64",
+      "w10rs5-x86"
+    ],
+    "w10rs5-x64": {},
+    "w10rs5-x86": {}
   },
   "Products": {
+    "OfficeProduct": [
+      "Excel",
+      "Word"
+    ],
     "MonorepoHelloWorld": {
       "Name": "MonorepoHelloWorld",
       "Parameters": {
@@ -58,7 +67,7 @@
         "w10rs5-x64"
       ],
       "Products": [
-        "MonorepoHelloWorld"
+        "OfficeProduct"
       ],
       "TestScenarios": [
         "Test1"
@@ -67,7 +76,7 @@
   },
   "TestScenarios": {
     "Test1": {
-      "FilterExpression": "(((System.Collections.Generic.Dictionary<string, int>)globals[\"list\"]).ContainsValue(-1) && !((bool)externals[\"IsSome\"]))",
+      "FilterExpression": "((((TestSuite)globals[\"Suite\"]).Products.Contains(config.Products[\"OfficeProduct\"]) && ((TestSuite)globals[\"Suite\"]).Platforms.Contains(config.Platforms[\"w10rs5\"])) && ((bool)externals[\"IsSome\"]))",
       "Deployments": [
         "InstallProduct"
       ],
