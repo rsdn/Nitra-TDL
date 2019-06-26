@@ -76,12 +76,22 @@ namespace Tdl
     | ScenarioGenerator -> Scenario.Generator
       {
         Name                                      -> Name;
+        match (ParametersOpt)
+        {
+          | Some(x) -> x.FormalParameters.Item1
+          | None()  -> []
+        } -> Parameters;
         Froms                                     -> Froms;
         SelectScenario.Deployment.Reference       -> Deployment;
         SelectScenario.Method.QualifiedIdentifier -> Method;
         SelectScenario.Platform                   -> Platform;
         SelectScenario.Product                    -> Product;
         SelectScenario.DefDeclarations            -> Definitions;
+        match (SelectScenario.FilterOpt)
+        {
+          | Some(x) -> Some(x.Condition)
+          | None()  -> None()
+        } -> FilterOpt;
       }
     | ScenarioSet       -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Span.StartPos);  }
     | ParallelScenario  -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Parallel, true); }
