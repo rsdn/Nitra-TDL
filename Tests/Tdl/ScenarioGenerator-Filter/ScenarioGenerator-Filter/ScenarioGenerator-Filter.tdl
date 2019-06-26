@@ -1,0 +1,49 @@
+platform Platform1;
+platform Platform2;
+platform AllPlatforms = Platform1, Platform2;
+
+product type MyProducts
+{
+  string Name;
+  string Version;
+}
+
+product MyProduct1 : MyProducts
+{
+  Name = "MyProduct1";
+  Version = "1.0";
+}
+
+product MyProduct2 : MyProducts
+{
+  Name = "MyProduct2";
+  Version = "1.0";
+}
+
+product AllProducts : MyProducts = MyProduct1, MyProduct2;
+
+suite type MySuites
+{
+}
+
+suite MySuite : MySuites
+{
+  platform AllPlatforms;
+  product AllProducts;
+  Generator1();
+}
+
+deployment MyDeployment() script "deploy.ps1" {}
+
+scenario Generator1(MySuites suite) =
+    from Platform in [Platform1, Platform2]
+    from Product in [MyProduct1, MyProduct2]
+    select
+    {
+	      filter suite.Platforms.Contains(Platform) && suite.Products.Contains(Product);
+        deployment MyDeployment;
+        environments (Platform, Product);
+        method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;
+        UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
+        Timeout = "02:30:00";
+    };

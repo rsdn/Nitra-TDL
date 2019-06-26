@@ -1,0 +1,155 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "MyDeployment": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "deploy.ps1"
+    }
+  },
+  "Platforms": {
+    "Platform1": {},
+    "Platform2": {},
+    "AllPlatforms": [
+      "Platform1",
+      "Platform2"
+    ]
+  },
+  "Products": {
+    "MyProduct1": {
+      "Name": "MyProduct1",
+      "Parameters": {
+        "Name": "MyProduct1"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    },
+    "MyProduct2": {
+      "Name": "MyProduct2",
+      "Parameters": {
+        "Name": "MyProduct2"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    },
+    "AllProducts": [
+      "MyProduct1",
+      "MyProduct2"
+    ]
+  },
+  "Suites": {
+    "MySuite": {
+      "Parameters": {},
+      "Platforms": [
+        "AllPlatforms"
+      ],
+      "Products": [
+        "AllProducts"
+      ],
+      "TestScenarios": [
+        "Generator1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Generator1-1": {
+      "FilterExpression": "(((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"]))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform1"
+          ],
+          "Products": [
+            "MyProduct1"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb73-5563-4882-9a33-86afe07eb6b5"
+    },
+    "Generator1-2": {
+      "FilterExpression": "(((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"]))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform2"
+          ],
+          "Products": [
+            "MyProduct1"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb74-5563-4882-9a33-86afe07eb6b5"
+    },
+    "Generator1-3": {
+      "FilterExpression": "(((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"]))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform1"
+          ],
+          "Products": [
+            "MyProduct2"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb76-5563-4882-9a33-86afe07eb6b5"
+    },
+    "Generator1-4": {
+      "FilterExpression": "(((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"]))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform2"
+          ],
+          "Products": [
+            "MyProduct2"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb79-5563-4882-9a33-86afe07eb6b5"
+    },
+    "Generator1": {
+      "TestScenarios": [
+        "Generator1-1",
+        "Generator1-2",
+        "Generator1-3",
+        "Generator1-4"
+      ]
+    }
+  },
+  "TestEntities": {}
+}
