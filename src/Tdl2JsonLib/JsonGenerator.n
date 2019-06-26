@@ -26,6 +26,7 @@ using QuickType;
 using Utils;
 
 using System;
+using System.Globalization;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -444,7 +445,7 @@ namespace Tdl2Json
           Timeout                 = getString("Timeout");
           UniqueId                = uniqueId.ToString();
           ProductGroupName        = getString("ProductGroupName");
-          FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase);
+          FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase, dic);
         };
 
       testGroup
@@ -626,7 +627,7 @@ namespace Tdl2Json
                   Timeout                 = getString("Timeout");
                   UniqueId                = getString("UniqueId");
                   ProductGroupName        = getString("ProductGroupName");
-                  FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase);
+                  FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
                   MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
               }
 
@@ -665,40 +666,68 @@ namespace Tdl2Json
       null
     }
     
-    private GenerateScenarioFilter(expr : DotNet.ExprBase) : string
+    private GenerateScenarioFilter(expr : DotNet.ExprBase, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
     {
-      def result = GenerateScenarioFilterImpl(expr);
+      def result = GenerateScenarioFilterImpl(expr, dic);
       result
     }
 
-    private GenerateBySymbol(symbol : DeclarationSymbol) : string
+    private GenerateTdlExpr(expr : Tdl.Expr, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
     {
-      | FieldSymbol as fld =>
-        match (fld.DeclaredIn)
-        {
-          | ExternalSymbol =>
-            def type = fld.Type.FullName;
-            def name = fld.Name;
-            $<#(($type)externals["$name"])#>
+      match (expr)
+      {
+        | Error                         => GenerateScenarioFilter()
+        | String(null)                  => "null"
+        | String(s)                     => $<#@"$(s.Replace("\"", "\"\""))"#>
+        | True                          => "true"
+        | False                         => "false"
+        | Real(num)                     => num.ToString(CultureInfo.InvariantCulture)
+        | Integer(num)                  => num.ToString(CultureInfo.InvariantCulture)
+        | Reference(symbol)             => GenerateBySymbol(symbol, dic)
+        | MemberAccess(expr, member, _) => GenerateTdlExpr(expr, dic) + "." + member.InitialName
+        | Tuple(items, _) =>
+          def args = items.Map(GenerateTdlExpr(_, dic));
+          $<#(..$args)#>
 
-          | _ => GenerateScenarioFilter()
-        }
+        | List(items, type) =>
+          def args = items.Map(GenerateTdlExpr(_, dic));
+          $<#new $(type.FullName)[] { ..$args }#>
+      }
+    }
 
-      | FormalParameterSymbol as p => 
-        def type =
-          match (p.Type)
+    private GenerateBySymbol(symbol : DeclarationSymbol, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
+    {
+      mutable tdlExpr;
+      match (symbol)
+      {
+        | FieldSymbol as fld =>
+          match (fld.DeclaredIn)
           {
-            | SuiteTypeSymbol => "TestSuite"
-            | _ => p.Type.FullName
-          };
-        
-        def name = p.Name;
-        $<#(($type)globals["$name"])#>
-
-      | Member.MethodSymbol as m => m.Name
-      | PlatformSymbol as p => $<#config.Platforms["$(p.Name)"]#>
-      | ProductSymbol  as p => $<#config.Products["$(p.Name)"]#>
-      | _ => GenerateScenarioFilter()
+            | ExternalSymbol =>
+              def type = fld.Type.FullName;
+              def name = fld.Name;
+              $<#(($type)externals["$name"])#>
+  
+            | _ => GenerateScenarioFilter()
+          }
+  
+        | FormalParameterSymbol as p => 
+          def type =
+            match (p.Type)
+            {
+              | SuiteTypeSymbol => "TestSuite"
+              | _ => p.Type.FullName
+            };
+          
+          def name = p.Name;
+          $<#(($type)globals["$name"])#>
+  
+        | Member.MethodSymbol as m => m.Name
+        | PlatformSymbol as p => $<#config.Platforms["$(p.Name)"]#>
+        | ProductSymbol  as p => $<#config.Products["$(p.Name)"]#>
+        | TypedDeclarationSymbol as s when dic.TryGetValue(s, out tdlExpr) => GenerateTdlExpr(tdlExpr, dic)
+        | _ => GenerateScenarioFilter()
+      }
     }
 
     public static ToFullNameString(symbol : TypeSymbol) : string
@@ -710,67 +739,70 @@ namespace Tdl2Json
       | _ => GenerateScenarioFilter()
     }
     
-    private GenerateScenarioFilterImpl(expr : DotNet.ExprBase) : string
+    private GenerateScenarioFilterImpl(expr : DotNet.ExprBase, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
     {
-      | null => null
-      | Expr.Is as e => $<#($(GenerateScenarioFilterImpl(e.Expr1)) is $(e.TypeNameType))#>
-      | Expr.As as e => $<#($(GenerateScenarioFilterImpl(e.Expr1)) as $(e.Type))#>
-      | DotNet.IntegerLiteral
-      | DotNet.RealLiteral
-      | DotNet.Expr.BooleanLiteral
-      | DotNet.Expr.Char
-      | DotNet.Expr.String => expr.ToString().Trim()
-      | Expr.Invocation as e =>
-        def args = e.Arguments.Map(GenerateScenarioFilterImpl);
-        $<#$(GenerateScenarioFilterImpl(e.Left))(..$args)#>;
+      match (expr)
+      {
+        | null => null
+        | Expr.Is as e => $<#($(GenerateScenarioFilterImpl(e.Expr1, dic)) is $(e.TypeNameType))#>
+        | Expr.As as e => $<#($(GenerateScenarioFilterImpl(e.Expr1, dic)) as $(e.Type))#>
+        | DotNet.IntegerLiteral
+        | DotNet.RealLiteral
+        | DotNet.Expr.BooleanLiteral
+        | DotNet.Expr.Char
+        | DotNet.Expr.String => expr.ToString().Trim()
+        | Expr.Invocation as e =>
+        def args = e.Arguments.Map(GenerateScenarioFilterImpl(_, dic));
+        $<#$(GenerateScenarioFilterImpl(e.Left, dic))(..$args)#>;
 
-      | Expr.IndexerAccess as e =>
-        def args = e.Arguments.Map(GenerateScenarioFilterImpl);
-        $<#$(GenerateScenarioFilterImpl(e.Left))[..$args]#>;
+        | Expr.IndexerAccess as e =>
+        def args = e.Arguments.Map(GenerateScenarioFilterImpl(_, dic));
+        $<#$(GenerateScenarioFilterImpl(e.Left, dic))[..$args]#>;
         
-      | Expr.Parenthesized   as e => GenerateScenarioFilterImpl(e.Expression)
-      | Expr.PostDecrement (Expr1=e) with op = "++"
-      | Expr.PostIncrement (Expr1=e) with op = "--"
-        => $<#$(GenerateScenarioFilterImpl(e))$op#>
+        | Expr.Parenthesized   as e => GenerateScenarioFilterImpl(e.Expression, dic)
+        | Expr.PostDecrement (Expr1=e) with op = "++"
+        | Expr.PostIncrement (Expr1=e) with op = "--"
+          => $<#$(GenerateScenarioFilterImpl(e, dic))$op#>
 
-      | Expr.PreIncrement    (Expr1=e) with op = "++"
-      | Expr.PreDecrement    (Expr1=e) with op = "--"
-      | Expr.BitwiseNegation (Expr1=e) with op = "~"
-      | Expr.LogicalNegation (Expr1=e) with op = "!"
-      | Expr.Negation        (Expr1=e) with op = "-"
-        => $<#$op$(GenerateScenarioFilterImpl(e))#>
+        | Expr.PreIncrement    (Expr1=e) with op = "++"
+        | Expr.PreDecrement    (Expr1=e) with op = "--"
+        | Expr.BitwiseNegation (Expr1=e) with op = "~"
+        | Expr.LogicalNegation (Expr1=e) with op = "!"
+        | Expr.Negation        (Expr1=e) with op = "-"
+          => $<#$op$(GenerateScenarioFilterImpl(e, dic))#>
         
-      | Expr.TypeOf as e => $<#typeof($(e.Type))#>
-      | Expr.GreaterThanOrEqual(Expr1=e1, Expr2=e2)  with op = ">="
-      | Expr.LessThanOrEqual   (Expr1=e1, Expr2=e2)  with op = "<=" 
-      | Expr.Less              (Expr1=e1, Expr2=e2)  with op =  "<"
-      | Expr.Greater           (Expr1=e1, Expr2=e2)  with op =  ">"
-      | Expr.ConditionalAnd    (Expr1=e1, Expr2=e2)  with op = "&&"
-      | Expr.ConditionalOr     (Expr1=e1, Expr2=e2)  with op = "||"
-      | Expr.Equal             (Expr1=e1, Expr2=e2)  with op = "=="
-      | Expr.NotEqual          (Expr1=e1, Expr2=e2)  with op = "!="
-      | Expr.NullCoalescing    (Expr1=e1, Expr2=e2)  with op = "??"
-      | Expr.LogicalOr         (Expr1=e1, Expr2=e2)  with op = "|"
-      | Expr.LogicalAnd        (Expr1=e1, Expr2=e2)  with op = "&"
-      | Expr.LogicalXor        (Expr1=e1, Expr2=e2)  with op = "~"
-      | Expr.ShiftLeft         (Expr1=e1, Expr2=e2)  with op = "<<"
-      | Expr.ShiftRight        (Expr1=e1, Expr2=e2)  with op = ">>"
-      | Expr.Sum               (Expr1=e1, Expr2=e2)  with op = "+"
-      | Expr.Sub               (Expr1=e1, Expr2=e2)  with op = "-"
-      | Expr.Modulus           (Expr1=e1, Expr2=e2)  with op = "%"
-      | Expr.Multiply          (Expr1=e1, Expr2=e2)  with op = "*"
-      | Expr.Divide            (Expr1=e1, Expr2=e2)  with op = "/"
-        => $<#($(GenerateScenarioFilterImpl(e1)) $op $(GenerateScenarioFilterImpl(e2)))#>
-      | Expr.Cast           as e => $<#(($(e.TypeName))$(GenerateScenarioFilterImpl(e.Expression)))#>
+        | Expr.TypeOf as e => $<#typeof($(e.Type))#>
+        | Expr.GreaterThanOrEqual(Expr1=e1, Expr2=e2)  with op = ">="
+        | Expr.LessThanOrEqual   (Expr1=e1, Expr2=e2)  with op = "<=" 
+        | Expr.Less              (Expr1=e1, Expr2=e2)  with op =  "<"
+        | Expr.Greater           (Expr1=e1, Expr2=e2)  with op =  ">"
+        | Expr.ConditionalAnd    (Expr1=e1, Expr2=e2)  with op = "&&"
+        | Expr.ConditionalOr     (Expr1=e1, Expr2=e2)  with op = "||"
+        | Expr.Equal             (Expr1=e1, Expr2=e2)  with op = "=="
+        | Expr.NotEqual          (Expr1=e1, Expr2=e2)  with op = "!="
+        | Expr.NullCoalescing    (Expr1=e1, Expr2=e2)  with op = "??"
+        | Expr.LogicalOr         (Expr1=e1, Expr2=e2)  with op = "|"
+        | Expr.LogicalAnd        (Expr1=e1, Expr2=e2)  with op = "&"
+        | Expr.LogicalXor        (Expr1=e1, Expr2=e2)  with op = "~"
+        | Expr.ShiftLeft         (Expr1=e1, Expr2=e2)  with op = "<<"
+        | Expr.ShiftRight        (Expr1=e1, Expr2=e2)  with op = ">>"
+        | Expr.Sum               (Expr1=e1, Expr2=e2)  with op = "+"
+        | Expr.Sub               (Expr1=e1, Expr2=e2)  with op = "-"
+        | Expr.Modulus           (Expr1=e1, Expr2=e2)  with op = "%"
+        | Expr.Multiply          (Expr1=e1, Expr2=e2)  with op = "*"
+        | Expr.Divide            (Expr1=e1, Expr2=e2)  with op = "/"
+          => $<#($(GenerateScenarioFilterImpl(e1, dic)) $op $(GenerateScenarioFilterImpl(e2, dic)))#>
+        | Expr.Cast           as e => $<#(($(e.TypeName))$(GenerateScenarioFilterImpl(e.Expression, dic)))#>
 
-      | Expr.Conditional as e =>
+        | Expr.Conditional as e =>
         def type = e.Type.FullName;
-        $<#($(GenerateScenarioFilterImpl(e.Condition)) ? (($type)$(GenerateScenarioFilterImpl(e.Expr1))) : (($type)$(GenerateScenarioFilterImpl(e.Expr2))))#>
+        $<#($(GenerateScenarioFilterImpl(e.Condition, dic)) ? (($type)$(GenerateScenarioFilterImpl(e.Expr1, dic))) : (($type)$(GenerateScenarioFilterImpl(e.Expr2, dic))))#>
 
-      | Expr.Argument as a => GenerateScenarioFilterImpl(a.Expr)
-      | Expr.MemberAccess1 as e => GenerateScenarioFilterImpl(e.Expr1) + "." + e.Ref.Symbol.Name
-      | Expr.SimpleName as e => GenerateBySymbol(e.Ref.Symbol)
-      | _ => GenerateScenarioFilter()
+        | Expr.Argument as a => GenerateScenarioFilterImpl(a.Expr, dic)
+        | Expr.MemberAccess1 as e => GenerateScenarioFilterImpl(e.Expr1, dic) + "." + e.Ref.Symbol.Name
+        | Expr.SimpleName as e => GenerateBySymbol(e.Ref.Symbol, dic)
+        | _ => GenerateScenarioFilter()
+      }
     }
 
     private GenerateSuiteGroup(suiteSymbol : Suite.ListSymbol) : string * SuiteGroup
