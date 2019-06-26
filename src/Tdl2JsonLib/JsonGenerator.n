@@ -444,6 +444,7 @@ namespace Tdl2Json
           Timeout                 = getString("Timeout");
           UniqueId                = uniqueId.ToString();
           ProductGroupName        = getString("ProductGroupName");
+          FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase);
         };
 
       testGroup

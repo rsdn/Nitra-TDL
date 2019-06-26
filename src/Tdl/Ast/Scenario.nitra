@@ -111,7 +111,7 @@ namespace Tdl
         IsMultiMachine : bool;
         Scenarios      : Reference*;
       }
-    | ignore-case Generator : Container
+    | ignore-case Generator : Container, Parameterizable
       {
         symbol
         {
@@ -122,6 +122,7 @@ namespace Tdl
         stage 3:
           in Defs       : ImmutableArray[Def];
           in Froms      : ImmutableArray[Code.From];
+          in Filter     : object;
 
           Scope          = MemberTable;
           Kind           = "scenario generator";
@@ -135,6 +136,8 @@ namespace Tdl
         out PlatformRef   : Ref[TypedDeclarationSymbol];
         out ProductRef    : Ref[TypedDeclarationSymbol];
 
+        Parameters.DeclaredIn           = Symbol;
+        Parameters.Scope                = Scope;
         Froms.Scope                     = Scope;
         Froms.ContainingTable           = Symbol.MemberTable;
         Deployment.Scope                = Scope.HideWith(Symbol.MemberTable);
@@ -142,7 +145,7 @@ namespace Tdl
         Product.Scope                   = Deployment.Scope;
         Method.Scope                    = Deployment.Scope;
         Definitions.DefinitionScope     = context.GetScenarioParameterScope();
-        Definitions.Scope               = context.GetExternalSymbolTable();
+        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope);
 
         DeploymentRef                   = Deployment.Ref.Resolve();
         MethodRef                       = Method.Ref.Resolve();
@@ -156,7 +159,12 @@ namespace Tdl
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployment, Symbol.Froms, context);
-        
+
+        FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
+        FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
+        FilterOpt.ExpectedType          = context.GetBooleanType();
+        Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
+
         Deployment.CheckExpected(context, context.ToTdlContext().DeploymentType, DeploymentRef.Symbol.Type);
         Method.    CheckExpected(context, context.ToTdlContext().MethodType,     MethodRef.Symbol.Type);
         Platform.  CheckExpected(context, context.ToTdlContext().PlatformType,   PlatformRef.Symbol.Type);
@@ -168,6 +176,7 @@ namespace Tdl
         Product      : Reference;
         Definitions  : Definition*;
         Method       : QualifiedReference;
+        FilterOpt    : DotNet.Expr?;
       }
   } // Scenario
 }

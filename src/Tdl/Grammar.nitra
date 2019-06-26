@@ -72,7 +72,7 @@
       | ProductSet        = "product"           sm Name sm ":" Type=Reference sm "=" sm Products=(Reference; "," sm)+ ";" nl;
       | Scenario          = "scenario"          sm Name Parameters? nl ScenarioBody;
       | ScenarioSet       = "scenario"          sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
-      | ScenarioGenerator = "scenario"          sm Name sm "=" sm From+ sm "select" sm SelectScenario ";" nl;
+      | ScenarioGenerator = "scenario"          sm Name Parameters? sm "=" sm From+ sm "select" sm SelectScenario ";" nl;
       | ParallelScenario  = Parallel="parallel" sm "scenario" sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
       | SuiteType         = "suite" sm "type"   sm Name nl TypeBody;
       | Suite             = "suite"             sm Name BaseType? nl SuiteBody;
@@ -132,7 +132,8 @@
     }
 
     syntax SelectScenario = outline_begin_before 
-                            "{" inl 
+                            "{" inl
+                                Filter? nl
                                 Deployment nl 
                                 "environments" sm "(" Platform=Reference "," sm Product=Reference ")" ";" nl
                                 Method nl
@@ -140,6 +141,7 @@
                           d "}" nl outline_end_before
     {
       syntax Deployment   = "deployment" sm Reference ";" nl;
+      syntax Filter = "filter" Condition=Expression ";" nl;
     }
 
     syntax Environments    = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
