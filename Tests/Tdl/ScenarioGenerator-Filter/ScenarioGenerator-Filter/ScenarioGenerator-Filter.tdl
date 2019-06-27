@@ -37,7 +37,7 @@ deployment MyDeployment() script "deploy.ps1" {}
 
 scenario Generator1(MySuites suite) =
     from Platform in [Platform1, Platform2]
-    from Product in [MyProduct1, MyProduct2]
+    from (Product, id) in [(MyProduct1, 1), (MyProduct2, 2)]
     select
     {
 	      filter suite.Platforms.Contains(Platform) && suite.Products.Contains(Product);
@@ -46,4 +46,5 @@ scenario Generator1(MySuites suite) =
         method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;
         UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
         Timeout = "02:30:00";
+        TfsId = id;
     };
