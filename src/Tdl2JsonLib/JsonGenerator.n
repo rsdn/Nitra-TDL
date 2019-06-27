@@ -695,6 +695,21 @@ namespace Tdl2Json
       }
     }
 
+    private GenerateDefaultValue(value : DotNet.DefaultValue) : string
+    {
+      | Null                  => "null"
+      | String(null)          => "null"
+      | String(s)             => $<#@"$(s.Replace("\"", "\"\""))"#>
+      | Bool(true)            => "true"
+      | Bool(false)           => "false"
+      | Number(num, true, _)  => num.ToString(CultureInfo.InvariantCulture)
+      | Number(num, false, _) => unchecked(num :> long).ToString(CultureInfo.InvariantCulture)
+      | Decimal(num)          => num.ToString(CultureInfo.InvariantCulture)
+      | Double(num)           => num.ToString(CultureInfo.InvariantCulture)
+      | Single(num)           => num.ToString(CultureInfo.InvariantCulture)
+      | t                     => throw NotSupportedException($"$(t.GetType().Name) is not supported in scenario parameters")
+    }
+
     private GenerateBySymbol(symbol : DeclarationSymbol, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
     {
       mutable tdlExpr;
@@ -718,9 +733,15 @@ namespace Tdl2Json
               | SuiteTypeSymbol => "TestSuite"
               | _ => p.Type.FullName
             };
-          
+
           def name = p.Name;
-          $<#(($type)globals["$name"])#>
+          if (p.HasDefault())
+          {
+            def defaultValue = GenerateDefaultValue(p.Default);
+            $<#(globals.ContainsKey("$name") ? ($type)globals["$name"] : $defaultValue)#>
+          }
+          else
+            $<#(($type)globals["$name"])#>
   
         | Member.MethodSymbol as m => m.Name
         | PlatformSymbol as p => $<#config.Platforms["$(p.Name)"]#>

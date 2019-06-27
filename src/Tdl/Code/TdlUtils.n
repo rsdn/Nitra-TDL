@@ -231,10 +231,11 @@ namespace Tdl
       builder.ToImmutable()
     }
 
-    public MakeAggregateParametersScope(deployments : Seq[DeploymentSymbol]) : ValueOption[Scope]
+    public MakeAggregateParametersScope(deployments : Seq[DeploymentSymbol], initialScope : Scope = null) : ValueOption[Scope]
     {
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
+      UnionScopeBuilder.Add(initialScope, ref builder);
       if (CollectDeployments(visited, ref builder, deployments))
         VSome(builder.ToScope())
       else
@@ -1239,7 +1240,7 @@ namespace Tdl
       builder.ToScope();
     }
 
-    public MakeAggregateParametersScope(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    public MakeAggregateParametersScope(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       def deployments = List();
       def initialDeployment = context.ToTdlContext().InitialDeployment;
@@ -1264,7 +1265,7 @@ namespace Tdl
           }        
         | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
       }
-      MakeAggregateParametersScope(deployments)
+      MakeAggregateParametersScope(deployments, parametersScope)
     }
     
     public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
