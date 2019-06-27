@@ -145,7 +145,7 @@ namespace Tdl
         Product.Scope                   = Deployment.Scope;
         Method.Scope                    = Deployment.Scope;
         Definitions.DefinitionScope     = context.GetScenarioParameterScope();
-        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope);
+        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope);
 
         DeploymentRef                   = Deployment.Ref.Resolve();
         MethodRef                       = Method.Ref.Resolve();
@@ -160,7 +160,7 @@ namespace Tdl
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployment, Symbol.Froms, context);
 
-        FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Deployment.Scope);
+        FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
         FilterOpt.ExpectedType          = context.GetBooleanType();
         Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
