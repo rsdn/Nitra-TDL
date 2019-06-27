@@ -24,12 +24,14 @@ product AllProducts : MyProducts = MyProduct1, MyProduct2;
 
 suite type MySuites
 {
+  string SomeSuiteData;
 }
 
 suite MySuite : MySuites
 {
   platform AllPlatforms;
   product AllProducts;
+  SomeSuiteData = "data3";
   Generator1();
 }
 
@@ -40,7 +42,7 @@ scenario Generator1(MySuites suite) =
     from (Product, id) in [(MyProduct1, 1), (MyProduct2, 2)]
     select
     {
-	      filter suite.Platforms.Contains(Platform) && suite.Products.Contains(Product);
+        filter suite.Platforms.Contains(Platform) && suite.Products.Contains(Product) && suite.SomeSuiteData == "data3";
         deployment MyDeployment;
         environments (Platform, Product);
         method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;

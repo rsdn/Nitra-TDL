@@ -799,7 +799,13 @@ namespace Tdl2Json
         $<#($(GenerateScenarioFilterImpl(e.Condition, dic)) ? (($type)$(GenerateScenarioFilterImpl(e.Expr1, dic))) : (($type)$(GenerateScenarioFilterImpl(e.Expr2, dic))))#>
 
         | Expr.Argument as a => GenerateScenarioFilterImpl(a.Expr, dic)
-        | Expr.MemberAccess1 as e => GenerateScenarioFilterImpl(e.Expr1, dic) + "." + e.Ref.Symbol.Name
+        | Expr.MemberAccess1 as e =>
+            def member = e.Ref.Symbol;
+            if (e.Expr1.Type is Tdl.SuiteTypeSymbol && member is Tdl.FieldSymbol)
+              $<#(($(e.Type))globals["$(member.Name)"])#>
+            else
+              GenerateScenarioFilterImpl(e.Expr1, dic) + "." + member.Name
+
         | Expr.SimpleName as e => GenerateBySymbol(e.Ref.Symbol, dic)
         | _ => GenerateScenarioFilter()
       }
