@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 
 using File = System.IO.File;
 
@@ -19,7 +20,15 @@ namespace Tdl2Json
         /// <summary>
         /// Application entry point. Returns 0 for success.
         /// </summary>
-        public static int Main(string[] args) => MainImpl(args);
+        public static int Main(string[] args)
+        {
+            var result = 0;
+            var stackSize = IntPtr.Size * 1024 * 1024 * 2;
+            var thread = new Thread(() => result = MainImpl(args), stackSize);
+            thread.Start();
+            thread.Join();
+            return result;
+        }
 
         // additional method is required by Costura's assembly loading hack under Mono
         private static int MainImpl(string[] args)
