@@ -32,17 +32,18 @@ suite MySuite : MySuites
   platform AllPlatforms;
   product AllProducts;
   SomeSuiteData = "data3";
+  isEnabled = true;
   Generator1();
 }
 
 deployment MyDeployment() script "deploy.ps1" {}
 
-scenario Generator1(MySuites suite) =
+scenario Generator1(MySuites suite, bool isEnabled = false) =
     from Platform in [Platform1, Platform2]
     from (Product, id) in [(MyProduct1, 1), (MyProduct2, 2)]
     select
     {
-        filter suite.Platforms.Contains(Platform) && suite.Products.Contains(Product) && suite.SomeSuiteData == "data3";
+        filter suite.Platforms.Contains(Platform) && suite.Products.Contains(Product) && suite.SomeSuiteData == "data3" && isEnabled;
         deployment MyDeployment;
         environments (Platform, Product);
         method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;

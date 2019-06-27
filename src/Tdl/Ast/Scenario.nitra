@@ -158,7 +158,7 @@ namespace Tdl
         Symbol.Product                  = ProductRef   .Symbol;
         Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployment, Symbol.Froms, context);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context);
 
         FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
