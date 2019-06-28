@@ -865,7 +865,7 @@ namespace Tdl2Json
           Products      = array[product.Name];
           TestScenarios = g.Statements.OfType.[Tdl.SuiteStatement.CallScenario]().Select(s => s.Reference.Name).ToArray();
           Parameters    = parameters;
-		      TestEntity    = entityOpt;
+          TestEntity    = entityOpt;
         };
 
         suites.Add(name, suite);

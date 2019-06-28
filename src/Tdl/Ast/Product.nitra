@@ -42,7 +42,7 @@ namespace Tdl
         Definitions.Scope           = context.GetExternalSymbolTable();
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
 
-        Name.ChechRequired(context, "field", Symbol.ProductType.MemberTable.GetAllSymbols(), Symbol.Defs);
+        Name.CheckRequired(context, "field", Symbol.ProductType.MemberTable.GetAllSymbols(), Symbol.Defs);
 
         Definitions : Definition*;
       }

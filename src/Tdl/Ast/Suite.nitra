@@ -59,6 +59,7 @@ namespace Tdl
         Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
 
         SetUsed(Symbol.Statements);
+        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
 
         EntityOpt   : Reference?;
         TypeOpt     : Reference?;
@@ -151,6 +152,7 @@ namespace Tdl
         Platform.  CheckExpected(context, context.ToTdlContext().PlatformType,   PlatformRef.Symbol.Type);
         Product.   CheckExpected(context, context.ToTdlContext().ProductType,    ProductRef.Symbol.Type);
         SetUsed(Symbol.Statements);
+        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
 
         Froms        : From*;
         EntityOpt    : Reference?;
