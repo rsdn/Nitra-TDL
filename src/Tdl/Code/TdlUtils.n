@@ -279,7 +279,7 @@ namespace Tdl
       true
     }
 
-    public MakeAggregateParametersScope(scenarios : ImmutableArray[ScenarioSymbol], context : DependentPropertyEvalContext) : Scope
+    public MakeAggregateParametersScope(scenarios : ImmutableArray[ScenarioSymbol], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
@@ -288,25 +288,42 @@ namespace Tdl
       when (initialDeployment != null && initialDeployment.IsAggregateParametersScopeEvaluated)
         UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
 
-      CollectScenarios(visited, ref builder, scenarios);
-      builder.ToScope()
+      if (CollectScenarios(visited, ref builder, scenarios))
+        VSome(builder.ToScope())
+      else
+        VNone()
     }
 
-    private CollectScenarios(visited : HashSet[int], builder : ref UnionScopeBuilder, scenarios : ImmutableArray[ScenarioSymbol]) : void
+    private CollectScenarios(visited : HashSet[int], builder : ref UnionScopeBuilder, scenarios : ImmutableArray[ScenarioSymbol]) : bool
     {
-      foreach (deployment in scenarios)
+      foreach (scenario when visited.Add(scenario.Id) in scenarios)
       {
-        unless (visited.Add(deployment.Id))
-          return;
-
-        match (deployment)
+        match (scenario)
         {
-          | s is Scenario.DefSymbol when s.IsDeploymentEvaluated && s.Deployment.IsAggregateParametersScopeEvaluated =>
+          | s is Scenario.DefSymbol when s.IsDeploymentEvaluated =>
+            unless (s.Deployment.IsAggregateParametersScopeEvaluated)
+              return false;
+
             UnionScopeBuilder.Add(s.Deployment.AggregateParametersScope, ref builder);
-          | s is Scenario.SetSymbol when s.IsScenariosEvaluated  => CollectScenarios(visited, ref builder, s.Scenarios);
+            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
+
+          | s is Scenario.SetSymbol when s.IsScenariosEvaluated =>
+            unless (CollectScenarios(visited, ref builder, s.Scenarios))
+              return false;
+
+          | s is Scenario.GeneratorSymbol when s.IsDeploymentEvaluated =>
+            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
+            when (s.Deployment is DeploymentSymbol as deployment)
+            {
+              unless (deployment.IsAggregateParametersScopeEvaluated)
+                return false;
+              UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
+            }
+
           | _ => ()
         }
       }
+      true
     }
 
     public MakeExpected(valueOpt : DeploymentOption.Success.IAstOption) : ParsedValue[int]

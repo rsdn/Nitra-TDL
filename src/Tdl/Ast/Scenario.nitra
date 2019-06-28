@@ -98,7 +98,7 @@ namespace Tdl
 
         Scenarios.Scope                 = Scope;
         Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
-        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios, context);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios, context);
         Symbol.MultiMachineId           = if (Symbol.IsMultiMachine) context.NewGuid() else Guid.Empty;
         Symbol.IsMultiMachine           = IsMultiMachine.HasValue && IsMultiMachine.Value;
 
