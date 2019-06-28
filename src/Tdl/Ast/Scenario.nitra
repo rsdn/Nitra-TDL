@@ -71,7 +71,7 @@ namespace Tdl
 
         ReportDuplicateBarrier(context, Symbol.Actions);
 
-        Name.ChechRequired(context, "option", context.GetRequiredScenarioParameters(), Symbol.Defs);
+        Name.CheckRequired(context, "option", context.GetRequiredScenarioParameters(), Symbol.Defs);
 
         CheckOptionForDuplicates(context, Definitions.SymbolRef);
 

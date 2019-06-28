@@ -12,7 +12,9 @@
         "Size42": "$(Product:ProductB.Size)",
         "ReleaseName": "$(Product:ProductB.BranchName)"
       },
-      "ScriptArgsDefaultValues": {},
+      "ScriptArgsDefaultValues": {
+        "IntValue": 7
+      },
       "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
     },
     "Execute_Deploy": {
@@ -223,7 +225,7 @@
   },
   "TestScenarios": {
     "Test1": {
-      "FilterExpression": "((System.Collections.Generic.List<int>)globals[\"List\"]).Any()",
+      "FilterExpression": "(globals.ContainsKey(\"List\") ? (System.Collections.Generic.List<int>)globals[\"List\"] : null).Any()",
       "Deployments": [
         "InstallProduct"
       ],

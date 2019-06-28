@@ -82,7 +82,9 @@
         "UpdateSourceAddress": "",
         "UseSecondaryUpdateSource": false,
         "SecondaryUpdateSource": "",
-        "BugsRobotStatus": 0
+        "BugsRobotStatus": 0,
+        "BuildName": "build1",
+        "InternalTestSettingsDirectory": "/"
       },
       "Platforms": [
         "win10"
@@ -101,7 +103,9 @@
         "UpdateSourceAddress": "",
         "UseSecondaryUpdateSource": false,
         "SecondaryUpdateSource": "",
-        "BugsRobotStatus": 0
+        "BugsRobotStatus": 0,
+        "BuildName": "build2",
+        "InternalTestSettingsDirectory": "/"
       },
       "Platforms": [
         "win10"

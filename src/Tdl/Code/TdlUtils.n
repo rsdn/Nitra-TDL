@@ -638,7 +638,7 @@ namespace Tdl
       filteringScope
     }
     
-    public ChechRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def]) : void
+    public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def]) : void
     {
       def defSet        = fields.Select(d => d.Symbol);
       def missingFields = requiredFields.Except(defSet).MapToArray(x => x.InitialName);
@@ -646,7 +646,44 @@ namespace Tdl
       unless (missingFields.IsEmpty())
         ast.Error(context, $<#The following $(name)$(if (count == 1) "" else "s") are required: ..$missingFields.#>);
     }
-    
+
+    public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope) : void
+    {
+      def definedParameters = HashSet();
+      foreach (s in productScope.AllSymbols)
+        _ = definedParameters.Add(s.NameId);
+      foreach (d in suiteDefs)
+        _ = definedParameters.Add(d.Symbol.NameId);
+
+      def undefinedParameters = HashSet();
+      foreach (statement in suiteStatements)
+      {
+        | CallScenario(scenaro) when scenaro.IsAggregateParametersScopeEvaluated =>
+          def scenarioScope = scenaro.AggregateParametersScope;
+          foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
+          {
+            when (definedParameters.Contains(parameter.NameId)
+               || parameter.HasDefault()
+               || parameter.DeclaredIn is Deployment.SelectSymbol
+               || parameter.Type is SuiteTypeSymbol)
+              continue; // OK
+
+            when (undefinedParameters.Add(parameter.NameId))
+            {
+              def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
+              using (root = msgs.RootError(ast.Name, $"Value is not specified for parameter '$(parameter)' declared in '$(parameter.DeclaredIn)'."))
+              {
+                def parameterDefinition = parameter.FirstParsedDeclarationOrDefault;
+                when (parameterDefinition != null)
+                  root.Hint(parameterDefinition.Name.Location, "Parameter definition.");
+              }
+            }
+          }
+
+        | _ => ()
+      }
+    }
+
     public ResolveSuiteTypeSymbol(this context : DependentPropertyEvalContext, typeRef : Ref[DeclarationSymbol]) : SuiteTypeSymbol
     {
       def makeDefaulteSuiteTypeSymbol()

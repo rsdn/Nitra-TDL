@@ -1,4 +1,4 @@
-﻿suite type Ext
+suite type Ext
 {
   string AutotestAssemblies;
   string UpdateSourceAddress;
@@ -17,6 +17,8 @@ suite "Ext.PullRequest" : Ext
     UseSecondaryUpdateSource = false;
     SecondaryUpdateSource = "";
     BugsRobotStatus = 0;
+    BuildName = "build1";
+    InternalTestSettingsDirectory = "/";
     ExclusiveTestGroup();
 }
 
@@ -30,5 +32,7 @@ suite "Ext.Delivery" : Ext
     UseSecondaryUpdateSource = false;
     SecondaryUpdateSource = "";
     BugsRobotStatus = 0;
+    BuildName = "build2";
+    InternalTestSettingsDirectory = "/";
     ExclusiveTestGroup();
 }

@@ -33,7 +33,9 @@ suite type Ext
 }
 
 suite "Compatibility.Self" =
-    from Product in [PURE2020wKSDE4_KSM2017, KSM2017_KIS2020, PURE2020wKSDE4_KSDE3]
+    from (Product, A, B) in [(PURE2020wKSDE4_KSM2017, PURE2020wKSDE4, KSM2017),
+                             (KSM2017_KIS2020,        KSM2017,        KIS2020),
+                             (PURE2020wKSDE4_KSDE3,   PURE2020wKSDE4, KSDE3)]
 select
 {
     entity SideBySide_KAVKIS2020_SIDRV;
@@ -43,8 +45,8 @@ select
     UpdateSourceAddress = "http://iro.kaspersky-labs.com/";
     DeploymentConditions = "/Update";
 
-    //ProductA = ???;
-    //ProductB = ???;
+    productA = A;
+    productB = B;
 
     Sbs2020Group();
 };

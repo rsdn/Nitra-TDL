@@ -61,7 +61,7 @@ suite Suite3
     Test1();
 }
 
-scenario Test1(List<int> List/*, Suite suit*/)
+scenario Test1(List<int> List = null/*, Suite suit*/)
 {
     filter List.Any(x => x > 0);
     deployment InstallProduct;
@@ -76,7 +76,7 @@ scenario Test1(List<int> List/*, Suite suit*/)
 
 deployment InstallProduct(
     string Version,
-    int IntValue,
+    int IntValue = 7,
     MsOfficeProducts ProductA,
     MsOfficeProducts ProductB,
     TheProductType   ProductC
