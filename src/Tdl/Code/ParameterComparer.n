@@ -14,70 +14,35 @@ using System.Linq;
 
 namespace Tdl
 {
-    class ParameterComparer : IEqualityComparer[DeclarationSymbol]
+  class ParameterComparer : IEqualityComparer[DeclarationSymbol]
+  {
+    public static Instance : this = ParameterComparer();
+      
+    public Equals(x : DeclarationSymbol, y : DeclarationSymbol) : bool
     {
-      public static Instance : this = ParameterComparer();
-      
-      public Equals(x : DeclarationSymbol, y : DeclarationSymbol) : bool
-      {
-        | (p1 is FormalParameterSymbol, p2 is FormalParameterSymbol) =>
-          p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type) && Cmp(p1.Default, p2.Default)
+      | (p1 is FormalParameterSymbol, p2 is FormalParameterSymbol) =>
+        p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
         
-        | (p1 is FieldSymbol, p2 is FormalParameterSymbol) =>
-          p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
+      | (p1 is FieldSymbol, p2 is FormalParameterSymbol) =>
+        p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
           
-        | (p1 is FormalParameterSymbol, p2 is FieldSymbol) =>
-          p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
+      | (p1 is FormalParameterSymbol, p2 is FieldSymbol) =>
+        p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
           
-        | _ => false
-      }
-      
-      public GetHashCode(obj : DeclarationSymbol) : int
-      {
-        | x is FormalParameterSymbol when x.IsTypeEvaluated && x.IsDefaultEvaluated => 
-          def result = x.Name.GetHashCode() ^ x.Type.GetHashCode() ^ HashCode(x.Default);
-          result
-          
-        | x is FieldSymbol when x.IsTypeEvaluated => 
-          def result = x.Name.GetHashCode() ^ x.Type.GetHashCode() ^ HashCode(DefaultValue.None());
-          result
-          
-        | _ => obj.GetHashCode()
-      }
-      
-      private static HashCode(x : DefaultValue) : int
-      {
-        | None           => 1
-        | Error          => 2
-        | Overflow       => 3
-        | Null           => 4
-        | Bool      as y => y.Value.GetHashCode()
-        | String    as y => y.Value.GetHashCode()
-        | Number    as y => y.Value.GetHashCode() ^ y.IsUnsigned.GetHashCode() ^ y.IsLong.GetHashCode()
-        | Reference as y => y.name.GetHashCode()
-        | Single    as y => y.Value.GetHashCode()
-        | Double    as y => y.Value.GetHashCode()
-        | Decimal   as y => y.Value.GetHashCode()
-      }
-      
-      private static Cmp(x : DefaultValue, y : DefaultValue) : bool
-      {
-        def result = match (x, y)
-        {
-          | (None     , None    ) => true
-          | (Error    , Error   ) => false
-          | (Overflow , Overflow) => false
-          | (Null     , Null    ) => true
-          | (Bool      as v1, Bool      as v2) => v1.Value == v2.Value
-          | (String    as v1, String    as v2) => v1.Value == v2.Value
-          | (Number    as v1, Number    as v2) => v1.Value == v2.Value && v1.IsUnsigned == v2.IsUnsigned && v1.IsLong == v2.IsLong
-          | (Reference as v1, Reference as v2) => v1.name  == v2.name
-          | (Single    as v1, Single    as v2) => v1.Value == v2.Value
-          | (Double    as v1, Double    as v2) => v1.Value == v2.Value
-          | (Decimal   as v1, Decimal   as v2) => v1.Value == v2.Value
-          | _ => false
-        };
-        result
-      }
+      | _ => false
     }
+      
+    public GetHashCode(obj : DeclarationSymbol) : int
+    {
+      | x is FormalParameterSymbol when x.IsTypeEvaluated => 
+        def result = x.Name.GetHashCode() ^ x.Type.GetHashCode();
+        result
+          
+      | x is FieldSymbol when x.IsTypeEvaluated => 
+        def result = x.Name.GetHashCode() ^ x.Type.GetHashCode();
+        result
+          
+      | _ => obj.GetHashCode()
+    }
+  }
 }
