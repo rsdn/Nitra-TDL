@@ -1316,7 +1316,7 @@ namespace Tdl
               | _ => ()
             }
             break;
-          }        
+          }
         | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
       }
       MakeAggregateParametersScope(deployments, parametersScope)
