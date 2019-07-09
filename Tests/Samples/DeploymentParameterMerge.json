@@ -1,0 +1,48 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "CurrySeq": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Seq": {
+            "Par": 1000
+          }
+        }
+      ]
+    },
+    "Seq": {
+      "Type": "Sequence",
+      "Deployments": [
+        "A",
+        "B"
+      ]
+    },
+    "A": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Par": "$(Par)"
+      },
+      "ScriptArgsDefaultValues": {
+        "Par": 700
+      },
+      "ScriptPath": "a.ps1"
+    },
+    "B": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Par": "$(Par)"
+      },
+      "ScriptArgsDefaultValues": {
+        "Par": 700
+      },
+      "ScriptPath": "b.ps1"
+    }
+  },
+  "Platforms": {},
+  "Products": {},
+  "Suites": {},
+  "TestScenarios": {},
+  "TestEntities": {}
+}

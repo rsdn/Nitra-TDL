@@ -129,7 +129,7 @@ namespace Tdl
         Symbol.BaseDeployment            = BaseDeploymentRef.Symbol;
 
         CurredParameters.Scope           = Scope;
-        CurredParameters.DefinitionScope = BaseDeploymentRef.Symbol.AggregateParametersScope;
+        CurredParameters.DefinitionScope = TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope);
         Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
         Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams);
 

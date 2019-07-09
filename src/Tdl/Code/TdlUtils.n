@@ -627,13 +627,19 @@ namespace Tdl
     
     public MakeParameterScope(scope : Scope) : Scope
     {
-      def used = HashSet(ParameterComparer());
-      def isUsed(x)
+      def internTable = Dictionary(ParameterComparer());
+      def isInternedSymbol(symbol)
       {
-        def res = used.Add(x);
-        res
+        mutable internedSymbol;
+        if (internTable.TryGetValue(symbol, out internedSymbol))
+          symbol : object == internedSymbol
+        else
+        {
+          internTable.Add(symbol, symbol);
+          true
+        }
       }
-      FilteringScope(scope, isUsed)
+      FilteringScope(scope, isInternedSymbol)
     }
     
     public TryMoveToImmutable[T](this builder : ImmutableArray[T].Builder) : ImmutableArray[T]
