@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Deployment : NamespaceMember, TypedDeclaration
+  abstract declaration Deployment : NamespaceMember, TypedDeclaration, UsedDeclaration
   {
     symbol
     {
@@ -25,6 +25,18 @@ namespace Tdl
 
     unless (InitialKeyword.IsEmpty)
       SetInitialDeployment(Symbol, context);
+
+    //unless (Symbol.IsUsed)
+    //  Name.Warning(context, "Unused deployment.");
+
+    | ignore-case Empty
+      {
+        symbol
+        {
+          AggregateParametersScope = EmptyScope.Instance;
+          AllDeployments           = ImmutableArray.Empty;
+        }
+      }
 
     | ignore-case Script : Parameterizable, DeploymentOptionsHost
       {
@@ -92,6 +104,8 @@ namespace Tdl
         Deployments.Scope               = Scope;
         Deployments.ContainingTable     = ContainingTable;
 
+        SetUsed(Symbol.Deployments, true);
+
         Deployments : DeploymentExpr*;
       }
 
@@ -120,6 +134,7 @@ namespace Tdl
         Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams);
 
         Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, CurredParameters.SymbolRef);
+        Symbol.BaseDeployment.IsUsed     = true;
 
         BaseDeployment   : Reference;
         CurredParameters : Definition*;
@@ -143,6 +158,7 @@ namespace Tdl
         Symbol.Cases                    = Cases.Cases;
 
         ChechSelectDeployment(context, Cases);
+        SetUsed(Symbol.Deployments, true);
 
         Cases      : Case*;
       }

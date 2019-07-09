@@ -1,0 +1,29 @@
+product type ProductType
+{
+  string Name;
+  string Version;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0";
+}
+
+platform Platform;
+
+scenario S1
+{
+  deployment eMpTy; // OK
+  environments (Platform, Product);
+  method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
+
+suite Suite
+{
+  platform Platform;
+  product Product;
+  S1();
+}
