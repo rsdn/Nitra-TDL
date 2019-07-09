@@ -62,6 +62,8 @@ namespace Tdl
         Type            = await context.MakeType(Reference.Ref.Symbol);
         Reference.Scope = Scope;
 
+        SetUsed(Reference.Ref.Symbol, true);
+
         Reference : Declarations.Reference;
       }
     | MemberAccess
@@ -70,6 +72,8 @@ namespace Tdl
         Expr.Scope   = Scope;
         Member.Scope = Expr.Type.Scope;
         Result       = Expr.MemberAccess(Expr.Result, Member.Ref.Symbol, Type);
+
+        SetUsed(Member.Ref.Symbol, true);
 
         Expr   : DefExpr;
         Member : Declarations.Reference;

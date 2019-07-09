@@ -29,7 +29,11 @@ namespace Tdl2Json
 
     public Generate(symbols : IEnumerable[DeclarationSymbol], deploymentScriptHeader : string, deploymentToolPath : string) : Dictionary[string, QuickType.Deployment]
     {
-      symbols.OfType.[DeploymentSymbol]().Select(GenerateDeployment(_, deploymentScriptHeader, deploymentToolPath)).ToDictionary()
+      // выбрасываем неиспользованный Empty-деплоймент
+      symbols.OfType.[DeploymentSymbol]()
+             .Where((d : DeploymentSymbol) => !(d is Deployment.EmptySymbol) || (d.IsIsUsedEvaluated && d.IsUsed))
+             .Select(GenerateDeployment(_, deploymentScriptHeader, deploymentToolPath))
+             .ToDictionary()
     }
 
     private getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
@@ -264,6 +268,7 @@ namespace Tdl2Json
           )
 
         | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel)
+        | Deployment.EmptySymbol as empty => (empty.Name, Deployment() <- { Type = TypeEnum.Empty })
         | _ => ThrowNotSupportedSymbol(deploymentSymbol) 
       }
     }

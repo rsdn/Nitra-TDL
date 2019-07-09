@@ -270,8 +270,9 @@ namespace Tdl
               return false;
             UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
 
+          | _ is Deployment.EmptySymbol
           | _ is DeploymentRebootSymbol    => ()
-            
+
           | null => assert(false, "Deployment can not be null.")
           | _    => assert(false, "Not supported deployment type: " + deployment.GetType().Name)
         }
@@ -1217,6 +1218,7 @@ namespace Tdl
           | s is Deployment.SelectSymbol   => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
           | s is Deployment.CurryingSymbol => if (s.IsBaseDeploymentEvaluated) [s.BaseDeployment] else []
           | _ is DeploymentRebootSymbol    => []
+          | _ is Deployment.EmptySymbol    => []
           | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
       }
       CheckForRecursion(ast, context, symbol, getDescendants, _depend)
@@ -1265,7 +1267,13 @@ namespace Tdl
       
       nodesMap.Keys.ToImmutableArray()
     }
-    
+
+    public SetUsed(this _ast : IAst, symbol : DeclarationSymbol, isUsed : bool) : void
+    {
+      when (symbol is UsedDeclarationSymbol as usageSymbol when !usageSymbol.IsIsUsedEvaluated)
+        usageSymbol.IsUsed = isUsed;
+    }
+
     public SetUsed[T](this _ast : IAst, items : Seq[T], isUsed : bool) : void
       where T: UsedDeclarationSymbol
     {
