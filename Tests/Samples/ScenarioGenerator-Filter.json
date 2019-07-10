@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
@@ -58,7 +58,7 @@
   },
   "TestScenarios": {
     "Generator1-1": {
-      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? (bool)globals[\"isEnabled\"] : false))",
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
       "Deployments": [
         "MyDeployment"
       ],
@@ -81,7 +81,7 @@
       "UniqueId": "42ddcb73-5563-4882-9a33-86afe07eb6b5"
     },
     "Generator1-2": {
-      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? (bool)globals[\"isEnabled\"] : false))",
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
       "Deployments": [
         "MyDeployment"
       ],
@@ -104,7 +104,7 @@
       "UniqueId": "42ddcb74-5563-4882-9a33-86afe07eb6b5"
     },
     "Generator1-3": {
-      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? (bool)globals[\"isEnabled\"] : false))",
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
       "Deployments": [
         "MyDeployment"
       ],
@@ -127,7 +127,7 @@
       "UniqueId": "42ddcb76-5563-4882-9a33-86afe07eb6b5"
     },
     "Generator1-4": {
-      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? (bool)globals[\"isEnabled\"] : false))",
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
       "Deployments": [
         "MyDeployment"
       ],

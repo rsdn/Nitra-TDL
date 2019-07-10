@@ -14,13 +14,13 @@ namespace Tdl2Json
 {
     module Expressions
     {
-        public ToObject(this expression : Tdl.Expr) : object
+        public ToObject(this expression : Tdl.Expr, targetParameter : DotNet.TypedDeclarationSymbol) : object
         {
           def loop(expression : Tdl.Expr) : object
           {
             | Error             => "<error>";
-            | False             => false
-            | True              => true
+            | False             => if (Deployments.IsDeploymentCodeParameter(targetParameter)) 0 : object else false
+            | True              => if (Deployments.IsDeploymentCodeParameter(targetParameter)) 1 : object else true
             | Integer      as i => i.Value
             | Real         as r => r.Value
             | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s) => "Product:" + s.Name

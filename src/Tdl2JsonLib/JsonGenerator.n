@@ -517,7 +517,7 @@ namespace Tdl2Json
                 def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
                 {
                     def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
-                    def env = c.Defs.Select(d => (d.Symbol.Name, d.Expr.ToObject())).ToDictionary();
+                    def env = c.Defs.Select(d => (d.Symbol.Name, d.Expr.ToObject(d.Symbol))).ToDictionary();
                     UnixScriptRunner() <-
                     {
                       TestScriptName             = c.Name.Value;
@@ -734,14 +734,21 @@ namespace Tdl2Json
               | _ => p.Type.FullName
             };
 
-          def name = p.Name;
+          def name = p.Name; 
+          def getValue =
+            match (type)
+            {
+              | "System.Boolean" | "bool" => $<#System.Convert.ToBoolean(globals["$name"])#>
+              | _                         => $<#($type)globals["$name"]#>
+            };
+
           if (p.HasDefault())
           {
             def defaultValue = GenerateDefaultValue(p.Default);
-            $<#(globals.ContainsKey("$name") ? ($type)globals["$name"] : $defaultValue)#>
+            $<#(globals.ContainsKey("$name") ? $getValue : $defaultValue)#>
           }
           else
-            $<#(($type)globals["$name"])#>
+            $<#($getValue)#>
   
         | Member.MethodSymbol as m => m.Name
         | PlatformSymbol as p => $<#config.Platforms["$(p.Name)"]#>

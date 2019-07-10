@@ -36,6 +36,12 @@ namespace Tdl2Json
              .ToDictionary()
     }
 
+    public IsDeploymentCodeParameter(symbol : DotNet.TypedDeclarationSymbol) : bool
+    {
+      | s is DotNet.FormalParameterSymbol when s.IsDeclaredInEvaluated => s.DeclaredIn is Deployment.CodeSymbol
+      | _ => false
+    }
+
     private getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
     {
       match (parameter.Default)
@@ -57,6 +63,7 @@ namespace Tdl2Json
       match (parameter.Default)
       {
         | String    as s => s.Value
+        | Bool      as b when IsDeploymentCodeParameter(parameter) => if (b.Value) 1 else 0
         | Bool      as b => b.Value
         | Number    as n => n.Value
         | Decimal   as d => d.Value
@@ -74,7 +81,7 @@ namespace Tdl2Json
       def simpleParameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
       def parameters       = simpleParameters.Select(p => (p.Name, getParameterValue(p)));
       def defaultes        = script.Parameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
-      def defs             = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
+      def defs             = script.Defs.Select(d => (d.Name, d.Expr.ToObject(null)));
       def scriptArgs       = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
       def deploymentModel = Deployment() <- 
@@ -127,7 +134,7 @@ namespace Tdl2Json
     private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
     {
       def deployments = Dictionary();
-      deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
+      deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject(p.Symbol)));
       (currying.Name,
         Deployment() <-
         {
@@ -167,7 +174,7 @@ namespace Tdl2Json
           match (parameter.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
           {
             | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
-            | "System.Boolean" | "bool"   => ("switch", $<#if ($(parameterName)) {"true"} else {"false"}#>);
+            | "System.Boolean" | "bool"   => ("bool",   $<#if ($(parameterName)) {"true"} else {"false"}#>);
             | type                        => (type,     $<#$(parameterName).ToString("", [System.Globalization.CultureInfo]::InvariantCulture)#>)
           };
 
