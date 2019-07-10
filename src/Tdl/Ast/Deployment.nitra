@@ -48,7 +48,7 @@ namespace Tdl
           in Base64    : ParsedValue[array[byte]];
 
         stage 3:
-          in Defs            : ImmutableArray[Def2];
+          in Defs            : ImmutableArray[UntypedDef];
 
           Kind           = "deployment";
           SpanClass      = TdlLang.DeploymentSpanClass;
@@ -59,7 +59,7 @@ namespace Tdl
         Content.Symbol                  = Symbol;
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
-        Symbol.Defs                     = TdlUtils.MakeDefinitions(Definitions);
+        Symbol.Defs                     = TdlUtils.MakeUntypedDefinitions(Definitions);
         Parameters.Scope                = Scope;
 
         Content         : DeploymentScriptContent;

@@ -17,7 +17,7 @@ namespace Tdl
       {
         Name               : ParsedValue[string];
         Arguments          : ImmutableArray[ParsedValue[string]];
-        Defs               : ImmutableArray[Def2];
+        Defs               : ImmutableArray[Def];
         MaxRebootsCountOpt : ParsedValue[int];
       }
     | Config        { path   : ParsedValue[string]; MaxRebootsCountOpt : ParsedValue[int]; }

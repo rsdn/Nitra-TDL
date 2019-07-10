@@ -24,20 +24,13 @@ using Tdl;
 
 namespace DotNet
 {
+    [Record]
     public sealed class InvocationScope : Scope
     {
+      _type        : TypeSymbol;
       _scope       : Scope;
       _globalScope : Scope;
-      _type        : TypeSymbol;
       _context     : DependentPropertyEvalContext;
-      
-      public this(type : TypeSymbol, scope : Scope, globalScope : Scope, context : DependentPropertyEvalContext)
-      {
-        _type        = type;
-        _scope       = scope;
-        _globalScope = globalScope;
-        _context     = context;
-      }
 
       private GetExtensionMethodContainers() : Seq[TopClassSymbol]
       {
@@ -134,7 +127,7 @@ namespace DotNet
           yield s;
       }
       
-      public override ToDot(nodeToIdMap : System.Collections.Generic.Dictionary[object, int], nodes : System.Collections.Generic.List[string], edges : System.Collections.Generic.List[string]) : void
+      public override ToDot(nodeToIdMap : Dictionary[object, int], nodes : List[string], edges : List[string]) : void
       {
         IgnoreParams();
         _scope.ToDot(nodeToIdMap, nodes, edges)

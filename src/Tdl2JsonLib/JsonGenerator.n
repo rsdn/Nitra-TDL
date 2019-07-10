@@ -517,7 +517,7 @@ namespace Tdl2Json
                 def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
                 {
                     def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
-                    def env = c.Defs.Select(d => (d.Name, d.Expr.ToObject())).ToDictionary();
+                    def env = c.Defs.Select(d => (d.Symbol.Name, d.Expr.ToObject())).ToDictionary();
                     UnixScriptRunner() <-
                     {
                       TestScriptName             = c.Name.Value;
