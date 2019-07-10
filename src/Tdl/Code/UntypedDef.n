@@ -3,7 +3,7 @@
 namespace Tdl
 {
   [Record]
-  public struct Def2
+  public struct UntypedDef
   {
     public Name : string;
     public Expr : Expr;

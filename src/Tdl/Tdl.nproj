@@ -173,7 +173,7 @@
     <Compile Include="Code\Def.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Code\Def2.n">
+    <Compile Include="Code\UntypedDef.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\ScopeAggregator.n">

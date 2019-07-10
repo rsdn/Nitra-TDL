@@ -12,12 +12,13 @@ namespace Tdl
 {
   abstract ast Action : BindableAst
   {
+  stage 2:
     out ScenarioActions : ScenarioAction;
 
     | Script
       {
         ScenarioActions = ScenarioAction.Script(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions), MaxRebootsCountOpt);
+          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(Definitions, Definitions.SymbolRef), MaxRebootsCountOpt);
 
         Name               : CSharp.StringLiteral;
         Arguments          : CSharp.StringLiteral*;
