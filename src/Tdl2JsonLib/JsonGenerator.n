@@ -175,13 +175,15 @@ namespace Tdl2Json
         jsonSchemaType = if (IsExperimental) "dev" else "prod";
 
       def symbols     = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
-      def suites      = List();
-      def suiteGroups = List();
+      def suites      = SortedDictionary();
+      def suiteGroups = SortedDictionary();
       foreach (g is Suite.GeneratorSymbol in symbols)
         GenerateSuiteGenerator(g, suites, suiteGroups);
+      foreach (s is Suite.ListSymbol in symbols)
+        GenerateSuiteGroup(s, suiteGroups);
+      foreach (s is Suite.DefSymbol in symbols)
+        suites.Add(GenerateSuite(s));
 
-      def suiteGroups = symbols.OfType.[Suite.ListSymbol]().Select(GenerateSuiteGroup).Concat(suiteGroups).ToDictionary();
-        
       def coordinate = Root() <-
       {
         Version       = JsonVersion;
@@ -189,7 +191,7 @@ namespace Tdl2Json
         Deployments   = Deployments.Generate(symbols, deploymentScriptHeader, deploymentToolPath);
         Products      = symbols.OfType.[ProductSymbol        ]().Select(GenerateProduct)             .ToDictionary();
         Platforms     = symbols.OfType.[PlatformSymbol       ]().Select(GeneratePlatform)            .ToDictionary();
-        Suites        = symbols.OfType.[Suite.DefSymbol      ]().Select(GenerateSuite).Concat(suites).ToDictionary();
+        Suites        = suites;
         TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol   ]().SelectMany(GenerateScenarios(_, initialDeployment)).ToDictionary();
         SuiteGroups   = if (suiteGroups.Count == 0) null else suiteGroups;
         TestEntities  = symbols.OfType.[EntitySymbol         ]().Select(GenerateEntity)              .ToDictionary();
@@ -839,12 +841,20 @@ namespace Tdl2Json
       }
     }
 
-    private GenerateSuiteGroup(suiteSymbol : Suite.ListSymbol) : string * SuiteGroup
+    private GenerateSuiteGroup(suiteSymbol : Suite.ListSymbol, suiteGroups : IDictionary[string, SuiteGroup]) : void
     {
-      (suiteSymbol.Name, SuiteGroup() <- { Suites = suiteSymbol.AllSuites.Select(_.Name).ToList(); })
+      def suites = List();
+      foreach (symbol in suiteSymbol.AllSuites)
+      {
+        | s is Suite.DefSymbol       => suites.Add(s.Name)
+        | s is Suite.GeneratorSymbol => suites.AddRange(suiteGroups[s.Name].Suites)
+        | _ => assert2(false, $"Invalid symbol $(symbol) in AllSymbols")
+      }
+
+      suiteGroups.Add(suiteSymbol.Name, SuiteGroup() <- { Suites = suites })
     }
 
-    private GenerateSuiteGenerator(g : Suite.GeneratorSymbol, suites : List[string * TestSuite], suiteGroups : List[string * SuiteGroup]) : void
+    private GenerateSuiteGenerator(g : Suite.GeneratorSymbol, suites : IDictionary[string, TestSuite], suiteGroups : IDictionary[string, SuiteGroup]) : void
     {
       def nameBase = g.Name;
       def names = List();

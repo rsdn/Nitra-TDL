@@ -207,7 +207,9 @@
       "Suites": [
         "Suite1",
         "Suite2",
-        "Suite3"
+        "Suite3",
+        "GeneratedSuiteList-Word-w10rs4-x86-1",
+        "GeneratedSuiteList-Excel-win_10_rs3-2"
       ]
     },
     "SuiteList1": {

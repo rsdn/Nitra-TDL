@@ -16,7 +16,7 @@ suite GeneratedSuiteList : SuiteType1 =
       Test1();
     };
 
-suite SuiteList = Suite1, Suite2, SuiteList1;
+suite SuiteList = Suite1, Suite2, SuiteList1, GeneratedSuiteList;
 
 suite SuiteList1 = Suite1, Suite3;
 

@@ -74,7 +74,7 @@ namespace Tdl
         symbol
         {
         stage 2:
-          in AllSuites : ImmutableArray[Suite.DefSymbol];
+          in AllSuites : ImmutableArray[SuiteSymbol]; // Defs + Generators
         stage 1:
           in Suites    : ImmutableArray[SuiteSymbol];
 
