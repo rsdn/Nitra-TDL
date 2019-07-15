@@ -78,6 +78,9 @@ namespace Tdl
         Method             : QualifiedReference;
         MaxRebootsCountOpt : ParsedValue[int];
         BinariesFolderOpt  : CSharp.StringLiteral?;
+
+        when (!(Method is QualifiedReference.Qualified))
+          Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
       }
     | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot
