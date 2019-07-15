@@ -39,43 +39,43 @@ namespace QuickType
         /// Описания деплоев
         /// </summary>
         [JsonProperty("Deployments", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, Deployment> Deployments { get; set; }
+        public IDictionary<string, Deployment> Deployments { get; set; }
 
         /// <summary>
         /// Значения параметров
         /// </summary>
         [JsonProperty("Parameters", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, string> Parameters { get; set; }
+        public IDictionary<string, string> Parameters { get; set; }
 
         /// <summary>
         /// Описания платформ
         /// </summary>
         [JsonProperty("Platforms", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, PlatformValue> Platforms { get; set; }
+        public IDictionary<string, PlatformValue> Platforms { get; set; }
 
         /// <summary>
         /// Описания продуктов
         /// </summary>
         [JsonProperty("Products", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, ProductValue> Products { get; set; }
+        public IDictionary<string, ProductValue> Products { get; set; }
 
         /// <summary>
         /// Описания тестов и групп
         /// </summary>
         [JsonProperty("Suites", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, TestSuite> Suites { get; set; }
+        public IDictionary<string, TestSuite> Suites { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, SuiteGroup> SuiteGroups { get; set; }
+        public IDictionary<string, SuiteGroup> SuiteGroups { get; set; }
 
         /// <summary>
         /// Описания тестов и групп
         /// </summary>
         [JsonProperty("TestScenarios", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, TestCase> TestScenarios { get; set; }
+        public IDictionary<string, TestCase> TestScenarios { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, TestEntity> TestEntities { get; set; }
+        public IDictionary<string, TestEntity> TestEntities { get; set; }
     }
 
     /// <summary>
@@ -99,10 +99,10 @@ namespace QuickType
         public long? ReturnValue { get; set; }
 
         [JsonProperty("ScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> ScriptArgs { get; set; }
+        public IDictionary<string, object> ScriptArgs { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> ScriptArgsDefaultValues { get; set; }
+        public IDictionary<string, object> ScriptArgsDefaultValues { get; set; }
 
         [JsonProperty("ScriptPath", NullValueHandling = NullValueHandling.Ignore)]
         public string ScriptPath { get; set; }
@@ -131,7 +131,7 @@ namespace QuickType
         public string Condition { get; set; }
 
         [JsonProperty("Values", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> Values { get; set; }
+        public IDictionary<string, object> Values { get; set; }
 
         #endregion
 
@@ -171,7 +171,7 @@ namespace QuickType
         /// инсталлятору и скрипту установки для деплоя 'Install Product'
         /// </summary>
         [JsonProperty("Parameters", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> Parameters { get; set; }
+        public IDictionary<string, object> Parameters { get; set; }
 
         [JsonProperty("BranchName")]
         public string BranchName { get; set; }
@@ -192,7 +192,7 @@ namespace QuickType
     public partial class TestSuite
     {
         [JsonProperty("Parameters", NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, object> Parameters { get; set; }
+        public IDictionary<string, object> Parameters { get; set; }
 
         [JsonProperty("Platforms")]
         public string[] Platforms { get; set; }

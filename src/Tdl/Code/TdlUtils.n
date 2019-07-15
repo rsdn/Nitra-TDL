@@ -542,33 +542,33 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
 
-    public Flatten(symbols : ImmutableArray[SuiteSymbol]) : ImmutableArray[Suite.DefSymbol]
+    public Flatten(symbols : ImmutableArray[SuiteSymbol]) : ImmutableArray[SuiteSymbol]
     {
       def getChildren(symbol)
       {
         | sx is Suite.ListSymbol => sx.Suites
-        | _                      => ImmutableArray.Empty
+        | _                      => default(ImmutableArray[SuiteSymbol])
       }
       Flatten(symbols, getChildren)
     }
-    
-    public Flatten[TBase, TDef](symbols : ImmutableArray[TBase], getChildren : TBase -> ImmutableArray[TBase]) : ImmutableArray[TDef]
-      where TBase : DeclarationSymbol
-      where TDef  : DeclarationSymbol
+
+    public Flatten[T](symbols : ImmutableArray[T], getChildren : T -> ImmutableArray[T]) : ImmutableArray[T]
+      where T : DeclarationSymbol
     {
       def builder = ImmutableArray.CreateBuilder(symbols.Length);
       def visited = HashSet();
 
-      def loop(symbols : ImmutableArray[TBase])
+      def loop(symbols : ImmutableArray[T])
       {
-        foreach (symbol in symbols)
+        foreach (symbol when visited.Add(symbol) in symbols)
         {
-          | _ when !visited.Add(symbol) => ()
-          | d is TDef => builder.Add(d);
-          | _ => loop(getChildren(symbol))
+          def children = getChildren(symbol);
+          if (children.IsDefault)
+            builder.Add(symbol)
+          else
+            loop(children)
         }
       }
-
       loop(symbols);
 
       builder.TryMoveToImmutable()
@@ -1184,6 +1184,7 @@ namespace Tdl
     {
       def getDescendants(sym : SuiteSymbol) : Seq[SuiteSymbol]
       {
+          | _ is Suite.GeneratorSymbol
           | _ is Suite.DefSymbol  => []
           | s is Suite.ListSymbol => if (s.IsSuitesEvaluated) s.Suites else []
           | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
