@@ -29,11 +29,11 @@ namespace Tdl2Json
 
     public Generate(symbols : IEnumerable[DeclarationSymbol], deploymentScriptHeader : string, deploymentToolPath : string) : Dictionary[string, QuickType.Deployment]
     {
+      def result = Dictionary();
       // выбрасываем неиспользованный Empty-деплоймент
-      symbols.OfType.[DeploymentSymbol]()
-             .Where((d : DeploymentSymbol) => !(d is Deployment.EmptySymbol) || (d.IsIsUsedEvaluated && d.IsUsed))
-             .Select(GenerateDeployment(_, deploymentScriptHeader, deploymentToolPath))
-             .ToDictionary()
+      foreach (d is DeploymentSymbol when !(d is Deployment.EmptySymbol) || (d.IsIsUsedEvaluated && d.IsUsed) in symbols)
+        GenerateDeployment(d, deploymentScriptHeader, deploymentToolPath, result);
+      result
     }
 
     public IsDeploymentCodeParameter(symbol : DotNet.TypedDeclarationSymbol) : bool
@@ -75,7 +75,7 @@ namespace Tdl2Json
       }
     }
     
-    private GenerateDeploymentScript(script : Deployment.ScriptSymbol) : string * QuickType.Deployment
+    private GenerateDeploymentScript(script : Deployment.ScriptSymbol, result : Dictionary[string, QuickType.Deployment]) : void
     {
       def refDefs          = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
       def simpleParameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
@@ -107,22 +107,38 @@ namespace Tdl2Json
         deploymentModel.ScriptDataExtension = if (script.IsExtensionEvaluated) script.Extension.Value else null;
       }
 
-      (script.Name, deploymentModel)
+      result.Add(script.Name, deploymentModel)
     }
 
-    private GenerateDeploymentSelect(sel : Deployment.SelectSymbol) : string * QuickType.Deployment
+    private GenerateDeploymentSelect(sel : Deployment.SelectSymbol, result : Dictionary[string, QuickType.Deployment]) : void
     {
       def separator   = "⁞";
       def deployments = sel.Deployments;
       def cases       = sel.Cases;
       assert2(deployments.Length == cases.Length);
-      
-      def condition = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
-      def values    = cases.Map2ToArray(deployments, 
-        (values, d) => (string.Join(separator, values.Select(v => if (v == null) JsonGenerator.ParameterDefaultValue else v)), 
-        [(d.Name, object())].ToDictionary())).ToDictionary();
+      def condition   = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
+      def values      = Dictionary();
+      for (mutable i; i < deployments.Length; ++i)
+      {
+        def selector = string.Join(separator, cases[i].Select(v => if (v == null) JsonGenerator.ParameterDefaultValue else v));
+        def seq      = deployments[i];
+        mutable name;
+        if (seq.Length == 1)
+          name = seq[0].Name
+        else
+        {
+          name = sel.Name + separator + selector;
+          result.Add(name, Deployment() <- 
+          { 
+              Type        = TypeEnum.Sequence;
+              Deployments = seq.Select(_.Name).ToArray()
+          })
+        }
 
-      (sel.Name, 
+        values.Add(selector, Dictionary() <- [ (name, object()) ])
+      }
+
+      result.Add(sel.Name, 
         Deployment() <- 
         { 
             Type      = TypeEnum.Select;
@@ -131,11 +147,11 @@ namespace Tdl2Json
         })
     }
 
-    private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol) : string * QuickType.Deployment
+    private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol, result : Dictionary[string, QuickType.Deployment]) : void
     {
       def deployments = Dictionary();
       deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject(p.Symbol)));
-      (currying.Name,
+      result.Add(currying.Name,
         Deployment() <-
         {
             Type        = TypeEnum.Sequence;
@@ -144,7 +160,7 @@ namespace Tdl2Json
       )
     }
 
-    private GenerateDeploymentCode(code : Deployment.CodeSymbol, deploymentScriptHeader : string, deploymentToolPath : string) : string * QuickType.Deployment
+    private GenerateDeploymentCode(code : Deployment.CodeSymbol, deploymentScriptHeader : string, deploymentToolPath : string, result : Dictionary[string, QuickType.Deployment]) : void
     {
       def scriptArgs = Dictionary();
       def defaults   = Dictionary();
@@ -234,7 +250,7 @@ namespace Tdl2Json
         .Replace("{{Tool}}",       deploymentToolPath)
         .ToString();
 
-      (code.Name,
+      result.Add(code.Name,
         Deployment() <-
         {
           Type                    = TypeEnum.Script;
@@ -249,16 +265,16 @@ namespace Tdl2Json
         })
     }
 
-    private GenerateDeployment(deploymentSymbol : DeploymentSymbol, deploymentScriptHeader : string, deploymentToolPath : string) : string * QuickType.Deployment
+    private GenerateDeployment(deploymentSymbol : DeploymentSymbol, deploymentScriptHeader : string, deploymentToolPath : string, result : Dictionary[string, QuickType.Deployment]) : void
     {
       match (deploymentSymbol)
       {
-        | Deployment.ScriptSymbol   as script   => GenerateDeploymentScript(script)
-        | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying(currying)
-        | Deployment.CodeSymbol     as code     => GenerateDeploymentCode(code, deploymentScriptHeader, deploymentToolPath)
+        | Deployment.ScriptSymbol   as script   => GenerateDeploymentScript(script, result)
+        | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying(currying, result)
+        | Deployment.CodeSymbol     as code     => GenerateDeploymentCode(code, deploymentScriptHeader, deploymentToolPath, result)
         | Deployment.SetSymbol as set =>
           def deployments = set.Deployments.Select(d => d.Name).ToArray();
-          (set.Name, 
+          result.Add(set.Name, 
             Deployment() <- 
             { 
               Type        = TypeEnum.Sequence;
@@ -266,7 +282,7 @@ namespace Tdl2Json
             })
 
         | DeploymentRebootSymbol as reboot => 
-          (reboot.Name, 
+          result.Add(reboot.Name, 
             Deployment() <-
             {
               Type          = TypeEnum.Reboot;
@@ -274,9 +290,9 @@ namespace Tdl2Json
             }
           )
 
-        | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel)
-        | Deployment.EmptySymbol as empty => (empty.Name, Deployment() <- { Type = TypeEnum.Empty })
-        | _ => ThrowNotSupportedSymbol(deploymentSymbol) 
+        | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel, result)
+        | Deployment.EmptySymbol as empty => result.Add(empty.Name, Deployment() <- { Type = TypeEnum.Empty })
+        | _ => _ = ThrowNotSupportedSymbol(deploymentSymbol) 
       }
     }
 

@@ -256,8 +256,9 @@ namespace Tdl
               return false;
             UnionScopeBuilder.Add(s.ParameterScope, ref builder);
 
-            unless (CollectDeployments(visited, ref builder, s.Deployments))
-              return false;
+            foreach (seq in s.Deployments)
+              unless (CollectDeployments(visited, ref builder, seq))
+                return false;
             
           | s is Deployment.SetSymbol      =>
             unless (CollectDeployments(visited, ref builder, s.Deployments))
@@ -990,14 +991,16 @@ namespace Tdl
         msgs.ReportMessage(CompilerMessageType.Error, location, message, 0);
     }
 
-    public MakeSelectAggregateParametersScope(scope : TableScope, deployments : ImmutableArray[DeploymentSymbol]) : ValueOption[Scope]
+    public MakeSelectAggregateParametersScope(scope : TableScope, deployments : ImmutableArray[ImmutableArray[DeploymentSymbol]]) : ValueOption[Scope]
     {
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
-      if (CollectDeployments(visited, ref builder, deployments))
-        VSome(builder.ToScope().HideWith(scope))
-      else
-        VNone()
+      foreach (seq in deployments)
+      {
+        unless (CollectDeployments(visited, ref builder, seq))
+          return VNone();
+      }
+      VSome(builder.ToScope().HideWith(scope))
     }
 
     public ChechSelectDeployment(this ast : IAst, context : DependentPropertyEvalContext, cases : Case.IAstList) : void
@@ -1224,7 +1227,7 @@ namespace Tdl
           | _ is Deployment.ScriptSymbol   => []
           | _ is Deployment.CodeSymbol     => []
           | s is Deployment.SetSymbol      => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
-          | s is Deployment.SelectSymbol   => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
+          | s is Deployment.SelectSymbol   => if (s.IsDeploymentsEvaluated)    s.Deployments.SelectMany(x => x) else []
           | s is Deployment.CurryingSymbol => if (s.IsBaseDeploymentEvaluated) [s.BaseDeployment] else []
           | _ is DeploymentRebootSymbol    => []
           | _ is Deployment.EmptySymbol    => []

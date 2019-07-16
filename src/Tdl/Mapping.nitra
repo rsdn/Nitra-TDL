@@ -162,8 +162,8 @@ namespace Tdl
 
   map syntax Grammar.Case -> Case
   {
-    Values.Item1 -> Values;
-    Reference    -> Reference;
+    Values.Item1      -> Values;
+    Deployments.Item1 -> Deployments;
   }
 
   map syntax Grammar.Case.Value -> CaseValue
