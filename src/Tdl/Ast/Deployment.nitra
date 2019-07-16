@@ -143,7 +143,7 @@ namespace Tdl
       {
         symbol
         {
-          in Deployments : ImmutableArray[DeploymentSymbol];
+          in Deployments : ImmutableArray[ImmutableArray[DeploymentSymbol]];
           in Cases       : ImmutableArray[ImmutableArray[string]];
 
           Kind           = "select deployment";
@@ -151,14 +151,14 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Deployment;
         }
 
-        Symbol.Deployments              = TdlUtils.MakeDeployments(TdlUtils.ResolveDeployments(Cases.Refs));
+        Symbol.Deployments              = Cases.Symbols;
         Symbol.AggregateParametersScope = await TdlUtils.MakeSelectAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployments);
         Parameters.Scope                = Scope;
         Cases.Scope                     = TdlUtils.MakeDeploymentScope(Scope);
+        Cases.ContainingTable           = ContainingTable;
         Symbol.Cases                    = Cases.Cases;
 
         ChechSelectDeployment(context, Cases);
-        SetUsed(Symbol.Deployments, true);
 
         Cases      : Case*;
       }

@@ -10,15 +10,19 @@ namespace Tdl
 {
   ast Case : BindableAst
   {
-    out Refs  : Ref[DeclarationSymbol];
-    out Cases : ImmutableArray[string];
+    in ContainingTable : TableScope;
+    out Symbols        : ImmutableArray[DeploymentSymbol];
+    out Cases          : ImmutableArray[string];
 
-    Reference.Scope = Scope;
-    Refs            = Reference.Ref;
-    Cases           = Values.Values;
+    Deployments.Scope           = Scope;
+    Deployments.ContainingTable = ContainingTable;
+    Symbols                     = TdlUtils.MakeDeployments(Deployments.Ref);
+    Cases                       = Values.Values;
 
-    Values    : CaseValue*;
-    Reference : Reference;
+    SetUsed(Symbols, true);
+
+    Values      : CaseValue*;
+    Deployments : DeploymentExpr*;
   }
 
   abstract ast CaseValue : BindableAst

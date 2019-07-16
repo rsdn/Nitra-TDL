@@ -2,6 +2,10 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
+    "Reboot-10:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "10:00"
+    },
     "DeployP1": {
       "Type": "Script",
       "ScriptArgs": {
@@ -10,12 +14,20 @@
       "ScriptArgsDefaultValues": {},
       "ScriptPath": "deploy.ps1"
     },
+    "Setup⁞A": {
+      "Type": "Sequence",
+      "Deployments": [
+        "A",
+        "Reboot-10:00",
+        "B"
+      ]
+    },
     "Setup": {
       "Type": "Select",
       "Condition": "$(InitialDeploymentParameter)",
       "Values": {
         "A": {
-          "A": {}
+          "Setup⁞A": {}
         },
         "B": {
           "B": {}

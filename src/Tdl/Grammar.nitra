@@ -113,7 +113,7 @@
 
     syntax EntityBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
 
-    syntax Case = "|" sm (Value; "," sm)+ sm "=>" Reference nl
+    syntax Case = "|" sm (Value; "," sm)+ sm "=>" Deployments=(DeploymentExpr; "," sm)+ nl
     {
       syntax Value
       {

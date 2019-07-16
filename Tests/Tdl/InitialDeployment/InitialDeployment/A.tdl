@@ -1,11 +1,11 @@
-﻿deployment DeployP1(string DeploymentParameter)
+deployment DeployP1(string DeploymentParameter)
   script "deploy.ps1"
 {
 }
 
 initial select deployment Setup(InitialDeploymentParameter)
 {
-  | "A" => A
+  | "A" => A, reboot "10:00", B
   | "B" => B
 }
 
