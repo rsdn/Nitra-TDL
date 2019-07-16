@@ -1164,6 +1164,8 @@ namespace Tdl
 
     public SetInitialDeployment(this deployment : Deployment, symbol : DeploymentSymbol, context : DependentPropertyEvalContext) : void
     {
+      SetUsed(deployment, symbol, true);
+
       def context = context.ToTdlContext();
       def initialDeployment = context.InitialDeployment;
       if (initialDeployment == null)

@@ -26,8 +26,8 @@ namespace Tdl
     unless (InitialKeyword.IsEmpty)
       SetInitialDeployment(Symbol, context);
 
-    //unless (Symbol.IsUsed)
-    //  Name.Warning(context, "Unused deployment.");
+    when (!Symbol.IsUsed && !(context.Project is Nitra.ProjectSystem.FsProject[IAst]))
+      Name.Warning(context, "Unused deployment.");
 
     | ignore-case Empty
       {
