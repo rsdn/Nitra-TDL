@@ -26,12 +26,8 @@
       "Type": "Select",
       "Condition": "$(InitialDeploymentParameter)",
       "Values": {
-        "A": {
-          "Setup⁞A": {}
-        },
-        "B": {
-          "B": {}
-        }
+        "A": "Setup⁞A",
+        "B": "B"
       }
     },
     "A": {

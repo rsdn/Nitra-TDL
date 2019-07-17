@@ -817,15 +817,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product without backdoor": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product without backdoor": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product without backdoor": {}
-        }
+        "Regular": "_Install product without backdoor",
+        "Upgrade 2019": "Install 2019 -> Install product without backdoor",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product without backdoor"
       }
     },
     "Install 2019 -> Install product without backdoor": {
@@ -850,15 +844,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product NoBackdoor TraceLevel_1000": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product NoBackdoor TraceLevel_1000": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product NoBackdoor TraceLevel_1000": {}
-        }
+        "Regular": "_Install product NoBackdoor TraceLevel_1000",
+        "Upgrade 2019": "Install 2019 -> Install product NoBackdoor TraceLevel_1000",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoBackdoor TraceLevel_1000"
       }
     },
     "Install 2019 -> Install product NoBackdoor TraceLevel_1000": {
@@ -884,15 +872,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product NoAV": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product NoAV": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product NoAV": {}
-        }
+        "Regular": "_Install product NoAV",
+        "Upgrade 2019": "Install 2019 -> Install product NoAV",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoAV"
       }
     },
     "Install 2019 -> Install product NoAV": {
@@ -917,15 +899,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product NoAV Chrome": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product NoAV Chrome": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product NoAV Chrome": {}
-        }
+        "Regular": "_Install product NoAV Chrome",
+        "Upgrade 2019": "Install 2019 -> Install product NoAV Chrome",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoAV Chrome"
       }
     },
     "Install 2019 -> Install product NoAV Chrome": {
@@ -951,15 +927,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product NoAV NoDV": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product NoAV NoDV": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product NoAV NoDV": {}
-        }
+        "Regular": "_Install product NoAV NoDV",
+        "Upgrade 2019": "Install 2019 -> Install product NoAV NoDV",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoAV NoDV"
       }
     },
     "Install 2019 -> Install product NoAV NoDV": {
@@ -985,15 +955,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product NoAV NoDV NoPPL": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product NoAV NoDV NoPPL": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product NoAV NoDV NoPPL": {}
-        }
+        "Regular": "_Install product NoAV NoDV NoPPL",
+        "Upgrade 2019": "Install 2019 -> Install product NoAV NoDV NoPPL",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoAV NoDV NoPPL"
       }
     },
     "Install 2019 -> Install product NoAV NoDV NoPPL": {
@@ -1020,15 +984,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product NoDV Chrome": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with reboot-45536 Impl": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product NoDV Chrome": {}
-        }
+        "Regular": "_Install product NoDV Chrome",
+        "Upgrade 2019": "Install 2019 -> Install product with reboot-45536 Impl",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoDV Chrome"
       }
     },
     "Install 2019 -> Install product with reboot-45536 Impl": {
@@ -1053,15 +1011,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "Regular": {
-          "_Install product with disabled PPL": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with disabled PPL": {}
-        },
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product with disabled PPL": {}
-        }
+        "Regular": "_Install product with disabled PPL",
+        "Upgrade 2019": "Install 2019 -> Install product with disabled PPL",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product with disabled PPL"
       }
     },
     "Install 2019 -> Install product with disabled PPL": {
@@ -1086,15 +1038,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product RunAtStartup": {}
-        },
-        "Regular": {
-          "_Install product RunAtStartup": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product RunAtStartup": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product RunAtStartup",
+        "Regular": "_Install product RunAtStartup",
+        "Upgrade 2019": "Install 2019 -> Install product RunAtStartup"
       }
     },
     "Install 2019 -> Install product RunAtStartup": {
@@ -1119,15 +1065,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App10FS.Main] Install product with RunAtSystemStartup": {}
-        },
-        "Regular": {
-          "_[App10FS.Main] Install product with RunAtSystemStartup": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App10FS.Main] Install product with RunAtSystemStartup": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App10FS.Main] Install product with RunAtSystemStartup",
+        "Regular": "_[App10FS.Main] Install product with RunAtSystemStartup",
+        "Upgrade 2019": "Install 2019 -> [App10FS.Main] Install product with RunAtSystemStartup"
       }
     },
     "Install 2019 -> [App10FS.Main] Install product with RunAtSystemStartup": {
@@ -1153,15 +1093,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product with reboot-3832 Impl": {}
-        },
-        "Regular": {
-          "_Install product with reboot-3832 Impl": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with reboot-3832 Impl": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product with reboot-3832 Impl",
+        "Regular": "_Install product with reboot-3832 Impl",
+        "Upgrade 2019": "Install 2019 -> Install product with reboot-3832 Impl"
       }
     },
     "Install 2019 -> Install product with reboot-3832 Impl": {
@@ -1187,15 +1121,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product with activation backdoor and Firefox update": {}
-        },
-        "Regular": {
-          "_Install product with activation backdoor and Firefox update": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with activation backdoor and Firefox update": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product with activation backdoor and Firefox update",
+        "Regular": "_Install product with activation backdoor and Firefox update",
+        "Upgrade 2019": "Install 2019 -> Install product with activation backdoor and Firefox update"
       }
     },
     "Install 2019 -> Install product with activation backdoor and Firefox update": {
@@ -1220,15 +1148,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product with activation code with reboot Impl": {}
-        },
-        "Regular": {
-          "_Install product with activation code with reboot Impl": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with activation code with reboot Impl": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product with activation code with reboot Impl",
+        "Regular": "_Install product with activation code with reboot Impl",
+        "Upgrade 2019": "Install 2019 -> Install product with activation code with reboot Impl"
       }
     },
     "Install 2019 -> Install product with activation code with reboot Impl": {
@@ -1254,15 +1176,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product-45534": {}
-        },
-        "Regular": {
-          "_Install product-45534": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product-45534": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product-45534",
+        "Regular": "_Install product-45534",
+        "Upgrade 2019": "Install 2019 -> Install product-45534"
       }
     },
     "Install 2019 -> Install product-45534": {
@@ -1288,15 +1204,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main] Install product with new Firefox": {}
-        },
-        "Regular": {
-          "_[App2.Main] Install product with new Firefox": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main] Install product with new Firefox": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main] Install product with new Firefox",
+        "Regular": "_[App2.Main] Install product with new Firefox",
+        "Upgrade 2019": "Install 2019 -> [App2.Main] Install product with new Firefox"
       }
     },
     "Install 2019 -> [App2.Main] Install product with new Firefox": {
@@ -1321,15 +1231,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product backdoor-50887": {}
-        },
-        "Regular": {
-          "_Install product backdoor-50887": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product backdoor-50887": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product backdoor-50887",
+        "Regular": "_Install product backdoor-50887",
+        "Upgrade 2019": "Install 2019 -> Install product backdoor-50887"
       }
     },
     "Install 2019 -> Install product backdoor-50887": {
@@ -1354,15 +1258,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product with App11 downgrade": {}
-        },
-        "Regular": {
-          "_Install product with App11 downgrade": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with App11 downgrade": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product with App11 downgrade",
+        "Regular": "_Install product with App11 downgrade",
+        "Upgrade 2019": "Install 2019 -> Install product with App11 downgrade"
       }
     },
     "Install 2019 -> Install product with App11 downgrade": {
@@ -1387,15 +1285,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product with signed test agent-48799": {}
-        },
-        "Regular": {
-          "_Install product with signed test agent-48799": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with signed test agent-48799": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product with signed test agent-48799",
+        "Regular": "_Install product with signed test agent-48799",
+        "Upgrade 2019": "Install 2019 -> Install product with signed test agent-48799"
       }
     },
     "Install 2019 -> Install product with signed test agent-48799": {
@@ -1420,15 +1312,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App8.Main] No install": {}
-        },
-        "Regular": {
-          "_[App8.Main] No install": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App8.Main] No install": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App8.Main] No install",
+        "Regular": "_[App8.Main] No install",
+        "Upgrade 2019": "Install 2019 -> [App8.Main] No install"
       }
     },
     "Install 2019 -> [App8.Main] No install": {
@@ -1456,15 +1342,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product No Dump On assert": {}
-        },
-        "Regular": {
-          "_Install product No Dump On assert": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product No Dump On assert": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product No Dump On assert",
+        "Regular": "_Install product No Dump On assert",
+        "Upgrade 2019": "Install 2019 -> Install product No Dump On assert"
       }
     },
     "Install 2019 -> Install product No Dump On assert": {
@@ -1489,15 +1369,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App10FS.Main] Install product No Dump On Assert": {}
-        },
-        "Regular": {
-          "_[App10FS.Main] Install product No Dump On Assert": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App10FS.Main] Install product No Dump On Assert": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App10FS.Main] Install product No Dump On Assert",
+        "Regular": "_[App10FS.Main] Install product No Dump On Assert",
+        "Upgrade 2019": "Install 2019 -> [App10FS.Main] Install product No Dump On Assert"
       }
     },
     "Install 2019 -> [App10FS.Main] Install product No Dump On Assert": {
@@ -1523,15 +1397,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App10.Main.BvtPvt.ML] Install No Accept EULAs": {}
-        },
-        "Regular": {
-          "_[App10.Main.BvtPvt.ML] Install No Accept EULAs": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App10.Main.BvtPvt.ML] Install No Accept EULAs": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App10.Main.BvtPvt.ML] Install No Accept EULAs",
+        "Regular": "_[App10.Main.BvtPvt.ML] Install No Accept EULAs",
+        "Upgrade 2019": "Install 2019 -> [App10.Main.BvtPvt.ML] Install No Accept EULAs"
       }
     },
     "Install 2019 -> [App10.Main.BvtPvt.ML] Install No Accept EULAs": {
@@ -1560,15 +1428,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[Main.BvtPvt.ML] Install bundle No Accept EULAs": {}
-        },
-        "Regular": {
-          "_[Main.BvtPvt.ML] Install bundle No Accept EULAs": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [Main.BvtPvt.ML] Install bundle No Accept EULAs": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[Main.BvtPvt.ML] Install bundle No Accept EULAs",
+        "Regular": "_[Main.BvtPvt.ML] Install bundle No Accept EULAs",
+        "Upgrade 2019": "Install 2019 -> [Main.BvtPvt.ML] Install bundle No Accept EULAs"
       }
     },
     "Install 2019 -> [Main.BvtPvt.ML] Install bundle No Accept EULAs": {
@@ -1598,15 +1460,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App8.Main.Unsigned.Outlook] Install ISO Impl": {}
-        },
-        "Regular": {
-          "_[App8.Main.Unsigned.Outlook] Install ISO Impl": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App8.Main.Unsigned.Outlook] Install ISO Impl": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App8.Main.Unsigned.Outlook] Install ISO Impl",
+        "Regular": "_[App8.Main.Unsigned.Outlook] Install ISO Impl",
+        "Upgrade 2019": "Install 2019 -> [App8.Main.Unsigned.Outlook] Install ISO Impl"
       }
     },
     "Install 2019 -> [App8.Main.Unsigned.Outlook] Install ISO Impl": {
@@ -1634,15 +1490,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product with App9": {}
-        },
-        "Regular": {
-          "_Install product with App9": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product with App9": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product with App9",
+        "Regular": "_Install product with App9",
+        "Upgrade 2019": "Install 2019 -> Install product with App9"
       }
     },
     "Install 2019 -> Install product with App9": {
@@ -1667,15 +1517,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App8.Main.Mock] Copy product distributive": {}
-        },
-        "Regular": {
-          "_[App8.Main.Mock] Copy product distributive": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App8.Main.Mock] Copy product distributive": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App8.Main.Mock] Copy product distributive",
+        "Regular": "_[App8.Main.Mock] Copy product distributive",
+        "Upgrade 2019": "Install 2019 -> [App8.Main.Mock] Copy product distributive"
       }
     },
     "Install 2019 -> [App8.Main.Mock] Copy product distributive": {
@@ -1703,15 +1547,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App8.Main.KpcInfra] Install product ": {}
-        },
-        "Regular": {
-          "_[App8.Main.KpcInfra] Install product ": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App8.Main.KpcInfra] Install product ": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App8.Main.KpcInfra] Install product ",
+        "Regular": "_[App8.Main.KpcInfra] Install product ",
+        "Upgrade 2019": "Install 2019 -> [App8.Main.KpcInfra] Install product "
       }
     },
     "Install 2019 -> [App8.Main.KpcInfra] Install product ": {
@@ -1740,15 +1578,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[MOCK] App8 Free with App9": {}
-        },
-        "Regular": {
-          "_[MOCK] App8 Free with App9": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [MOCK] App8 Free with App9": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[MOCK] App8 Free with App9",
+        "Regular": "_[MOCK] App8 Free with App9",
+        "Upgrade 2019": "Install 2019 -> [MOCK] App8 Free with App9"
       }
     },
     "Install 2019 -> [MOCK] App8 Free with App9": {
@@ -1774,15 +1606,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App8.Main.FileShredder] Install product with activation code + traceLevel": {}
-        },
-        "Regular": {
-          "_[App8.Main.FileShredder] Install product with activation code + traceLevel": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App8.Main.FileShredder] Install product with activation code + traceLevel": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App8.Main.FileShredder] Install product with activation code + traceLevel",
+        "Regular": "_[App8.Main.FileShredder] Install product with activation code + traceLevel",
+        "Upgrade 2019": "Install 2019 -> [App8.Main.FileShredder] Install product with activation code + traceLevel"
       }
     },
     "Install 2019 -> [App8.Main.FileShredder] Install product with activation code + traceLevel": {
@@ -1807,15 +1633,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[Main.UpgradeSettingsByReinstall] Install product": {}
-        },
-        "Regular": {
-          "_[Main.UpgradeSettingsByReinstall] Install product": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [Main.UpgradeSettingsByReinstall] Install product": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[Main.UpgradeSettingsByReinstall] Install product",
+        "Regular": "_[Main.UpgradeSettingsByReinstall] Install product",
+        "Upgrade 2019": "Install 2019 -> [Main.UpgradeSettingsByReinstall] Install product"
       }
     },
     "Install 2019 -> [Main.UpgradeSettingsByReinstall] Install product": {
@@ -1844,15 +1664,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[Main.BvtPvt.MailAv] Mount ISO Impl": {}
-        },
-        "Regular": {
-          "_[Main.BvtPvt.MailAv] Mount ISO Impl": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [Main.BvtPvt.MailAv] Mount ISO Impl": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[Main.BvtPvt.MailAv] Mount ISO Impl",
+        "Regular": "_[Main.BvtPvt.MailAv] Mount ISO Impl",
+        "Upgrade 2019": "Install 2019 -> [Main.BvtPvt.MailAv] Mount ISO Impl"
       }
     },
     "Install 2019 -> [Main.BvtPvt.MailAv] Mount ISO Impl": {
@@ -1879,15 +1693,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[Main.BvtPvt.ML] Install product No Accept EULAs": {}
-        },
-        "Regular": {
-          "_[Main.BvtPvt.ML] Install product No Accept EULAs": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [Main.BvtPvt.ML] Install product No Accept EULAs": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[Main.BvtPvt.ML] Install product No Accept EULAs",
+        "Regular": "_[Main.BvtPvt.ML] Install product No Accept EULAs",
+        "Upgrade 2019": "Install 2019 -> [Main.BvtPvt.ML] Install product No Accept EULAs"
       }
     },
     "Install 2019 -> [Main.BvtPvt.ML] Install product No Accept EULAs": {
@@ -1916,15 +1724,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product-46909": {}
-        },
-        "Regular": {
-          "_Install product-46909": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product-46909": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product-46909",
+        "Regular": "_Install product-46909",
+        "Upgrade 2019": "Install 2019 -> Install product-46909"
       }
     },
     "Install 2019 -> Install product-46909": {
@@ -1949,15 +1751,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product [Enabled downgrade]": {}
-        },
-        "Regular": {
-          "_Install product [Enabled downgrade]": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product [Enabled downgrade]": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product [Enabled downgrade]",
+        "Regular": "_Install product [Enabled downgrade]",
+        "Upgrade 2019": "Install 2019 -> Install product [Enabled downgrade]"
       }
     },
     "Install 2019 -> Install product [Enabled downgrade]": {
@@ -1983,15 +1779,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product Tracelevel_800": {}
-        },
-        "Regular": {
-          "_Install product Tracelevel_800": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product Tracelevel_800": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product Tracelevel_800",
+        "Regular": "_Install product Tracelevel_800",
+        "Upgrade 2019": "Install 2019 -> Install product Tracelevel_800"
       }
     },
     "Install 2019 -> Install product Tracelevel_800": {
@@ -2016,15 +1806,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product-4105": {}
-        },
-        "Regular": {
-          "_Install product-4105": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product-4105": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product-4105",
+        "Regular": "_Install product-4105",
+        "Upgrade 2019": "Install 2019 -> Install product-4105"
       }
     },
     "Install 2019 -> Install product-4105": {
@@ -2050,15 +1834,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[Ucp.Mock] Copy product distributive": {}
-        },
-        "Regular": {
-          "_[Ucp.Mock] Copy product distributive": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [Ucp.Mock] Copy product distributive": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[Ucp.Mock] Copy product distributive",
+        "Regular": "_[Ucp.Mock] Copy product distributive",
+        "Upgrade 2019": "Install 2019 -> [Ucp.Mock] Copy product distributive"
       }
     },
     "Install 2019 -> [Ucp.Mock] Copy product distributive": {
@@ -2086,15 +1864,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_No install": {}
-        },
-        "Regular": {
-          "_No install": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> No install": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_No install",
+        "Regular": "_No install",
+        "Upgrade 2019": "Install 2019 -> No install"
       }
     },
     "Install 2019 -> No install": {
@@ -2121,15 +1893,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Intstall App2_+App9 no EULA acceptance-11101 Impl": {}
-        },
-        "Regular": {
-          "_Intstall App2_+App9 no EULA acceptance-11101 Impl": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Intstall App2_+App9 no EULA acceptance-11101 Impl": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Intstall App2_+App9 no EULA acceptance-11101 Impl",
+        "Regular": "_Intstall App2_+App9 no EULA acceptance-11101 Impl",
+        "Upgrade 2019": "Install 2019 -> Intstall App2_+App9 no EULA acceptance-11101 Impl"
       }
     },
     "Install 2019 -> Intstall App2_+App9 no EULA acceptance-11101 Impl": {
@@ -2155,15 +1921,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Intstall App2_+App9 Impl": {}
-        },
-        "Regular": {
-          "_Intstall App2_+App9 Impl": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Intstall App2_+App9 Impl": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Intstall App2_+App9 Impl",
+        "Regular": "_Intstall App2_+App9 Impl",
+        "Upgrade 2019": "Install 2019 -> Intstall App2_+App9 Impl"
       }
     },
     "Install 2019 -> Intstall App2_+App9 Impl": {
@@ -2188,15 +1948,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install two products": {}
-        },
-        "Regular": {
-          "_Install two products": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install two products": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install two products",
+        "Regular": "_Install two products",
+        "Upgrade 2019": "Install 2019 -> Install two products"
       }
     },
     "Install 2019 -> Install two products": {
@@ -2222,15 +1976,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product backdoor and request family App8": {}
-        },
-        "Regular": {
-          "_Install product backdoor and request family App8": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product backdoor and request family App8": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product backdoor and request family App8",
+        "Regular": "_Install product backdoor and request family App8",
+        "Upgrade 2019": "Install 2019 -> Install product backdoor and request family App8"
       }
     },
     "Install 2019 -> Install product backdoor and request family App8": {
@@ -2256,15 +2004,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product backdoor and register with fake code": {}
-        },
-        "Regular": {
-          "_Install product backdoor and register with fake code": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product backdoor and register with fake code": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product backdoor and register with fake code",
+        "Regular": "_Install product backdoor and register with fake code",
+        "Upgrade 2019": "Install 2019 -> Install product backdoor and register with fake code"
       }
     },
     "Install 2019 -> Install product backdoor and register with fake code": {
@@ -2292,15 +2034,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product backdoor and register with one time registration-46723": {}
-        },
-        "Regular": {
-          "_Install product backdoor and register with one time registration-46723": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product backdoor and register with one time registration-46723": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product backdoor and register with one time registration-46723",
+        "Regular": "_Install product backdoor and register with one time registration-46723",
+        "Upgrade 2019": "Install 2019 -> Install product backdoor and register with one time registration-46723"
       }
     },
     "Install 2019 -> Install product backdoor and register with one time registration-46723": {
@@ -2328,15 +2064,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product backdoor and register with one time registration-50886": {}
-        },
-        "Regular": {
-          "_Install product backdoor and register with one time registration-50886": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product backdoor and register with one time registration-50886": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product backdoor and register with one time registration-50886",
+        "Regular": "_Install product backdoor and register with one time registration-50886",
+        "Upgrade 2019": "Install 2019 -> Install product backdoor and register with one time registration-50886"
       }
     },
     "Install 2019 -> Install product backdoor and register with one time registration-50886": {
@@ -2364,15 +2094,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[Ucp.Mock] Install product with one time shared secret": {}
-        },
-        "Regular": {
-          "_[Ucp.Mock] Install product with one time shared secret": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [Ucp.Mock] Install product with one time shared secret": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[Ucp.Mock] Install product with one time shared secret",
+        "Regular": "_[Ucp.Mock] Install product with one time shared secret",
+        "Upgrade 2019": "Install 2019 -> [Ucp.Mock] Install product with one time shared secret"
       }
     },
     "Install 2019 -> [Ucp.Mock] Install product with one time shared secret": {
@@ -2401,15 +2125,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product backdoor downloader.ini": {}
-        },
-        "Regular": {
-          "_Install product backdoor downloader.ini": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product backdoor downloader.ini": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product backdoor downloader.ini",
+        "Regular": "_Install product backdoor downloader.ini",
+        "Upgrade 2019": "Install 2019 -> Install product backdoor downloader.ini"
       }
     },
     "Install 2019 -> Install product backdoor downloader.ini": {
@@ -2437,15 +2155,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product-4890": {}
-        },
-        "Regular": {
-          "_Install product-4890": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product-4890": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product-4890",
+        "Regular": "_Install product-4890",
+        "Upgrade 2019": "Install 2019 -> Install product-4890"
       }
     },
     "Install 2019 -> Install product-4890": {
@@ -2470,15 +2182,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product GDPR-46786": {}
-        },
-        "Regular": {
-          "_Install product GDPR-46786": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product GDPR-46786": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product GDPR-46786",
+        "Regular": "_Install product GDPR-46786",
+        "Upgrade 2019": "Install 2019 -> Install product GDPR-46786"
       }
     },
     "Install 2019 -> Install product GDPR-46786": {
@@ -2504,15 +2210,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product GDPR-2783": {}
-        },
-        "Regular": {
-          "_Install product GDPR-2783": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product GDPR-2783": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product GDPR-2783",
+        "Regular": "_Install product GDPR-2783",
+        "Upgrade 2019": "Install 2019 -> Install product GDPR-2783"
       }
     },
     "Install 2019 -> Install product GDPR-2783": {
@@ -2538,15 +2238,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn": {}
-        },
-        "Regular": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn",
+        "Regular": "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn"
       }
     },
     "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaMarketingKsn": {
@@ -2573,15 +2267,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketing": {}
-        },
-        "Regular": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketing": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaMarketing": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketing",
+        "Regular": "_[App2.Main.Signed.Agreements] Install product GDPR EulaMarketing",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaMarketing"
       }
     },
     "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaMarketing": {
@@ -2609,15 +2297,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR EulaKsn": {}
-        },
-        "Regular": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR EulaKsn": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaKsn": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Signed.Agreements] Install product GDPR EulaKsn",
+        "Regular": "_[App2.Main.Signed.Agreements] Install product GDPR EulaKsn",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaKsn"
       }
     },
     "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR EulaKsn": {
@@ -2645,15 +2327,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR Eula": {}
-        },
-        "Regular": {
-          "_[App2.Main.Signed.Agreements] Install product GDPR Eula": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR Eula": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Signed.Agreements] Install product GDPR Eula",
+        "Regular": "_[App2.Main.Signed.Agreements] Install product GDPR Eula",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR Eula"
       }
     },
     "Install 2019 -> [App2.Main.Signed.Agreements] Install product GDPR Eula": {
@@ -2682,15 +2358,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Signed.Agreements] Install product EulaKsn": {}
-        },
-        "Regular": {
-          "_[App2.Main.Signed.Agreements] Install product EulaKsn": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Signed.Agreements] Install product EulaKsn": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Signed.Agreements] Install product EulaKsn",
+        "Regular": "_[App2.Main.Signed.Agreements] Install product EulaKsn",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Signed.Agreements] Install product EulaKsn"
       }
     },
     "Install 2019 -> [App2.Main.Signed.Agreements] Install product EulaKsn": {
@@ -2718,15 +2388,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Signed.Agreements] Install product Eula": {}
-        },
-        "Regular": {
-          "_[App2.Main.Signed.Agreements] Install product Eula": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Signed.Agreements] Install product Eula": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Signed.Agreements] Install product Eula",
+        "Regular": "_[App2.Main.Signed.Agreements] Install product Eula",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Signed.Agreements] Install product Eula"
       }
     },
     "Install 2019 -> [App2.Main.Signed.Agreements] Install product Eula": {
@@ -2755,15 +2419,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Installation] No install": {}
-        },
-        "Regular": {
-          "_[App2.Main.Installation] No install": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Installation] No install": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Installation] No install",
+        "Regular": "_[App2.Main.Installation] No install",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Installation] No install"
       }
     },
     "Install 2019 -> [App2.Main.Installation] No install": {
@@ -2791,15 +2449,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product GDPR-46615": {}
-        },
-        "Regular": {
-          "_Install product GDPR-46615": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product GDPR-46615": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product GDPR-46615",
+        "Regular": "_Install product GDPR-46615",
+        "Upgrade 2019": "Install 2019 -> Install product GDPR-46615"
       }
     },
     "Install 2019 -> Install product GDPR-46615": {
@@ -2826,15 +2478,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[Ucp.Mock] Install product with family trial": {}
-        },
-        "Regular": {
-          "_[Ucp.Mock] Install product with family trial": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [Ucp.Mock] Install product with family trial": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[Ucp.Mock] Install product with family trial",
+        "Regular": "_[Ucp.Mock] Install product with family trial",
+        "Upgrade 2019": "Install 2019 -> [Ucp.Mock] Install product with family trial"
       }
     },
     "Install 2019 -> [Ucp.Mock] Install product with family trial": {
@@ -2860,15 +2506,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product-1379": {}
-        },
-        "Regular": {
-          "_Install product-1379": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product-1379": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product-1379",
+        "Regular": "_Install product-1379",
+        "Upgrade 2019": "Install 2019 -> Install product-1379"
       }
     },
     "Install 2019 -> Install product-1379": {
@@ -2893,15 +2533,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product (With full Traces) Impl": {}
-        },
-        "Regular": {
-          "_Install product (With full Traces) Impl": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product (With full Traces) Impl": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product (With full Traces) Impl",
+        "Regular": "_Install product (With full Traces) Impl",
+        "Upgrade 2019": "Install 2019 -> Install product (With full Traces) Impl"
       }
     },
     "Install 2019 -> Install product (With full Traces) Impl": {
@@ -2927,15 +2561,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product GDPR backdoor": {}
-        },
-        "Regular": {
-          "_Install product GDPR backdoor": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product GDPR backdoor": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product GDPR backdoor",
+        "Regular": "_Install product GDPR backdoor",
+        "Upgrade 2019": "Install 2019 -> Install product GDPR backdoor"
       }
     },
     "Install 2019 -> Install product GDPR backdoor": {
@@ -2960,15 +2588,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_[App2.Main.Installation] Install product": {}
-        },
-        "Regular": {
-          "_[App2.Main.Installation] Install product": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> [App2.Main.Installation] Install product": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_[App2.Main.Installation] Install product",
+        "Regular": "_[App2.Main.Installation] Install product",
+        "Upgrade 2019": "Install 2019 -> [App2.Main.Installation] Install product"
       }
     },
     "Install 2019 -> [App2.Main.Installation] Install product": {
@@ -3676,27 +3298,13 @@
       "Type": "Select",
       "Condition": "$(Name)",
       "Values": {
-        "App8": {
-          "Install product for only kashell manipulation App8": {}
-        },
-        "App7": {
-          "Install product for only kashell manipulation": {}
-        },
-        "App11": {
-          "Install product for only kashell manipulation": {}
-        },
-        "App2": {
-          "Install product for only kashell manipulation": {}
-        },
-        "App10": {
-          "Install product for only kashell manipulation": {}
-        },
-        "App10FS": {
-          "Install product for only kashell manipulation": {}
-        },
-        "App6": {
-          "Install product for only kashell manipulation": {}
-        }
+        "App8": "Install product for only kashell manipulation App8",
+        "App7": "Install product for only kashell manipulation",
+        "App11": "Install product for only kashell manipulation",
+        "App2": "Install product for only kashell manipulation",
+        "App10": "Install product for only kashell manipulation",
+        "App10FS": "Install product for only kashell manipulation",
+        "App6": "Install product for only kashell manipulation"
       }
     },
     "Install product for only kashell manipulation App8": {
@@ -3752,24 +3360,16 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product",
+        "Upgrade 2019": "Install 2019 -> Install product"
       }
     },
     "Install product No Backdoor": {
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install Product No Backdoor": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product No backdoor": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install Product No Backdoor",
+        "Upgrade 2019": "Install 2019 -> Install product No backdoor"
       }
     },
     "Install 2019 -> Install product No backdoor": {
@@ -4253,15 +3853,9 @@
       "Type": "Select",
       "Condition": "$(BaseProductType)",
       "Values": {
-        "SameProduct": {
-          "Copy New Product Version (CurrentProduct)": {}
-        },
-        "NextProduct": {
-          "Copy New Product Version (BaseProduct)": {}
-        },
-        "PreviousProduct": {
-          "Copy New Product Version (CurrentProduct)": {}
-        }
+        "SameProduct": "Copy New Product Version (CurrentProduct)",
+        "NextProduct": "Copy New Product Version (BaseProduct)",
+        "PreviousProduct": "Copy New Product Version (CurrentProduct)"
       }
     },
     "Copy New Product Version (CurrentProduct)": {

@@ -120,7 +120,7 @@ namespace Tdl2Json
       def values      = Dictionary();
       for (mutable i; i < deployments.Length; ++i)
       {
-        def selector = string.Join(separator, cases[i].Select(v => if (v == null) JsonGenerator.ParameterDefaultValue else v));
+        def selector = string.Join(separator, cases[i].Select(v => v ?? JsonGenerator.ParameterDefaultValue));
         def seq      = deployments[i];
         mutable name;
         if (seq.Length == 1)
@@ -135,7 +135,7 @@ namespace Tdl2Json
           })
         }
 
-        values.Add(selector, Dictionary() <- [ (name, object()) ])
+        values.Add(selector, name)
       }
 
       result.Add(sel.Name, 

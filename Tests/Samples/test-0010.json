@@ -41,15 +41,9 @@
       "Type": "Select",
       "Condition": "$(InstallationType)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "_Install product NoBackdoor TraceLevel_1000": {}
-        },
-        "Regular": {
-          "_Install product NoBackdoor TraceLevel_1000": {}
-        },
-        "Upgrade 2019": {
-          "Install 2019 -> Install product NoBackdoor TraceLevel_1000": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoBackdoor TraceLevel_1000",
+        "Regular": "_Install product NoBackdoor TraceLevel_1000",
+        "Upgrade 2019": "Install 2019 -> Install product NoBackdoor TraceLevel_1000"
       }
     },
     "_Install product NoBackdoor TraceLevel_1000": {

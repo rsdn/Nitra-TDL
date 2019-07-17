@@ -18,12 +18,8 @@
       "Type": "Select",
       "Condition": "$(X)",
       "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
-          "A": {}
-        },
-        "BBB": {
-          "B": {}
-        }
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "A",
+        "BBB": "B"
       }
     }
   },
