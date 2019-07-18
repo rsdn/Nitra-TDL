@@ -1003,30 +1003,27 @@ namespace Tdl
       VSome(builder.ToScope().HideWith(scope))
     }
 
-    public ChechSelectDeployment(this ast : IAst, context : DependentPropertyEvalContext, cases : Case.IAstList) : void
+    public CheckSelectDeployment(this ast : IAst, context : DependentPropertyEvalContext, cases : Case.IAstList, parameterCount : int) : void
     {
       def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
       
-      mutable valuesCount = -1;
       foreach (case in cases)
       {
-        if (valuesCount < 0)
-          valuesCount = case.Values.Count;
-        else when (valuesCount != case.Values.Count)
+        when (case.Values.Count != parameterCount)
         {
-          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "The case must has $valuesCount values.", 0);
+          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
           break;
         }
       }
 
       foreach (case in cases with k)
-      foreach (value when value.Values == "" in case.Values)
+      foreach (value when value.Text == "" in case.Values)
         msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value can't be empty.", 0);
       
       def set = HashSet();
       foreach (case in cases with k)
       {
-        def values = case.Values.Map(v => v.Values);
+        def values = case.Values.Map(_.Text);
         unless (set.Add(values))
           msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Duplicate entry.", 0);
       }
