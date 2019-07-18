@@ -17,7 +17,7 @@ namespace Tdl
     Deployments.Scope           = Scope;
     Deployments.ContainingTable = ContainingTable;
     Symbols                     = TdlUtils.MakeDeployments(Deployments.Ref);
-    Cases                       = Values.Values;
+    Cases                       = Values.Text;
 
     SetUsed(Symbols, true);
 
@@ -27,18 +27,18 @@ namespace Tdl
 
   abstract ast CaseValue : BindableAst
   {
-    out Values : string;
+    out Text : string;
 
     | String
       {
-        Values = TdlUtils.ConvertStringLiteralOrNull(Value);
+        Text = TdlUtils.ConvertStringLiteralOrNull(Value);
 
         Value : CSharp.StringLiteral;
       }
 
     | Wildcard
       {
-        Values = null;
+        Text = null;
       }
   }
 }
