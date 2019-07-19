@@ -7,6 +7,7 @@
       "ReturnValue": 42,
       "ScriptArgs": {
         "IntValue": "$(IntValue)",
+        "ParameterFromProduct": "$(ParameterFromProduct)",
         "PRODUCT_VERSION": "$(Version)",
         "Size100": "$(Product:ProductA.Size)",
         "Size42": "$(Product:ProductB.Size)",
@@ -87,7 +88,8 @@
     "MonorepoHelloWorld": {
       "Name": "MonorepoHelloWorld",
       "Parameters": {
-        "Name": "MonorepoHelloWorld"
+        "Name": "MonorepoHelloWorld",
+        "ParameterFromProduct": "C"
       },
       "BranchName": "MonorepoHelloWorld",
       "Version": "#(ProductVersion)"
@@ -96,7 +98,8 @@
       "Name": "Word",
       "Parameters": {
         "Name": "Word",
-        "Size": 100
+        "Size": 100,
+        "ParameterFromProduct": "A"
       },
       "BranchName": "Word",
       "Version": "#(ProductVersion)"
@@ -105,7 +108,8 @@
       "Name": "Excel",
       "Parameters": {
         "Name": "Excel",
-        "Size": 42
+        "Size": 42,
+        "ParameterFromProduct": "B"
       },
       "BranchName": "Excel",
       "Version": "#(ProductVersion)"

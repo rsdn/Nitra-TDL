@@ -893,8 +893,8 @@ namespace Tdl
     
     public CheckExpected(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, type2 : TypeSymbol) : void
     {
-      if (TdlTypeUnifier.Instance.TryProvide(type1, type2))
-        _ = TdlTypeUnifier.Instance.Provide(type1, type2);
+      if (TdlTypeUnifier.Instance.TryRequire(type2, type1))
+        _ = TdlTypeUnifier.Instance.Require(type2, type1);
       else
         ast.Error(context, $"Expected '$(TypeToString(type1))' but got '$(TypeToString(type2))'.", 0);
     }
@@ -1505,27 +1505,27 @@ namespace Tdl
 
     //public RequiredTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : TypeSymbol
     //{
-    //  def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
+    //  def baseType = context.ConstructType(baseTypeFullTypeName, baseTypeParam);
     //  Require(ast, context, type, baseType);
     //  baseTypeParam
     //}
     
     public ProvidedTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedTypeFullTypeName : string, derivedTypeParam : TypeSymbol) : TypeSymbol
     {
-      def derivedType = context.ConstractType(derivedTypeFullTypeName, derivedTypeParam);
+      def derivedType = context.ConstructType(derivedTypeFullTypeName, derivedTypeParam);
       Provide(ast, context, type, derivedType);
       derivedTypeParam
     }
     
     //public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : void
     //{
-    //  def baseType = context.ConstractType(baseTypeFullTypeName, baseTypeParam);
+    //  def baseType = context.ConstructType(baseTypeFullTypeName, baseTypeParam);
     //  Require(ast, context, type1, baseType)
     //}
     //
     //public Provide(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, derivedFullTypeName : string, derivedTypeParam : TypeSymbol) : void
     //{
-    //  def derivedType = context.ConstractType(derivedFullTypeName, derivedTypeParam);
+    //  def derivedType = context.ConstructType(derivedFullTypeName, derivedTypeParam);
     //  Provide(ast, context, type1, derivedType)
     //}
     
@@ -1552,7 +1552,7 @@ namespace Tdl
       _ = TdlTypeUnifier.Instance.Provide(type, derivedType);
     }
     
-    public ConstractType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParam : TypeSymbol) : TypeSymbol
+    public ConstructType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParam : TypeSymbol) : TypeSymbol
     {
       def typeInfo = context.BindType(fullTypeName : string, 1);
       def type = TopConstructedTypeSymbol();
@@ -1611,7 +1611,7 @@ namespace Tdl
       def flags = ModifierSet(context);
       flags.Add(Modifiers.Public);
       prop.Flags = flags;
-      prop.Type = context.ConstractType(collectionName, baseProductType);
+      prop.Type = context.ConstructType(collectionName, baseProductType);
       prop.CustomAttributes = array(0);
       prop.EvalProperties(context);
 
@@ -1622,17 +1622,17 @@ namespace Tdl
       def flags = ModifierSet(context);
       flags.Add(Modifiers.Public);
       prop.Flags = flags;
-      prop.Type = context.ConstractType(collectionName, platformType);
+      prop.Type = context.ConstructType(collectionName, platformType);
       prop.CustomAttributes = array(0);
       prop.EvalProperties(context);
     }
 
-    public ConstractFromListExpectedType(this context : DependentPropertyEvalContext, list : Expr, type : TypeSymbol) : TypeSymbol
+    public ConstructFromListExpectedType(this context : DependentPropertyEvalContext, list : Expr, type : TypeSymbol) : TypeSymbol
     {
       match (list)
       {
         | Expr.Reference(Symbol=Product.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
-        | _ => context.ConstractType("System.Collections.Generic.IEnumerable", type)
+        | _ => context.ConstructType("System.Collections.Generic.IEnumerable", type)
       }
     }
 

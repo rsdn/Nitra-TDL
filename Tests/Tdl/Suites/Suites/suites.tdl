@@ -79,7 +79,8 @@ deployment InstallProduct(
     int IntValue = 7,
     MsOfficeProducts ProductA,
     MsOfficeProducts ProductB,
-    TheProductType   ProductC
+    TheProductType   ProductC,
+    string ParameterFromProduct
 )
     script @"\\sdfs\autotests\KIS\DeploymentScripts\TdlTests\null-deployment.ps1"
 {
@@ -95,6 +96,7 @@ product type TheProductType
     string Name;
     string BranchName;
     string Version;
+    string ParameterFromProduct;
 }
 
 product type MsOfficeProducts
@@ -103,6 +105,7 @@ product type MsOfficeProducts
     string BranchName;
     string Version;
     int Size;
+    string ParameterFromProduct;
 }
 
 product MonorepoHelloWorld : TheProductType
@@ -110,6 +113,7 @@ product MonorepoHelloWorld : TheProductType
     Name = "MonorepoHelloWorld";
     BranchName = "MonorepoHelloWorld";
     Version = ProductVersion;
+    ParameterFromProduct = "C";
 }
 
 product Word : MsOfficeProducts
@@ -118,6 +122,7 @@ product Word : MsOfficeProducts
     BranchName = "Word";
     Version = ProductVersion;
     Size = 100;
+    ParameterFromProduct = "A";
 }
 
 product Excel : MsOfficeProducts
@@ -126,6 +131,7 @@ product Excel : MsOfficeProducts
     BranchName = "Excel";
     Version = ProductVersion;
     Size = 42;
+    ParameterFromProduct = "B";
 }
 
 external
