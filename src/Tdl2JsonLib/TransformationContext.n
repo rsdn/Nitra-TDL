@@ -23,6 +23,8 @@ namespace Tdl2Json
 
     public InitialDeployment : Tdl.DeploymentSymbol { get; }
 
+    public FinalDeployment : Tdl.DeploymentSymbol { get; }
+
     public OutputPath : string { get; }
   }
 }

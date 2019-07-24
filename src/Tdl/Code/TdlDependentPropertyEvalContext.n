@@ -21,6 +21,9 @@ namespace Tdl
     [RecordIgnore]
     public InitialDeployment : DeploymentSymbol { get; set; }
 
+    [RecordIgnore]
+    public FinalDeployment : DeploymentSymbol { get; set; }
+
     public DeploymentType    : TdlType.DeploymentSymbol;
     public PlatformType      : TdlType.PlatformSymbol;
     public ProductType       : TdlType.ProductSymbol;

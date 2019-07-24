@@ -39,7 +39,7 @@ namespace Tdl
         Parameters.FormalParameters.Item1    -> Parameters;
         DeploymentScriptBody.DefDeclarations -> Definitions;
         DeploymentScriptBody.Options         -> Options;
-        InitialKeyword = Initial.Span;
+        Modifier                             -> Modifier;
       }
     | DeploymentCode   -> Deployment.Code
       {
@@ -47,11 +47,11 @@ namespace Tdl
         Parameters.FormalParameters.Item1    -> Parameters;
         DeploymentCodeBody.Commands          -> Commands;
         DeploymentCodeBody.Options           -> Options;
-        InitialKeyword = Initial.Span;
+        Modifier                             -> Modifier;
       }
-    | DeploymentSet    -> Deployment.Set      { Name -> Name; InitialKeyword = Initial.Span; Deployments.Item1 -> Deployments; }
-    | Currying         -> Deployment.Currying { Name -> Name; InitialKeyword = Initial.Span; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
-    | DeploymentSelect -> Deployment.Select   { Name -> Name; InitialKeyword = Initial.Span; Parameters.Item1 -> Parameters; Cases -> Cases; }
+    | DeploymentSet    -> Deployment.Set      { Name -> Name; Modifier -> Modifier; Deployments.Item1 -> Deployments; }
+    | Currying         -> Deployment.Currying { Name -> Name; Modifier -> Modifier; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
+    | DeploymentSelect -> Deployment.Select   { Name -> Name; Modifier -> Modifier; Parameters.Item1 -> Parameters; Cases -> Cases; }
     | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; [] -> TypeBase; }
     | Product          -> Product.Def         { Name -> Name; Type -> ProductType; ProductBody.DefDeclarations -> Definitions; }
     | ProductSet       -> Product.Set         { Name -> Name; Type -> ProductType; Products.Item1 -> Products; }
@@ -143,6 +143,12 @@ namespace Tdl
     | Entity   -> Entity      { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
   }
 
+  map syntax Grammar.DeploymentModifier -> DeploymentModifier
+  {
+    | Initial -> Initial {}
+    | Final   -> Final {}
+  }
+
   map syntax Grammar.MemberDeclaration.DeploymentSelect.Parameter -> FormalParameter
   {
     Name         -> Name;
@@ -207,7 +213,7 @@ namespace Tdl
       {
           Name = Name(Location, "Reboot-" + TdlUtils.ConvertStringLiteral(timeout));
           timeout -> Timeout;
-          InitialKeyword = NSpan();
+          None() -> Modifier;
       }
   }
 

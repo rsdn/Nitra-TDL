@@ -206,6 +206,7 @@ namespace Tdl
       context.CancellationToken = cancellationToken;
       backEnd.CancellationToken = cancellationToken;
       context.InitialDeployment = null;
+      context.FinalDeployment   = null;
 
       def removeParsedSymbols(tableScope : TableScope)
       {
