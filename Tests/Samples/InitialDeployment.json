@@ -30,6 +30,14 @@
         "B": "B"
       }
     },
+    "Finalize": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "FinalDeploymentParameter": "$(FinalDeploymentParameter)"
+      },
+      "ScriptArgsDefaultValues": {},
+      "ScriptPath": "finalize.ps1"
+    },
     "A": {
       "Type": "Script",
       "ScriptArgs": {},
@@ -60,7 +68,8 @@
     "Suite1": {
       "Parameters": {
         "InitialDeploymentParameter": "A",
-        "DeploymentParameter": "value for normal deployment"
+        "DeploymentParameter": "value for normal deployment",
+        "FinalDeploymentParameter": "Z"
       },
       "Platforms": [
         "win7-x64"
@@ -75,7 +84,8 @@
     "Suite2": {
       "Parameters": {
         "InitialDeploymentParameter": "B",
-        "DeploymentParameter": "value for normal deployment"
+        "DeploymentParameter": "value for normal deployment",
+        "FinalDeploymentParameter": "Z"
       },
       "Platforms": [
         "win7-x64"
@@ -90,7 +100,8 @@
     "Suite3": {
       "Parameters": {
         "InitialDeploymentParameter": "B",
-        "DeploymentParameter": "value for normal deployment"
+        "DeploymentParameter": "value for normal deployment",
+        "FinalDeploymentParameter": "Z"
       },
       "Platforms": [
         "win7-x64"
@@ -104,7 +115,8 @@
     },
     "Suite4": {
       "Parameters": {
-        "InitialDeploymentParameter": "B"
+        "InitialDeploymentParameter": "B",
+        "FinalDeploymentParameter": "Z"
       },
       "Platforms": [
         "win7-x64"
@@ -121,7 +133,8 @@
     "Scenario1": {
       "Deployments": [
         "Setup",
-        "DeployP1"
+        "DeployP1",
+        "Finalize"
       ],
       "Environments": [
         {
@@ -149,7 +162,8 @@
     "Scenario3-1": {
       "Deployments": [
         "Setup",
-        "DeployP1"
+        "DeployP1",
+        "Finalize"
       ],
       "Environments": [
         {
@@ -176,7 +190,8 @@
     },
     "Scenario4": {
       "Deployments": [
-        "Setup"
+        "Setup",
+        "Finalize"
       ],
       "Environments": [
         {

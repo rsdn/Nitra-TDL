@@ -21,10 +21,10 @@ namespace Tdl
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
 
-    InitialKeyword : NSpan;
+    Modifier : DeploymentModifier?;
 
-    unless (InitialKeyword.IsEmpty)
-      SetInitialDeployment(Symbol, context);
+    when (Modifier.HasValue)
+      SetSpecialDeployment(Symbol, Modifier.Value, context);
 
     when (!Symbol.IsUsed && !(context.Project is Nitra.ProjectSystem.FsProject[IAst]))
       Name.Warning(context, "Unused deployment.");

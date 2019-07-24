@@ -49,17 +49,23 @@
       | EmbedFile  = "file"   sm Path=StringLiteral
     }
 
+    syntax DeploymentModifier
+    {
+      | Initial = "initial" sm
+      | Final   = "final" sm
+    }
+
     syntax MemberDeclaration
     {
       | Alias             = "using"    sm Name sm "=" sm QualifiedIdentifier ";" nl;
       | Open              = "using"    sm QualifiedIdentifier ";" nl;
       | Platform          = "platform" sm Name ";" nl;
       | PlatformSet       = "platform" sm Name sm "=" sm Platforms=(Reference; "," sm)+ ";" nl;
-      | DeploymentScript  = Initial=("initial" sm)? "deployment" sm Name outline_begin_before Parameters outline_end_before nl DeploymentScriptContent nl DeploymentScriptBody;
-      | DeploymentCode    = Initial=("initial" sm)? "deployment" sm Name outline_begin_before Parameters outline_end_before nl DeploymentCodeBody;
-      | DeploymentSet     = Initial=("initial" sm)? "deployment" sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
-      | Currying          = Initial=("initial" sm)? "deployment" sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
-      | DeploymentSelect  = Initial=("initial" sm)? "select" sm "deployment" sm Name "(" (Parameter; "," sm)+ ")"
+      | DeploymentScript  = Modifier=DeploymentModifier? "deployment" sm Name outline_begin_before Parameters outline_end_before nl DeploymentScriptContent nl DeploymentScriptBody;
+      | DeploymentCode    = Modifier=DeploymentModifier? "deployment" sm Name outline_begin_before Parameters outline_end_before nl DeploymentCodeBody;
+      | DeploymentSet     = Modifier=DeploymentModifier? "deployment" sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
+      | Currying          = Modifier=DeploymentModifier? "deployment" sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
+      | DeploymentSelect  = Modifier=DeploymentModifier? "select" sm "deployment" sm Name "(" (Parameter; "," sm)+ ")"
                             "{" inl
                                 Case*  
                             d "}" nl outline_end_before

@@ -14,6 +14,7 @@ suite Suite1
   product P1;
   InitialDeploymentParameter = "A";
   DeploymentParameter = "value for normal deployment";
+  FinalDeploymentParameter = "Z";
   // простой сценарий
   Scenario1();
 }
@@ -26,6 +27,7 @@ suite Suite2
   product P1;
   InitialDeploymentParameter = "B";
   DeploymentParameter = "value for normal deployment";
+  FinalDeploymentParameter = "Z";
   // сценарий - множество
   Scenario2();
 }
@@ -50,6 +52,7 @@ suite Suite3
   product P1;
   InitialDeploymentParameter = "B";
   DeploymentParameter = "value for normal deployment";
+  FinalDeploymentParameter = "Z";
   // сценарий - генератор
   Scenario3();
 }
@@ -69,6 +72,7 @@ suite Suite4
   platform win7-x64;
   product P1;
   InitialDeploymentParameter = "B";
+  FinalDeploymentParameter = "Z";
   // сценарий, в котором указан собственно initial деплоймент
   Scenario4();
 }

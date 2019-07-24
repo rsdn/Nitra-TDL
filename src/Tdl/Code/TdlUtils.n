@@ -41,7 +41,7 @@ namespace Tdl
         dictionary.Add(k, v);
       dictionary
     }
-    
+
     public ToTdlContext(this context : DependentPropertyEvalContext) : TdlDependentPropertyEvalContext
     {
       context :> TdlDependentPropertyEvalContext;
@@ -286,9 +286,7 @@ namespace Tdl
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
 
-      def initialDeployment = context.ToTdlContext().InitialDeployment;
-      when (initialDeployment != null && initialDeployment.IsAggregateParametersScopeEvaluated)
-        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
+      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
 
       if (CollectScenarios(visited, ref builder, scenarios))
         VSome(builder.ToScope())
@@ -1162,23 +1160,30 @@ namespace Tdl
       text
     }
 
-    public SetInitialDeployment(this deployment : Deployment, symbol : DeploymentSymbol, context : DependentPropertyEvalContext) : void
+    public SetSpecialDeployment(this deployment : Deployment, symbol : DeploymentSymbol, modifier : DeploymentModifier, context : DependentPropertyEvalContext) : void
     {
-      SetUsed(deployment, symbol, true);
-
       def context = context.ToTdlContext();
-      def initialDeployment = context.InitialDeployment;
-      if (initialDeployment == null)
-        context.InitialDeployment = symbol
-      else
+      match (modifier)
       {
-        def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, deployment);
-        using (root = msgs.RootError(deployment.Name, $"Redefinition of initial deployment, first is '$(initialDeployment)'."))
-        {
-          def firstDefinition = initialDeployment.FirstParsedDeclarationOrDefault;
-          when (firstDefinition != null)
-            root.Hint(firstDefinition.Name.Location, "First definition.");
-        }
+        | DeploymentModifier.Initial with (get = context.get_InitialDeployment, set = context.set_InitialDeployment, specialType = "initial")
+        | DeploymentModifier.Final   with (get = context.get_FinalDeployment,   set = context.set_FinalDeployment,   specialType = "final") =>
+          SetUsed(deployment, symbol, true);
+
+          def specialDeployment = get();
+          if (specialDeployment == null)
+            set(symbol)
+          else
+          {
+            def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, deployment);
+            using (root = msgs.RootError(deployment.Name, $"Redefinition of $specialType deployment, first is '$(specialDeployment)'."))
+            {
+              def firstDefinition = specialDeployment.FirstParsedDeclarationOrDefault;
+              when (firstDefinition != null)
+                root.Hint(firstDefinition.Name.Location, "First definition.");
+            }
+          }
+
+        | _ => assert2(false, $"Unknown deployment mofidifier of type $(modifier.GetType())");
       }
     }
 
@@ -1303,20 +1308,23 @@ namespace Tdl
       mutable builder;
       UnionScopeBuilder.Add(parametersScope, ref builder);
       UnionScopeBuilder.Add(deploymentScope, ref builder);
-
-      def initialDeployment = context.ToTdlContext().InitialDeployment;
-      when (initialDeployment != null && initialDeployment.IsAggregateParametersScopeEvaluated)
-        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
-
+      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
       builder.ToScope();
     }
 
     public MakeAggregateParametersScope(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       def deployments = List();
-      def initialDeployment = context.ToTdlContext().InitialDeployment;
+      def tdlContext  = context.ToTdlContext();
+
+      def initialDeployment = tdlContext.InitialDeployment;
       when (initialDeployment != null)
         deployments.Add(initialDeployment);
+
+      def finalDeployment = tdlContext.FinalDeployment;
+      when (finalDeployment != null)
+        deployments.Add(finalDeployment);
+
       match (deployment)
       {
         | DeploymentSymbol as d when !d.IsAllDeploymentsEvaluated => return VNone();
@@ -1672,6 +1680,19 @@ namespace Tdl
                                       binariesFolderOpt.ConvertStringLiteral()))
         | _ => VNone()
       }
+    }
+
+    private AddSpecialDeploymentsAggregateParameterScope(builder : ref UnionScopeBuilder, context : DependentPropertyEvalContext) : void
+    {
+      def tdlContext = context.ToTdlContext();
+
+      def initialDeployment = tdlContext.InitialDeployment;
+      when (initialDeployment != null && initialDeployment.IsAggregateParametersScopeEvaluated)
+        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
+
+      def finalDeployment = tdlContext.FinalDeployment;
+      when (finalDeployment != null && finalDeployment.IsAggregateParametersScopeEvaluated)
+        UnionScopeBuilder.Add(finalDeployment.AggregateParametersScope, ref builder);
     }
   } // module
 } // namespace

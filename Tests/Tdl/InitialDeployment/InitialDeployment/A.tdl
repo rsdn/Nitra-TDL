@@ -9,5 +9,10 @@ initial select deployment Setup(InitialDeploymentParameter)
   | "B" => B
 }
 
+final deployment Finalize(string FinalDeploymentParameter)
+  script "finalize.ps1"
+{
+}
+
 deployment A() script "A.ps1" {}
 deployment B() script "A.ps1" {}
