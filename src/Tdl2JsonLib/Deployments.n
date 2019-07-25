@@ -25,8 +25,6 @@ namespace Tdl2Json
 {
   public module Deployments
   {
-    private DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
-
     public Generate(symbols : IEnumerable[DeclarationSymbol], deploymentScriptHeader : string, deploymentToolPath : string) : Dictionary[string, QuickType.Deployment]
     {
       def result = Dictionary();
@@ -42,7 +40,7 @@ namespace Tdl2Json
       | _ => false
     }
 
-    private getParameterValue(parameter : DotNet.FormalParameterSymbol) : object
+    public GetParameterValue(parameter : DotNet.FormalParameterSymbol) : object
     {
       match (parameter.Default)
       {
@@ -58,7 +56,7 @@ namespace Tdl2Json
       }
     }
 
-    private getDefaultValue(parameter : DotNet.FormalParameterSymbol) : object
+    public GetDefaultValue(parameter : DotNet.FormalParameterSymbol) : object
     {
       match (parameter.Default)
       {
@@ -79,8 +77,8 @@ namespace Tdl2Json
     {
       def refDefs          = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
       def simpleParameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
-      def parameters       = simpleParameters.Select(p => (p.Name, getParameterValue(p)));
-      def defaultes        = script.Parameters.Select(p => (p.Name, getDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
+      def parameters       = simpleParameters.Select(p => (p.Name, GetParameterValue(p)));
+      def defaultes        = script.Parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
       def defs             = script.Defs.Select(d => (d.Name, d.Expr.ToObject(null)));
       def scriptArgs       = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
@@ -110,9 +108,9 @@ namespace Tdl2Json
       result.Add(script.Name, deploymentModel)
     }
 
-    private GenerateDeploymentSelect(sel : Deployment.SelectSymbol, result : Dictionary[string, QuickType.Deployment]) : void
+    private GenerateDeploymentSelect(sel : Deployment.SelectSymbol, deploymentScriptHeader : string, deploymentToolPath : string, result : Dictionary[string, QuickType.Deployment]) : void
     {
-      def separator   = "⁞";
+      def separator = "⁞";
       def deployments = sel.Deployments;
       def cases       = sel.Cases;
       assert2(deployments.Length == cases.Length);
@@ -128,13 +126,8 @@ namespace Tdl2Json
         else
         {
           name = sel.Name + separator + selector;
-          result.Add(name, Deployment() <- 
-          { 
-              Type        = TypeEnum.Sequence;
-              Deployments = seq.Select(_.Name).ToArray()
-          })
+          GenerateDeploymentSequence(name, seq, deploymentScriptHeader, deploymentToolPath, result);
         }
-
         values.Add(selector, name)
       }
 
@@ -156,113 +149,13 @@ namespace Tdl2Json
         {
             Type        = TypeEnum.Sequence;
             Deployments = array[deployments];
-        }
-      )
+        })
     }
 
     private GenerateDeploymentCode(code : Deployment.CodeSymbol, deploymentScriptHeader : string, deploymentToolPath : string, result : Dictionary[string, QuickType.Deployment]) : void
     {
-      def scriptArgs = Dictionary();
-      def defaults   = Dictionary();
-
-      def deploymentParameters = StringBuilder();
-      def deploymentCode       = StringBuilder();
-      def deploymentPrologue   = StringBuilder().AppendLine(deploymentScriptHeader);
-
-      def getParameterReference(name) { "$_csharp_" + name }
-
-      foreach (parameter in code.Parameters with index)
-      {
-        def parameterValue        = getParameterValue(parameter);
-        def parameterDefaultValue = getDefaultValue(parameter);
-
-        scriptArgs.Add(parameter.Name, parameterValue);
-        when (parameterDefaultValue != null)
-          defaults.Add(parameter.Name, parameterDefaultValue);
-
-        when (index > 0)
-          _ = deploymentParameters.AppendLine(",");
-
-        def parameterName = "$" + parameter.Name;
-        def parameterReference = getParameterReference(parameter.Name);
-
-        def (type, value) =
-          match (parameter.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
-          {
-            | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
-            | "System.Boolean" | "bool"   => ("string", $<#switch($(parameterName)) { "0" { "false" } "false" { "false" } "" { "false" } $$null { "false" } default { "true" } }#>)
-            | type                        => (type,     $<#$(parameterName).ToString("", [System.Globalization.CultureInfo]::InvariantCulture)#>)
-          };
-
-        _ = deploymentParameters.Append($"  [$(type)] $(parameterName)");
-        _ = deploymentPrologue.AppendLine($<#$(parameterReference) = $(value)#>);
-      }
-
-      def ast = code.FirstDeclarationOrDefault :> Tdl.Deployment.Code;
-      foreach (command in ast.Commands)
-      {
-        def commandVariable = "command" + command.StepNumberIn;
-        def commandType     = command.TypeRef.Symbol.FullName;
-        _ = deploymentCode.AppendLine($"var $(commandVariable) = __runtime__.CreateCommand<$(commandType)>();");
-
-        foreach (argument is Tdl.CommmandCallInputArgument in command.Arguments)
-        {
-          def expr = argument.Value;
-          def value =
-            match (expr)
-            {
-              | DefExpr.String
-              | DefExpr.True
-              | DefExpr.False
-              | DefExpr.RealLiteral
-              | DefExpr.DecimalIntegerLiteral
-              | DefExpr.HexadecimalIntegerLiteral => expr.ToString()
-              | DefExpr.Reference as x =>
-                match (x.Reference.Ref.Symbol)
-                {
-                  | FormalParameterSymbol            => getParameterReference(x.ToString())
-                  | CommmandCallOutputArgumentSymbol => x.ToString()
-                  | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
-                }
-
-              | x => throw NotSupportedException($"Expression '$(x)' is not supported in deployment code.")
-            };
-
-          def parameterName = argument.ParameterName.Text;
-          _ = deploymentCode.AppendLine($"$(commandVariable).$(parameterName) = $(value);");
-        }
-
-        _ = deploymentCode.AppendLine($"__runtime__.ExecuteCommand($(commandVariable));");
-
-        foreach (argument is Tdl.CommmandCallOutputArgument in command.Arguments)
-        {
-          def parameterName = argument.ParameterName.Text;
-          def variableName  = argument.Name.Text;
-          _ = deploymentCode.AppendLine($"var $(variableName) = $(commandVariable).$(parameterName);");
-        }
-      }
-
-      def deploymentScript = StringBuilder(DeploymentScriptTemplate)
-        .Replace("{{Parameters}}", deploymentParameters.ToString())
-        .Replace("{{Prologue}}",   deploymentPrologue.ToString())
-        .Replace("{{Name}}",       code.Name)
-        .Replace("{{Source}}",     deploymentCode.ToString())
-        .Replace("{{Tool}}",       deploymentToolPath)
-        .ToString();
-
-      result.Add(code.Name,
-        Deployment() <-
-        {
-          Type                    = TypeEnum.Script;
-          ScriptPath              = null;
-          ScriptData              = Encoding.UTF8.GetBytes(deploymentScript);
-          ScriptDataExtension     = ".ps1";
-          ReturnValue             = if (code.Expected.HasValue)  code.Expected.Value  else null;
-          RebootExitCode          = if (code.ForReboot.HasValue) code.ForReboot.Value else null;
-          Timeout                 = if (code.Timeout.HasValue)   code.Timeout.Value   else null;
-          ScriptArgs              = scriptArgs;
-          ScriptArgsDefaultValues = defaults;
-        })
+      def deployment = DeploymentCodeCompiler(code).Compile(deploymentScriptHeader, deploymentToolPath);
+      result.Add(code.Name, deployment)
     }
 
     private GenerateDeployment(deploymentSymbol : DeploymentSymbol, deploymentScriptHeader : string, deploymentToolPath : string, result : Dictionary[string, QuickType.Deployment]) : void
@@ -272,35 +165,94 @@ namespace Tdl2Json
         | Deployment.ScriptSymbol   as script   => GenerateDeploymentScript(script, result)
         | Deployment.CurryingSymbol as currying => GenerateDeploymentCurrying(currying, result)
         | Deployment.CodeSymbol     as code     => GenerateDeploymentCode(code, deploymentScriptHeader, deploymentToolPath, result)
-        | Deployment.SetSymbol as set =>
-          def deployments = set.Deployments.Select(d => d.Name).ToArray();
-          result.Add(set.Name, 
-            Deployment() <- 
-            { 
-              Type        = TypeEnum.Sequence;
-              Deployments = deployments;
-            })
-
+        | Deployment.SetSymbol      as set      => GenerateDeploymentSequence(set.Name, set.Deployments, deploymentScriptHeader, deploymentToolPath, result)
         | DeploymentRebootSymbol as reboot => 
           result.Add(reboot.Name, 
             Deployment() <-
             {
               Type          = TypeEnum.Reboot;
               RebootTimeout = if (reboot.Timeout.HasValue) reboot.Timeout.ValueOrDefault else "00:30:00";
-            }
-          )
+            })
 
-        | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel, result)
+        | Deployment.SelectSymbol as sel => GenerateDeploymentSelect(sel, deploymentScriptHeader, deploymentToolPath, result)
         | Deployment.EmptySymbol as empty => result.Add(empty.Name, Deployment() <- { Type = TypeEnum.Empty })
-        | _ => _ = ThrowNotSupportedSymbol(deploymentSymbol) 
+        | _ => _ = ThrowNotSupportedSymbol(deploymentSymbol)
       }
     }
 
-    private ReadStringResource(name : string) : string
+    private GenerateDeploymentSequence(name : string, sequence : ImmutableArray[DeploymentSymbol], deploymentScriptHeader : string, deploymentToolPath : string, result : Dictionary[string, QuickType.Deployment]) : void
     {
-      using (stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
-      using (reader = System.IO.StreamReader(stream))
-        reader.ReadToEnd();
+      match (NList.ToList(OptimizeDeploymentSequence(sequence)))
+      {
+        | [OptimizedDeployments.Compiler(builder)] => result.Add(name, builder.Compile(deploymentScriptHeader, deploymentToolPath, name))
+        | lst =>
+          def names = List();
+
+          foreach (x in lst)
+          {
+            | OptimizedDeployments.Compiler(builder) =>
+              unless (result.ContainsKey(builder.Name))
+                result.Add(builder.Name, builder.Compile(deploymentScriptHeader, deploymentToolPath));
+              names.Add(builder.Name);
+
+            | OptimizedDeployments.Range(start, count) =>
+              def end = start + count;
+              for (mutable i = start; i < end; ++i)
+                names.Add(sequence[i].Name);
+          }
+
+          result.Add(name, Deployment() <- 
+          { 
+            Type        = TypeEnum.Sequence;
+            Deployments = names.ToArray()
+          })
+      }
+    }
+
+    private variant OptimizedDeployments
+    {
+      | Range    { start : int; count : int; }
+      | Compiler { builder : DeploymentCodeCompiler; }
+    }
+
+    private OptimizeDeploymentSequence(deployments : ImmutableArray[DeploymentSymbol]) : Seq[OptimizedDeployments]
+    {
+      mutable start;
+      mutable pos;
+
+      while (pos < deployments.Length)
+      {
+        if (deployments[pos] is Deployment.CodeSymbol as first)
+        {
+          def builder = DeploymentCodeCompiler(first);
+
+          def fold()
+          {
+            ++pos;
+            when (pos < deployments.Length)
+            when (deployments[pos] is Deployment.CodeSymbol as next)
+            when (builder.TryAdd(next))
+              fold();
+          }
+          fold();
+
+          when (builder.Count > 1)
+          {
+            def count = pos - start - builder.Count;
+            when (count > 0)
+              yield OptimizedDeployments.Range(start, count);
+
+            yield OptimizedDeployments.Compiler(builder);
+            start = pos;
+          }
+        }
+        else
+          ++pos
+      }
+
+      def count = pos - start;
+      when (count > 0)
+        yield OptimizedDeployments.Range(start, count);
     }
   } // module
 } // namespace

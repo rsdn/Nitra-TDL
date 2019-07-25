@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Tdl
 {
-  class ParameterComparer : IEqualityComparer[DeclarationSymbol]
+  public class ParameterComparer : IEqualityComparer[DeclarationSymbol]
   {
     public static Instance : this = ParameterComparer();
       
