@@ -1,0 +1,201 @@
+﻿using DotNet;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using Tdl;
+
+using Nitra;
+using Nitra.Declarations;
+
+namespace Tdl2Json
+{
+  internal class DeploymentCodeCompiler
+  {
+    private static DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
+
+    private         _symbols        : List[Deployment.CodeSymbol] = List();
+    private         _exitCode       : ParsedValue[int];
+    private mutable _rebootExitCode : ParsedValue[int];
+    private mutable _timeout        : ParsedValue[string];
+    private mutable _timeoutValue   : TimeSpan?; // null means invalid text in _timeout
+
+    public Name : string { get; private set; }
+
+    public Count : int { get { _symbols.Count } }
+
+    public this(symbol : Deployment.CodeSymbol)
+    {
+      Name            = symbol.Name;
+      _exitCode       = symbol.Expected;
+      _rebootExitCode = symbol.ForReboot;
+      _timeout        = symbol.Timeout;
+      _timeoutValue   = ParseTimeout(_timeout);
+      _symbols.Add(symbol);
+    }
+
+    public TryAdd(symbol : Deployment.CodeSymbol) : bool
+    {
+      when (_rebootExitCode.HasValue)
+        return false;
+
+      when (_exitCode.ValueOrDefault != symbol.Expected.ValueOrDefault)
+        return false;
+
+      def otherTimeout = ParseTimeout(symbol.Timeout);
+      when (!_timeoutValue.HasValue || !otherTimeout.HasValue)
+        return false;
+
+      _symbols.Add(symbol);
+
+      Name = Name + "⁝" + symbol.Name;
+
+      def newTimeoutValue = _timeoutValue.GetValueOrDefault() + otherTimeout.GetValueOrDefault();
+      when (newTimeoutValue != TimeSpan.Zero)
+      {
+        _timeout      = ParsedValue(_timeout.Span, newTimeoutValue.ToString());
+        _timeoutValue = newTimeoutValue;
+      }
+
+      _rebootExitCode = symbol.ForReboot;
+
+      true
+    }
+
+    public Compile(deploymentScriptHeader : string, deploymentToolPath : string, customName : string = null) : QuickType.Deployment
+    {
+      def scriptArgs = Dictionary();
+      def defaults   = Dictionary();
+
+      def deploymentParameters = StringBuilder();
+      def deploymentCode       = StringBuilder();
+      def deploymentPrologue   = StringBuilder().AppendLine(deploymentScriptHeader);
+
+      def getParameterReference(name) { "$_csharp_" + name }
+
+      def uniqueParameters = HashSet(ParameterComparer.Instance);
+
+      foreach (symbol in _symbols)
+      {
+        foreach (parameter when uniqueParameters.Add(parameter) in symbol.Parameters)
+        {
+          def parameterValue        = Deployments.GetParameterValue(parameter);
+          def parameterDefaultValue = Deployments.GetDefaultValue(parameter);
+
+          scriptArgs.Add(parameter.Name, parameterValue);
+          when (parameterDefaultValue != null)
+            defaults.Add(parameter.Name, parameterDefaultValue);
+
+          when (uniqueParameters.Count > 1)
+            _ = deploymentParameters.AppendLine(",");
+
+          def parameterName = "$" + parameter.Name;
+          def parameterReference = getParameterReference(parameter.Name);
+
+          def (type, value) =
+            match (parameter.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
+            {
+              | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
+              | "System.Boolean" | "bool"   => ("string", $<#switch($(parameterName)) { "0" { "false" } "false" { "false" } "" { "false" } $$null { "false" } default { "true" } }#>)
+              | type                        => (type,     $<#$(parameterName).ToString("", [System.Globalization.CultureInfo]::InvariantCulture)#>)
+            };
+
+          _ = deploymentParameters.Append($"  [$(type)] $(parameterName)");
+          _ = deploymentPrologue.AppendLine($<#$(parameterReference) = $(value)#>);
+        }
+
+        foreach (command in (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands)
+        {
+          def commandVariable = "command" + command.StepNumberIn;
+          def commandType     = command.TypeRef.Symbol.FullName;
+          _ = deploymentCode.AppendLine($"var $(commandVariable) = __runtime__.CreateCommand<$(commandType)>();");
+
+          foreach (argument is Tdl.CommmandCallInputArgument in command.Arguments)
+          {
+            def expr = argument.Value;
+            def value =
+              match (expr)
+              {
+                | DefExpr.String
+                | DefExpr.True
+                | DefExpr.False
+                | DefExpr.RealLiteral
+                | DefExpr.DecimalIntegerLiteral
+                | DefExpr.HexadecimalIntegerLiteral => expr.ToString()
+                | DefExpr.Reference as x =>
+                  match (x.Reference.Ref.Symbol)
+                  {
+                    | FormalParameterSymbol            => getParameterReference(x.ToString())
+                    | CommmandCallOutputArgumentSymbol => x.ToString()
+                    | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
+                  }
+
+                | x => throw NotSupportedException($"Expression '$(x)' is not supported in deployment code.")
+              };
+
+            def parameterName = argument.ParameterName.Text;
+            _ = deploymentCode.AppendLine($"$(commandVariable).$(parameterName) = $(value);");
+          }
+
+          _ = deploymentCode.AppendLine($"__runtime__.ExecuteCommand($(commandVariable));");
+
+          foreach (argument is Tdl.CommmandCallOutputArgument in command.Arguments)
+          {
+            def parameterName = argument.ParameterName.Text;
+            def variableName  = argument.Name.Text;
+            _ = deploymentCode.AppendLine($"var $(variableName) = $(commandVariable).$(parameterName);");
+          }
+        }
+      }
+
+      def deploymentScript = StringBuilder(DeploymentScriptTemplate)
+        .Replace("{{Parameters}}", deploymentParameters.ToString())
+        .Replace("{{Prologue}}",   deploymentPrologue.ToString())
+        .Replace("{{Name}}",       customName ?? Name)
+        .Replace("{{Source}}",     deploymentCode.ToString())
+        .Replace("{{Tool}}",       deploymentToolPath)
+        .ToString();
+
+      QuickType.Deployment() <-
+      {
+        Type                    = QuickType.TypeEnum.Script;
+        ScriptPath              = null;
+        ScriptData              = Encoding.UTF8.GetBytes(deploymentScript);
+        ScriptDataExtension     = ".ps1";
+        ReturnValue             = if (_exitCode.HasValue)       _exitCode.Value       else null;
+        RebootExitCode          = if (_rebootExitCode.HasValue) _rebootExitCode.Value else null;
+        Timeout                 = if (_timeout.HasValue)        _timeout.Value        else null;
+        ScriptArgs              = scriptArgs;
+        ScriptArgsDefaultValues = defaults;
+      }
+    }
+
+    private static ParseTimeout(t : ParsedValue[string]) : TimeSpan?
+    {
+      mutable timeoutValue;
+      if (t.HasValue)
+        if (TimeSpan.TryParse(t.ValueOrDefault, out timeoutValue))
+          timeoutValue
+        else
+          null
+      else
+        TimeSpan.Zero
+    }
+
+    private static ReadStringResource(name : string) : string
+    {
+      using (stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(name))
+      using (reader = System.IO.StreamReader(stream))
+        reader.ReadToEnd();
+    }
+  }
+}

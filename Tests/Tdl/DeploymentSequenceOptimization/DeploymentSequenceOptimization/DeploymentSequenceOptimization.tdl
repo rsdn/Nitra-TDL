@@ -1,0 +1,43 @@
+deployment D1(string Message)
+{
+  KL.Autotests.Commands.LogMessage(Message);
+  expected 0;
+}
+
+deployment D2(bool IsVerbose = false)
+{
+  KL.Autotests.Commands.ComplexOperation(IsVerbose);
+  expected 0;
+}
+
+deployment D3()
+  script "file.ps1"
+{}
+
+deployment S1 = D1, D2;
+
+deployment S2 = D1, D2, D3;
+
+deployment S3 = D3, D1, D2;
+
+deployment S4 = D1, D3, D2;
+
+select deployment SS1(F)
+{
+  | "X" => D1, D2
+}
+
+select deployment SS2(F)
+{
+  | "X" => D1, D2, D3
+}
+
+select deployment SS3(F)
+{
+  | "X" => D3, D1, D2
+}
+
+select deployment SS4(F)
+{
+  | "X" => D1, D3, D2
+}
