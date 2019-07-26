@@ -395,8 +395,8 @@ namespace Tdl
     
     public MakeExternalSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : ExternalSymbol
     {
-      def parameterName = Name(NoLocation, "external");
-      def symbol = ExternalDeclaration.[ExternalSymbol](parameterName).DefineSymbol(rootNamespace.MemberTable);
+      def decl   = PredefinedDeclaration(Name(NoLocation, "external"), fun() { ExternalSymbol() });
+      def symbol = decl.DefineSymbol(rootNamespace.MemberTable) :> ExternalSymbol;
       symbol.EvalProperties(context);
       symbol
     }

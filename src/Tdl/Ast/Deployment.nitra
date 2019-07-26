@@ -60,7 +60,7 @@ namespace Tdl
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
         Symbol.Defs                     = TdlUtils.MakeUntypedDefinitions(Definitions);
-        Parameters.Scope                = Scope;
+        Parameters.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
 
         Content         : DeploymentScriptContent;
         Definitions     : Definition*;
@@ -77,7 +77,7 @@ namespace Tdl
           MakeHint       = TdlUtils.DeploymentMakeHint(symbolCache, this);
         }
 
-        Parameters.Scope                = Scope;
+        Parameters.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
         Commands.StepNumberIn           = 0;
         Commands.Variables              = Symbol.Variables;
         Commands.OuterScope             = Scope;

@@ -40,22 +40,6 @@ namespace Tdl2Json
       | _ => false
     }
 
-    public GetParameterValue(parameter : DotNet.FormalParameterSymbol) : object
-    {
-      match (parameter.Default)
-      {
-        | Reference as r => "#(" + r.name + ")"
-        | None           
-        | String   
-        | Bool     
-        | Number   
-        | Decimal  
-        | Double   
-        | Single => "$(" + parameter.Name + ")"
-        | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
-      }
-    }
-
     public GetDefaultValue(parameter : DotNet.FormalParameterSymbol) : object
     {
       match (parameter.Default)
@@ -68,19 +52,18 @@ namespace Tdl2Json
         | Double    as d => d.Value
         | Single    as s => s.Value
         | None           => null
-        | Reference as r => r.name
+        | Reference as r => "#(" + r.name + ")"
         | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
     }
     
     private GenerateDeploymentScript(script : Deployment.ScriptSymbol, result : Dictionary[string, QuickType.Deployment]) : void
     {
-      def refDefs          = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
-      def simpleParameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).ToArray();
-      def parameters       = simpleParameters.Select(p => (p.Name, GetParameterValue(p)));
-      def defaultes        = script.Parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
-      def defs             = script.Defs.Select(d => (d.Name, d.Expr.ToObject(null)));
-      def scriptArgs       = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
+      def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
+      def parameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).Select(p => (p.Name, "$(" + p.Name + ")")).ToArray();
+      def defaultes  = script.Parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
+      def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject(null)));
+      def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
       def deploymentModel = Deployment() <- 
       {
