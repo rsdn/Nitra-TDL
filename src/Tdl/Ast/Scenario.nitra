@@ -71,6 +71,7 @@ namespace Tdl
         Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
 
         ReportDuplicateBarrier(context, Symbol.Actions);
+        CheckMaxReboots(context, Symbol.Actions);
 
         Name.CheckRequired(context, "option", context.GetRequiredScenarioParameters(), Symbol.Defs);
 
