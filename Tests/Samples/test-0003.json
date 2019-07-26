@@ -146,6 +146,7 @@
           {
             "AssemblyName": "TestDll.dll",
             "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart",
+            "MaxRebootsCount": 1,
             "ArtifactsCollectionTimeout": "00:01:00"
           },
           {
@@ -164,6 +165,7 @@
           {
             "AssemblyName": "TestDll.dll",
             "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart",
+            "MaxRebootsCount": 1,
             "ArtifactsCollectionTimeout": "00:01:00"
           },
           {

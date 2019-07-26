@@ -732,7 +732,7 @@ namespace Tdl
       foreach (field when ObsoleteProductTypeFields.TryGetValue(field.Name, out replacedWith) in fields)
         field.FirstDeclarationOrDefault.Name.Warning(context, $"Field $(field.Name) is obsolete and will be replaced with $replacedWith field.");
     }
-    
+
     public ReportDuplicateBarrier(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
     {
       def set = HashSet();
@@ -743,7 +743,36 @@ namespace Tdl
         msgs.ReportMessage(CompilerMessageType.Error, loc, "Multiple usage of barrier " + b.barrier.InitialName, 0);
       }
     }
-    
+
+    public CheckMaxReboots(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
+    {
+      mutable prevAction = null;
+      for (mutable i = 0; i < actions.Length; ++i)
+      {
+        when (actions[i] is ScenarioAction.WaitForReboot as action)
+        {
+          match (prevAction)
+          {
+            | ScenarioAction.Script(MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.Config(MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.GTest (MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.Apk   (MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.Method(MaxRebootsCountOpt = maxReboots) =>
+              when (maxReboots.ValueOrDefault < 1)
+              {
+                def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+                msgs.Error(prevAction.Location, "Directive 'max-reboots' with non-zero value is required by following 'wait-for-reboot' scenario action.");
+              }
+
+            | _ =>
+              def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+              msgs.Warning(action.Location, "Redundant 'wait-for-reboot' scenario action.");
+          }
+        }
+        prevAction = actions[i];
+      }
+    }
+
     [Record]
     struct Edge
     {
