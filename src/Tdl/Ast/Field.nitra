@@ -17,8 +17,9 @@ namespace Tdl
       DeclaredInOpt = VSome(DeclaredIn);
     }
 
-    Type.Scope  = Scope;
-    TypeRef     = Type.Ref.Resolve();
+    Type.Scope        = Scope;
+    TypeRef           = Type.Ref.Resolve();
+    Symbol.DeclaredIn = ContainingTable.Owner;
 
     Type : QualifiedReference;
   }

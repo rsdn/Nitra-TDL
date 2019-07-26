@@ -88,12 +88,11 @@ namespace Tdl2Json
       {
         foreach (parameter when uniqueParameters.Add(parameter) in symbol.Parameters)
         {
-          def parameterValue        = Deployments.GetParameterValue(parameter);
-          def parameterDefaultValue = Deployments.GetDefaultValue(parameter);
+          scriptArgs.Add(parameter.Name, "$(" + parameter.Name + ")");
 
-          scriptArgs.Add(parameter.Name, parameterValue);
-          when (parameterDefaultValue != null)
-            defaults.Add(parameter.Name, parameterDefaultValue);
+          def defaultValue = Deployments.GetDefaultValue(parameter);
+          when (defaultValue != null)
+            defaults.Add(parameter.Name, defaultValue);
 
           when (uniqueParameters.Count > 1)
             _ = deploymentParameters.AppendLine(",");

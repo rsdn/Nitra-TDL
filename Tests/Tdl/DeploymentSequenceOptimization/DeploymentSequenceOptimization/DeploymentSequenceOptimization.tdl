@@ -1,4 +1,6 @@
-deployment D1(string Message)
+external { string Foo; }
+
+deployment D1(string Message = Foo)
 {
   KL.Autotests.Commands.LogMessage(Message);
   expected 0;

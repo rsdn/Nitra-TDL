@@ -62,11 +62,6 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.BaseProductType
     }
 
-    public GetExternalSymbol(this context : DependentPropertyEvalContext) : ExternalSymbol
-    {
-      ToTdlContext(context).TdlProjectData.ExternalSymbol
-    }
-
     public GetScenarioParameterScope(this context : DependentPropertyEvalContext) : Scope
     {
       ToTdlContext(context).TdlProjectData.ScenarioParameterScope
@@ -170,14 +165,6 @@ namespace Tdl
       builder.ToImmutable()
     }
 
-    public ResolveDeployments(deploymentRefs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[Ref[DeploymentSymbol]]
-    {
-      def builder = ImmutableArray.CreateBuilder(deploymentRefs.Length);
-      foreach (r in deploymentRefs)
-        builder.Add(r.Resolve());
-      builder.MoveToImmutable()
-    }
-    
     public MakeAllProducts(it : ProductSymbol, products : ImmutableArray[ProductSymbol]) : ImmutableArray[Product.DefSymbol]
     {
       def builder = ImmutableArray.CreateBuilder();
@@ -1430,13 +1417,6 @@ namespace Tdl
     public Accept(this ast : IAst, onName : Name -> void, onReference : Reference -> void) : void
     {
       ast.Accept(AstVisitor(onName, onReference));
-    }
-
-    public SetDeclaredIn(this _ast : IAst, context : DependentPropertyEvalContext, symbols : ImmutableArray[FieldSymbol]) : void
-    {
-      def declaredIn = context.GetExternalSymbol();
-      foreach (symbol in symbols)
-        symbol.DeclaredIn = declaredIn;
     }
 
     public CreateLoginAction(context : DependentPropertyEvalContext, location : Location, user : CSharp.StringLiteral, password : CSharp.StringLiteral) : ScenarioAction.Login

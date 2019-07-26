@@ -13,6 +13,12 @@ namespace Tdl
       Scope     = MemberTable;
       Kind      = "external";
       SpanClass = TdlLang.ExternalSpanClass;
+      CanMerge  = true;
     }
+
+    Fields.ContainingTable = Symbol.MemberTable;
+    Fields.Scope           = Scope;
+
+    Fields : Field*;
   }
 }

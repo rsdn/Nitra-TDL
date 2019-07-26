@@ -138,9 +138,9 @@ namespace Tdl
         SuiteScenario.DefDeclarations    -> Definitions;
         SuiteScenario.SuiteStatements    -> Statements;
       }
-    | External -> ExternalAst { ExternalBody.Fields -> Fields; }
-    | Barrier  -> Barrier     { Name -> Name; Timeout -> Timeout; }
-    | Entity   -> Entity      { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
+    | External -> External { Name = Name(Location.WithSpan(KwExternal.FromStart()), "external"); ExternalBody.Fields -> Fields; }
+    | Barrier  -> Barrier  { Name -> Name; Timeout -> Timeout; }
+    | Entity   -> Entity   { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
   }
 
   map syntax Grammar.DeploymentModifier -> DeploymentModifier
