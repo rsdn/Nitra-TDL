@@ -36,6 +36,12 @@ namespace QuickType
         public string Schema { get; set; }
 
         /// <summary>
+        /// Дефолтные значения параметров для всего конфига
+        /// </summary>
+        [JsonProperty("DefaultValues", NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> DefaultValues { get; set; }
+
+        /// <summary>
         /// Описания деплоев
         /// </summary>
         [JsonProperty("Deployments", NullValueHandling = NullValueHandling.Ignore)]
