@@ -11,6 +11,7 @@ namespace Tdl
     symbol
     {
       in DeclaredIn : DeclarationSymbol;
+      in Value      : ValueOption[Tdl.Expr];
 
       Kind          = "field";
       SpanClass     = TdlLang.FieldSpanClass;
@@ -18,9 +19,12 @@ namespace Tdl
     }
 
     Type.Scope        = Scope;
+    Value.Scope       = Scope;
     TypeRef           = Type.Ref.Resolve();
     Symbol.DeclaredIn = ContainingTable.Owner;
+    Symbol.Value      = Value.Result;
 
-    Type : QualifiedReference;
+    Type  : QualifiedReference;
+    Value : DefExpr?;
   }
 }

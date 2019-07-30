@@ -25,6 +25,8 @@ namespace Tdl2Json
 
     public FinalDeployment : Tdl.DeploymentSymbol { get; }
 
+    public ExternalSymbols : TableScope { get; }
+
     public OutputPath : string { get; }
   }
 }

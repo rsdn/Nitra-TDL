@@ -104,7 +104,8 @@ namespace Tdl2Json
           when (string.IsNullOrEmpty(deploymentToolPath))
             deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
 
-          GenerateJson(context.RootNamespace, context.InitialDeployment, context.FinalDeployment, output, deploymentScriptHeader, deploymentToolPath, jsonSchemaType);
+          GenerateJson(context.RootNamespace, context.InitialDeployment, context.FinalDeployment, context.ExternalSymbols, output,
+            deploymentScriptHeader, deploymentToolPath, jsonSchemaType);
         }
       }
 
@@ -152,7 +153,8 @@ namespace Tdl2Json
 
       def tdlProjectData = data :> TdlProjectData;
       def evalContext    = tdlProjectData.Context :> TdlDependentPropertyEvalContext;
-      TransformationContext(tdlProjectData.RootNamespace, commentBag, messages, evalContext.InitialDeployment, evalContext.FinalDeployment, transformatorOutput)
+      TransformationContext(tdlProjectData.RootNamespace, commentBag, messages, evalContext.InitialDeployment, evalContext.FinalDeployment,
+        tdlProjectData.ExternalSymbolTable, transformatorOutput)
     }
 
     internal ReportMessage(msg : string, importance : MessageImportance = MessageImportance.High) : void
@@ -166,8 +168,8 @@ namespace Tdl2Json
       stopwatch.Restart();
     }
 
-    private GenerateJson(root : NamespaceSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, output : Lazy[TextWriter],
-      deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string) : void
+    private GenerateJson(root : NamespaceSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, externalSymbols : TableScope,
+      output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string) : void
     {
       def stopwatch = Stopwatch.StartNew();
       JsonGenerator.ReportMessage("Generating JSON...");
@@ -175,7 +177,7 @@ namespace Tdl2Json
       when (string.IsNullOrEmpty(jsonSchemaType))
         jsonSchemaType = if (IsExperimental) "dev" else "prod";
 
-      def symbols     = root.MemberTable.Symbols.SelectMany(x => x).ToImmutableArray();
+      def symbols     = root.MemberTable.GetAllSymbols().ToImmutableArray();
       def suites      = SortedDictionary();
       def suiteGroups = SortedDictionary();
       foreach (g is Suite.GeneratorSymbol in symbols)
@@ -184,6 +186,16 @@ namespace Tdl2Json
         GenerateSuiteGroup(s, suiteGroups);
       foreach (s is Suite.DefSymbol in symbols)
         suites.Add(GenerateSuite(s));
+
+      def defaultValues = SortedDictionary();
+      foreach (f is FieldSymbol in externalSymbols.GetAllSymbols())
+      {
+        when (f.Value is VSome(v))
+        {
+          def value = v.ToObject(f);
+          defaultValues.Add(f.Name, value);
+        }
+      }
 
       def coordinate = Root() <-
       {
@@ -196,6 +208,7 @@ namespace Tdl2Json
         TestScenarios = symbols.OfType.[Tdl.ScenarioSymbol   ]().SelectMany(GenerateScenarios(_, initialDeployment, finalDeployment)).ToDictionary();
         SuiteGroups   = if (suiteGroups.Count == 0) null else suiteGroups;
         TestEntities  = symbols.OfType.[EntitySymbol         ]().Select(GenerateEntity)              .ToDictionary();
+        DefaultValues = if (defaultValues.Count == 0) null else defaultValues;
       };
 
       def settings = ConverterSettings.Settings <- Formatting = Formatting.Indented;
