@@ -73,11 +73,12 @@ namespace Tdl
         Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt, BinariesFolderOpt);
+        ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt, BinariesFolderOpt, ContinueOnErrorOpt);
 
         Method             : QualifiedReference;
         MaxRebootsCountOpt : ParsedValue[int];
         BinariesFolderOpt  : CSharp.StringLiteral?;
+        ContinueOnErrorOpt : ParsedValue[bool];
 
         when (!(Method is QualifiedReference.Qualified))
           Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");

@@ -264,6 +264,7 @@ namespace Tdl
             | Some(x) -> Some(x)
           } -> BinariesFolderOpt;
           MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
+          ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
         }
       ]
     | Sequence -> SequenceActions
@@ -280,6 +281,7 @@ namespace Tdl
           | Some(x) -> Some(x)
         } -> BinariesFolderOpt;
         MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
+        ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
       }
     | Script ->  Action.Script
       {

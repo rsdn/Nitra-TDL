@@ -47,7 +47,7 @@ namespace Tdl2Json
           dictionary
         }
         
-        public ToNulable[T](this value : ParsedValue[T]) : T?
+        public ToNullable[T](this value : ParsedValue[T]) : T?
           where T: struct
         {
           if (value.HasValue) Nullable(value.Value) else null
