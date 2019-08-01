@@ -506,31 +506,24 @@ namespace Tdl2Json
               def artifactsCollectionTimeout = getString("ArtifactsCollectionTimeout");
               def getTestMethod() : TestMethod
               {
-                when (r.Actions.Length == 1)
-                when (r.Actions[0] is ScenarioAction.Method as method)
-                {
-                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.type, method.method);
-                  return TestMethodQualifier() <- 
-                  {
-                    AssemblyName               = assemblyName;
-                    MethodName                 = methodName;
-                    MaxRebootsCount            = method.MaxRebootsCountOpt.ToNulable();
-                    ArtifactsCollectionTimeout = artifactsCollectionTimeout;
-                    LocalTestBinariesFolder    = if (method.binariesFolderOpt.HasValue) method.binariesFolderOpt.Value else null;
-                  };
-                }
                 def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
                 {
-                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.type, method.method);
+                  def (assemblyName, methodName) = GetAssemblyAndMethodName(method.TypeSymbol, method.MethodSymbol);
                   TestMethodQualifier() <- 
                   {
                     AssemblyName               = assemblyName;
                     MethodName                 = methodName;
-                    MaxRebootsCount            = method.MaxRebootsCountOpt.ToNulable();
+                    MaxRebootsCount            = method.MaxRebootsCountOpt.ToNullable();
+                    ContinueOnError            = method.ContinueOnErrorOpt.ToNullable();
                     ArtifactsCollectionTimeout = artifactsCollectionTimeout;
-                    LocalTestBinariesFolder    = if (method.binariesFolderOpt.HasValue) method.binariesFolderOpt.Value else null;
+                    LocalTestBinariesFolder    = if (method.BinariesFolderOpt.HasValue) method.BinariesFolderOpt.Value else null;
                   }
                 }
+
+                when (r.Actions.Length == 1)
+                when (r.Actions[0] is ScenarioAction.Method as method)
+                  return makeMethodAction(method);
+
                 def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
                 {
                     def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
@@ -540,7 +533,7 @@ namespace Tdl2Json
                       TestScriptName             = c.Name.Value;
                       TestScriptArgs             = testScriptArgs;
                       Environment                = env;
-                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
                       ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                     }
                 }
@@ -551,7 +544,7 @@ namespace Tdl2Json
                     {
                       ProgramName                = c.Name.Value;
                       Arguments                  = testScriptArgs;
-                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
                       ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                     }
                 }
@@ -562,7 +555,7 @@ namespace Tdl2Json
                       AndroidTestContainer       = c.Name.Value;
                       TestFilter                 = c.FilterOpt.ValueOrDefault;
                       TestRunnerPath             = c.RunnerPath.ValueOrDefault;
-                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                      MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
                     }
                 }
                 def makeConfigAction(c : ScenarioAction.Config) : TestBot
@@ -570,7 +563,7 @@ namespace Tdl2Json
                   TestBot() <-
                   {
                     TestConfigName             = c.path.Value;
-                    MaxRebootsCount            = c.MaxRebootsCountOpt.ToNulable();
+                    MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
                     ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                   }
                 }

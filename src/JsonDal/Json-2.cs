@@ -39,6 +39,9 @@
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string LocalTestBinariesFolder { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public bool? ContinueOnError { get; set; }
     }
 
     public sealed class RebootTestStep : TestMethod, TestSequenceItem

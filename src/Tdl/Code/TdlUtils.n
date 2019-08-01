@@ -1375,6 +1375,14 @@ namespace Tdl
       
       ParsedValue(lit.Span, int.Parse(lit.GetText()))
     }
+
+    public ToBool(this continueOnErrorOpt : OptionParseTree[GrammarParseTree.ContinueOnError]) : ParsedValue[bool]
+    {
+      if (continueOnErrorOpt.HasValue)
+        ParsedValue(continueOnErrorOpt.Span, true)
+      else
+        ParsedValue(continueOnErrorOpt.Span.StartPos)
+    }
     
     public ResolveOpt[TSymbol](this refOpt : ValueOption[Ref[DeclarationSymbol]]) : ValueOption[Ref[TSymbol]]
       where TSymbol: DeclarationSymbol
@@ -1677,7 +1685,8 @@ namespace Tdl
       }
     }
 
-    public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ParsedValue[int], binariesFolderOpt : CSharp.StringLiteral.IAstOption) : ValueOption[ScenarioAction.Method]
+    public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ParsedValue[int],
+      binariesFolderOpt : CSharp.StringLiteral.IAstOption, continueOnErrorOpt : ParsedValue[bool]) : ValueOption[ScenarioAction.Method]
     {
       match (methodAst)
       {
@@ -1686,7 +1695,8 @@ namespace Tdl
                                       q.Qualifier.Ref.Symbol,
                                       methodSymbol,
                                       maxRebootsCountOpt,
-                                      binariesFolderOpt.ConvertStringLiteral()))
+                                      binariesFolderOpt.ConvertStringLiteral(),
+                                      continueOnErrorOpt))
         | _ => VNone()
       }
     }

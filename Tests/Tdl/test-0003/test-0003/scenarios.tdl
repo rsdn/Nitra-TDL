@@ -6,7 +6,7 @@ scenario FacadeProductStopStart
     environments (win10, "App4 11.1__App6 2020.MP0"), (w10rs4-x64, "App6 2020.MP0");
     sequence
     {
-      method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart max-reboots 1;
+      method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart max-reboots 1 continue-on-error;
       wait-for-reboot 00:00:56;
       method Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT;
       reboot;

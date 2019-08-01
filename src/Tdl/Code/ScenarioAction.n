@@ -41,7 +41,14 @@ namespace Tdl
       }
     | Logoff          { }
     | LockWorkstation { }
-    | Method          { type : DeclarationSymbol; method : Member.MethodSymbol; MaxRebootsCountOpt : ParsedValue[int]; binariesFolderOpt : ParsedValue[string]; }
+    | Method
+      {
+        TypeSymbol         : DeclarationSymbol;
+        MethodSymbol       : Member.MethodSymbol;
+        MaxRebootsCountOpt : ParsedValue[int];
+        BinariesFolderOpt  : ParsedValue[string];
+        ContinueOnErrorOpt : ParsedValue[bool];
+      }
     | Reboot          { }
     | WaitForReboot   { TimeSpan : string; }
     | Barrier         { barrier : BarrierSymbol; }
