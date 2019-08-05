@@ -1,0 +1,8 @@
+﻿namespace Tdl2Json
+{
+  module Separators
+  {
+    public DeploymentSelectSeparator = " |||| ";
+    public DeploymentCodeSeparator   = " >>>> ";
+  }
+}

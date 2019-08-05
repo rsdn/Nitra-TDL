@@ -14,7 +14,7 @@
       "ScriptArgsDefaultValues": {},
       "ScriptPath": "deploy.ps1"
     },
-    "Setup⁞A": {
+    "Setup |||| A": {
       "Type": "Sequence",
       "Deployments": [
         "A",
@@ -26,7 +26,7 @@
       "Type": "Select",
       "Condition": "$(InitialDeploymentParameter)",
       "Values": {
-        "A": "Setup⁞A",
+        "A": "Setup |||| A",
         "B": "B"
       }
     },

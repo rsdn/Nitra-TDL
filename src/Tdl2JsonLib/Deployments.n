@@ -93,7 +93,7 @@ namespace Tdl2Json
 
     private GenerateDeploymentSelect(sel : Deployment.SelectSymbol, deploymentScriptHeader : string, deploymentToolPath : string, result : Dictionary[string, QuickType.Deployment]) : void
     {
-      def separator = "⁞";
+      def separator = Separators.DeploymentSelectSeparator;
       def deployments = sel.Deployments;
       def cases       = sel.Cases;
       assert2(deployments.Length == cases.Length);
