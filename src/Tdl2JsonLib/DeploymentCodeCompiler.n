@@ -57,7 +57,7 @@ namespace Tdl2Json
 
       _symbols.Add(symbol);
 
-      Name = Name + "⁝" + symbol.Name;
+      Name = Name + Separators.DeploymentCodeSeparator + symbol.Name;
 
       def newTimeoutValue = _timeoutValue.GetValueOrDefault() + otherTimeout.GetValueOrDefault();
       when (newTimeoutValue != TimeSpan.Zero)
