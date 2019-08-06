@@ -112,6 +112,7 @@ namespace Tdl2Json
           _ = deploymentPrologue.AppendLine($<#$(parameterReference) = $(value)#>);
         }
 
+        _ = deploymentCode.AppendLine("{");
         foreach (command in (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands)
         {
           def commandVariable = "command" + command.StepNumberIn;
@@ -154,6 +155,7 @@ namespace Tdl2Json
             _ = deploymentCode.AppendLine($"var $(variableName) = $(commandVariable).$(parameterName);");
           }
         }
+        _ = deploymentCode.AppendLine("}");
       }
 
       def deploymentScript = StringBuilder(DeploymentScriptTemplate)
