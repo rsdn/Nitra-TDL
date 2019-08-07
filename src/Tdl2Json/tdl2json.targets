@@ -10,6 +10,7 @@
       <WorkingDirectory             ParameterType="System.String" Required="false" />
       <DeploymentScriptHeader       ParameterType="System.String" Required="false" />
       <DeploymentToolPath           ParameterType="System.String" Required="false" />
+      <BooleanMarshalMode           ParameterType="System.String" Required="false" />
       <Sources                      ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <References                   ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <OutputFile                   ParameterType="System.String" Required="true" Output="true" />
@@ -43,6 +44,7 @@
             WorkingDirectory             = "$(MSBuildProjectDirectory)"
             DeploymentScriptHeader       = "$(TdlDeploymentScriptHeader)"
             DeploymentToolPath           = "$(TdlDeploymentToolPath)"
+            BooleanMarshalMode           = "$(TdlBooleanMarshalMode)"
             References                   = "@(ReferencePath)"
             Sources                      = "@(TdlCompile)"
             OutputFile                   = "$(TdlOutputPath)">

@@ -1,0 +1,8 @@
+﻿namespace Tdl2Json
+{
+  public enum BooleanMarshalMode
+  {
+    | Boolean
+    | Integer
+  }
+}

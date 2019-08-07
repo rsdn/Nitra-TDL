@@ -104,6 +104,12 @@
     <Compile Include="..\AssemblyVersion.n">
       <Link>Properties\AssemblyVersion.n</Link>
     </Compile>
+    <Compile Include="BooleanLiterals.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BooleanMarshalType.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DeploymentCodeCompiler.n">
       <SubType>Code</SubType>
     </Compile>

@@ -34,19 +34,12 @@ namespace Tdl2Json
       result
     }
 
-    public IsDeploymentCodeParameter(symbol : DotNet.TypedDeclarationSymbol) : bool
-    {
-      | s is DotNet.FormalParameterSymbol when s.IsDeclaredInEvaluated => s.DeclaredIn is Deployment.CodeSymbol
-      | _ => false
-    }
-
     public GetDefaultValue(parameter : DotNet.FormalParameterSymbol) : object
     {
       match (parameter.Default)
       {
         | String    as s => s.Value
-        | Bool      as b when IsDeploymentCodeParameter(parameter) => if (b.Value) 1 else 0
-        | Bool      as b => b.Value
+        | Bool      as b => if (b.Value) BooleanLiterals.True else BooleanLiterals.False
         | Number    as n => n.Value
         | Decimal   as d => d.Value
         | Double    as d => d.Value
@@ -62,7 +55,7 @@ namespace Tdl2Json
       def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
       def parameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).Select(p => (p.Name, "$(" + p.Name + ")")).ToArray();
       def defaultes  = script.Parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
-      def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject(null)));
+      def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
       def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
       def deploymentModel = Deployment() <- 
@@ -126,7 +119,7 @@ namespace Tdl2Json
     private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol, result : Dictionary[string, QuickType.Deployment]) : void
     {
       def deployments = Dictionary();
-      deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject(p.Symbol)));
+      deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
       result.Add(currying.Name,
         Deployment() <-
         {

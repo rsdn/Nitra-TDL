@@ -348,7 +348,7 @@
       "Parameters": {
         "AutotestAssemblies": "\\\\sdfs\\storage\\CoreTechnologies\\AutotestProjectBuilds\\Components.Autotest\\LatestBuild.txt",
         "UpdateSourceAddress": "",
-        "UseSecondaryUpdateSource": false,
+        "UseSecondaryUpdateSource": 0,
         "SecondaryUpdateSource": "",
         "DeploymentConditions": "/Update",
         "BugsRobotStatus": 0

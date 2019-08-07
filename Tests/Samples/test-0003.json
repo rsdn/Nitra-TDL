@@ -75,15 +75,15 @@
     ]
   },
   "Suites": {
-    "Ext.PullRequest": {
+    "Ext.Delivery": {
       "Parameters": {
         "AutotestAssemblies": "\\\\sdfs.domain.com\\Autotests\\Components\\Delivery\\BlackBox\\AutotestAssemblies",
-        "DeployIsNeeded": true,
+        "DeployIsNeeded": 1,
         "UpdateSourceAddress": "",
-        "UseSecondaryUpdateSource": false,
+        "UseSecondaryUpdateSource": 0,
         "SecondaryUpdateSource": "",
         "BugsRobotStatus": 0,
-        "BuildName": "build1",
+        "BuildName": "build2",
         "InternalTestSettingsDirectory": "/"
       },
       "Platforms": [
@@ -96,15 +96,15 @@
         "ExclusiveTestGroup"
       ]
     },
-    "Ext.Delivery": {
+    "Ext.PullRequest": {
       "Parameters": {
         "AutotestAssemblies": "\\\\sdfs.domain.com\\Autotests\\Components\\Delivery\\BlackBox\\AutotestAssemblies",
-        "DeployIsNeeded": true,
+        "DeployIsNeeded": 1,
         "UpdateSourceAddress": "",
-        "UseSecondaryUpdateSource": false,
+        "UseSecondaryUpdateSource": 0,
         "SecondaryUpdateSource": "",
         "BugsRobotStatus": 0,
-        "BuildName": "build2",
+        "BuildName": "build1",
         "InternalTestSettingsDirectory": "/"
       },
       "Platforms": [

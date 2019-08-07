@@ -890,7 +890,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableAppVerifier": true
+            "ForceDisableAppVerifier": 1
           }
         }
       ]
@@ -917,7 +917,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableAppVerifier": true,
+            "ForceDisableAppVerifier": 1,
             "UpdateChromeToVersion": "71.0.3578.802"
           }
         }
@@ -945,8 +945,8 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableAppVerifier": true,
-            "ForceDisableDriverVerifier": true
+            "ForceDisableAppVerifier": 1,
+            "ForceDisableDriverVerifier": 1
           }
         }
       ]
@@ -973,9 +973,9 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableAppVerifier": true,
-            "ForceDisableDriverVerifier": true,
-            "DisablePpl": true
+            "ForceDisableAppVerifier": 1,
+            "ForceDisableDriverVerifier": 1,
+            "DisablePpl": 1
           }
         }
       ]
@@ -1001,7 +1001,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableDriverVerifier": true,
+            "ForceDisableDriverVerifier": 1,
             "UpdateChromeToVersion": "71.0.3578.802"
           }
         }
@@ -1029,7 +1029,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisablePpl": true
+            "DisablePpl": 1
           }
         }
       ]
@@ -1056,7 +1056,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "RunAtSystemStartup": true
+            "RunAtSystemStartup": 1
           }
         }
       ]
@@ -1083,8 +1083,8 @@
       "Deployments": [
         {
           "_Install product": {
-            "RunAtSystemStartup": true,
-            "SetProductNameForFacade": false
+            "RunAtSystemStartup": 1,
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -1276,7 +1276,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "EnableAutomaticApp11Downgrade": true
+            "EnableAutomaticApp11Downgrade": 1
           }
         }
       ]
@@ -1330,9 +1330,9 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true,
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1,
             "InstallLicenceBackdoor": "Off"
           }
         }
@@ -1360,7 +1360,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "TurnOffDumpOnAssert": true
+            "TurnOffDumpOnAssert": 1
           }
         }
       ]
@@ -1387,8 +1387,8 @@
       "Deployments": [
         {
           "_Install product": {
-            "SetProductNameForFacade": false,
-            "TurnOffDumpOnAssert": true
+            "SetProductNameForFacade": 0,
+            "TurnOffDumpOnAssert": 1
           }
         }
       ]
@@ -1451,7 +1451,7 @@
             "AcceptMarketingAgreement": "Off",
             "AcceptSocializationAgreement": "Off",
             "BundleApp9": "Enabled",
-            "InstallActivationServerBackdoor": true
+            "InstallActivationServerBackdoor": 1
           }
         }
       ]
@@ -1478,10 +1478,10 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "SetProductNameForFacade": false
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -1535,10 +1535,10 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true,
-            "SetProductNameForFacade": false
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1,
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -1566,10 +1566,10 @@
         {
           "_Install product": {
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2.Main.Additional.LicenseRequest",
-            "ForceDisableAppVerifier": true,
+            "ForceDisableAppVerifier": 1,
             "ForceTraceLevel": "1000",
             "InstallLicenceBackdoor": "Off",
-            "Verbose": true
+            "Verbose": 1
           }
         }
       ]
@@ -1651,11 +1651,11 @@
       "Deployments": [
         {
           "_Install product": {
-            "ActivateEmbeddedTrial": true,
+            "ActivateEmbeddedTrial": 1,
             "InstallLicenceBackdoor": "Off",
-            "RunAtSystemStartup": true,
-            "SetProductNameForFacade": false,
-            "TurnOffProtection": true
+            "RunAtSystemStartup": 1,
+            "SetProductNameForFacade": 0,
+            "TurnOffProtection": 1
           }
         }
       ]
@@ -1682,9 +1682,9 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "SetProductNameForFacade": false
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -1742,7 +1742,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "InstallLib1": true
+            "InstallLib1": 1
           }
         }
       ]
@@ -1769,7 +1769,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "EnableAutomaticApp11Downgrade": true,
+            "EnableAutomaticApp11Downgrade": 1,
             "InstallLicenceBackdoor": "Off"
           }
         }
@@ -1825,7 +1825,7 @@
         {
           "_Install product": {
             "ForceTraceLevel": "800",
-            "SetProductNameForFacade": false
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -1852,10 +1852,10 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true,
-            "SetProductNameForFacade": false
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1,
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -1882,9 +1882,9 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1
           }
         }
       ]
@@ -2116,7 +2116,7 @@
             "KpcCompanyId": "Company@example.com",
             "KpcOneTimeRegistrationSharedSecret": "skldjf;slkdjfa;skldfj;aslkdfjlsajkdf",
             "KpcUserId": "A1F57560-1B67-4C6A-9E5B-D1BF5668AC93",
-            "SetProductNameForFacade": false
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -2200,7 +2200,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "EnableAutomaticApp11Downgrade": true,
+            "EnableAutomaticApp11Downgrade": 1,
             "UseGDPR": "On"
           }
         }
@@ -2437,10 +2437,10 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true,
-            "SetProductNameForFacade": false
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1,
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -2467,7 +2467,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "EnableAutomaticApp11Downgrade": true,
+            "EnableAutomaticApp11Downgrade": 1,
             "InstallLicenceBackdoor": "Off",
             "UseGDPR": "On"
           }
@@ -2497,7 +2497,7 @@
         {
           "_Install product": {
             "RequestApp8TrialTier": "Family",
-            "SetProductNameForFacade": false
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -2524,7 +2524,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "StartService": true
+            "StartService": 1
           }
         }
       ]
@@ -2606,7 +2606,7 @@
       "Deployments": [
         {
           "_Install product": {
-            "RunAtSystemStartup": true
+            "RunAtSystemStartup": 1
           }
         }
       ]
@@ -2616,7 +2616,7 @@
       "Deployments": [
         {
           "Install App9": {
-            "ForceInstallCertificates": true
+            "ForceInstallCertificates": 1
           }
         }
       ]
@@ -2626,9 +2626,9 @@
       "Deployments": [
         {
           "Install App9": {
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1
           }
         }
       ]
@@ -2640,8 +2640,8 @@
           "Install App9": {
             "AcceptEula": "Off",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_WithApp9.Main.Additional",
-            "DisableProductInstallation": true,
-            "App9WasInstalledInBundlePreviously": true
+            "DisableProductInstallation": 1,
+            "App9WasInstalledInBundlePreviously": 1
           }
         }
       ]
@@ -2652,8 +2652,8 @@
         {
           "Install App9": {
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_WithApp9.Main.Additional",
-            "DisableProductInstallation": true,
-            "App9WasInstalledInBundlePreviously": true
+            "DisableProductInstallation": 1,
+            "App9WasInstalledInBundlePreviously": 1
           }
         }
       ]
@@ -2663,7 +2663,7 @@
       "Deployments": [
         {
           "Install App9": {
-            "InstallLib1": true
+            "InstallLib1": 1
           }
         }
       ]
@@ -2683,8 +2683,8 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableDriverVerifier": true,
-            "RunAtSystemStartup": true
+            "ForceDisableDriverVerifier": 1,
+            "RunAtSystemStartup": 1
           }
         }
       ]
@@ -2695,9 +2695,9 @@
         {
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "RunAtSystemStartup": true,
-            "SetProductNameForFacade": false,
-            "TurnOffProtection": true
+            "RunAtSystemStartup": 1,
+            "SetProductNameForFacade": 0,
+            "TurnOffProtection": 1
           }
         }
       ]
@@ -2709,12 +2709,12 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2017.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "On"
           }
         }
@@ -2727,13 +2727,13 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2017.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
-            "RunAtSystemStartup": true,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
+            "RunAtSystemStartup": 1,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "On"
           }
         }
@@ -2746,12 +2746,12 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2019.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "On"
           }
         }
@@ -2764,13 +2764,13 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2019.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
-            "RunAtSystemStartup": true,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
+            "RunAtSystemStartup": 1,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "On"
           }
         }
@@ -2782,8 +2782,8 @@
         {
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "ForceDisableDriverVerifier": true,
-            "RunAtSystemStartup": true
+            "ForceDisableDriverVerifier": 1,
+            "RunAtSystemStartup": 1
           }
         }
       ]
@@ -2795,9 +2795,9 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2.Main.Additional.LicenseRequest",
-            "ForceDisableDriverVerifier": true,
+            "ForceDisableDriverVerifier": 1,
             "InstallLicenceBackdoor": "Off",
-            "RunAtSystemStartup": true
+            "RunAtSystemStartup": 1
           }
         }
       ]
@@ -2809,12 +2809,12 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2016.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "On"
           }
         }
@@ -2826,8 +2826,8 @@
         {
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
-            "ForceDisableDriverVerifier": true,
-            "InstallActivationServerBackdoor": true
+            "ForceDisableDriverVerifier": 1,
+            "InstallActivationServerBackdoor": 1
           }
         }
       ]
@@ -2839,13 +2839,13 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2016.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
-            "RunAtSystemStartup": true,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
+            "RunAtSystemStartup": 1,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "On"
           }
         }
@@ -2858,13 +2858,13 @@
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2016.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
             "InstallLicenceBackdoor": "Off",
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "On"
           }
         }
@@ -2876,9 +2876,9 @@
         {
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "DisableTestModulesInstallation": true,
-            "InstallActivationServerBackdoor": true,
-            "TurnOffProtection": true
+            "DisableTestModulesInstallation": 1,
+            "InstallActivationServerBackdoor": 1,
+            "TurnOffProtection": 1
           }
         }
       ]
@@ -2889,8 +2889,8 @@
         {
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "InstallActivationServerBackdoor": true,
-            "TurnOffProtection": true
+            "InstallActivationServerBackdoor": 1,
+            "TurnOffProtection": 1
           }
         }
       ]
@@ -2910,7 +2910,7 @@
       "Deployments": [
         {
           "deploy_patch_Execute": {
-            "ActivateEmbeddedTrial": false,
+            "ActivateEmbeddedTrial": 0,
             "backdoorSet": "All"
           }
         }
@@ -2934,9 +2934,9 @@
           "deploy_patch_Execute": {
             "backdoorSet": "All",
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "ForceDownloadBackdoors": false,
-            "InstallActivationServerBackdoor": true,
-            "TurnOffProtection": true
+            "ForceDownloadBackdoors": 0,
+            "InstallActivationServerBackdoor": 1,
+            "TurnOffProtection": 1
           }
         }
       ]
@@ -2948,10 +2948,10 @@
           "deploy_patch_Execute": {
             "backdoorSet": "Base",
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "DisableTestModulesInstallation": true,
-            "ForceDownloadBackdoors": false,
-            "InstallActivationServerBackdoor": true,
-            "TurnOffProtection": false
+            "DisableTestModulesInstallation": 1,
+            "ForceDownloadBackdoors": 0,
+            "InstallActivationServerBackdoor": 1,
+            "TurnOffProtection": 0
           }
         }
       ]
@@ -2961,9 +2961,9 @@
       "Deployments": [
         {
           "deploy_patch_Execute": {
-            "ForceDownloadBackdoors": false,
-            "InstallActivationServerBackdoor": true,
-            "RunAtSystemStartup": false
+            "ForceDownloadBackdoors": 0,
+            "InstallActivationServerBackdoor": 1,
+            "RunAtSystemStartup": 0
           }
         }
       ]
@@ -2973,8 +2973,8 @@
       "Deployments": [
         {
           "deploy_patch_Execute": {
-            "InstallActivationServerBackdoor": true,
-            "SkipRecommendedSettings": true
+            "InstallActivationServerBackdoor": 1,
+            "SkipRecommendedSettings": 1
           }
         }
       ]
@@ -2987,7 +2987,7 @@
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "backdoorSet": "All",
             "InstallLicenceBackdoor": "On",
-            "TurnOffProtection": true
+            "TurnOffProtection": 1
           }
         }
       ]
@@ -2997,9 +2997,9 @@
       "Deployments": [
         {
           "deploy_patch_Execute": {
-            "ForceDisableDriverVerifier": true,
-            "ForceDownloadBackdoors": false,
-            "InstallActivationServerBackdoor": true,
+            "ForceDisableDriverVerifier": 1,
+            "ForceDownloadBackdoors": 0,
+            "InstallActivationServerBackdoor": 1,
             "InstallLicenceBackdoor": "On"
           }
         }
@@ -3011,9 +3011,9 @@
         {
           "deploy_patch_Execute": {
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2019.MP0.Additional.LicenseRequest",
-            "ForceDisableDriverVerifier": true,
-            "ForceDownloadBackdoors": false,
-            "SetProductNameForFacade": true
+            "ForceDisableDriverVerifier": 1,
+            "ForceDownloadBackdoors": 0,
+            "SetProductNameForFacade": 1
           }
         }
       ]
@@ -3023,9 +3023,9 @@
       "Deployments": [
         {
           "deploy_patch_Execute": {
-            "ForceDownloadBackdoors": false,
-            "RunAtSystemStartup": false,
-            "SetProductNameForFacade": true
+            "ForceDownloadBackdoors": 0,
+            "RunAtSystemStartup": 0,
+            "SetProductNameForFacade": 1
           }
         }
       ]
@@ -3037,9 +3037,9 @@
           "deploy_patch_Execute": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2018.MP0.AdditionalContinuousIntegration",
-            "DisableTestModulesInstallation": true,
-            "ForceDownloadBackdoors": false,
-            "InstallActivationServerBackdoor": true
+            "DisableTestModulesInstallation": 1,
+            "ForceDownloadBackdoors": 0,
+            "InstallActivationServerBackdoor": 1
           }
         }
       ]
@@ -3050,10 +3050,10 @@
         {
           "deploy_patch_Execute": {
             "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true,
-            "RunAtSystemStartup": false
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1,
+            "RunAtSystemStartup": 0
           }
         }
       ]
@@ -3064,11 +3064,11 @@
         {
           "deploy_patch_Execute": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "DisableProductInstallation": true,
-            "DisableTestModulesInstallation": true,
-            "ForceInstallCertificates": true,
+            "DisableProductInstallation": 1,
+            "DisableTestModulesInstallation": 1,
+            "ForceInstallCertificates": 1,
             "InstallLicenceBackdoor": "On",
-            "RunAtSystemStartup": false
+            "RunAtSystemStartup": 0
           }
         }
       ]
@@ -3079,7 +3079,7 @@
         {
           "Install App9": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "ForceInstallCertificates": true
+            "ForceInstallCertificates": 1
           }
         }
       ]
@@ -3312,11 +3312,11 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableAppVerifier": true,
-            "DisableTestModulesInstallation": true,
-            "ActivateEmbeddedTrial": false,
+            "ForceDisableAppVerifier": 1,
+            "DisableTestModulesInstallation": 1,
+            "ActivateEmbeddedTrial": 0,
             "InstallLicenceBackdoor": "Off",
-            "SetProductNameForFacade": false
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -3326,11 +3326,11 @@
       "Deployments": [
         {
           "_Install product": {
-            "ForceDisableAppVerifier": true,
-            "DisableTestModulesInstallation": true,
-            "ActivateEmbeddedTrial": true,
+            "ForceDisableAppVerifier": 1,
+            "DisableTestModulesInstallation": 1,
+            "ActivateEmbeddedTrial": 1,
             "InstallLicenceBackdoor": "Off",
-            "SetProductNameForFacade": false
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -3340,8 +3340,8 @@
       "Deployments": [
         {
           "_Install product": {
-            "DisableTestModulesInstallation": true,
-            "SetProductNameForFacade": false
+            "DisableTestModulesInstallation": 1,
+            "SetProductNameForFacade": 0
           }
         }
       ]
@@ -3351,7 +3351,7 @@
       "Deployments": [
         {
           "Copy Comodo": {
-            "SetAutorun": true
+            "SetAutorun": 1
           }
         }
       ]
@@ -3473,36 +3473,36 @@
         "AcceptKsnAgreement": "On",
         "AcceptMarketingAgreement": "On",
         "AcceptSocializationAgreement": "On",
-        "ActivateEmbeddedTrial": false,
+        "ActivateEmbeddedTrial": 0,
         "ActivationCode": "",
         "ActivationServerUrl": "",
         "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2.Main.AdditionalContinuousIntegration",
         "BundleApp9": "Default",
-        "CollectContinuousProductTraces": true,
+        "CollectContinuousProductTraces": 1,
         "CollectionMountType": "File share",
         "CollectionsNetworkPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Deployment\\App2.Main",
-        "ContinueOnErrors": false,
+        "ContinueOnErrors": 0,
         "DefaultUpdateSource": "",
-        "DisableDistribFilesDownloading": false,
-        "DisablePpl": false,
-        "DisableProductInstallation": false,
-        "DisableRestartService": true,
-        "DisableTestModulesInstallation": false,
-        "DisableVSCollectorsDeployment": false,
+        "DisableDistribFilesDownloading": 0,
+        "DisablePpl": 0,
+        "DisableProductInstallation": 0,
+        "DisableRestartService": 1,
+        "DisableTestModulesInstallation": 0,
+        "DisableVSCollectorsDeployment": 0,
         "DriversLogState": "MainEnableBranchDisable",
-        "EnableAntiSpam": false,
-        "EnableAutomaticApp11Downgrade": false,
-        "EnableBssLogs": false,
-        "EnableSslDecoding": false,
-        "ForceDisableAppVerifier": false,
-        "ForceDisableDriverVerifier": false,
-        "ForceInstallCertificates": false,
-        "ForcePreloadDumpWriter": false,
+        "EnableAntiSpam": 0,
+        "EnableAutomaticApp11Downgrade": 0,
+        "EnableBssLogs": 0,
+        "EnableSslDecoding": 0,
+        "ForceDisableAppVerifier": 0,
+        "ForceDisableDriverVerifier": 0,
+        "ForceInstallCertificates": 0,
+        "ForcePreloadDumpWriter": 0,
         "ForceTraceLevel": "",
-        "IgnoreNothingToUpdateCode": false,
-        "InstallActivationServerBackdoor": false,
+        "IgnoreNothingToUpdateCode": 0,
+        "InstallActivationServerBackdoor": 0,
         "InstallerExecutableFileMask": "",
-        "InstallLib1": false,
+        "InstallLib1": 0,
         "InstallLicenceBackdoor": "On",
         "IsoImageFileName": "",
         "KpcActivationCode": "",
@@ -3511,30 +3511,30 @@
         "KPCRegion": "",
         "KpcUserId": "",
         "LocalizationCode": "",
-        "PostUpdateServiceStartStop": false,
+        "PostUpdateServiceStartStop": 0,
         "RegisterAiCom": "Off",
-        "ReplaceDistributiveFromIso": false,
+        "ReplaceDistributiveFromIso": 0,
         "RequestApp8TrialTier": "Default",
-        "RunAtSystemStartup": false,
+        "RunAtSystemStartup": 0,
         "SaveHashesPath": "",
         "ScreenshotsFolder": "",
-        "SetProductNameForFacade": true,
-        "Silent": false,
-        "StartService": false,
+        "SetProductNameForFacade": 1,
+        "Silent": 0,
+        "StartService": 0,
         "SuggestApp3": "Off",
         "TimesToUpdate": 1,
         "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
-        "TurnOffDumpOnAssert": false,
-        "TurnOffProtection": false,
+        "TurnOffDumpOnAssert": 0,
+        "TurnOffProtection": 0,
         "UpdateChromeToVersion": "",
         "UpdateFirefoxToVersion": "",
         "UpdateSource": "",
         "UseCollections": "On",
         "UseGDPR": "Default",
-        "UseProxyForUpdate": false,
-        "Verbose": false,
-        "VerboseExternalProcessesOutput": false,
-        "WaitForProductActivation": false
+        "UseProxyForUpdate": 0,
+        "Verbose": 0,
+        "VerboseExternalProcessesOutput": 0,
+        "WaitForProductActivation": 0
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy.ps1"
     },
@@ -3544,7 +3544,7 @@
         {
           "_Install product": {
             "InstallLicenceBackdoor": "Off",
-            "InstallActivationServerBackdoor": false
+            "InstallActivationServerBackdoor": 0
           }
         }
       ]
@@ -3585,12 +3585,12 @@
         {
           "_Install product": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": true,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 1,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "Off"
           }
         }
@@ -3603,12 +3603,12 @@
           "_Install product": {
             "InstallLicenceBackdoor": "Off",
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "DisableTestModulesInstallation": true,
-            "DisableVSCollectorsDeployment": true,
-            "InstallActivationServerBackdoor": false,
-            "SetProductNameForFacade": false,
-            "StartService": true,
-            "TurnOffDumpOnAssert": true,
+            "DisableTestModulesInstallation": 1,
+            "DisableVSCollectorsDeployment": 1,
+            "InstallActivationServerBackdoor": 0,
+            "SetProductNameForFacade": 0,
+            "StartService": 1,
+            "TurnOffDumpOnAssert": 1,
             "UseCollections": "Off"
           }
         }
@@ -3655,18 +3655,18 @@
         "AcceptMarketingAgreement": "On",
         "AcceptSocializationAgreement": "On",
         "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App9.Additional",
-        "CollectContinuousProductTraces": false,
+        "CollectContinuousProductTraces": 0,
         "CollectionMountType": "File share",
         "CollectionsNetworkPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Deployment\\App2.Main",
         "ConfigFilesFamily": "App9.",
-        "DisableProductInstallation": false,
-        "DisableTestModulesInstallation": false,
-        "DownloadBackdoorsUsingBinariesService": false,
-        "ForceInstallCertificates": false,
+        "DisableProductInstallation": 0,
+        "DisableTestModulesInstallation": 0,
+        "DownloadBackdoorsUsingBinariesService": 0,
+        "ForceInstallCertificates": 0,
         "HydraDllPath": "",
         "InstallerExecutableFileMask": "",
-        "InstallLib1": false,
-        "App9WasInstalledInBundlePreviously": false,
+        "InstallLib1": 0,
+        "App9WasInstalledInBundlePreviously": 0,
         "SaveHashesPath": "",
         "ScreenshotsFolder": "",
         "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
@@ -3681,7 +3681,7 @@
         {
           "Install App9": {
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
-            "DisableTestModulesInstallation": true,
+            "DisableTestModulesInstallation": 1,
             "UseCollections": "Off"
           }
         }
@@ -3765,61 +3765,61 @@
         "AcceptKsnAgreement": "On",
         "AcceptMarketingAgreement": "On",
         "AcceptSocializationAgreement": "On",
-        "ActivateEmbeddedTrial": false,
+        "ActivateEmbeddedTrial": 0,
         "ActivationCode": "",
         "ActivationServerUrl": "",
         "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2.Main.AdditionalContinuousIntegration",
         "backdoorSet": "Base",
         "BundleApp9": "Default",
-        "CollectContinuousProductTraces": false,
+        "CollectContinuousProductTraces": 0,
         "CollectionMountType": "File share",
         "CollectionsNetworkPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Deployment\\App2.Main",
-        "ContinueOnErrors": false,
+        "ContinueOnErrors": 0,
         "DefaultUpdateSource": "",
-        "DisableDistribFilesDownloading": false,
-        "DisableDriversLog": false,
-        "DisablePpl": false,
-        "DisableProductInstallation": false,
-        "DisableRestartService": true,
-        "DisableTestModulesInstallation": false,
-        "DisableVSCollectorsDeployment": false,
-        "EnableAntiSpam": false,
-        "EnableAutomaticApp11Downgrade": false,
-        "EnableSslDecoding": false,
-        "ForceDisableAppVerifier": false,
-        "ForceDisableDriverVerifier": false,
-        "ForceDownloadBackdoors": true,
-        "ForceInstallCertificates": false,
-        "ForcePreloadDumpWriter": false,
+        "DisableDistribFilesDownloading": 0,
+        "DisableDriversLog": 0,
+        "DisablePpl": 0,
+        "DisableProductInstallation": 0,
+        "DisableRestartService": 1,
+        "DisableTestModulesInstallation": 0,
+        "DisableVSCollectorsDeployment": 0,
+        "EnableAntiSpam": 0,
+        "EnableAutomaticApp11Downgrade": 0,
+        "EnableSslDecoding": 0,
+        "ForceDisableAppVerifier": 0,
+        "ForceDisableDriverVerifier": 0,
+        "ForceDownloadBackdoors": 1,
+        "ForceInstallCertificates": 0,
+        "ForcePreloadDumpWriter": 0,
         "ForceTraceLevel": "",
-        "IgnoreNothingToUpdateCode": false,
-        "InstallActivationServerBackdoor": false,
+        "IgnoreNothingToUpdateCode": 0,
+        "InstallActivationServerBackdoor": 0,
         "InstallerExecutableFileMask": "",
-        "InstallLib1": false,
+        "InstallLib1": 0,
         "InstallLicenceBackdoor": "Off",
         "IsoImageFileName": "",
         "LocalizationCode": "",
-        "PostUpdateServiceStartStop": false,
+        "PostUpdateServiceStartStop": 0,
         "RegisterAiCom": "Off",
-        "ReplaceDistributiveFromIso": false,
-        "RunAtSystemStartup": true,
+        "ReplaceDistributiveFromIso": 0,
+        "RunAtSystemStartup": 1,
         "SaveHashesPath": "",
         "ScreenshotsFolder": "",
-        "SetProductNameForFacade": false,
-        "Silent": false,
-        "SkipRecommendedSettings": false,
-        "StartService": false,
+        "SetProductNameForFacade": 0,
+        "Silent": 0,
+        "SkipRecommendedSettings": 0,
+        "StartService": 0,
         "TimesToUpdate": 1,
         "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
-        "TurnOffDumpOnAssert": false,
-        "TurnOffProtection": false,
+        "TurnOffDumpOnAssert": 0,
+        "TurnOffProtection": 0,
         "UpdateSource": "",
         "UseCollections": "On",
         "UseGDPR": "Default",
-        "UseProxyForUpdate": false,
-        "Verbose": false,
-        "VerboseExternalProcessesOutput": false,
-        "WaitForProductActivation": false
+        "UseProxyForUpdate": 0,
+        "Verbose": 0,
+        "VerboseExternalProcessesOutput": 0,
+        "WaitForProductActivation": 0
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy_patch.ps1"
     },
@@ -3841,11 +3841,11 @@
         "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
         "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
         "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
-        "ContinueOnErrors": false,
-        "Silent": false,
+        "ContinueOnErrors": 0,
+        "Silent": 0,
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "Verbose": false,
-        "VerboseExternalProcessesOutput": false
+        "Verbose": 0,
+        "VerboseExternalProcessesOutput": 0
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deployGuiTestApp.ps1"
     },
@@ -3870,7 +3870,7 @@
       "ScriptArgsDefaultValues": {
         "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
         "AdditionalFiles": "$(SessionWorkFolder)\\ProductBuild",
-        "ForceDisableDriverVerifier": true,
+        "ForceDisableDriverVerifier": 1,
         "TargetFolder": "c:\\installNewVersion"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\TfuCopyNewVersionTo.ps1"
@@ -3887,7 +3887,7 @@
       "ScriptArgsDefaultValues": {
         "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
         "AdditionalFiles": "$(SessionWorkFolder)\\BaseProductBuild",
-        "ForceDisableDriverVerifier": true,
+        "ForceDisableDriverVerifier": 1,
         "TargetFolder": "c:\\installNewVersion"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\TfuCopyNewVersionTo.ps1"
@@ -3944,7 +3944,7 @@
       },
       "ScriptArgsDefaultValues": {
         "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\Rivals\\Comodo",
-        "SetAutorun": false
+        "SetAutorun": 0
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\HIPS\\DeployAndRunComodo.ps1"
     },
@@ -4916,8 +4916,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -4931,8 +4931,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -4946,8 +4946,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -4961,8 +4961,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": true,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 1,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -4976,8 +4976,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -4991,8 +4991,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -5006,8 +5006,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -5021,8 +5021,8 @@
         "ProductBinariesExcludedFilesMasks": "*.cab;*.txt",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "KTS*full.exe"
       },
       "BranchName": "Main",
@@ -5036,8 +5036,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe",
         "ConfigFilesFamily": "App9.",
         "TestAppPackName": "CompanyLab.App9.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": true,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 1,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
@@ -5051,8 +5051,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",
@@ -5066,8 +5066,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",
@@ -5081,8 +5081,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",
@@ -5096,8 +5096,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": true,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 1,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",
@@ -5111,8 +5111,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",
@@ -5126,8 +5126,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",
@@ -5141,8 +5141,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",
@@ -5156,8 +5156,8 @@
         "ProductBinariesExcludedFilesMasks": "*.cab;*.txt",
         "ConfigFilesFamily": "App2.",
         "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": false,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "KTS*full.exe"
       },
       "BranchName": "MainFrom19",
@@ -5171,8 +5171,8 @@
         "ProductBinariesExcludedFilesMasks": "*_full.exe",
         "ConfigFilesFamily": "App9.",
         "TestAppPackName": "CompanyLab.App9.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": true,
-        "SkipRecommendedSettings": false,
+        "DisableAddingTrustedApplications": 1,
+        "SkipRecommendedSettings": 0,
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "MainFrom19",

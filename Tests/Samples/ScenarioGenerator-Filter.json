@@ -43,7 +43,7 @@
     "MySuite": {
       "Parameters": {
         "SomeSuiteData": "data3",
-        "isEnabled": true
+        "isEnabled": 1
       },
       "Platforms": [
         "AllPlatforms"

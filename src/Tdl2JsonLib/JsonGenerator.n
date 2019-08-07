@@ -70,9 +70,12 @@ namespace Tdl2Json
                        transformatorOutput      : string,
                        transformatorOpt         : TransfomationFunc,
                        isTestMode               : bool,
+                       booleanMarshalMode       : BooleanMarshalMode,
                        jsonSchemaType           : string
       ) : TransformationContext
     {
+      BooleanLiterals.Setup(booleanMarshalMode);
+
       def mode =
         match (isTestMode)
         {
@@ -192,7 +195,7 @@ namespace Tdl2Json
       {
         when (f.Value is VSome(v))
         {
-          def value = v.ToObject(f);
+          def value = v.ToObject();
           defaultValues.Add(f.Name, value);
         }
       }
@@ -231,8 +234,8 @@ namespace Tdl2Json
       match (expr)
       {
         | String    as str => str.Value
-        | False            => false
-        | True             => true
+        | False            => BooleanLiterals.False
+        | True             => BooleanLiterals.True
         | Real      as x   => x.Value
         | Integer   as x   => x.Value
         | Reference(Symbol=VarSymbol as v) => toJson(dic[v], dic)
@@ -527,7 +530,7 @@ namespace Tdl2Json
                 def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
                 {
                     def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
-                    def env = c.Defs.Select(d => (d.Symbol.Name, d.Expr.ToObject(d.Symbol))).ToDictionary();
+                    def env = c.Defs.Select(d => (d.Symbol.Name, d.Expr.ToObject())).ToDictionary();
                     UnixScriptRunner() <-
                     {
                       TestScriptName             = c.Name.Value;
