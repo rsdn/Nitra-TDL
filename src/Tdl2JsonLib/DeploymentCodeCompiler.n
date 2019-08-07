@@ -21,6 +21,13 @@ namespace Tdl2Json
 {
   internal class DeploymentCodeCompiler
   {
+    [Record]
+    private class ParameterInfo
+    {
+      public ScriptName   : string;
+      public DefaultValue : object;
+    }
+
     private static DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
 
     private         _symbols        : List[Deployment.CodeSymbol] = List();
@@ -80,25 +87,51 @@ namespace Tdl2Json
       def deploymentCode       = StringBuilder();
       def deploymentPrologue   = StringBuilder().AppendLine(deploymentScriptHeader);
 
-      def getParameterReference(name) { "$_csharp_" + name }
+      def parametersByName   = Dictionary(StringComparer.OrdinalIgnoreCase);
+      def parametersBySymbol = Dictionary();
 
-      def uniqueParameters = HashSet(ParameterComparer.Instance);
+      def getParameterReference(p) { "$_csharp_" + parametersBySymbol[p].ScriptName }
 
       foreach (symbol in _symbols)
       {
-        foreach (parameter when uniqueParameters.Add(parameter) in symbol.Parameters)
+        foreach (parameter in symbol.Parameters)
         {
-          scriptArgs.Add(parameter.Name, "$(" + parameter.Name + ")");
-
           def defaultValue = Deployments.GetDefaultValue(parameter);
-          when (defaultValue != null)
-            defaults.Add(parameter.Name, defaultValue);
 
-          when (uniqueParameters.Count > 1)
+          mutable parameterInfo;
+          mutable scriptName = parameter.Name;
+          when (parametersByName.TryGetValue(scriptName, out parameterInfo))
+          {
+            when (Equals(parameterInfo.DefaultValue, defaultValue))
+            {
+              parametersBySymbol.Add(parameter, parameterInfo);
+              continue;
+            }
+
+            def generateUniqueName(index)
+            {
+              def name = parameter.Name + "_tdl" + index.ToString();
+              if (parametersByName.ContainsKey(name))
+                generateUniqueName(index + 1)
+              else
+                name
+            }
+            scriptName = generateUniqueName(0);
+          }
+
+          parameterInfo = ParameterInfo(scriptName, defaultValue);
+          parametersBySymbol.Add(parameter, parameterInfo);
+          parametersByName.Add(scriptName, parameterInfo);
+          scriptArgs.Add(scriptName, "$(" + parameter.Name + ")");
+
+          when (defaultValue != null)
+            defaults.Add(scriptName, defaultValue);
+
+          when (scriptArgs.Count > 1)
             _ = deploymentParameters.AppendLine(",");
 
-          def parameterName = "$" + parameter.Name;
-          def parameterReference = getParameterReference(parameter.Name);
+          def parameterName = "$" + scriptName;
+          def parameterReference = getParameterReference(parameter);
 
           def (type, value) =
             match (parameter.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
@@ -134,7 +167,7 @@ namespace Tdl2Json
                 | DefExpr.Reference as x =>
                   match (x.Reference.Ref.Symbol)
                   {
-                    | FormalParameterSymbol            => getParameterReference(x.ToString())
+                    | FormalParameterSymbol as p       => getParameterReference(p)
                     | CommmandCallOutputArgumentSymbol => x.ToString()
                     | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
                   }

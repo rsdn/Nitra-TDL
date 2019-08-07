@@ -43,3 +43,20 @@ select deployment SS4(F)
 {
   | "X" => D1, D3, D2
 }
+
+deployment K1(string Message = "a")
+{
+  KL.Autotests.Commands.LogMessage(Message);
+}
+
+deployment K2(string Message = "b")
+{
+  KL.Autotests.Commands.LogMessage(Message);
+}
+
+deployment K3(string Message = "a")
+{
+  KL.Autotests.Commands.LogMessage(Message);
+}
+
+deployment KK = K1, K2, K3;
