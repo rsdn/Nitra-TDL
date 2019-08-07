@@ -16,6 +16,13 @@ namespace Tdl2Json
                 ["short"]  = MessageImportance.High,
             };
 
+        private static readonly Dictionary<string, BooleanMarshalMode> BooleanMarshalModes =
+            new Dictionary<string, BooleanMarshalMode>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["boolean"] = BooleanMarshalMode.Boolean,
+                ["integer"] = BooleanMarshalMode.Integer,
+            };
+
         private readonly OptionSet optionSet;
 
         public bool NeedHelp { get; private set; }
@@ -44,6 +51,8 @@ namespace Tdl2Json
 
         public string DeploymentToolPath { get; private set; }
 
+        public BooleanMarshalMode BooleanMarshalMode { get; private set; }
+
         public bool IsTestMode => ComilerMessagesTest || SampleOutputFile != null;
 
         public CommandLineOptions()
@@ -59,7 +68,8 @@ namespace Tdl2Json
                 { "t|transformator=",         "Transformer: path-to.dll|Qualified.Function.Name",        AddTransformer },
                 { "m|compiler-messages-test", "Test compiler messages by samples.",                      _ => ComilerMessagesTest = true },
                 { "s|sample=",                "Sample output file path.",                                v => SampleOutputFile = v },
-                { "d|debug",                  "Start with debugger prompt",                              v => Debugger.Launch() },
+                { "d|debug",                  "Start with debugger prompt",                              _ => Debugger.Launch() },
+                { "b|bool-marshal-mode=",    $"Marshal mode for boolean values: {string.Join(", ", BooleanMarshalModes.Keys)}.", SetBooleanMarshalMode },
                 { "json-schema-type=",        "JSON schema type.",                                       v => JsonSchemaType = v, true },
                 new ResponseFileSource(),
 
@@ -71,6 +81,7 @@ namespace Tdl2Json
         public void Parse(IEnumerable<string> arguments)
         {
             LogLevel = MessageImportance.Low;
+            BooleanMarshalMode = BooleanMarshalMode.Integer;
             Transformers = new List<(string, string, string)>();
             InputFiles = new List<string>();
             References = new List<string>();
@@ -115,6 +126,14 @@ namespace Tdl2Json
                 LogLevel = logLevel;
             else
                 throw new OptionException($"Invalid logging verbosity level '{value}'", "log-level");
+        }
+
+        private void SetBooleanMarshalMode(string value)
+        {
+            if (BooleanMarshalModes.TryGetValue(value, out var mode))
+                BooleanMarshalMode = mode;
+            else
+                throw new OptionException($"Invalid invalid boolean marshal mode '{value}'", "bool-marshal-mode");
         }
 
         private void AddTransformer(string value)

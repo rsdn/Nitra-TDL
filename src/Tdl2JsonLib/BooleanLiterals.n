@@ -1,0 +1,24 @@
+﻿namespace Tdl2Json
+{
+  internal module BooleanLiterals
+  {
+    public True  : object { get; private set; }
+    public False : object { get; private set; }
+
+    static this()
+    {
+      Setup(BooleanMarshalMode.Integer);
+    }
+
+    public Setup(mode : BooleanMarshalMode) : void
+    {
+      | Boolean =>
+        True = true;
+        False = false;
+
+      | Integer =>
+        True  = 1;
+        False = 0;
+    }
+  }
+}

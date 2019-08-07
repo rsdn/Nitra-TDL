@@ -60,6 +60,12 @@ public class TdlTask : ToolTask
         set;
     }
 
+    public string BooleanMarshalMode
+    {
+        get;
+        set;
+    }
+
     protected override string GenerateFullPathToTool()
     {
         return null;
@@ -89,6 +95,10 @@ public class TdlTask : ToolTask
         if (!string.IsNullOrEmpty(DeploymentToolPath))
         {
             buffer.Add("-deployment-tool:" + EscapeFilePath(DeploymentToolPath));
+        }
+        if (!string.IsNullOrEmpty(BooleanMarshalMode))
+        {
+            buffer.Add("-bool-marshal-mode:" + EscapeFilePath(BooleanMarshalMode));
         }
         buffer.Add("-out:" + EscapeFilePath(OutputFile));
         return string.Join(Environment.NewLine, buffer);
