@@ -1,6 +1,8 @@
 ﻿using DotNet;
 
+using Nemerle;
 using Nemerle.Collections;
+using Nemerle.Extensions;
 using Nemerle.Text;
 using Nemerle.Utility;
 using Nemerle.Utility.Pair;
@@ -12,9 +14,7 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Linq;
 
-using Nemerle;
-using Nemerle.Extensions;
-
+using Nitra;
 using Nitra.Declarations;
 
 using Tdl;
@@ -68,17 +68,22 @@ namespace Tdl2Json
         ScriptArgsDefaultValues = defaultes;
       };
 
-      if (script.IsEmbedPathEvaluated)
+      match (script.ScriptReference)
       {
-        def fileName                        = script.EmbedPath.Value;
-        deploymentModel.ScriptData          = File.ReadAllBytes(fileName);
-        deploymentModel.ScriptDataExtension = Path.GetExtension(fileName);
-      }
-      else
-      {
-        deploymentModel.ScriptPath          = if (script.IsPathEvaluated)      script.Path.Value      else null;
-        deploymentModel.ScriptData          = if (script.IsBase64Evaluated)    script.Base64.Value    else null;
-        deploymentModel.ScriptDataExtension = if (script.IsExtensionEvaluated) script.Extension.Value else null;
+        | FilePath   as x =>
+          deploymentModel.ScriptPath          = x.Path.ValueOrDefault;
+
+        | SourceCode as x =>
+          deploymentModel.ScriptData          = Encoding.UTF8.GetBytes(x.Text.ValueOrDefault ?? "");
+          deploymentModel.ScriptDataExtension = x.Extension.ValueOrDefault;
+
+        | EmbedFile  as x =>
+          def path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(
+              script.FirstParsedDeclarationOrDefault.Location.Source.File.FullName), x.Path.Value));
+          deploymentModel.ScriptData          = File.ReadAllBytes(path);
+          deploymentModel.ScriptDataExtension = Path.GetExtension(path);
+
+        | _ => ()
       }
 
       result.Add(script.Name, deploymentModel)
