@@ -44,7 +44,6 @@
     syntax DeploymentScriptContent
     {
       | FilePath   = "script" sm Path=StringLiteral
-      | Base64     = "base64" sm Data=StringLiteral nl "extension" sm Extension=StringLiteral
       | SourceCode = "source" sm Text=StringLiteral nl "extension" sm Extension=StringLiteral
       | EmbedFile  = "file"   sm Path=StringLiteral
     }

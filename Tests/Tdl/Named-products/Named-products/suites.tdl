@@ -16,7 +16,7 @@ suite type SuiteType { }
 
 product OfficeProduct : MsOfficeProducts = Excel, Word;
 
-suite NamedProduct
+suite NamedProduct : SuiteType
 {
     platform w10rs5-x64;
     product OfficeProduct;

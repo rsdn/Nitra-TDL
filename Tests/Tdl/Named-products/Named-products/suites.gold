@@ -1,0 +1,76 @@
+using System.Collections.Generic;
+scenario Test1(SuiteType Suite)
+{
+  filterSuite.Products.Contains(OfficeProduct) && Suite.Platforms.Contains(w10rs5) && IsSome;
+  deployment InstallProduct;
+  environments (w10rs5-x64, MonorepoHelloWorld);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+  RerunCountOnTestFailure = 0;
+  LocalTestBinariesFolder = @"C:\Tests";
+  ExternalAutotestId = 24;
+  Timeout = "00:05:00";
+}
+suite type SuiteType
+{
+}
+product OfficeProduct :MsOfficeProducts = Excel, Word;
+suite NamedProduct : SuiteType
+{
+  platform w10rs5-x64;
+  product OfficeProduct;
+  Version = ProductVersion;
+  ProductA = Excel;
+  ProductB = Word;
+  ProductC = MonorepoHelloWorld;
+  Test1();
+}
+deployment InstallProduct(string Version, MsOfficeProducts ProductA, MsOfficeProducts ProductB, TheProductType ProductC)
+script @"\\sdfs\autotests\KIS\DeploymentScripts\TdlTests\null-deployment.ps1"
+{
+  PRODUCT_VERSION = Version;
+  Size100 = ProductA.Size;
+  Size42 = ProductB.Size;
+  ReleaseName = ProductB.BranchName;
+  expected 42;
+}
+product type TheProductType
+{
+  string Name;
+  string BranchName;
+  string Version;
+}
+product type MsOfficeProducts
+{
+  string Name;
+  string BranchName;
+  string Version;
+  int Size;
+}
+product MonorepoHelloWorld :TheProductType
+{
+  Name = "MonorepoHelloWorld";
+  BranchName = "MonorepoHelloWorld";
+  Version = ProductVersion;
+}
+product Word :MsOfficeProducts
+{
+  Name = "Word";
+  BranchName = "Word";
+  Version = ProductVersion;
+  Size = 100;
+}
+product Excel :MsOfficeProducts
+{
+  Name = "Excel";
+  BranchName = "Excel";
+  Version = ProductVersion;
+  Size = 42;
+}
+platform w10rs5 = w10rs5-x64, w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs5-x86;
+external {
+  string ProductVersion;
+  bool IsSome;
+}

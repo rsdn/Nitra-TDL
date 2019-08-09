@@ -395,27 +395,6 @@ namespace Tdl
       ParsedValue(str.Span, builder.ToString())
     }
 
-    public ParseBase64Literal(str : CSharp.StringLiteral, context : DependentPropertyEvalContext) : ParsedValue[array[byte]]
-    {
-      def data = ConvertStringLiteral(str);
-      if (data.HasValue)
-      {
-        try
-        {
-          def base64 = Convert.FromBase64String(data.Value);
-          ParsedValue(data.Span, base64);
-        }
-        catch
-        {
-          | _ =>
-            str.Error(context, "Invalid Base64 string");
-            ParsedValue(data.Span.StartPos)
-        }
-      }
-      else
-        ParsedValue(data.Span.StartPos)
-    }
-
     public CreateEmbedFilePath(str : CSharp.StringLiteral, context : DependentPropertyEvalContext) : ParsedValue[string]
     {
       def rawValue = ConvertStringLiteral(str);
@@ -433,7 +412,7 @@ namespace Tdl
         unless (File.Exists(path))
           str.Error(context, $"Deployment file '$(path)' not found.");
 
-        ParsedValue(rawValue.Span, path)
+        rawValue
       }
       catch
       {
@@ -441,15 +420,6 @@ namespace Tdl
           str.Error(context, $"Failed to process deployment file path ($(e.GetType())): $(e.Message)");
           rawValue
       }
-    }
-
-    public CreateBase64Literal(str : CSharp.StringLiteral) : ParsedValue[array[byte]]
-    {
-      def data = ConvertStringLiteral(str);
-      if (data.HasValue)
-        ParsedValue(data.Span, Encoding.UTF8.GetBytes(data.Value));
-      else
-        ParsedValue(data.Span.StartPos)
     }
 
     public MakeDefinitions(definitions : Definition.IAstList, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]

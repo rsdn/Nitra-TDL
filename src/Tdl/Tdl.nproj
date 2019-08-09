@@ -197,6 +197,9 @@
     <Compile Include="Code\ScenarioAction.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\ScriptReference.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\SuiteStatement.n">
       <SubType>Code</SubType>
     </Compile>

@@ -14,24 +14,15 @@ namespace Tdl
 
     | FilePath
       {
-        Symbol.Path = TdlUtils.ConvertStringLiteral(Path);
+        Symbol.ScriptReference = ScriptReference.FilePath(TdlUtils.ConvertStringLiteral(Path));
 
         Path : CSharp.StringLiteral;
       }
 
-    | Base64
-      {
-        Symbol.Base64    = TdlUtils.ParseBase64Literal(Data, context);
-        Symbol.Extension = TdlUtils.ConvertStringLiteral(Extension);
-
-        Data      : CSharp.StringLiteral;
-        Extension : CSharp.StringLiteral;
-      }
-
     | SourceCode
       {
-        Symbol.Base64    = TdlUtils.CreateBase64Literal(Text);
-        Symbol.Extension = TdlUtils.ConvertStringLiteral(Extension);
+        Symbol.ScriptReference = ScriptReference.SourceCode(TdlUtils.ConvertStringLiteral(Text),
+                                                            TdlUtils.ConvertStringLiteral(Extension));
 
         Text      : CSharp.StringLiteral;
         Extension : CSharp.StringLiteral;
@@ -39,7 +30,7 @@ namespace Tdl
 
     | EmbedFile
       {
-        Symbol.EmbedPath = TdlUtils.CreateEmbedFilePath(Path, context);
+        Symbol.ScriptReference = ScriptReference.EmbedFile(TdlUtils.CreateEmbedFilePath(Path, context));
 
         Path : CSharp.StringLiteral;
       }
