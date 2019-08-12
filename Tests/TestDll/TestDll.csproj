@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="code.cs" />
     <Compile Include="commands.cs" />
+    <Compile Include="FakeSuite.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

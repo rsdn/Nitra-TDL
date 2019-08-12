@@ -1,0 +1,7 @@
+﻿deployment "Copy Comodo and run" = "Install Comodo";
+
+deployment "Install Comodo"()
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\HIPS\InstallComodo.ps1"
+{
+    expected 42;
+}

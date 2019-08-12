@@ -1,0 +1,10 @@
+﻿select deployment "_Install PURE"(Name)
+{
+    | "PURE" => "Install PURE"
+}
+
+deployment "Install PURE"()
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deployPURE.ps1"
+{
+    expected 42;
+}

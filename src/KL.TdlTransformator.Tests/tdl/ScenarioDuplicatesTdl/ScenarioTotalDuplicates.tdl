@@ -1,0 +1,96 @@
+﻿external
+{
+    string ProductVersion;
+}
+
+scenario OriginalTest-1
+{
+    deployment "_Install product fake";
+    environments (win7-xFake, KIS);
+    method FakeAutotestsSuite.FakeSuite.FakeTestOne;
+    UniqueId = "ad871402-cbb6-4078-b667-066d24eef432";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 186456;
+}
+
+scenario OriginalTest-2
+{
+    deployment "_Install product fake";
+    environments (win7-xFake, KIS);
+    method FakeAutotestsSuite.FakeSuite.FakeTestTwo;
+    UniqueId = "D82BA4A1-EC7A-407E-9047-320084EE0E75";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 186456;
+}
+
+scenario DuplicateTest-1
+{
+    deployment "_Install product fake";
+    environments (win7-xFake, KIS);
+    method FakeAutotestsSuite.FakeSuite.FakeTestOne;
+    UniqueId = "1D33334F-B11D-4AEE-A0E2-4073AE791FD0";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 186456;
+}
+
+platform win7-xFake;
+
+suite "KIS"
+{
+    platform win7-xFake;
+    product KIS;
+    ScenarioWithDuplicate();
+}
+
+suite "KIS_dupe_only"
+{
+    platform win7-xFake;
+    product KIS;
+    DuplicateTest-1();
+}
+
+suite "KIS_no_dupe"
+{
+    platform win7-xFake;
+    product KIS;
+    ScenarioNoDupes();
+}
+
+scenario ScenarioNoDupes =
+    OriginalTest-1,
+    OriginalTest-2;
+
+scenario ScenarioWithDuplicate =
+    OriginalTest-2,
+    DuplicateTest-1;
+
+scenario ScenarioWithTwoDupes = 
+    OriginalTest-1,
+	DuplicateTest-1;
+
+deployment "_Install product fake"(
+    bool WaitForProductActivation = false)
+        script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\nullScript.ps1"
+{
+    expected 42;
+}
+
+product KIS : BaseProduct
+{
+    Name = "KFA";
+    ReleaseName = "Main";
+    Version = ProductVersion;
+}
+
+product type BaseProduct
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+}

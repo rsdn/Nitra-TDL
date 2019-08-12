@@ -8,7 +8,7 @@ namespace KL.TdlTransformator.Models.Scenario.Actions
         public MethodActionModel([NotNull] Tdl.ScenarioAction.Method method, Location location) 
             : base(location)
         {
-            FullName = method.method.FullName;
+            FullName = method.MethodSymbol.FullName;
             MaxReboots = method.MaxRebootsCountOpt.Value;
             Method = method;
         }

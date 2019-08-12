@@ -1,0 +1,79 @@
+﻿
+scenario SameEnv-OriginalTest-1
+{
+    deployment "_Install product dup env";
+    environments (win7-xdup1, First_product);
+    method FakeAutotestsSuite.FakeSuite.FakeTestOne;
+    UniqueId = "79BE6B65-7F99-4BAE-8FB0-380CA822157D";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 186456;
+}
+
+scenario  SameEnv-OriginalTest-2
+{
+    deployment "_Install product dup env";
+    environments (win7-xdup1, First_product);
+    method FakeAutotestsSuite.FakeSuite.FakeTestTwo;
+    UniqueId = "FFCFB4ED-09CA-4C3A-A26F-30368BE009EA";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 186456;
+}
+
+scenario  SameEnv-DuplicateTest-1
+{
+    deployment "_Install product dup env";
+    environments (win7-xdup2, First_product);
+    method FakeAutotestsSuite.FakeSuite.FakeTestOne;
+    UniqueId = "97C900EA-CA2D-48DF-94E5-1DF85A0EDDA8";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 186456;
+}
+
+scenario  SameEnv-DuplicateTest-2
+{
+    deployment "_Install product dup env";
+    environments (win7-xdup2, First_product),  (win7-xdup1, Second_product);
+    method FakeAutotestsSuite.FakeSuite.FakeTestOne;
+    UniqueId = "2A3AF096-55CA-41F4-BCCC-48BFBBD13AA3";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 186456;
+}
+
+platform win7-xdup1;
+platform win7-xdup2;
+
+deployment "_Install product dup env"(
+    bool WaitForProductActivation = false)
+        script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\nullScript.ps1"
+{
+    expected 42;
+}
+
+product First_product : BaseProduct_dup
+{
+    Name = "KFA";
+    ReleaseName = "Main";
+    Version = "0000";
+}
+
+product Second_product : BaseProduct_dup
+{
+    Name = "KFA";
+    ReleaseName = "Main";
+    Version = "0000";
+}
+
+product type BaseProduct_dup
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+}

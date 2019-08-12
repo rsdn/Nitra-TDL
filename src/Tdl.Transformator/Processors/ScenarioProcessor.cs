@@ -332,7 +332,7 @@ namespace KL.TdlTransformator.Processors
 
             IEnumerable<IGrouping<int, MethodActionModel>> groupMethod(IEnumerable<MethodActionModel> methods)
             {
-                var result = methods.GroupBy(m => m.Method.method.CustomAttributes
+                var result = methods.GroupBy(m => m.Method.MethodSymbol.CustomAttributes
                     .Where(attr => attr.Arguments?.Count > 1 && attr.Arguments[0].ToString() == qcIdDef)
                     .Select(a => Convert.ToInt32(a.Arguments[1].ToString()))
                     .FirstOrDefault());
@@ -392,7 +392,7 @@ namespace KL.TdlTransformator.Processors
 
             var newScenario = (ScenarioModel)baseScenario.Clone();
             newScenario.Id = container.NextId();
-            newScenario.Name = methods.First().Method.method.Name;
+            newScenario.Name = methods.First().Method.MethodSymbol.Name;
             newScenario.Actions = new List<BaseActionModel>();
 
             var originalActions = baseScenario.Actions;

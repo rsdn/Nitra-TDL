@@ -1,0 +1,13 @@
+﻿product type Kavkis
+{
+    string Name;
+    string ReleaseName;
+    string Version;
+    string AutotestBinariesExcludedFilesMasks;
+    string ProductBinariesExcludedFilesMasks;
+    string ConfigFilesFamily;
+    string TestAppPackName;
+    bool   DisableAddingTrustedApplications;
+    bool   SkipRecommendedSettings;
+    string InstallerExecutableFileMask;
+}

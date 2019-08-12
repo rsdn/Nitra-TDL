@@ -1,0 +1,15 @@
+﻿deployment "_Install product"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string AcceptSocializationAgreement = "On",
+	bool ActivateEmbeddedTrial = false,
+    string ActivationCode = "",
+    bool DisableProductInstallation = false,
+    bool DisableRestartService = true,
+    bool SetProductNameForFacade = true,
+	bool NeedReboot = false,
+	int CountAttempt = 1,
+	string UseAdditionalFiles = "On")
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}

@@ -1,0 +1,18 @@
+﻿deployment "_Install product"(
+	string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+	string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+	string DumpFolder = "",
+	string AcceptSocializationAgreement = "On",
+	bool ActivateEmbeddedTrial = false,
+	string ActivationCode = "",
+	string AdditionalFiles = @"\\tis-dfs.avp.ru\Autotests\KIS\AdditionalFiles\Kis.Main.AdditionalContinuousIntegration",
+	bool DisableProductInstallation = false,
+	bool DisableRestartService = true,
+	string InstallLicenceBackdoor = "On",
+	bool SetProductNameForFacade = true,
+	int TimesToUpdate = 1,
+	string UseCollections = "On")
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}

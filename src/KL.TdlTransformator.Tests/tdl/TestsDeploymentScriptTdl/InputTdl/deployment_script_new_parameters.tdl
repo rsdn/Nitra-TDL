@@ -1,0 +1,8 @@
+﻿deployment "Deploy with new parameters"(
+	bool NeedReboot = false,
+	int CountAttempt = 1,
+	string UseAdditionalFiles = "On")
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}

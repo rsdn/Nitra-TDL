@@ -21,16 +21,13 @@ namespace KL.TdlTransformator.Models.Modules
             Items = new List<Model>();
 
             var itemsIds = new List<int>();
-            foreach (var element in
-                symbol.Declarations.SelectMany(declaration => declaration.Members))
+            foreach (var element in symbol.Declarations.SelectMany(declaration => declaration.Members))
             {
                 switch (element)
                 {
                     case Declaration decl:
-                        itemsIds.Add(decl.Symbol.Id);
-                        break;
-                    case ExternalAst ast:
-                        itemsIds.AddRange(ast.Fields.Select(item => item.Symbol.Id));
+                        if (!(decl.Symbol is ExternalSymbol))
+                            itemsIds.Add(decl.Symbol.Id);
                         break;
                     default:
                         Logger.Error($@"unknown element {element.GetType()}");

@@ -1,0 +1,19 @@
+﻿deployment "Deploy composite" = "Install product", "Copy Comodo", "Run Comodo";
+
+deployment "Copy Comodo"()
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\HIPS\CopyComodo.ps1"
+{
+    expected 42;
+}
+
+deployment "Run Comodo"()
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\HIPS\RunComodo.ps1"
+{
+    expected 42;
+}
+
+deployment "Install product"()
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}

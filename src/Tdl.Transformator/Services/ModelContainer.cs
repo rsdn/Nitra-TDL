@@ -25,13 +25,11 @@ namespace KL.TdlTransformator.Services
         [NotNull]
         public TModel Get<TModel>(int id) where TModel : Model
         {
-            if (!_models.ContainsKey(id))
+            if (!_models.TryGetValue(id, out var target))
             {
                 throw new InvalidOperationException(
                     $"the id {id} is not found.");
             }
-
-            var target = _models[id];
 
             switch (target)
             {
@@ -42,8 +40,7 @@ namespace KL.TdlTransformator.Services
                     return model;
                 default:
                     throw new InvalidCastException(
-                        $"The item at index is not a {typeof(TModel)},"
-                        + $" it is a {target.ModelType}");
+                        $"The item at index is not a {typeof(TModel)}, it is a {target.ModelType}");
             }
         }
 
