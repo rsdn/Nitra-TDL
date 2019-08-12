@@ -1,0 +1,1 @@
+﻿deployment "Additional deploy" = "_Install product"(UseCollections: "Off");

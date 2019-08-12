@@ -34,7 +34,7 @@ namespace KL.TdlTransformator.Models.Parameters
 
         [ItemNotNull, NotNull]
         public static List<DefinitionModel> GetDefinitions(
-            ImmutableArray<Def2> defs,
+            ImmutableArray<UntypedDef> defs,
             [ItemNotNull, NotNull]
             Definition.IAstList definitions)
         {

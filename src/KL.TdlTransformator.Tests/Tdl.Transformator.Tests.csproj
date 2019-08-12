@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <NemerleVersion>Net-4.0</NemerleVersion>
+    <NemerleBinPathRoot Condition=" '$(NemerleBinPathRoot)' == '' ">$(ProgramFiles)\Nemerle</NemerleBinPathRoot>
+    <Nemerle Condition=" '$(Nemerle)' == '' ">$(NemerleBinPathRoot)\$(NemerleVersion)</Nemerle>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
+    <PackageReference Include="KL.Environment" Version="1.2.26" />
+    <PackageReference Include="KL.Executors" Version="1.0.15.2" />
+    <PackageReference Include="KL.Initializable" Version="1.0.2" />
+    <PackageReference Include="KL.TestFramework" Version="1.6.15" />
+    <PackageReference Include="KL.TestFramework.Attributes" Version="1.3.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+    <PackageReference Include="Unity.Abstractions" Version="5.11.1" />
+    <PackageReference Include="Unity.Container" Version="5.11.1" />
+    <PackageReference Include="Unity.Interception" Version="5.11.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Tests\TestDll\TestDll.csproj" />
+    <ProjectReference Include="..\Tdl.Transformator\Tdl.Transformator.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Collections.Immutable.Light">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\System.Collections.Immutable.Light.dll</HintPath>
+    </Reference>
+    <Reference Include="Nemerle">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(Nemerle)\Nemerle.dll</HintPath>
+    </Reference>
+    <Reference Include="Nitra.Runtime">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\Nitra.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="tdl\**\*.Tdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,6 @@
+﻿deployment "Install product" = "Deploy product"(
+	ActivateEmbeddedTrial: true,
+	InstallLicenceBackdoor: "Off",
+	RunAtSystemStartup: true,
+	SetProductNameForFacade: false,
+	TurnOffProtection: true);

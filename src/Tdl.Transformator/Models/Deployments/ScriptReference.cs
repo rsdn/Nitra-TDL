@@ -43,25 +43,18 @@ namespace KL.TdlTransformator.Models.Deployments
                 Path = path ?? throw new ArgumentNullException(nameof(path));
             }
 
-            public override string Print()
-            {
-                throw new NotImplementedException();
-            }
+            public override string Print() => Path.Print();
 
             public override object Clone()
             {
                 throw new NotImplementedException();
             }
 
-            public override bool IsIdentical([CanBeNull] ScriptReference other)
-            {
-                throw new NotImplementedException();
-            }
+            public override bool IsIdentical([CanBeNull] ScriptReference other) =>
+                other is FilePath otherFilePath && Path.IsIdentical(otherFilePath.Path);
 
-            public override IEnumerable<CommentBlock> FindCommentsForMembers(CommentBag commentBag)
-            {
-                return SymbolConverter.SearchComments(commentBag, Path.Comments);
-            }
+            public override IEnumerable<CommentBlock> FindCommentsForMembers(CommentBag commentBag) =>
+                SymbolConverter.SearchComments(commentBag, Path.Comments);
         } // class FilePath
 
         public sealed class SourceCode : ScriptReference
@@ -85,16 +78,14 @@ namespace KL.TdlTransformator.Models.Deployments
                 throw new NotImplementedException();
             }
 
-            public override bool IsIdentical([CanBeNull] ScriptReference other)
-            {
-                throw new NotImplementedException();
-            }
+            public override bool IsIdentical([CanBeNull] ScriptReference other) =>
+                other is SourceCode otherSourceCode
+                    && Data.IsIdentical(otherSourceCode.Data)
+                    && Extension.IsIdentical(otherSourceCode.Extension);
 
-            public override IEnumerable<CommentBlock> FindCommentsForMembers(CommentBag commentBag)
-            {
-                return SymbolConverter.SearchComments(commentBag, Data.Comments)
+            public override IEnumerable<CommentBlock> FindCommentsForMembers(CommentBag commentBag) =>
+                SymbolConverter.SearchComments(commentBag, Data.Comments)
                     .Concat(SymbolConverter.SearchComments(commentBag, Extension.Comments));
-            }
         } // class SourceCode
 
         public sealed class EmbedFile : ScriptReference
@@ -116,15 +107,11 @@ namespace KL.TdlTransformator.Models.Deployments
                 throw new NotImplementedException();
             }
 
-            public override bool IsIdentical([CanBeNull] ScriptReference other)
-            {
-                throw new NotImplementedException();
-            }
+            public override bool IsIdentical([CanBeNull] ScriptReference other) =>
+                other is EmbedFile otherEmbedFile && Path.IsIdentical(otherEmbedFile.Path);
 
-            public override IEnumerable<CommentBlock> FindCommentsForMembers(CommentBag commentBag)
-            {
-                return SymbolConverter.SearchComments(commentBag, Path.Comments);
-            }
+            public override IEnumerable<CommentBlock> FindCommentsForMembers(CommentBag commentBag) =>
+                SymbolConverter.SearchComments(commentBag, Path.Comments);
         } // class EmbedFile
     } // class ScriptReference
 } // namespace

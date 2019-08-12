@@ -17,9 +17,8 @@ namespace KL.TdlTransformator.Models.Externals
             // we selected field symbols in where
             return
                 externalSymbol.MemberTable.AllSymbols
-                    .Where(symbol => symbol is FieldSymbol)
-                    .Select(symbol =>
-                        new FieldModel(symbol as FieldSymbol));
+                    .OfType<FieldSymbol>()
+                    .Select(symbol => new FieldModel(symbol));
         }
     }
 }

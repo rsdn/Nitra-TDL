@@ -1,0 +1,18 @@
+﻿deployment "Install product" = "_Install product"(
+	ActivateEmbeddedTrial: true,
+	InstallLicenceBackdoor: "Off",
+	RunAtSystemStartup: true,
+	SetProductNameForFacade: false,
+	TurnOffProtection: true);
+
+deployment "_Install product"(
+    bool ActivateEmbeddedTrial = false,
+    string InstallLicenceBackdoor = "On",
+    bool RunAtSystemStartup = false,
+    bool SetProductNameForFacade = true,
+    bool TurnOffProtection = false,
+	string UseCollections = "On")
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}

@@ -1,0 +1,1 @@
+﻿deployment "Deploy composite" = "Install product", "Install Comodo";

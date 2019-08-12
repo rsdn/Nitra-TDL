@@ -1,0 +1,5 @@
+﻿deployment "_Install SAAS"()
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\_deploySAAS.ps1"
+{
+    expected 42;
+}

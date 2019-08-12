@@ -1,0 +1,5 @@
+﻿deployment "Install product" = "_Install product"(
+	ActivateEmbeddedTrial: true,
+	SetProductNameForFacade: false,
+	TurnOffProtection: true,
+	UseCollections: "Off");

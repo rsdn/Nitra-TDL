@@ -1,0 +1,88 @@
+﻿scenario ScenariosWithSequence =
+    UngroupTest1,
+    UngroupTest2,
+    UngroupTest4;
+
+platform win7-xFake;
+
+barrier Barrier1 timeout "00:10:00";
+
+suite "KIS"
+{
+    platform win7-xFake;
+    product KIS;
+    ScenariosWithSequence();
+}
+
+deployment "_Install product fake1"(bool WaitForProductActivation = false)
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\nullScript.ps1"
+{
+    expected 42;
+}
+
+product KIS : BaseProduct
+{
+    Name = "KFA";
+    BranchName = "Main";
+    Version = "as";
+}
+
+product type BaseProduct
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+scenario UngroupTest1
+{
+    deployment "_Install product fake1";
+    environments (win7-xFake, KIS);
+    sequence
+    {
+        reboot;
+        barrier Barrier1;
+        method FakeAutotestsSuite.FakeSuite.UngroupTest1 max-reboots 1;
+        wait for reboot;
+    }
+    UniqueId = "8b2e2b49-3cd7-4e09-8e5c-0e54a87463c0";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 1643013;
+}
+
+scenario UngroupTest2
+{
+    deployment "_Install product fake1";
+    environments (win7-xFake, KIS);
+    sequence
+    {
+        method FakeAutotestsSuite.FakeSuite.UngroupTest2;
+        method FakeAutotestsSuite.FakeSuite.UngroupTest3 max-reboots 1;
+        wait for reboot;
+    }
+
+    UniqueId = "8b2e2b49-3cd7-4e09-8e5c-0e54a87463c1";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 1643014;
+}
+
+scenario UngroupTest4
+{
+    deployment "_Install product fake1";
+    environments (win7-xFake, KIS);
+    sequence
+    {
+        reboot;
+        reboot;
+        method FakeAutotestsSuite.FakeSuite.UngroupTest4;
+    }
+    UniqueId = "8b2e2b49-3cd7-4e09-8e5c-0e54a87463c2";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 1643015;
+}

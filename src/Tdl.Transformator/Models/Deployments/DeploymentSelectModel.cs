@@ -53,7 +53,10 @@ namespace KL.TdlTransformator.Models.Deployments
             foreach (var deploymentCaseModel in Cases)
             {
                 deploymentCaseModel.Init(modelContainer);
-                deploymentCaseModel.Deployment.SelectDeploymentRefs.Add(this);
+                foreach (var deployment in deploymentCaseModel.Deployments)
+                {
+                    deployment.SelectDeploymentRefs.Add(this);
+                }
             }
         }
 

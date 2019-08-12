@@ -1,0 +1,7 @@
+﻿select deployment "Install product"(Name)
+{
+    | "KAV" => "Install KAVKIS"
+    | "SAAS" => "Install SAAS"
+    | _      => "_Install product"
+	| "PURE" => "Install PURE"
+}

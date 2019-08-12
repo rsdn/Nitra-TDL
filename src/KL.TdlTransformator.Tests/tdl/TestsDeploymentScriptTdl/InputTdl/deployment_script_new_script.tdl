@@ -1,0 +1,5 @@
+﻿deployment "Deploy with new script"()
+    script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\simpleDeploy.ps1"
+{
+    expected 42;
+}

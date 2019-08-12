@@ -1,0 +1,57 @@
+﻿scenario ScenariosWithSequence = ScenarioWithSequence;
+
+barrier Barrier1 timeout "00:10:00";
+
+scenario ScenarioWithSequence
+{
+    deployment "_Install product fake1";
+    environments (win7-xFake, KIS);
+    sequence
+    {
+        reboot;
+        barrier Barrier1;
+        method FakeAutotestsSuite.FakeSuite.UngroupTest1 max-reboots 1;
+        wait for reboot;
+        method FakeAutotestsSuite.FakeSuite.UngroupTest2;
+        method FakeAutotestsSuite.FakeSuite.UngroupTest3 max-reboots 1;
+        wait for reboot;
+        reboot;
+        reboot;
+        method FakeAutotestsSuite.FakeSuite.UngroupTest4;
+    }
+    UniqueId = "ad871402-cbb6-4078-b667-066d24eef436";
+    RevertAgentAfter = true;
+    Timeout = "01:30:00";
+    Area = "Hips";
+    TfsId = 1643013;
+} 
+
+platform win7-xFake;
+
+suite "KIS"
+{
+    platform win7-xFake;
+    product KIS;
+    ScenariosWithSequence();
+}  
+
+deployment "_Install product fake1"(
+    bool WaitForProductActivation = false)
+        script @"\\tis-dfs.avp.ru\Autotests\KIS\DeploymentScripts\Deployment\nullScript.ps1"
+{
+    expected 42;
+}
+
+product KIS : BaseProduct
+{
+    Name = "KFA";
+    BranchName = "Main";
+    Version = "as";
+}
+
+product type BaseProduct
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
