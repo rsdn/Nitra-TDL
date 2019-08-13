@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 using Tdl;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models.Products
+namespace Tdl.Transformator.Models.Products
 {
     public sealed class ProductSetModel : ProductBaseModel
     {

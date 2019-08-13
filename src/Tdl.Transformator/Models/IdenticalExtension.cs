@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System.Collections.Generic;
 
-namespace KL.TdlTransformator.Models
+namespace Tdl.Transformator.Models
 {
     public static class IdenticalExtension
     {

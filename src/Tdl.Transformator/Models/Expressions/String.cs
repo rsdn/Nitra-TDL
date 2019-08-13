@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace KL.TdlTransformator.Models.Expressions
+namespace Tdl.Transformator.Models.Expressions
 {
     public sealed class String : Expression
     {

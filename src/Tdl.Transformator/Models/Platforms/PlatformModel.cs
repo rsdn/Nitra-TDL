@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Platforms
+namespace Tdl.Transformator.Models.Platforms
 {
     public sealed class PlatformModel : PlatformBase
     {

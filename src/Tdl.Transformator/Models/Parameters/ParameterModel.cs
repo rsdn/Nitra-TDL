@@ -2,9 +2,9 @@
 using System.Text;
 using DotNet;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 
-namespace KL.TdlTransformator.Models.Parameters
+namespace Tdl.Transformator.Models.Parameters
 {
     public sealed class ParameterModel : Model
     {

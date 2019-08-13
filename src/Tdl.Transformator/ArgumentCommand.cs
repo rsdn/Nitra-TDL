@@ -1,4 +1,4 @@
-﻿namespace KL.TdlTransformator
+﻿namespace Tdl.Transformator
 {
     public static class ArgumentCommand
     {

@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Suite;
-using KL.TdlTransformator.Models.TypedReference;
+using Tdl.Transformator.Models.Suite;
+using Tdl.Transformator.Models.TypedReference;
 using Nitra.Declarations;
 
-namespace KL.TdlTransformator.Models.Products
+namespace Tdl.Transformator.Models.Products
 {
     public abstract class ProductBaseModel : SuiteRelatable
     {

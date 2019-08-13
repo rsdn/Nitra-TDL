@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models.Scenario
+namespace Tdl.Transformator.Models.Scenario
 {
     public sealed class ScenarioSetModel : ScenarioBaseModel
     {

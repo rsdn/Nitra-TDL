@@ -4,13 +4,13 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Deployments;
-using KL.TdlTransformator.Models.Parameters;
-using KL.TdlTransformator.Models.Scenario.Actions;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Deployments;
+using Tdl.Transformator.Models.Parameters;
+using Tdl.Transformator.Models.Scenario.Actions;
+using Tdl.Transformator.Services;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models.Scenario
+namespace Tdl.Transformator.Models.Scenario
 {
     public sealed class ScenarioModel : ScenarioBaseModel
     {

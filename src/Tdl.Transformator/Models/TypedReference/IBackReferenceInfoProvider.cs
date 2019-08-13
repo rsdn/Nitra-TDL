@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KL.TdlTransformator.Models.TypedReference
+namespace Tdl.Transformator.Models
 {
     public interface IBackReferenceInfoProvider
     {

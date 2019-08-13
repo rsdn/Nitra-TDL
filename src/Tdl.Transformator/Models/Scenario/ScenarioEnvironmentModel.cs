@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Platforms;
-using KL.TdlTransformator.Models.Products;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Platforms;
+using Tdl.Transformator.Models.Products;
+using Tdl.Transformator.Services;
 
-namespace KL.TdlTransformator.Models.Scenario
+namespace Tdl.Transformator.Models.Scenario
 {
     public sealed class ScenarioEnvironmentModel : IdenticalBase<ScenarioEnvironmentModel>
     {

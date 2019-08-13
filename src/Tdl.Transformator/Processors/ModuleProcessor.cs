@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Modules;
-using KL.TdlTransformator.Models.Scenario;
+using Tdl.Transformator.Models.Modules;
+using Tdl.Transformator.Models.Scenario;
 using NLog;
 
-namespace KL.TdlTransformator.Processors
+
+namespace Tdl.Transformator.Processors
 {
+    using Environment = System.Environment;
+
     public sealed class ModuleProcessor
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();

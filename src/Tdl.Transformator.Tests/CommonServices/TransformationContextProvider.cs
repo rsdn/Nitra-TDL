@@ -5,7 +5,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Tests.CommonServices
+namespace Tdl.Transformator.Tests.CommonServices
 {
     public static class Context
     {

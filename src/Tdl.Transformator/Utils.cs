@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KL.TdlTransformator
+namespace Tdl.Transformator
 {
     static class Utils
     {

@@ -1,4 +1,4 @@
-﻿namespace KL.TdlTransformator.Models.Expressions
+﻿namespace Tdl.Transformator.Models.Expressions
 {
     public sealed class Error : Expression
     {

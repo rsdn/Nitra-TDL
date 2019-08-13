@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace KL.TdlTransformator.Models.Expressions
+namespace Tdl.Transformator.Models.Expressions
 {
     public sealed class Real : Expression
     {

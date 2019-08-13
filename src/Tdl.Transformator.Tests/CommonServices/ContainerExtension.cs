@@ -1,7 +1,7 @@
 ﻿using Unity;
 using Unity.Extension;
 
-namespace KL.TdlTransformator.Tests.CommonServices
+namespace Tdl.Transformator.Tests.CommonServices
 {
     public sealed class ContainerExtension : UnityContainerExtension
     {

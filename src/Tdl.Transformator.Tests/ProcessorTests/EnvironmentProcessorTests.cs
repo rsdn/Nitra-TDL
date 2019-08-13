@@ -1,21 +1,20 @@
 ﻿using System.IO;
 using System.Linq;
-using KL.TdlTransformator.Models.Scenario;
-using KL.TdlTransformator.Processors;
-using KL.TdlTransformator.Tests.CommonServices;
+using Tdl.Transformator.Models.Scenario;
+using Tdl.Transformator.Processors;
+using Tdl.Transformator.Tests.CommonServices;
 using KL.TestFramework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Unity;
 
-namespace KL.TdlTransformator.Tests.ProcessorTests
+namespace Tdl.Transformator.Tests.ProcessorTests
 {
     [TestClass]
     public class EnvironmentProcessorTests
     {
-        private const string TdlFolder = "tdl";
         private const string TestFolder = "ScenarioDuplicatesTdl";
         private static readonly string CurrentDirectory = Directory.GetCurrentDirectory();
-        private static readonly string TdlDirectory = Path.Combine(CurrentDirectory, TdlFolder, TestFolder);
+        private static readonly string TdlDirectory = Path.Combine(TestUtils.TdlsRoot, TestFolder);
         
         [TestMethod]
         public void RemoveEnvironmentDuplicates()

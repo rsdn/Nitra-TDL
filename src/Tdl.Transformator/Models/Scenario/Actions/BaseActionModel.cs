@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Nitra;
 
-namespace KL.TdlTransformator.Models.Scenario.Actions
+namespace Tdl.Transformator.Models.Scenario.Actions
 {
     public abstract class BaseActionModel : IdenticalBase<BaseActionModel>
     {

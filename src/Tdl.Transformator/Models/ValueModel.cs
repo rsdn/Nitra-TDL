@@ -5,7 +5,7 @@ using Nitra;
 using Nitra.Declarations;
 using Tdl;
 
-namespace KL.TdlTransformator.Models
+namespace Tdl.Transformator.Models
 {
     public sealed class ValueModel : IIdentical<ValueModel>, ICloneable
     {

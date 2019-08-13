@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using KL.TdlTransformator;
-using KL.TdlTransformator.Models;
-using KL.TdlTransformator.Models.Deployments;
-using KL.TdlTransformator.Models.Modules;
-using KL.TdlTransformator.Models.Products;
-using KL.TdlTransformator.Models.Scenario;
-using KL.TdlTransformator.Processors;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator;
+using Tdl.Transformator.Models;
+using Tdl.Transformator.Models.Deployments;
+using Tdl.Transformator.Models.Modules;
+using Tdl.Transformator.Models.Products;
+using Tdl.Transformator.Models.Scenario;
+using Tdl.Transformator.Processors;
+using Tdl.Transformator.Services;
 using Tdl2Json;
 
 // ReSharper disable once CheckNamespace
 namespace Tdl
 {
-    public static class Transformator
+    public static class Program
     { 
         // ReSharper disable once UnusedMember.Global
         public static void Main([NotNull] TransformationContext context)
@@ -30,7 +30,7 @@ namespace Tdl
 
             Console.WriteLine("input command..");
 
-            var clo = new KL.TdlTransformator.CommandLineOptions();
+            var clo = new Tdl.Transformator.CommandLineOptions();
             
             while (clo.NeedExit == false)
             {

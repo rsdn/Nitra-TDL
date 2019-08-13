@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 using Nitra;
 
-namespace KL.TdlTransformator.Models
+namespace Tdl.Transformator.Models
 {
     public sealed class ReferenceModel<TRefereedModel> : IdenticalBase<ReferenceModel<TRefereedModel>>, ICloneable
         where TRefereedModel : Model

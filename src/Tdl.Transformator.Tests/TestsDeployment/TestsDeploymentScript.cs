@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using KL.TdlTransformator.Models.Deployments;
-using KL.TdlTransformator.Models.Parameters;
-using KL.TdlTransformator.Tests.CommonServices;
-using KL.TdlTransformator.Tests.ModelTests;
+using Tdl.Transformator.Models.Deployments;
+using Tdl.Transformator.Models.Parameters;
+using Tdl.Transformator.Tests.CommonServices;
+using Tdl.Transformator.Tests.ModelTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace KL.TdlTransformator.Tests.TestsDeployment
+namespace Tdl.Transformator.Tests.TestsDeployment
 {
     [TestClass]
     public sealed class TestsDeploymentScript : ModelTestBase

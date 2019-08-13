@@ -1,8 +1,8 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models.TypedReference;
+using Tdl.Transformator.Models.TypedReference;
 using Nitra.Declarations; 
 
-namespace KL.TdlTransformator.Models.Suite
+namespace Tdl.Transformator.Models.Suite
 {
     public abstract class SuiteRelatable : Model
     {

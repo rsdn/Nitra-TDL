@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Parameters;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Parameters;
+using Tdl.Transformator.Services;
 using Tdl;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models.Deployments
+namespace Tdl.Transformator.Models.Deployments
 {
     public sealed class DeploymentScriptModel : CurryingApplicableDeployment
     {
