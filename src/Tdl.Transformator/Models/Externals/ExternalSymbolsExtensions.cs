@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Parameters;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Parameters;
+using Tdl.Transformator.Services;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Externals
+namespace Tdl.Transformator.Models.Externals
 {
     public static class ExternalSymbolsExtensions
     {

@@ -4,7 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models
+namespace Tdl.Transformator.Models
 {
     public sealed class CommentBlockModel : ICloneable
     {

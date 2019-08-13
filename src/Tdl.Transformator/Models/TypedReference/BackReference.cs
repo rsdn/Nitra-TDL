@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using System;
 
-namespace KL.TdlTransformator.Models.TypedReference
+namespace Tdl.Transformator.Models.TypedReference
 {
     public class BackReference<TReference> : ICloneable
     {

@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Parameters;
-using KL.TdlTransformator.Models.Platforms;
-using KL.TdlTransformator.Models.Products;
-using KL.TdlTransformator.Models.Scenario;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Parameters;
+using Tdl.Transformator.Models.Platforms;
+using Tdl.Transformator.Models.Products;
+using Tdl.Transformator.Models.Scenario;
+using Tdl.Transformator.Services;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Suite
+namespace Tdl.Transformator.Models.Suite
 {
     public sealed class SuiteDefModel : SuiteModel
     {

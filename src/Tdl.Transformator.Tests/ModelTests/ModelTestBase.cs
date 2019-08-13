@@ -1,18 +1,18 @@
-﻿using KL.TdlTransformator.Services;
+﻿using Tdl.Transformator.Services;
 using KL.TestFramework;
 using System.IO;
-using KL.TdlTransformator.Tests.CommonServices;
+using Tdl.Transformator.Tests.CommonServices;
 using Unity;
+using System.Runtime.CompilerServices;
 
-namespace KL.TdlTransformator.Tests.ModelTests
+namespace Tdl.Transformator.Tests.ModelTests
 {
     public abstract class ModelTestBase
     {
-        private const string AllTdlFolders = "tdl";
         private static readonly string CurrentDirectory = Directory.GetCurrentDirectory();
 
         public readonly ModelConverter _modelConverter = new ModelConverter();
-
+        
         public string GetExpectedTdl(string tdlFiles)
         {
             var path = Path.Combine(DirectoryExpectedFiles, tdlFiles);
@@ -21,7 +21,7 @@ namespace KL.TdlTransformator.Tests.ModelTests
 
         protected abstract string TdlFolder { get; }
 
-        protected string DirectoryFiles => Path.Combine(CurrentDirectory, AllTdlFolders, TdlFolder);
+        protected string DirectoryFiles => Path.Combine(TestUtils.TdlsRoot, TdlFolder);
 
         protected string DirectoryExpectedFiles => Path.Combine(DirectoryFiles, "ExpectedTdl");
 

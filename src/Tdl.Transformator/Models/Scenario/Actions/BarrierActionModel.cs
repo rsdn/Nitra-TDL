@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Barrier;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Barrier;
+using Tdl.Transformator.Services;
 using Nitra;
 
-namespace KL.TdlTransformator.Models.Scenario.Actions
+namespace Tdl.Transformator.Models.Scenario.Actions
 {
     public sealed class BarrierActionModel : BaseActionModel
     {

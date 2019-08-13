@@ -9,10 +9,10 @@ namespace Tdl
         static Test()
         {
             // проверка компилируемости
-            _ = (TransfomationFunc)Transformator;
+            _ = (TransfomationFunc)DoTransformator;
         }
 
-        public static void Transformator(TransformationContext context)
+        public static void DoTransformator(TransformationContext context)
         {
             Console.WriteLine($"output:'{context.OutputPath}'");
             Console.WriteLine("Symbols:");

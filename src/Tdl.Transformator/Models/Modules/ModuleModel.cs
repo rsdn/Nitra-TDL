@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Parameters;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Parameters;
+using Tdl.Transformator.Services;
 using Nitra.Declarations;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Modules
+namespace Tdl.Transformator.Models.Modules
 {
     public sealed class ModuleModel : Model
     {

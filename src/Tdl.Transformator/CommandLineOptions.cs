@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace KL.TdlTransformator
+namespace Tdl.Transformator
 {
     public sealed class CommandLineOptions
     {

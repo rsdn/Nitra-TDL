@@ -3,24 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Modules;
-using KL.TdlTransformator.Models.Scenario;
-using KL.TdlTransformator.Models.Suite;
-using KL.TdlTransformator.Processors;
-using KL.TdlTransformator.Services;
-using KL.TdlTransformator.Tests.CommonServices;
+using Tdl.Transformator.Models.Modules;
+using Tdl.Transformator.Models.Scenario;
+using Tdl.Transformator.Models.Suite;
+using Tdl.Transformator.Processors;
+using Tdl.Transformator.Services;
+using Tdl.Transformator.Tests.CommonServices;
 using KL.TestFramework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Unity;
 
-namespace KL.TdlTransformator.Tests.ProcessorTests
+namespace Tdl.Transformator.Tests.ProcessorTests
 {
     [TestClass]
     public class ScenarioProcessorTests
     {
-        private const string TdlFolder = "tdl";        
-        private static readonly string CurrentDirectory = Directory.GetCurrentDirectory();
-
         public readonly ModelConverter _modelConverter = new ModelConverter();
 
         [TestMethod]
@@ -83,8 +80,7 @@ namespace KL.TdlTransformator.Tests.ProcessorTests
             CompareModuleAfterAction(testFolder, tdl, excpectedTdl, action); 
         }
 
-        private static string TdlDirectory([NotNull] string testFolder) 
-            => Path.Combine(CurrentDirectory, TdlFolder, testFolder);  
+        private static string TdlDirectory([NotNull] string testFolder) => Path.Combine(TestUtils.TdlsRoot, testFolder);  
 
         private static void ValidateScenarioSet(
             IEnumerable<ScenarioBaseModel> scenarios,

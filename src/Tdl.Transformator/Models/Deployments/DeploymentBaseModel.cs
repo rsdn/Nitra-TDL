@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Scenario;
-using KL.TdlTransformator.Models.TypedReference;
+using Tdl.Transformator.Models.Scenario;
+using Tdl.Transformator.Models.TypedReference;
 using Nitra.Declarations;
 
-namespace KL.TdlTransformator.Models.Deployments
+namespace Tdl.Transformator.Models.Deployments
 {
     public abstract class DeploymentBaseModel : Model
     {

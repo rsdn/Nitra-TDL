@@ -1,9 +1,9 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Expressions;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Expressions;
+using Tdl.Transformator.Services;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Parameters
+namespace Tdl.Transformator.Models.Parameters
 {
     public sealed class DefModel : Model
     {

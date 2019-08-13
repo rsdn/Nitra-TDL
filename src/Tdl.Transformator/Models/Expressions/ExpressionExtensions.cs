@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Expressions
+namespace Tdl.Transformator.Models.Expressions
 {
     internal static class ExpressionExtensions
     {

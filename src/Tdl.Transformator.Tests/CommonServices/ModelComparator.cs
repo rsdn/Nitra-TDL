@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models;
+using Tdl.Transformator.Models;
 
-namespace KL.TdlTransformator.Tests.CommonServices
+namespace Tdl.Transformator.Tests.CommonServices
 {
     public static class ModelComparator
     {

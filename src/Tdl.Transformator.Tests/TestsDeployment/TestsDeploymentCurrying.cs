@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using KL.TdlTransformator.Models.Deployments;
-using KL.TdlTransformator.Models.Expressions;
-using KL.TdlTransformator.Tests.CommonServices;
-using KL.TdlTransformator.Tests.ModelTests;
+using Tdl.Transformator.Models.Deployments;
+using Tdl.Transformator.Models.Expressions;
+using Tdl.Transformator.Tests.CommonServices;
+using Tdl.Transformator.Tests.ModelTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using String = KL.TdlTransformator.Models.Expressions.String;
+using String = Tdl.Transformator.Models.Expressions.String;
 
-namespace KL.TdlTransformator.Tests.TestsDeployment
+namespace Tdl.Transformator.Tests.TestsDeployment
 {
     [TestClass]
     public sealed class TestsDeploymentCurrying : ModelTestBase

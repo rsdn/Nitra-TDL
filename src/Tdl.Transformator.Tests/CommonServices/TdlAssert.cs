@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace KL.TdlTransformator.Tests.CommonServices
+namespace Tdl.Transformator.Tests.CommonServices
 {
     public static class TdlAssert
     {

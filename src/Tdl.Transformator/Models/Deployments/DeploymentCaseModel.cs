@@ -1,12 +1,12 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 using System;
 using System.Linq;
 using System.Collections.Immutable;
 using Tdl;
 using System.Collections.Generic;
 
-namespace KL.TdlTransformator.Models.Deployments
+namespace Tdl.Transformator.Models.Deployments
 {
     public sealed class DeploymentCaseModel : IdenticalBase<DeploymentCaseModel>
     {

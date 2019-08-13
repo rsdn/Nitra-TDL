@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 using Tdl;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models.Platforms
+namespace Tdl.Transformator.Models.Platforms
 {
     public sealed class PlatformsSetModel : PlatformBase
     {

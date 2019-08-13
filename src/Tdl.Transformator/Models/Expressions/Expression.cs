@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System;
 
-namespace KL.TdlTransformator.Models.Expressions
+namespace Tdl.Transformator.Models.Expressions
 {
     public abstract class Expression : IEquatable<Expression>, ICloneable
     {

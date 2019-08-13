@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Modules;
-using KL.TdlTransformator.Models.TypedReference;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Modules;
+using Tdl.Transformator.Models.TypedReference;
+using Tdl.Transformator.Services;
 using Nitra.Declarations;
 using NLog;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models
+namespace Tdl.Transformator.Models
 {
     public abstract class Model : IdenticalBase<Model>, ICloneable, IBackReferenceInfoProvider
     {

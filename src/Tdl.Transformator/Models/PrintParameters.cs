@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KL.TdlTransformator.Models
+namespace Tdl.Transformator.Models
 {
     [Flags]
     public enum PrintParameters

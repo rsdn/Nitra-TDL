@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models;
-using KL.TdlTransformator.Models.Modules;
-using KL.TdlTransformator.Models.Products;
-using KL.TdlTransformator.Models.Scenario;
-using KL.TdlTransformator.Models.Scenario.Actions;
-using KL.TdlTransformator.Models.Suite;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models;
+using Tdl.Transformator.Models.Modules;
+using Tdl.Transformator.Models.Products;
+using Tdl.Transformator.Models.Scenario;
+using Tdl.Transformator.Models.Scenario.Actions;
+using Tdl.Transformator.Models.Suite;
+using Tdl.Transformator.Services;
 using NLog;
 
-namespace KL.TdlTransformator.Processors
+namespace Tdl.Transformator.Processors
 {
     public sealed class ScenarioProcessor
     {

@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
-using KL.TdlTransformator.Models;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models;
+using Tdl.Transformator.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Tdl;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Models.Deployments
+namespace Tdl.Transformator.Models.Deployments
 {
     public abstract class ScriptReference : IIdentical<ScriptReference>, ICloneable
     {

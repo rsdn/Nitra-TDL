@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using DotNet;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models;
-using KL.TdlTransformator.Models.Barrier;
-using KL.TdlTransformator.Models.Deployments;
-using KL.TdlTransformator.Models.Externals;
-using KL.TdlTransformator.Models.Modules;
-using KL.TdlTransformator.Models.Platforms;
-using KL.TdlTransformator.Models.Products;
-using KL.TdlTransformator.Models.Scenario;
-using KL.TdlTransformator.Models.Suite;
+using Tdl.Transformator.Models;
+using Tdl.Transformator.Models.Barrier;
+using Tdl.Transformator.Models.Deployments;
+using Tdl.Transformator.Models.Externals;
+using Tdl.Transformator.Models.Modules;
+using Tdl.Transformator.Models.Platforms;
+using Tdl.Transformator.Models.Products;
+using Tdl.Transformator.Models.Scenario;
+using Tdl.Transformator.Models.Suite;
 using Nitra.Declarations;
 using NLog;
 using Tdl;
 using Tdl2Json;
 
-namespace KL.TdlTransformator.Services
+namespace Tdl.Transformator.Services
 {
     public sealed class SymbolConverter
     {

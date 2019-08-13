@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Expressions;
+using Tdl.Transformator.Models.Expressions;
 using Nitra;
 
-namespace KL.TdlTransformator.Models.Parameters
+namespace Tdl.Transformator.Models.Parameters
 {
     public sealed class DefinitionModel : IEquatable<DefinitionModel>, ICloneable
     {

@@ -1,10 +1,10 @@
-﻿using KL.TdlTransformator.Tests.ModelTests;
+﻿using Tdl.Transformator.Tests.ModelTests;
 using System.Linq;
-using KL.TdlTransformator.Tests.CommonServices;
+using Tdl.Transformator.Tests.CommonServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Unity;
 
-namespace KL.TdlTransformator.Tests.TestsParsing
+namespace Tdl.Transformator.Tests.TestsParsing
 {
     [TestClass]
     public sealed class TestsParsingAndGenerate : ModelTestBase

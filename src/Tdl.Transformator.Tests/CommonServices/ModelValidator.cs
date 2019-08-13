@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models;
+using Tdl.Transformator.Models;
 
-namespace KL.TdlTransformator.Tests.CommonServices
+namespace Tdl.Transformator.Tests.CommonServices
 {
     public sealed class ModelValidator
     {

@@ -14,15 +14,18 @@
     <IntermediateOutputPath>..\..\obj\$(Configuration)\</IntermediateOutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
-	<SignAssembly>false</SignAssembly>
-	<AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
+	  <SignAssembly>false</SignAssembly>
+	  <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="TdlTask.cs" />
   </ItemGroup>

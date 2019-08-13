@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Services;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Barrier
+namespace Tdl.Transformator.Models.Barrier
 {
     public sealed class BarrierModel : Model
     {

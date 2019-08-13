@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models;
+using Tdl.Transformator.Services;
 
-namespace KL.TdlTransformator.Tests.CommonServices
+namespace Tdl.Transformator.Tests.CommonServices
 {
     public sealed class ModelConverter
     {

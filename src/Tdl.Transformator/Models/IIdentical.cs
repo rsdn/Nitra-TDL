@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace KL.TdlTransformator.Models
+namespace Tdl.Transformator.Models
 {
     public interface IIdentical<TIdentic>
     {

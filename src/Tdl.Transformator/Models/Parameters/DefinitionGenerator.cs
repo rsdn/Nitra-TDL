@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Expressions;
+using Tdl.Transformator.Models.Expressions;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Parameters
+namespace Tdl.Transformator.Models.Parameters
 {
     public static class DefinitionGenerator
     {

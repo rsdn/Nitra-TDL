@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models.Parameters;
-using KL.TdlTransformator.Models.TypedReference;
-using KL.TdlTransformator.Services;
+using Tdl.Transformator.Models.Parameters;
+using Tdl.Transformator.Models.TypedReference;
+using Tdl.Transformator.Services;
 using Tdl;
 
-namespace KL.TdlTransformator.Models.Products
+namespace Tdl.Transformator.Models.Products
 {
     public sealed class ProductTypeModel : Model
     {

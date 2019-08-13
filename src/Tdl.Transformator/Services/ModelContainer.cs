@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
-using KL.TdlTransformator.Models;
-using KL.TdlTransformator.Models.Modules;
+using Tdl.Transformator.Models;
+using Tdl.Transformator.Models.Modules;
 using NLog;
 
-namespace KL.TdlTransformator.Services
+namespace Tdl.Transformator.Services
 {
     public sealed class ModelContainer
     {
