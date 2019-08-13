@@ -43,7 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Transformator", "Transforma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tdl.Transformator", "Tdl.Transformator\Tdl.Transformator.csproj", "{54B5602A-FE48-4E6F-A623-EA86AAFCA769}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tdl.Transformator.Tests", "KL.TdlTransformator.Tests\Tdl.Transformator.Tests.csproj", "{9DDC3DF5-C4F4-48B4-A387-6282298DFB28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tdl.Transformator.Tests", "Tdl.Transformator.Tests\Tdl.Transformator.Tests.csproj", "{9DDC3DF5-C4F4-48B4-A387-6282298DFB28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

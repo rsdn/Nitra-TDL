@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <IsPackable>false</IsPackable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NemerleVersion>Net-4.0</NemerleVersion>
     <NemerleBinPathRoot Condition=" '$(NemerleBinPathRoot)' == '' ">$(ProgramFiles)\Nemerle</NemerleBinPathRoot>
     <Nemerle Condition=" '$(Nemerle)' == '' ">$(NemerleBinPathRoot)\$(NemerleVersion)</Nemerle>
@@ -9,6 +10,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\..\bin\Debug\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
