@@ -3,9 +3,7 @@ using System.Linq;
 using Tdl.Transformator.Models.Scenario;
 using Tdl.Transformator.Processors;
 using Tdl.Transformator.Tests.CommonServices;
-using KL.TestFramework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Unity;
 
 namespace Tdl.Transformator.Tests.ProcessorTests
 {
@@ -13,7 +11,6 @@ namespace Tdl.Transformator.Tests.ProcessorTests
     public class EnvironmentProcessorTests
     {
         private const string TestFolder = "ScenarioDuplicatesTdl";
-        private static readonly string CurrentDirectory = Directory.GetCurrentDirectory();
         private static readonly string TdlDirectory = Path.Combine(TestUtils.TdlsRoot, TestFolder);
         
         [TestMethod]

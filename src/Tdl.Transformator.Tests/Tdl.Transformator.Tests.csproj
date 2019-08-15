@@ -25,23 +25,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
-    <PackageReference Include="KL.Environment" Version="1.2.26" />
-    <PackageReference Include="KL.Executors" Version="1.0.15.2" />
-    <PackageReference Include="KL.Initializable" Version="1.0.2" />
-    <PackageReference Include="KL.TestFramework" Version="1.6.15" />
-    <PackageReference Include="KL.TestFramework.Attributes" Version="1.3.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
-    <PackageReference Include="Unity.Abstractions" Version="5.11.1" />
-    <PackageReference Include="Unity.Container" Version="5.11.1" />
-    <PackageReference Include="Unity.Interception" Version="5.11.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Tests\TestDll\TestDll.csproj" />
     <ProjectReference Include="..\Tdl.Transformator\Tdl.Transformator.csproj" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition=" '$(SolutionName)' != 'Tdl.Transformator' ">
     <Reference Include="System.Collections.Immutable.Light">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -58,6 +50,10 @@
       <HintPath>$(NitraPath)\Nitra.Runtime.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup Condition=" '$(SolutionName)' == 'Tdl.Transformator' ">
+    <PackageReference Include="Tdl" Version="1.15.5.252" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
