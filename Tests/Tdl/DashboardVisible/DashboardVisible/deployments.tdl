@@ -1,0 +1,46 @@
+deployment Deployment1([DashboardVisible] string Message, [DashboardVisible] bool isVerbose = false)
+{
+  KL.Autotests.Commands.LogMessage(Message);
+  KL.Autotests.Commands.ComplexOperation(IsVerbose: isVerbose, Result: out var result);
+  KL.Autotests.Commands.LogMessage(Severity: 2, Message: result);
+  expected 0;
+}
+
+suite type SuiteType
+{
+  [DashboardVisible]
+  bool SuiteTypeField;
+}
+
+suite Suite : SuiteType
+{
+  platform Platform;
+  product Product;
+  Message = "C# deployment";
+  SuiteTypeField = true;
+  ScenarioParam = 42;
+  S1();
+}
+
+product type ProductType
+{
+  string Name;
+  string Version;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0";
+}
+
+platform Platform;
+
+scenario S1([DashboardVisible] int ScenarioParam)
+{
+  deployment Deployment1;
+  environments (Platform, Product);
+  method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}

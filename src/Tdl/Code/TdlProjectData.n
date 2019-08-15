@@ -177,16 +177,18 @@ namespace Tdl
       result
     }
 
-    private GetInputRequiredFlag(inputAttribute : DotNet.CustomAttributeSymbol) : bool
+    private GetInputRequiredFlag(attribute : DeclarationSymbol) : bool
     {
-      foreach (n when n.Name == "Required" in inputAttribute.NamedArguments)
-      {
-        when (n.Expression is CustomAttributeExpression.Bool(value))
-          return value;
-        break;
-      }
-      // default is true
-      true
+      | inputAttribute is DotNet.CustomAttributeSymbol =>
+        foreach (n when n.Name == "Required" in inputAttribute.NamedArguments)
+        {
+          when (n.Expression is CustomAttributeExpression.Bool(value))
+            return value;
+          break;
+        }
+        // default is true
+        true
+      | _ => true
     }
   }
 }

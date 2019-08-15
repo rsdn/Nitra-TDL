@@ -1683,5 +1683,9 @@ namespace Tdl
       when (finalDeployment != null && finalDeployment.IsAggregateParametersScopeEvaluated)
         UnionScopeBuilder.Add(finalDeployment.AggregateParametersScope, ref builder);
     }
+    public HasDashboardVisible(attributes : DotNet.CustomAttributeReference.IAstList) : bool
+    {
+      attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttribites.DashboardVisibleSymbol)
+    }
   } // module
 } // namespace

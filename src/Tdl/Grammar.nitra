@@ -12,8 +12,11 @@
     using CSharp.TopDeclarations;
     using CSharp.Types;
     using CSharp.CS7;
+    using CSharp.Attributes;
 
     keyword regex ['A'..'Z', 'a'..'z', '_'..'_', '-'..'-']+ ['0'..'9']* rule S;
+
+    alias Attributes = AttributeSection*;
 
     [StartRule]
     syntax Module = MemberDeclaration*;
@@ -208,9 +211,9 @@
 
     syntax ExternalBody = outline_begin_before "{" inl Fields=FieldWithDefault* d "}" nl outline_end_before;
 
-    syntax Field = AnyType sm Name ";" nl;
+    syntax Field = Attributes AnyType sm Name ";" nl;
 
-    syntax FieldWithDefault = AnyType sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
+    syntax FieldWithDefault = Attributes AnyType sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
     
     syntax DeploymentScriptBody = outline_begin_before "{" inl DefDeclaration* Options=DeploymentOption* d "}" nl outline_end_before;
 

@@ -1,0 +1,10 @@
+deployment CurrySeq = Seq(Par: 1000);
+deployment Seq = A, B;
+deployment A(int Par =700)
+script "a.ps1"
+{
+}
+deployment B(int Par =700)
+script "b.ps1"
+{
+}

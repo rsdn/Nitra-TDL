@@ -19,6 +19,7 @@
   span class External    { ForegroundColor=LightSkyBlue; }
   span class Barrier     { ForegroundColor=Gray; }
   span class Var         { ForegroundColor=DodgerBlue; }
+  span class Attribite   { ForegroundColor=Gray; }
 
   syntax module Tdl.Grammar start rule Module;
 }

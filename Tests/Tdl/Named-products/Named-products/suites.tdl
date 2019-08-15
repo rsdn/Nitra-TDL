@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 scenario Test1(SuiteType Suite)
 {
     filter Suite.Products.Contains(OfficeProduct) && Suite.Platforms.Contains(w10rs5) && IsSome;

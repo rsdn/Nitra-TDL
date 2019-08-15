@@ -6,23 +6,26 @@ using Nitra.Declarations;
 
 namespace Tdl
 {
-  declaration Field : BindableAst, SelfTypedDeclaration
+  declaration Field : BindableAst, SelfTypedDeclaration, CustomAttributeHostDeclaration
   {
     symbol
     {
-      in DeclaredIn : DeclarationSymbol;
-      in Value      : ValueOption[Tdl.Expr];
+      in DeclaredIn         : DeclarationSymbol;
+      in Value              : ValueOption[Tdl.Expr];
+    stage 3:
+      in IsDashboardVisible : bool;
 
       Kind          = "field";
       SpanClass     = TdlLang.FieldSpanClass;
       DeclaredInOpt = VSome(DeclaredIn);
     }
 
-    Type.Scope        = Scope;
-    Value.Scope       = Scope;
-    TypeRef           = Type.Ref.Resolve();
-    Symbol.DeclaredIn = ContainingTable.Owner;
-    Symbol.Value      = Value.Result;
+    Type.Scope                = Scope;
+    Value.Scope               = Scope;
+    TypeRef                   = Type.Ref.Resolve();
+    Symbol.DeclaredIn         = ContainingTable.Owner;
+    Symbol.Value              = Value.Result;
+    Symbol.IsDashboardVisible = TdlUtils.HasDashboardVisible(Attributes);
 
     Type  : QualifiedReference;
     Value : DefExpr?;

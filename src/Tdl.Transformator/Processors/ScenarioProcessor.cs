@@ -333,6 +333,7 @@ namespace Tdl.Transformator.Processors
             IEnumerable<IGrouping<int, MethodActionModel>> groupMethod(IEnumerable<MethodActionModel> methods)
             {
                 var result = methods.GroupBy(m => m.Method.MethodSymbol.CustomAttributes
+                    .OfType<DotNet.CustomAttributeSymbol>()
                     .Where(attr => attr.Arguments?.Count > 1 && attr.Arguments[0].ToString() == qcIdDef)
                     .Select(a => Convert.ToInt32(a.Arguments[1].ToString()))
                     .FirstOrDefault());

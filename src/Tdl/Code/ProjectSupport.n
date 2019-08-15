@@ -156,7 +156,7 @@ namespace Tdl
           methodType.Return = symbolRef.Symbol;
       }
 
-      def initTypeSymbol(type : TypeSymbol) : void
+      def initTypeSymbol(type : DeclarationSymbol) : void
       {
         type.EvalProperties(context);
       }
@@ -183,7 +183,10 @@ namespace Tdl
       emptyDeployment.AllDeployments           = ImmutableArray.Create();
       emptyDeployment.AggregateParametersScope = EmptyScope.Instance;
       emptyDeployment.EvalProperties(context);
+      initTypeSymbol(emptyDeployment);
 
+      def dashboardVisible = ExternalDeclaration.[Tdl.PredefinedAttribites.DashboardVisibleSymbol](Location.Default, "DashboardVisible", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      initTypeSymbol(dashboardVisible);
       data
     }
 
