@@ -18,6 +18,9 @@
   </ItemGroup>
   
   <ItemGroup Condition=" '$(SolutionName)' != 'Tdl.Transformator' ">
+    <ProjectReference Include="..\Tdl2JsonLib\Tdl2JsonLib.nproj" />
+    <ProjectReference Include="..\Tdl\Tdl.nproj" />
+
     <Reference Include="System.Collections.Immutable.Light">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
