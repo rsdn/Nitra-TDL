@@ -10,15 +10,14 @@
     <OutputPath>..\..\bin\$(Configuration)\</OutputPath>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Tdl2JsonLib\Tdl2JsonLib.nproj" />
-    <ProjectReference Include="..\Tdl\Tdl.nproj" />
-  </ItemGroup>
-  
+
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(SolutionName)' != 'Tdl.Transformator' ">
     <Reference Include="System.Collections.Immutable.Light">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -60,5 +59,8 @@
     <PackageReference Include="Mono.Options" Version="5.3.0.1" />
     <PackageReference Include="NLog" Version="4.6.6" />
   </ItemGroup>
-
+  
+  <ItemGroup Condition=" '$(SolutionName)' == 'Tdl.Transformator' ">
+    <PackageReference Include="Tdl" Version="1.15.5.252" />
+  </ItemGroup>
 </Project>
