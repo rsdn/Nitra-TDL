@@ -8,8 +8,8 @@
     <description>Набор библиотек для работы с TDL</description>
   </metadata>
   <files>
-    <file target="lib\net461" src="..\bin\$configuration$\*.exe" />
-    <file target="lib\net461" src="..\bin\$configuration$\*.config" />
-    <file target="lib\net461" src="..\bin\$configuration$\*.dll" exclude="**\Tdl.VersionInfo.dll" />
+    <file target="lib\net461" src="..\bin\$configuration$\*.exe"    exclude="**\*Test*;**\*Transformator*" />
+    <file target="lib\net461" src="..\bin\$configuration$\*.config" exclude="**\*Test*;**\*Transformator*" />
+    <file target="lib\net461" src="..\bin\$configuration$\*.dll"    exclude="**\*Test*;**\*Transformator*;**\Tdl.VersionInfo.dll" />
   </files>
 </package>

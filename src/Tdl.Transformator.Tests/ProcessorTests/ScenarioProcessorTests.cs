@@ -9,9 +9,7 @@ using Tdl.Transformator.Models.Suite;
 using Tdl.Transformator.Processors;
 using Tdl.Transformator.Services;
 using Tdl.Transformator.Tests.CommonServices;
-using KL.TestFramework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Unity;
 
 namespace Tdl.Transformator.Tests.ProcessorTests
 {

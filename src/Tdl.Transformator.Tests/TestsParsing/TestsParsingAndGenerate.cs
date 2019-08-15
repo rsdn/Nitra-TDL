@@ -1,8 +1,6 @@
 ﻿using Tdl.Transformator.Tests.ModelTests;
-using System.Linq;
 using Tdl.Transformator.Tests.CommonServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Unity;
 
 namespace Tdl.Transformator.Tests.TestsParsing
 {

@@ -1,16 +1,11 @@
-﻿using Tdl.Transformator.Services;
-using KL.TestFramework;
-using System.IO;
+﻿using System.IO;
+using Tdl.Transformator.Services;
 using Tdl.Transformator.Tests.CommonServices;
-using Unity;
-using System.Runtime.CompilerServices;
 
 namespace Tdl.Transformator.Tests.ModelTests
 {
     public abstract class ModelTestBase
     {
-        private static readonly string CurrentDirectory = Directory.GetCurrentDirectory();
-
         public readonly ModelConverter _modelConverter = new ModelConverter();
         
         public string GetExpectedTdl(string tdlFiles)
