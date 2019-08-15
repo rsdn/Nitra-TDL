@@ -98,7 +98,7 @@
     <Compile Include="Ast\DeploymentModifier.nitra">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Ast\DeploymentOption.nitra">
+    <Compile Include="Ast\PredefinedAttribites.nitra">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ast\DeploymentOptionsHost.nitra">
@@ -132,6 +132,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ast\Platform.nitra">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ast\PredefinedAttribits.nitra">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ast\Product.nitra">

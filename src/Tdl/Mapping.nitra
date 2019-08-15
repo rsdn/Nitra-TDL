@@ -393,9 +393,10 @@ namespace Tdl
 
   map syntax Grammar.Field -> Field
   {
-    Name    -> Name;
-    AnyType -> Type;
-    None() -> Value;
+    Name       -> Name;
+    AnyType    -> Type;
+    None()     -> Value;
+    Attributes -> Attributes;
   }
 
   map syntax Grammar.FieldWithDefault -> Field
@@ -407,6 +408,7 @@ namespace Tdl
       | Some((_, e)) -> Some(e)
       | None -> None()
     } -> Value;
+    Attributes -> Attributes;
   }
 
   map syntax Grammar.SuiteStatement -> SuiteStatementAst
