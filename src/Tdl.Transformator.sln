@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tdl.Transformator", "Tdl.Tr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tdl.Transformator.Tests", "Tdl.Transformator.Tests\Tdl.Transformator.Tests.csproj", "{9DDC3DF5-C4F4-48B4-A387-6282298DFB28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDll", "..\Tests\TestDll\TestDll.csproj", "{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9DDC3DF5-C4F4-48B4-A387-6282298DFB28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DDC3DF5-C4F4-48B4-A387-6282298DFB28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DDC3DF5-C4F4-48B4-A387-6282298DFB28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14EEAC6F-5AE0-40B3-9981-E8F4EA142A43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

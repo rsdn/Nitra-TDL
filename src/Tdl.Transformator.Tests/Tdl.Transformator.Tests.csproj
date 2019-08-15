@@ -38,6 +38,7 @@
     <PackageReference Include="Unity.Interception" Version="5.11.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Tests\TestDll\TestDll.csproj" />
     <ProjectReference Include="..\Tdl.Transformator\Tdl.Transformator.csproj" />
   </ItemGroup>
   <ItemGroup>
