@@ -1,0 +1,82 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deployment1": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "Message": "$(Message)",
+        "isVerbose": "$(isVerbose)",
+        "NotVisible": "$(NotVisible)"
+      },
+      "ScriptArgsDefaultValues": {
+        "isVerbose": 0
+      },
+      "ScriptPath": "a.ps1"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {
+        "Message": "C# deployment",
+        "SuiteTypeField1": 1,
+        "SuiteTypeField2": 1,
+        "ScenarioParam1": 42,
+        "ScenarioParam2": 48,
+        "NotVisible": 1
+      },
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "S1"
+      ],
+      "DashboardVisibleParameters": [
+        "Message",
+        "SuiteTypeField1",
+        "ScenarioParam1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S1": {
+      "Deployments": [
+        "Deployment1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20A84E6C-1028-48ED-B4E4-3DC8CB599E71"
+    }
+  },
+  "TestEntities": {}
+}

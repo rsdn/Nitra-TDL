@@ -195,7 +195,7 @@ namespace QuickType
     /// то такие тесты будут пропущены с результатом Skipped. AdditionalDeployments выполняются
     /// перед всеми тестами
     /// </summary>
-    public partial class TestSuite
+    public class TestSuite
     {
         [JsonProperty("Parameters", NullValueHandling = NullValueHandling.Ignore)]
         public IDictionary<string, object> Parameters { get; set; }
@@ -211,6 +211,9 @@ namespace QuickType
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string TestEntity { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> DashboardVisibleParameters { get; set; }
     }
 
     public partial class TestGroup

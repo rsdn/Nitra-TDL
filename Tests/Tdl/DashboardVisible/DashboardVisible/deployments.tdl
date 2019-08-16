@@ -1,24 +1,26 @@
-deployment Deployment1([DashboardVisible] string Message, [DashboardVisible] bool isVerbose = false)
+deployment Deployment1([DashboardVisible] string Message, [DashboardVisible] bool isVerbose = false, bool NotVisible)
+  script "a.ps1"
 {
-  KL.Autotests.Commands.LogMessage(Message);
-  KL.Autotests.Commands.ComplexOperation(IsVerbose: isVerbose, Result: out var result);
-  KL.Autotests.Commands.LogMessage(Severity: 2, Message: result);
   expected 0;
 }
 
 suite type SuiteType
 {
   [DashboardVisible]
-  bool SuiteTypeField;
+  bool SuiteTypeField1;
+  bool SuiteTypeField2;
 }
 
 suite Suite : SuiteType
 {
   platform Platform;
   product Product;
-  Message = "C# deployment";
-  SuiteTypeField = true;
-  ScenarioParam = 42;
+  Message         = "C# deployment";
+  SuiteTypeField1 = true;
+  SuiteTypeField2 = true;
+  ScenarioParam1  = 42;
+  ScenarioParam2  = 48;
+  NotVisible      = true;
   S1();
 }
 
@@ -36,7 +38,7 @@ product Product : ProductType
 
 platform Platform;
 
-scenario S1([DashboardVisible] int ScenarioParam)
+scenario S1([DashboardVisible] int ScenarioParam1, int ScenarioParam2)
 {
   deployment Deployment1;
   environments (Platform, Product);
