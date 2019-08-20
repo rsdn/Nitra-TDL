@@ -74,7 +74,7 @@ namespace Tdl2Json
                     {
                         var transformatorFunc = LoadTransformator(t.assembly, t.type, t.method);
                         var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, options.DeploymentScriptHeader, options.DeploymentToolPath,
-                            isMethodTypingEnabled: true, output: null, transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc, isTestMode: true,
+                            isMethodTypingEnabled: true, output: null, transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc, isTestMode: isTestMode,
                             booleanMarshalMode: options.BooleanMarshalMode, jsonSchemaType: options.JsonSchemaType);
                         messages.AddRange(transformationContext.Messages);
 
