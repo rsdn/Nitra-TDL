@@ -106,7 +106,7 @@ namespace Tdl
         Deployments : DeploymentExpr*;
       }
 
-    | ignore-case Currying
+    | ignore-case Currying : Parameterizable
       {
         symbol
         {
@@ -125,13 +125,14 @@ namespace Tdl
         BaseDeploymentRef                = BaseDeployment.Ref.Resolve();
         Symbol.BaseDeployment            = BaseDeploymentRef.Symbol;
 
-        CurredParameters.Scope           = Scope;
+        CurredParameters.Scope           = Scope.HideWith(Symbol.ParameterScope);
         CurredParameters.DefinitionScope = TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope);
         Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
         Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams);
 
         Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, CurredParameters.SymbolRef);
         Symbol.BaseDeployment.IsUsed     = true;
+        Parameters.Scope                 = Scope.UnionWith(context.GetExternalSymbolTable());
 
         BaseDeployment   : Reference;
         CurredParameters : Definition*;

@@ -50,7 +50,18 @@ namespace Tdl
         Modifier                             -> Modifier;
       }
     | DeploymentSet    -> Deployment.Set      { Name -> Name; Modifier -> Modifier; Deployments.Item1 -> Deployments; }
-    | Currying         -> Deployment.Currying { Name -> Name; Modifier -> Modifier; Reference -> BaseDeployment; ParameterCurryings.Item1 -> CurredParameters; }
+    | Currying         -> Deployment.Currying
+      {
+        Modifier -> Modifier;
+        Name -> Name;
+        match (ParametersOpt)
+        {
+          | Some(x) -> x.FormalParameters.Item1
+          | None()  -> []
+        } -> Parameters;
+        Reference -> BaseDeployment;
+        ParameterCurryings.Item1 -> CurredParameters;
+      }
     | DeploymentSelect -> Deployment.Select   { Name -> Name; Modifier -> Modifier; Parameters.Item1 -> Parameters; Cases -> Cases; }
     | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; [] -> TypeBase; }
     | Product          -> Product.Def         { Name -> Name; Type -> ProductType; ProductBody.DefDeclarations -> Definitions; }
