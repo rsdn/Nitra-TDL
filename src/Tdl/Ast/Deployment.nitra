@@ -125,10 +125,10 @@ namespace Tdl
         BaseDeploymentRef                = BaseDeployment.Ref.Resolve();
         Symbol.BaseDeployment            = BaseDeploymentRef.Symbol;
 
-        CurredParameters.Scope           = Scope.HideWith(Symbol.ParameterScope);
+        CurredParameters.Scope           = Scope.UnionWith(context.GetExternalSymbolTable()).HideWith(Symbol.ParameterScope);
         CurredParameters.DefinitionScope = TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope);
         Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
-        Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams);
+        Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams).HideWith(Symbol.ParameterScope);
 
         Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, CurredParameters.SymbolRef);
         Symbol.BaseDeployment.IsUsed     = true;

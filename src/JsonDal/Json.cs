@@ -88,7 +88,7 @@ namespace QuickType
     /// Описание одного шага для подготовки тестового окружения. Может выполнять простые действия
     /// или вызывать другие шаги с определенными переменными
     /// </summary>
-    public partial class Deployment
+    public class Deployment
     {
         /// <summary>
         /// Выбор деплоя в зависимости от значения параметра
@@ -143,6 +143,9 @@ namespace QuickType
 
         [JsonProperty("Deployments", NullValueHandling = NullValueHandling.Ignore)]
         public object[] Deployments { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> DefaultValues { get; set; }
     }
 
     public partial class PurpleDeployment

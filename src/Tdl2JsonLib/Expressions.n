@@ -33,6 +33,8 @@ namespace Tdl2Json
           
           match (expression)
           {
+            | Reference(Symbol=sym) when sym.Owner?.Owner is ExternalSymbol
+            | MemberAccess(Expr=Expr.Reference(Symbol=ExternalSymbol), Symbol=sym) => "#(" + sym.Name + ")"
             | Reference
             | MemberAccess => "$(" + loop(expression) + ")"
             | _            => loop(expression)

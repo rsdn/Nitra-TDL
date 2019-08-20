@@ -1,0 +1,95 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "MyDeployment": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "Message": "$(Message)",
+        "Param2": "$(Param2)",
+        "WithDefault": "$(WithDefault)",
+        "WithoutDefault": "$(WithoutDefault)",
+        "NotVisible": "$(NotVisible)",
+        "Param4": "$(Param4)"
+      },
+      "ScriptArgsDefaultValues": {
+        "Param2": 100500,
+        "WithDefault": 0
+      },
+      "ScriptPath": "a.ps1"
+    },
+    "OverrideArgs": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "MyDeployment": {
+            "Message": "$(Product:Param1.Message)",
+            "Param2": "$(Param2)",
+            "NotVisible": "#(Xxx)",
+            "WithoutDefault": "$(Param3)"
+          }
+        }
+      ],
+      "DefaultValues": {
+        "Param2": 42
+      }
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product",
+        "Message": "some message"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {
+        "Param1": "Product",
+        "Param3": 0,
+        "Param4": 33
+      },
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "S1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S1": {
+      "Deployments": [
+        "OverrideArgs"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20A84E6C-1028-48ED-B4E4-3DC8CB599E71"
+    }
+  },
+  "TestEntities": {}
+}
