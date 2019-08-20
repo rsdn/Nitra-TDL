@@ -66,7 +66,7 @@
       | DeploymentScript  = Modifier=DeploymentModifier? "deployment" sm Name outline_begin_before Parameters outline_end_before nl DeploymentScriptContent nl DeploymentScriptBody;
       | DeploymentCode    = Modifier=DeploymentModifier? "deployment" sm Name outline_begin_before Parameters outline_end_before nl DeploymentCodeBody;
       | DeploymentSet     = Modifier=DeploymentModifier? "deployment" sm Name sm "=" sm Deployments=(DeploymentExpr; "," sm)+ ";" nl
-      | Currying          = Modifier=DeploymentModifier? "deployment" sm Name sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
+      | Currying          = Modifier=DeploymentModifier? "deployment" sm Name Parameters? sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
       | DeploymentSelect  = Modifier=DeploymentModifier? "select" sm "deployment" sm Name "(" (Parameter; "," sm)+ ")"
                             "{" inl
                                 Case*  
