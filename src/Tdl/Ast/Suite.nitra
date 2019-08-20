@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Suite : NamespaceMember
+  abstract declaration Suite : NamespaceMember, TypedDeclaration
   {
     | ignore-case Def
       {
@@ -17,7 +17,6 @@ namespace Tdl
           in Platform    : PlatformSymbol;
           in Product     : ProductSymbol;
           in Statements  : ImmutableArray[SuiteStatement];
-          in Type        : SuiteTypeSymbol;
           in EntityOpt   : ValueOption[EntitySymbol];
         stage 3:
           in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
@@ -102,7 +101,6 @@ namespace Tdl
           in Statements  : ImmutableArray[SuiteStatement];
           in Platform    : TypedDeclarationSymbol;
           in Product     : TypedDeclarationSymbol;
-          in Type        : SuiteTypeSymbol;
           in EntityOpt   : ValueOption[TypedDeclarationSymbol];
         stage 3          :
           in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.

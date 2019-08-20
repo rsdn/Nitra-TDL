@@ -49,12 +49,17 @@ namespace Tdl2Json
         | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
     }
+
+    private MkeDefaultValues(parameters : ImmutableArray[FormalParameterSymbol]) : Dictionary[string, object]
+    {
+      parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary()
+    }
     
     private GenerateDeploymentScript(script : Deployment.ScriptSymbol, result : Dictionary[string, QuickType.Deployment]) : void
     {
       def refDefs    = HashSet(script.Defs.Where(d => d.Expr is Expr.Reference).Select(d => (d.Expr :> Expr.Reference).Symbol.Name));
       def parameters = script.Parameters.Where(p => !(p.Type is Tdl.ProductTypeSymbol)).Select(p => (p.Name, "$(" + p.Name + ")")).ToArray();
-      def defaultes  = script.Parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary();
+      def defaultes  = MkeDefaultValues(script.Parameters);
       def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
       def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
@@ -123,13 +128,15 @@ namespace Tdl2Json
 
     private GenerateDeploymentCurrying(currying : Deployment.CurryingSymbol, result : Dictionary[string, QuickType.Deployment]) : void
     {
+      def defaultes  = MkeDefaultValues(currying.Parameters);
       def deployments = Dictionary();
       deployments.Add(currying.BaseDeployment.Name, currying.ParameterValues.ToDictionary(p => p.Symbol.Name, p => p.Expr.ToObject()));
       result.Add(currying.Name,
         Deployment() <-
         {
-            Type        = TypeEnum.Sequence;
-            Deployments = array[deployments];
+            Type          = TypeEnum.Sequence;
+            Deployments   = array[deployments];
+            DefaultValues = if (defaultes.Count == 0) null else defaultes;
         })
     }
 
