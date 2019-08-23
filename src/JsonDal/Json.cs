@@ -108,7 +108,7 @@ namespace QuickType
         public IDictionary<string, object> ScriptArgs { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public IDictionary<string, object> ScriptArgsDefaultValues { get; set; }
+        public IDictionary<string, object> DefaultValues { get; set; }
 
         [JsonProperty("ScriptPath", NullValueHandling = NullValueHandling.Ignore)]
         public string ScriptPath { get; set; }
@@ -143,9 +143,6 @@ namespace QuickType
 
         [JsonProperty("Deployments", NullValueHandling = NullValueHandling.Ignore)]
         public object[] Deployments { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public IDictionary<string, object> DefaultValues { get; set; }
     }
 
     public partial class PurpleDeployment

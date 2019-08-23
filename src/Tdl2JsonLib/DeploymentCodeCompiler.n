@@ -201,15 +201,15 @@ namespace Tdl2Json
 
       QuickType.Deployment() <-
       {
-        Type                    = QuickType.TypeEnum.Script;
-        ScriptPath              = null;
-        ScriptData              = Encoding.UTF8.GetBytes(deploymentScript);
-        ScriptDataExtension     = ".ps1";
-        ReturnValue             = if (_exitCode.HasValue)       _exitCode.Value       else null;
-        RebootExitCode          = if (_rebootExitCode.HasValue) _rebootExitCode.Value else null;
-        Timeout                 = if (_timeout.HasValue)        _timeout.Value        else null;
-        ScriptArgs              = scriptArgs;
-        ScriptArgsDefaultValues = defaults;
+        Type                = QuickType.TypeEnum.Script;
+        ScriptPath          = null;
+        ScriptData          = Encoding.UTF8.GetBytes(deploymentScript);
+        ScriptDataExtension = ".ps1";
+        ReturnValue         = if (_exitCode.HasValue)       _exitCode.Value       else null;
+        RebootExitCode      = if (_rebootExitCode.HasValue) _rebootExitCode.Value else null;
+        Timeout             = if (_timeout.HasValue)        _timeout.Value        else null;
+        ScriptArgs          = scriptArgs;
+        sDefaultValues      = defaults;
       }
     }
 
