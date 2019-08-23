@@ -65,12 +65,12 @@ namespace Tdl2Json
 
       def deploymentModel = Deployment() <- 
       {
-        Type                    = TypeEnum.Script;
-        ReturnValue             = if (script.Expected.HasValue)    script.Expected.Value  else null;
-        RebootExitCode          = if (script.ForReboot.HasValue)   script.ForReboot.Value else null;
-        Timeout                 = if (script.Timeout.HasValue)     script.Timeout.Value   else null;
-        ScriptArgs              = scriptArgs;
-        ScriptArgsDefaultValues = defaultes;
+        Type           = TypeEnum.Script;
+        ReturnValue    = if (script.Expected.HasValue)    script.Expected.Value  else null;
+        RebootExitCode = if (script.ForReboot.HasValue)   script.ForReboot.Value else null;
+        Timeout        = if (script.Timeout.HasValue)     script.Timeout.Value   else null;
+        ScriptArgs     = scriptArgs;
+        DefaultValues  = defaultes;
       };
 
       match (script.ScriptReference)
