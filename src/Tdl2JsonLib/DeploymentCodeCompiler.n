@@ -209,7 +209,7 @@ namespace Tdl2Json
         RebootExitCode      = if (_rebootExitCode.HasValue) _rebootExitCode.Value else null;
         Timeout             = if (_timeout.HasValue)        _timeout.Value        else null;
         ScriptArgs          = scriptArgs;
-        sDefaultValues      = defaults;
+        DefaultValues       = defaults;
       }
     }
 
