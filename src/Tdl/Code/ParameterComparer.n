@@ -21,13 +21,13 @@ namespace Tdl
     public Equals(x : DeclarationSymbol, y : DeclarationSymbol) : bool
     {
       | (p1 is FormalParameterSymbol, p2 is FormalParameterSymbol) =>
-        p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
+        p1.Name == p2.Name && p1.IsTypeEvaluated && p2.IsTypeEvaluated && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
         
       | (p1 is FieldSymbol, p2 is FormalParameterSymbol) =>
-        p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
+        p1.Name == p2.Name && p1.IsTypeEvaluated && p2.IsTypeEvaluated && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
           
       | (p1 is FormalParameterSymbol, p2 is FieldSymbol) =>
-        p1.Name == p2.Name && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
+        p1.Name == p2.Name && p1.IsTypeEvaluated && p2.IsTypeEvaluated && TypeUnifier.Instance.Unify(p1.Type, p2.Type)
           
       | _ => false
     }

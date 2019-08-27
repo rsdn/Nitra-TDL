@@ -3464,7 +3464,7 @@
         "VerboseExternalProcessesOutput": "$(VerboseExternalProcessesOutput)",
         "WaitForProductActivation": "$(WaitForProductActivation)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
         "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
         "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
@@ -3645,7 +3645,7 @@
         "UseCollections": "$(UseCollections)",
         "UseProxy": "$(UseProxy)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
         "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
         "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
@@ -3756,7 +3756,7 @@
         "VerboseExternalProcessesOutput": "$(VerboseExternalProcessesOutput)",
         "WaitForProductActivation": "$(WaitForProductActivation)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
         "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
         "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
@@ -3837,7 +3837,7 @@
         "Verbose": "$(Verbose)",
         "VerboseExternalProcessesOutput": "$(VerboseExternalProcessesOutput)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "BuildPath": "$(SessionWorkFolder)\\ProductBuild",
         "DataCollectorsPath": "$(SessionWorkFolder)\\Autotests",
         "TestArtefactsFolder": "$(SessionWorkFolder)\\Artefacts",
@@ -3867,7 +3867,7 @@
         "ForceDisableDriverVerifier": "$(ForceDisableDriverVerifier)",
         "TargetFolder": "$(TargetFolder)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
         "AdditionalFiles": "$(SessionWorkFolder)\\ProductBuild",
         "ForceDisableDriverVerifier": 1,
@@ -3884,7 +3884,7 @@
         "ForceDisableDriverVerifier": "$(ForceDisableDriverVerifier)",
         "TargetFolder": "$(TargetFolder)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "TraceRootOverriddenLocation": "C:\\Agent\\Artifacts",
         "AdditionalFiles": "$(SessionWorkFolder)\\BaseProductBuild",
         "ForceDisableDriverVerifier": 1,
@@ -3899,7 +3899,7 @@
         "AdditionalFiles": "$(AdditionalFiles)",
         "TargetFolder": "$(TargetFolder)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AdditionalFiles": "$(SessionWorkFolder)\\ProductBuild",
         "TargetFolder": "c:\\TfuStarter"
       },
@@ -3911,7 +3911,7 @@
       "ScriptArgs": {
         "LanguagePacksRootPath": "$(LanguagePacksRootPath)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "LanguagePacksRootPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\Windows Langpacks\\ru-RU"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\installWindowsLanguagePack.ps1",
@@ -3923,7 +3923,7 @@
       "ScriptArgs": {
         "AdditionalFiles": "$(AdditionalFiles)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AdditionalFiles": ""
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\setAutoplay.ps1"
@@ -3932,7 +3932,7 @@
       "Type": "Script",
       "ReturnValue": 42,
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\HIPS\\enableAutorun.ps1"
     },
     "Copy Comodo": {
@@ -3942,7 +3942,7 @@
         "AdditionalFiles": "$(AdditionalFiles)",
         "SetAutorun": "$(SetAutorun)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\Rivals\\Comodo",
         "SetAutorun": 0
       },
@@ -3954,7 +3954,7 @@
       "ScriptArgs": {
         "FileName": "$(FileName)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "FileName": "registyEnvironment.json"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\registryEnvironmentSave.ps1"
@@ -3963,14 +3963,14 @@
       "Type": "Script",
       "ReturnValue": 42,
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\OAS\\CopyTool.ps1"
     },
     "Turn firewall on": {
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\firewall_turn_on.ps1"
     },
     "browserUpdate_Execute": {
@@ -3980,7 +3980,7 @@
         "Browser": "$(Browser)",
         "Version": "$(Version)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Browser": "Chrome",
         "Version": "71.0.3578.802"
       },
@@ -3992,7 +3992,7 @@
       "ScriptArgs": {
         "UacAction": "$(UacAction)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "UacAction": "Disable"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\ManageUAC\\ManageUAC.ps1"
@@ -4002,7 +4002,7 @@
       "ScriptArgs": {
         "BuildPath": "$(BuildPath)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\copyOldAutotestFacade.ps1"
@@ -4013,7 +4013,7 @@
       "ScriptArgs": {
         "DistribFolder": "$(DistribFolder)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "DistribFolder": "C:\\installNewVersion"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\TfuSetAutotestOverrides.ps1"
@@ -4025,7 +4025,7 @@
         "AssemblyFolder": "$(AssemblyFolder)",
         "Command": "$(Command)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AssemblyFolder": "$(SessionWorkFolder)\\Autotests",
         "Command": "prepare_for_reboot"
       },
@@ -4040,7 +4040,7 @@
         "ClassName": "$(ClassName)",
         "MethodName": "$(MethodName)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AssemblyFolder": "$(SessionWorkFolder)\\Autotests",
         "AssemblyName": "Autotest.App2.Utilities.dll",
         "ClassName": "Autotest.Utilities.OutlookDeployManager.OutlookDeployer",
@@ -4065,7 +4065,7 @@
         "FailureFilePath": "$(FailureFilePath)",
         "SuccessFilePath": "$(SuccessFilePath)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "FailureFilePath": "C:\\install\\comodo_installation_faill.txt",
         "SuccessFilePath": "C:\\install\\comodo_installation_complete.txt"
       },
@@ -4124,7 +4124,7 @@
         "UserCountry": "$(UserCountry)",
         "UserLanguage": "$(UserLanguage)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "BuildNumber": "$BuildNumber",
         "Browser": "Chrome",
         "EnableAllForceRerun": "Off",

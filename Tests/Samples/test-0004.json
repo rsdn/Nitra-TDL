@@ -20,7 +20,7 @@
         "AutotestsPath": "$(AutotestsPath)",
         "DeploymentSequenceName": "$(DeploymentSequenceName)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AutotestsPath": "xyz",
         "DeploymentSequenceName": "abc"
       },

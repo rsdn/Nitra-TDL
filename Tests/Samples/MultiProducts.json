@@ -8,7 +8,7 @@
       "ScriptArgs": {
         "PathToCerts": "$(PathToCerts)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "PathToCerts": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs"
       },
       "ScriptPath": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs\\installCertificates.ps1"
@@ -24,7 +24,7 @@
         "UserLanguage": "$(UserLanguage)",
         "UcpInstanceType": "$(UcpInstanceType)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AutotestsPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\BinaryStorage\\Autotests\\Win\\Portal",
         "TargetFolder": "C:\\Autotests"
       },
@@ -41,7 +41,7 @@
         "UserLanguage": "$(UserLanguage)",
         "UcpInstanceType": "$(UcpInstanceType)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "AutotestsPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\BinaryStorage\\Autotests\\Win\\CIWD",
         "TargetFolder": "C:\\Autotests"
       },

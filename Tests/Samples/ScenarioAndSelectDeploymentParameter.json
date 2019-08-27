@@ -1,17 +1,17 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
     "A": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "a.ps1"
     },
     "B": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "b.ps1"
     },
     "S": {

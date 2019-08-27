@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
@@ -8,7 +8,7 @@
       "ScriptArgs": {
         "Message": "$(Message)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "#(Foo)"
       },
       "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KRDENCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
@@ -20,7 +20,7 @@
       "ScriptArgs": {
         "IsVerbose": "$(IsVerbose)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "IsVerbose": 0
       },
       "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRJc1ZlcmJvc2UNCikNCmZ1bmN0aW9uIFRkbE1ha2VMaW5lRGlyZWN0aXZlIHsgDQogICAgIiNsaW5lICQoJE15SW52b2NhdGlvbi5TY3JpcHRMaW5lTnVtYmVyICsgMSkgIiIkKCRNeUludm9jYXRpb24uU2NyaXB0TmFtZSkiIiINCn0NCg0KJF9jc2hhcnBfSXNWZXJib3NlID0gc3dpdGNoKCRJc1ZlcmJvc2UpIHsgIjAiIHsgImZhbHNlIiB9ICJmYWxzZSIgeyAiZmFsc2UiIH0gIiIgeyAiZmFsc2UiIH0gJG51bGwgeyAiZmFsc2UiIH0gZGVmYXVsdCB7ICJ0cnVlIiB9IH0NCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuQ29tcGxleE9wZXJhdGlvbj4oKTsNCmNvbW1hbmQwLklzVmVyYm9zZSA9ICRfY3NoYXJwX0lzVmVyYm9zZTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCn0NCg0KI2xpbmUgZGVmYXVsdA0KIkANCg0KJFRkbERlcGxveW1lbnROYW1lID0gQCcNCkQyDQonQA0KDQokVGRsVGVtcEZpbGUgPSBbU3lzdGVtLklPLlBhdGhdOjpHZXRUZW1wRmlsZU5hbWUoKQ0KDQpTZXQtQ29udGVudCAtUGF0aCAkVGRsVGVtcEZpbGUgLUVuY29kaW5nIFVURjggLVZhbHVlICRUZGxEZXBsb3ltZW50U291cmNlDQoNCi5cS0wuQXV0b3Rlc3RzLkRlcGxveWVyLmV4ZSAkVGRsRGVwbG95bWVudE5hbWUgJFRkbFRlbXBGaWxlDQoNCiRUZGxFeGl0Q29kZSA9ICRMYXN0RXhpdENvZGUNCg0KUmVtb3ZlLUl0ZW0gLVBhdGggJFRkbFRlbXBGaWxlDQoNCmV4aXQgJFRkbEV4aXRDb2RlDQo=",
@@ -29,7 +29,7 @@
     "D3": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "file.ps1"
     },
     "S1": {
@@ -39,7 +39,7 @@
         "Message": "$(Message)",
         "IsVerbose": "$(IsVerbose)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "#(Foo)",
         "IsVerbose": 0
       },
@@ -53,7 +53,7 @@
         "Message": "$(Message)",
         "IsVerbose": "$(IsVerbose)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "#(Foo)",
         "IsVerbose": 0
       },
@@ -89,7 +89,7 @@
         "Message": "$(Message)",
         "IsVerbose": "$(IsVerbose)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "#(Foo)",
         "IsVerbose": 0
       },
@@ -151,7 +151,7 @@
       "ScriptArgs": {
         "Message": "$(Message)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "a"
       },
       "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzENCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
@@ -162,7 +162,7 @@
       "ScriptArgs": {
         "Message": "$(Message)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "b"
       },
       "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzINCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
@@ -173,7 +173,7 @@
       "ScriptArgs": {
         "Message": "$(Message)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "a"
       },
       "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzMNCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
@@ -185,7 +185,7 @@
         "Message": "$(Message)",
         "Message_tdl0": "$(Message)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Message": "a",
         "Message_tdl0": "b"
       },

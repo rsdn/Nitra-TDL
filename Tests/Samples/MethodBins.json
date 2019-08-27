@@ -8,7 +8,7 @@
       "ScriptArgs": {
         "Version": "$(Version)"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
     }
   },

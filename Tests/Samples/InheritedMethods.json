@@ -8,7 +8,7 @@
       "ScriptArgs": {
         "PathToCerts": "$(PathToCerts)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "PathToCerts": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs"
       },
       "ScriptPath": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs\\installCertificates.ps1"

@@ -5,7 +5,7 @@
     "DeployDataCollectors": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\tis-dfs\\autotests\\Components\\UserScenarios\\Hive\\HiveDeploy\\DeployDataCollectors.ps1"
     },
     "DeployMultiProduct": {
@@ -17,7 +17,7 @@
         "DeployerFlags": "$(DeploymentConditions)",
         "UpdateSource": "$(UpdateSourceAddress)"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\DeployMultiProduct.ps1"
     },
     "ApplyDplScript": {
@@ -27,7 +27,7 @@
         "DplScript": "$(PrepareForTestScript)",
         "OverrideTestSettings": "$(OverrideTestSettingsDirectory)"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
     },
     "ApplyDplScriptKsm60": {
@@ -37,7 +37,7 @@
         "DplScript": "\\\\sdfs\\autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\KfpAutotestModeEnable.dpl",
         "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\KSM6.0"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
     },
     "ApplyDplScriptKsm65": {
@@ -47,7 +47,7 @@
         "DplScript": "\\\\sdfs\\autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\KfpAutotestModeEnable.dpl",
         "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\KSM6.5"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
     },
     "ApplyDplScriptApp2_19": {
@@ -57,7 +57,7 @@
         "DplScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
         "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\App219"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
     },
     "DeployMultiProductWithDeployerAndPreparingKsm60": {

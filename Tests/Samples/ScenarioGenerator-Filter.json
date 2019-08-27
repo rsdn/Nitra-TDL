@@ -5,7 +5,7 @@
     "MyDeployment": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "deploy.ps1"
     }
   },

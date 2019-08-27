@@ -11,7 +11,7 @@
         "Size42": "$(Product:ProductB.Size)",
         "ReleaseName": "$(Product:ProductB.BranchName)"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
     }
   },

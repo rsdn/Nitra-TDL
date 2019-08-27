@@ -13,7 +13,7 @@
         "DeployerFlags": "$(DeploymentConditions)",
         "TestSettingsDirectory": "$(InternalTestSettingsDirectory)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "DeployerTimeoutSec": 900
       },
       "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\Deploy.ps1"
@@ -21,7 +21,7 @@
     "DeployCollectors": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\DeployDataCollectors.ps1"
     },
     "DeployWithDeployer_NoReboot": {

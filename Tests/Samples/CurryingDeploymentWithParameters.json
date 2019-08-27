@@ -13,7 +13,7 @@
         "NotVisible": "$(NotVisible)",
         "Param4": "$(Param4)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Param2": 100500,
         "WithDefault": 0
       },

@@ -6,7 +6,7 @@
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "\\\\domain.com\\global\\Builds2\\Ido-Dev\\TestAgent.Python-monorep\\1.2.0.404\\drop\\Domain.Hive.TestAgent\\install_linux.sh"
     },
     "InstallProduct": {
@@ -28,7 +28,7 @@
         "E_BUILD_PATH": "$(BuildPath)\\$(BuildDir)",
         "E_PRODUCT_VERSION": "$(Version)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "DEPLOY_ROBOT": "hello_deploy.robot",
         "E_AIR_ACCESSKEY": "{AirToken}",
         "E_AIR_CLI": "air-cli",

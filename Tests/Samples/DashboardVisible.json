@@ -10,7 +10,7 @@
         "isVerbose": "$(isVerbose)",
         "NotVisible": "$(NotVisible)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "isVerbose": 0
       },
       "ScriptPath": "a.ps1"

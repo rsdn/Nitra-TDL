@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
@@ -24,7 +24,7 @@
       "ScriptArgs": {
         "Par": "$(Par)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Par": 700
       },
       "ScriptPath": "a.ps1"
@@ -34,7 +34,7 @@
       "ScriptArgs": {
         "Par": "$(Par)"
       },
-      "ScriptArgsDefaultValues": {
+      "DefaultValues": {
         "Par": 700
       },
       "ScriptPath": "b.ps1"

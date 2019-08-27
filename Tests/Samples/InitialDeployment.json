@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
@@ -11,7 +11,7 @@
       "ScriptArgs": {
         "DeploymentParameter": "$(DeploymentParameter)"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "deploy.ps1"
     },
     "Setup |||| A": {
@@ -35,19 +35,19 @@
       "ScriptArgs": {
         "FinalDeploymentParameter": "$(FinalDeploymentParameter)"
       },
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "finalize.ps1"
     },
     "A": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "A.ps1"
     },
     "B": {
       "Type": "Script",
       "ScriptArgs": {},
-      "ScriptArgsDefaultValues": {},
+      "DefaultValues": {},
       "ScriptPath": "A.ps1"
     }
   },
