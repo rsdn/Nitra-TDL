@@ -24,13 +24,14 @@ namespace Tdl2Json
     [Record]
     private class ParameterInfo
     {
-      public ScriptName   : string;
+      public Type         : TypeSymbol;
       public DefaultValue : object;
     }
 
     private static DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
 
     private         _symbols        : List[Deployment.CodeSymbol] = List();
+    private         _parameters     : Dictionary[string, ParameterInfo] = Dictionary(StringComparer.OrdinalIgnoreCase);
     private         _exitCode       : ParsedValue[int];
     private mutable _rebootExitCode : ParsedValue[int];
     private mutable _timeout        : ParsedValue[string];
@@ -47,7 +48,7 @@ namespace Tdl2Json
       _rebootExitCode = symbol.ForReboot;
       _timeout        = symbol.Timeout;
       _timeoutValue   = ParseTimeout(_timeout);
-      _symbols.Add(symbol);
+      AddSymbol(symbol);
     }
 
     public TryAdd(symbol : Deployment.CodeSymbol) : bool
@@ -62,7 +63,18 @@ namespace Tdl2Json
       when (!_timeoutValue.HasValue || !otherTimeout.HasValue)
         return false;
 
-      _symbols.Add(symbol);
+      foreach (parameter in symbol.Parameters)
+      {
+        mutable parameterInfo;
+        when (_parameters.TryGetValue(parameter.Name, out parameterInfo))
+        {
+          def defaultValue = Deployments.GetDefaultValue(parameter);
+          when (!Equals(parameterInfo.DefaultValue, defaultValue))
+            return false;
+        }
+      }
+
+      AddSymbol(symbol);
 
       Name = Name + Separators.DeploymentCodeSeparator + symbol.Name;
 
@@ -87,64 +99,38 @@ namespace Tdl2Json
       def deploymentCode       = StringBuilder();
       def deploymentPrologue   = StringBuilder().AppendLine(deploymentScriptHeader);
 
-      def parametersByName   = Dictionary(StringComparer.OrdinalIgnoreCase);
-      def parametersBySymbol = Dictionary();
+      def getParameterReference(p) { "$_csharp_" + p }
 
-      def getParameterReference(p) { "$_csharp_" + parametersBySymbol[p].ScriptName }
+      foreach (pair in _parameters)
+      {
+        def name          = pair.Key;
+        def parameterInfo = pair.Value;
+
+        scriptArgs.Add(name, "$(" + name + ")");
+
+        when (parameterInfo.DefaultValue != null)
+          defaults.Add(name, parameterInfo.DefaultValue);
+
+        when (scriptArgs.Count > 1)
+          _ = deploymentParameters.AppendLine(",");
+
+        def parameterName = "$" + name;
+        def parameterReference = getParameterReference(name);
+
+        def (type, value) =
+          match (parameterInfo.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
+          {
+            | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
+            | "System.Boolean" | "bool"   => ("string", $<#switch($(parameterName)) { "0" { "false" } "false" { "false" } "" { "false" } $$null { "false" } default { "true" } }#>)
+            | type                        => (type,     $<#$(parameterName).ToString("", [System.Globalization.CultureInfo]::InvariantCulture)#>)
+          };
+
+        _ = deploymentParameters.Append($"  [$(type)] $(parameterName)");
+        _ = deploymentPrologue.AppendLine($<#$(parameterReference) = $(value)#>);
+      }
 
       foreach (symbol in _symbols)
       {
-        foreach (parameter in symbol.Parameters)
-        {
-          def defaultValue = Deployments.GetDefaultValue(parameter);
-
-          mutable parameterInfo;
-          mutable scriptName = parameter.Name;
-          when (parametersByName.TryGetValue(scriptName, out parameterInfo))
-          {
-            when (Equals(parameterInfo.DefaultValue, defaultValue))
-            {
-              parametersBySymbol.Add(parameter, parameterInfo);
-              continue;
-            }
-
-            def generateUniqueName(index)
-            {
-              def name = parameter.Name + "_tdl" + index.ToString();
-              if (parametersByName.ContainsKey(name))
-                generateUniqueName(index + 1)
-              else
-                name
-            }
-            scriptName = generateUniqueName(0);
-          }
-
-          parameterInfo = ParameterInfo(scriptName, defaultValue);
-          parametersBySymbol.Add(parameter, parameterInfo);
-          parametersByName.Add(scriptName, parameterInfo);
-          scriptArgs.Add(scriptName, "$(" + parameter.Name + ")");
-
-          when (defaultValue != null)
-            defaults.Add(scriptName, defaultValue);
-
-          when (scriptArgs.Count > 1)
-            _ = deploymentParameters.AppendLine(",");
-
-          def parameterName = "$" + scriptName;
-          def parameterReference = getParameterReference(parameter);
-
-          def (type, value) =
-            match (parameter.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
-            {
-              | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
-              | "System.Boolean" | "bool"   => ("string", $<#switch($(parameterName)) { "0" { "false" } "false" { "false" } "" { "false" } $$null { "false" } default { "true" } }#>)
-              | type                        => (type,     $<#$(parameterName).ToString("", [System.Globalization.CultureInfo]::InvariantCulture)#>)
-            };
-
-          _ = deploymentParameters.Append($"  [$(type)] $(parameterName)");
-          _ = deploymentPrologue.AppendLine($<#$(parameterReference) = $(value)#>);
-        }
-
         _ = deploymentCode.AppendLine("{");
         foreach (command in (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands)
         {
@@ -167,7 +153,7 @@ namespace Tdl2Json
                 | DefExpr.Reference as x =>
                   match (x.Reference.Ref.Symbol)
                   {
-                    | FormalParameterSymbol as p       => getParameterReference(p)
+                    | FormalParameterSymbol as p       => getParameterReference(p.Name)
                     | CommmandCallOutputArgumentSymbol => x.ToString()
                     | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
                   }
@@ -210,6 +196,17 @@ namespace Tdl2Json
         Timeout             = if (_timeout.HasValue)        _timeout.Value        else null;
         ScriptArgs          = scriptArgs;
         DefaultValues       = defaults;
+      }
+    }
+
+    private AddSymbol(symbol : Deployment.CodeSymbol) : void
+    {
+      _symbols.Add(symbol);
+
+      foreach (parameter when !_parameters.ContainsKey(parameter.Name) in symbol.Parameters)
+      {
+        def parameterInfo = ParameterInfo(parameter.Type, Deployments.GetDefaultValue(parameter));
+        _parameters.Add(parameter.Name, parameterInfo);
       }
     }
 
