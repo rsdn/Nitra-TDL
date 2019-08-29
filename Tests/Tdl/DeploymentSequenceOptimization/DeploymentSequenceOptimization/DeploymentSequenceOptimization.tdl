@@ -59,4 +59,9 @@ deployment K3(string Message = "a")
   KL.Autotests.Commands.LogMessage(Message);
 }
 
-deployment KK = K1, K2, K3;
+deployment K4(string Message = "a")
+{
+  KL.Autotests.Commands.LogMessage(Message);
+}
+
+deployment KK = K1, K2, K3, K4;
