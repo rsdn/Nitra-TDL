@@ -68,7 +68,7 @@ namespace Tdl2Json
         mutable parameterInfo;
         when (_parameters.TryGetValue(parameter.Name, out parameterInfo))
         {
-          def defaultValue = Deployments.GetDefaultValue(parameter);
+          def defaultValue = DeploymentCompiler.GetDefaultValue(parameter);
           when (!Equals(parameterInfo.DefaultValue, defaultValue))
             return false;
         }
@@ -205,7 +205,7 @@ namespace Tdl2Json
 
       foreach (parameter when !_parameters.ContainsKey(parameter.Name) in symbol.Parameters)
       {
-        def parameterInfo = ParameterInfo(parameter.Type, Deployments.GetDefaultValue(parameter));
+        def parameterInfo = ParameterInfo(parameter.Type, DeploymentCompiler.GetDefaultValue(parameter));
         _parameters.Add(parameter.Name, parameterInfo);
       }
     }
