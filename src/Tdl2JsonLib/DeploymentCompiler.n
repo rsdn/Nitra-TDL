@@ -61,12 +61,12 @@ namespace Tdl2Json
     [Memoize]
     public Compile(seq : list[DeploymentSymbol]) : array[QuickType.TestGroupDeployment]
     {
-      CompileSequence(seq)
+      CompileSequence(seq, Dictionary(StringComparer.OrdinalIgnoreCase))
     }
 
     public GetEmptyDeployment() : QuickType.TestGroupDeployment
     {
-      when (_emptyDeployment : object == null)
+      when (_emptyDeployment == null)
       {
         def name = ProjectSupport.EmptyDeploymentName;
         _deployments.Add(name, QuickType.Deployment() <- { Type = QuickType.TypeEnum.Empty });
@@ -75,7 +75,7 @@ namespace Tdl2Json
       _emptyDeployment
     }
 
-    private CompileSequence(deployments : Seq[DeploymentSymbol]) : array[QuickType.TestGroupDeployment]
+    private CompileSequence(deployments : Seq[DeploymentSymbol], rootValues : Dictionary[string, object]) : array[QuickType.TestGroupDeployment]
     {
       def walk(d : DeploymentSymbol, values : Dictionary[string, object], sequence : List[SequenceItem])
       {
@@ -98,9 +98,21 @@ namespace Tdl2Json
               walk(d, values, sequence);
 
           | Deployment.CurryingSymbol as s =>
+            foreach (p in s.Parameters)
+            {
+              def defaultValue = GetDefaultValue(p);
+              when (defaultValue != null && !values.ContainsKey(p.Name))
+              {
+                unless (_deployments.ContainsKey(s.Name))
+                  CompileCurring(s);
+                sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values)));
+                return;
+              }
+            }
+
             def innerValues = Dictionary(values, values.Comparer);
             foreach (x in s.ParameterValues)
-              innerValues[x.Symbol.Name] = x.Expr.ToObject();
+              innerValues[x.Symbol.Name] = x.Expr.ToObject(values);
             walk(s.BaseDeployment, innerValues, sequence);
 
           | Deployment.SelectSymbol   as s =>
@@ -136,12 +148,11 @@ namespace Tdl2Json
               CompileSelect(s);
             sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values)))
 
-          | _ => assert(false)
+          | d => assert(false, $"Unknown deployment type $(d.GetType())")
         }
       }
 
-      def sequence   = List();
-      def rootValues = Dictionary(StringComparer.OrdinalIgnoreCase);
+      def sequence = List();
       foreach (d in deployments)
         walk(d, rootValues, sequence);
 
@@ -150,9 +161,22 @@ namespace Tdl2Json
 
       def finalizeCompiler()
       {
-        def name       = compiler.Name;
         def deployment = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
-        _deployments.Add(name, deployment);
+        def saveDeployment(tempName, index)
+        {
+          mutable existingDeployment;
+          if (_deployments.TryGetValue(tempName, out existingDeployment))
+            if (ArraysEquals(existingDeployment.ScriptData, deployment.ScriptData))
+              tempName
+            else
+              saveDeployment(compiler.Name + index.ToString(), index + 1)
+          else
+          {
+            _deployments.Add(tempName, deployment);
+            tempName
+          }
+        }
+        def name = saveDeployment(compiler.Name, 0);
         result.Add(MakeDeploymentReference(name, null));
         compiler = null;
       }
@@ -243,7 +267,7 @@ namespace Tdl2Json
       for (mutable i; i < deployments.Length; ++i)
       {
         def selector = string.Join(separator, cases[i].Select(v => v ?? JsonGenerator.ParameterDefaultValue));
-        def sequence = CompileSequence(deployments[i]);
+        def sequence = CompileSequence(deployments[i], Dictionary(StringComparer.OrdinalIgnoreCase));
         def handler  =
           if (sequence.Length == 1)
             sequence[0]
@@ -269,6 +293,21 @@ namespace Tdl2Json
         })
     }
 
+    private CompileCurring(currying : Deployment.CurryingSymbol) : void
+    {
+      def defaults = MakeDefaultValues(currying.Parameters);
+      def values   = Dictionary(StringComparer.OrdinalIgnoreCase);
+      foreach (p in currying.ParameterValues)
+        values.Add(p.Symbol.Name, p.Expr.ToObject());
+      _deployments.Add(currying.Name,
+        QuickType.Deployment() <-
+        {
+            Type          = QuickType.TypeEnum.Sequence;
+            Deployments   = CompileSequence(array[currying.BaseDeployment], values);
+            DefaultValues = if (defaults.Count == 0) null else defaults;
+        })
+    }
+
     private static MakeDefaultValues(parameters : ImmutableArray[FormalParameterSymbol]) : Dictionary[string, object]
     {
       parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary()
@@ -281,6 +320,11 @@ namespace Tdl2Json
         DeploymentName = name;
         Parameters = if (values != null && values.Count > 0) values else null
       }
+    }
+
+    private static ArraysEquals(a : array[byte], b : array[byte]) : bool
+    {
+      System.Collections.StructuralComparisons.StructuralEqualityComparer.Equals(a, b)
     }
   }
 }

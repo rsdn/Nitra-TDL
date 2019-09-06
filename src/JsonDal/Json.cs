@@ -345,7 +345,7 @@ namespace QuickType
         public static implicit operator ProductValue(string[] StringArray) => new ProductValue { StringArray = StringArray };
     }
 
-    public partial struct TestGroupDeployment
+    public partial class TestGroupDeployment
     {
         public Dictionary<string, object> Parameters;
         public string DeploymentName;
@@ -602,7 +602,7 @@ namespace QuickType
 
     internal class TestGroupDeploymentConverter : JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(TestGroupDeployment) || t == typeof(TestGroupDeployment?);
+        public override bool CanConvert(Type t) => t == typeof(TestGroupDeployment);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {

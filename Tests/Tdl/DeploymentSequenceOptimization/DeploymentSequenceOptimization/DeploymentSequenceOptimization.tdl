@@ -65,3 +65,30 @@ deployment K4(string Message = "a")
 }
 
 deployment KK = K1, K2, K3, K4;
+
+platform win7-x86;
+
+product type ProductType
+{
+  string Name;
+  string Version;
+  string BranchName;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0.0.0";
+  BranchName = "master";
+}
+
+scenario Scenario = 
+  from d in [S1, S2, S3, S4, SS1, SS2, SS3, SS4, KK]
+  select
+  {
+    deployment d;
+    environments (win7-x86, Product);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
+    Timeout = "00:30";
+  };

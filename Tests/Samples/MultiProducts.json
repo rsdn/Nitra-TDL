@@ -46,14 +46,6 @@
         "TargetFolder": "C:\\Autotests"
       },
       "ScriptPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\Hive\\Deployments\\Portal\\Scripts\\GetPortalAutotestsByPath.ps1"
-    },
-    "Deployment_MyK_CIWD": {
-      "Type": "Sequence",
-      "Deployments": [
-        "Deploy_MyK_CIWD_Certificates",
-        "Deploy_MyK_Autotests",
-        "Deploy_CIWD_Autotests"
-      ]
     }
   },
   "Platforms": {
@@ -116,7 +108,9 @@
     "debug_Run_tests_for_two_product": {
       "Area": "Program",
       "Deployments": [
-        "Deployment_MyK_CIWD"
+        "Deploy_MyK_CIWD_Certificates",
+        "Deploy_MyK_Autotests",
+        "Deploy_CIWD_Autotests"
       ],
       "Environments": [
         {

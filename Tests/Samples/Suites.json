@@ -17,53 +17,6 @@
         "IntValue": 7
       },
       "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
-    },
-    "Execute_Deploy": {
-      "Type": "Script",
-      "ReturnValue": 42,
-      "ScriptArgs": {
-        "ProductDistributivePath": "$(ProductDistributivePath)",
-        "ProductModulesPath": "$(ProductModulesPath)",
-        "BaseDistribTestModules": "$(BaseDistribTestModules)",
-        "AutotestsPath": "$(AutotestsPath)",
-        "DeploymentSequenceName": "$(DeploymentSequenceName)"
-      },
-      "DefaultValues": {
-        "AutotestsPath": "xyz",
-        "DeploymentSequenceName": "abc"
-      },
-      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\CSharp_Deployer\\executeDeploy.ps1",
-      "Timeout": "01:00:00"
-    },
-    "Deploy_Gated": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
-      ]
-    },
-    "Deploy_Middle": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ]
-    },
-    "Deploy_Finish": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Deploy_Middle": {
-            "AutotestsPath": "finish"
-          }
-        }
-      ]
     }
   },
   "Platforms": {
