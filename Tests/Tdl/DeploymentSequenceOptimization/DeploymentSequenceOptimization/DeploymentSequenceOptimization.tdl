@@ -1,70 +1,25 @@
 external { string Foo; }
 
-deployment D1(string Message = Foo)
+deployment Basic(string Message = Foo, bool Flag, int Value)
 {
   KL.Autotests.Commands.LogMessage(Message);
-  expected 0;
+  KL.Autotests.Commands.ComplexOperation(IsVerbose: Flag);
 }
-
-deployment D2(bool IsVerbose = false)
+deployment Curry1 = Basic(Message: "111");
+deployment Curry2 = Basic(Message: "---");
+deployment Curry3 = Basic(Message: "---");
+deployment Curry4(string AnotherMessage) = Basic(Message: AnotherMessage);
+deployment CurrySeq = Curry1, Curry2, Curry3, Curry4, Basic;
+select deployment SelectorSeq(V1, V2)
 {
-  KL.Autotests.Commands.ComplexOperation(IsVerbose);
-  expected 0;
+  | "XXX", "YYY" => Curry1, Curry2, Curry3, Curry4, Basic
 }
+deployment CurrySelector = SelectorSeq(V2: "YYY");
 
-deployment D3()
-  script "file.ps1"
-{}
-
-deployment S1 = D1, D2;
-
-deployment S2 = D1, D2, D3;
-
-deployment S3 = D3, D1, D2;
-
-deployment S4 = D1, D3, D2;
-
-select deployment SS1(F)
-{
-  | "X" => D1, D2
-}
-
-select deployment SS2(F)
-{
-  | "X" => D1, D2, D3
-}
-
-select deployment SS3(F)
-{
-  | "X" => D3, D1, D2
-}
-
-select deployment SS4(F)
-{
-  | "X" => D1, D3, D2
-}
-
-deployment K1(string Message = "a")
-{
-  KL.Autotests.Commands.LogMessage(Message);
-}
-
-deployment K2(string Message = "b")
-{
-  KL.Autotests.Commands.LogMessage(Message);
-}
-
-deployment K3(string Message = "a")
-{
-  KL.Autotests.Commands.LogMessage(Message);
-}
-
-deployment K4(string Message = "a")
-{
-  KL.Autotests.Commands.LogMessage(Message);
-}
-
-deployment KK = K1, K2, K3, K4;
+// same deployment sequence for CurryFinal1 and CurryFinal2
+// Basic("111"), Basic("---"), Basic("---"), Basic("333"), Basic(Foo)
+deployment CurryFinal1 = CurrySelector(V1: "XXX", AnotherMessage: "333", Flag: false, Value: 0);
+deployment CurryFinal2 = CurrySeq(AnotherMessage: "333", Flag: false, Value: 0);
 
 platform win7-x86;
 
@@ -82,13 +37,30 @@ product Product : ProductType
   BranchName = "master";
 }
 
-scenario Scenario = 
-  from d in [S1, S2, S3, S4, SS1, SS2, SS3, SS4, KK]
-  select
-  {
-    deployment d;
-    environments (win7-x86, Product);
-    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
-    UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
-    Timeout = "00:30";
-  };
+scenario Scenario1
+{
+  deployment CurryFinal1;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
+  Timeout = "00:30";
+}
+
+
+scenario Scenario2
+{
+  deployment CurryFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8288";
+  Timeout = "00:30";
+}
+
+scenario Scenarios = Scenario1, Scenario2;
+
+suite Suite
+{
+  platform win7-x86;
+  product Product;
+  Scenarios();
+}

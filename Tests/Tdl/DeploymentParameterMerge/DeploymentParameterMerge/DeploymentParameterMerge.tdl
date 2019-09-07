@@ -27,3 +27,10 @@ scenario Scenario
   UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
   Timeout = "00:30";
 }
+
+suite Suite
+{
+  platform win7-x86;
+  product Product;
+  Scenario();
+}

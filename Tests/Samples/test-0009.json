@@ -5,13 +5,6 @@
     "UpdateSource": ""
   },
   "Deployments": {
-    "InstallTestAgent": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\domain.com\\global\\Builds2\\Ido-Dev\\TestAgent.Python-monorep\\1.2.0.404\\drop\\Domain.Hive.TestAgent\\install_linux.sh"
-    },
     "InstallProduct": {
       "Type": "Script",
       "ReturnValue": 0,
@@ -43,12 +36,12 @@
       },
       "ScriptPath": "$(BuildPath)\\$(BuildDir)\\$(ProductInstall)"
     },
-    "LinuxDeploy": {
-      "Type": "Sequence",
-      "Deployments": [
-        "InstallTestAgent",
-        "InstallProduct"
-      ]
+    "InstallTestAgent": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "\\\\domain.com\\global\\Builds2\\Ido-Dev\\TestAgent.Python-monorep\\1.2.0.404\\drop\\Domain.Hive.TestAgent\\install_linux.sh"
     }
   },
   "Platforms": {
@@ -108,7 +101,8 @@
   "TestScenarios": {
     "FirstTestFile": {
       "Deployments": [
-        "LinuxDeploy"
+        "InstallTestAgent",
+        "InstallProduct"
       ],
       "Environments": [
         {
@@ -131,7 +125,8 @@
     },
     "SecondTestFile": {
       "Deployments": [
-        "LinuxDeploy"
+        "InstallTestAgent",
+        "InstallProduct"
       ],
       "Environments": [
         {

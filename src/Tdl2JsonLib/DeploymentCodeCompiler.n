@@ -39,9 +39,9 @@ namespace Tdl2Json
 
     private static DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
 
-    private         _symbols          : List[Deployment.CodeSymbol]                            = List();
-    private         _freeParameters   : Dictionary[string, FreeParameterInfo]                  = Dictionary(StringComparer.OrdinalIgnoreCase);
-    private         _closedParameters : Dictionary[FormalParameterSymbol, ClosedParameterInfo] = Dictionary();
+    private         _symbols          : List[Deployment.CodeSymbol]                                  = List();
+    private         _freeParameters   : Dictionary[string, FreeParameterInfo]                        = Dictionary(StringComparer.OrdinalIgnoreCase);
+    private         _closedParameters : Dictionary[FormalParameterSymbol * int, ClosedParameterInfo] = Dictionary();
     private         _exitCode         : ParsedValue[int];
     private mutable _rebootExitCode   : ParsedValue[int];
     private mutable _timeout          : ParsedValue[string];
@@ -152,7 +152,7 @@ namespace Tdl2Json
         {
           def makeName()
           {
-            def name = pair.Key.Name + nameCounter.ToString();
+            def name = pair.Key[0].Name + nameCounter.ToString();
             ++nameCounter;
             if (_freeParameters.ContainsKey(name))
               makeName()
@@ -166,7 +166,7 @@ namespace Tdl2Json
         }
       }
 
-      foreach (symbol in _symbols)
+      foreach (symbol in _symbols with symbolIndex)
       {
         _ = deploymentCode.AppendLine("{");
         foreach (command in (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands)
@@ -191,8 +191,9 @@ namespace Tdl2Json
                   match (x.Reference.Ref.Symbol)
                   {
                     | FormalParameterSymbol as p       =>
+                      def key = (p, symbolIndex);
                       mutable parameterInfo;
-                      getParameterReference(if (_closedParameters.TryGetValue(p, out parameterInfo)) parameterInfo.Name else p.Name);
+                      getParameterReference(if (_closedParameters.TryGetValue(key, out parameterInfo)) parameterInfo.Name else p.Name);
 
                     | CommmandCallOutputArgumentSymbol => x.ToString()
                     | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
@@ -241,6 +242,7 @@ namespace Tdl2Json
 
     private AddSymbol(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object]) : void
     {
+      def symbolIndex = _symbols.Count;
       _symbols.Add(symbol);
 
       foreach (parameter in symbol.Parameters)
@@ -248,9 +250,10 @@ namespace Tdl2Json
         mutable value;
         if (values.TryGetValue(parameter.Name, out value))
         {
+          def key = (parameter, symbolIndex);
           def parameterInfo = _closedParameters.Values.FirstOrDefault(p => Equals(p.Value, value) && TdlTypeUnifier.Instance.TryUnify(p.Type, parameter.Type))
             ?? ClosedParameterInfo(parameter.Type, value);
-          _closedParameters.Add(parameter, parameterInfo);
+          _closedParameters.Add(key, parameterInfo);
         }
         else unless (_freeParameters.ContainsKey(parameter.Name))
         {
