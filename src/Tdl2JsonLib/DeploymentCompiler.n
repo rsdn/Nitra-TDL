@@ -166,7 +166,8 @@ namespace Tdl2Json
         {
           mutable existingDeployment;
           if (_deployments.TryGetValue(tempName, out existingDeployment))
-            if (ArraysEquals(existingDeployment.ScriptData, deployment.ScriptData))
+            if (DictionaryEquals(existingDeployment.ScriptArgs,    deployment.ScriptArgs) &&
+                DictionaryEquals(existingDeployment.DefaultValues, deployment.DefaultValues))
               tempName
             else
               saveDeployment(compiler.Name + index.ToString(), index + 1)
@@ -322,9 +323,17 @@ namespace Tdl2Json
       }
     }
 
-    private static ArraysEquals(a : array[byte], b : array[byte]) : bool
+    private static DictionaryEquals(a : IDictionary[string, object], b : IDictionary[string, object]) : bool
     {
-      System.Collections.StructuralComparisons.StructuralEqualityComparer.Equals(a, b)
+      when (a.Count != b.Count)
+        return false;
+
+      mutable otherValue;
+      foreach (pair in a)
+        when (!b.TryGetValue(pair.Key, out otherValue) || !Equals(pair.Value, otherValue))
+          return false;
+
+      true
     }
   }
 }
