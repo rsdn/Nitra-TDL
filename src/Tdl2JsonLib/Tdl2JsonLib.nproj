@@ -128,7 +128,9 @@
     <Compile Include="ConfigurationException.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Deployments.n" />
+    <Compile Include="DeploymentCompiler.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ExceptionHelper.n">
       <SubType>Code</SubType>
     </Compile>

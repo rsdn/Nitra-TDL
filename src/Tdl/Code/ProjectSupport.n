@@ -26,6 +26,7 @@ namespace Tdl
 {
   public partial class ProjectSupport : IProjectSupport, IDisposable
   {
+    public static EmptyDeploymentName      = "Empty";
     static NoLocation : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     static NoFile     : ProjectSystem.File = SourceSnapshot.Default.File;
     static NoSpan     : NSpan              = NSpan(0);
@@ -176,7 +177,7 @@ namespace Tdl
       def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, entityFieldsScope, requiredScenarioParameters, externalSymbol, TestMode, baseProductType);
       context.TdlProjectData         = data;
 
-      def emptyDeployment = ExternalDeclaration.[Tdl.Deployment.EmptySymbol](Location.Default, "Empty", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def emptyDeployment = ExternalDeclaration.[Tdl.Deployment.EmptySymbol](Location.Default, EmptyDeploymentName, ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       // TODO: эти свойства должны вычисляться в EvalProperties
       emptyDeployment.Type                     = deploymentType;
       emptyDeployment.Scope                    = EmptyScope.Instance;

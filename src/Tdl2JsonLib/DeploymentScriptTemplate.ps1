@@ -1,20 +1,24 @@
 ﻿param(
 {{Parameters}}
 )
+
+$TdlDeploymentName = @'
+{{Name}}
+'@
+
 function TdlMakeLineDirective { 
     "#line $($MyInvocation.ScriptLineNumber + 1) ""$($MyInvocation.ScriptName)"""
 }
+
 {{Prologue}}
+
+Write-Output $TdlDeploymentName
 
 $TdlDeploymentSource = @"
 $(TdlMakeLineDirective)
 {{Source}}
 #line default
 "@
-
-$TdlDeploymentName = @'
-{{Name}}
-'@
 
 $TdlTempFile = [System.IO.Path]::GetTempFileName()
 

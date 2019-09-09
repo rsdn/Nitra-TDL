@@ -14,7 +14,7 @@ namespace Tdl2Json
 {
     module Expressions
     {
-        public ToObject(this expression : Tdl.Expr) : object
+        public ToObject(this expression : Tdl.Expr, values : IReadOnlyDictionary[string, object] = null) : object
         {
           def loop(expression : Tdl.Expr) : object
           {
@@ -30,11 +30,13 @@ namespace Tdl2Json
             | List         as xs => def elems = xs.Elems.Select(loop);  $<#[..$elems]#>
             | _ => assert(false);
           }
-          
+
+          mutable referenceValue;
           match (expression)
           {
             | Reference(Symbol=sym) when sym.Owner?.Owner is ExternalSymbol
             | MemberAccess(Expr=Expr.Reference(Symbol=ExternalSymbol), Symbol=sym) => "#(" + sym.Name + ")"
+            | Reference(Symbol=sym) when values != null && values.TryGetValue(sym.Name, out referenceValue) => referenceValue
             | Reference
             | MemberAccess => "$(" + loop(expression) + ")"
             | _            => loop(expression)

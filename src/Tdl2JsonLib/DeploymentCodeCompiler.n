@@ -22,36 +22,46 @@ namespace Tdl2Json
   internal class DeploymentCodeCompiler
   {
     [Record]
-    private class ParameterInfo
+    private class FreeParameterInfo
     {
       public Type         : TypeSymbol;
       public DefaultValue : object;
     }
 
+    [Record]
+    private class ClosedParameterInfo
+    {
+      [RecordIgnore]
+      public mutable Name  : string;
+      public         Type  : TypeSymbol;
+      public         Value : object;
+    }
+
     private static DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
 
-    private         _symbols        : List[Deployment.CodeSymbol] = List();
-    private         _parameters     : Dictionary[string, ParameterInfo] = Dictionary(StringComparer.OrdinalIgnoreCase);
-    private         _exitCode       : ParsedValue[int];
-    private mutable _rebootExitCode : ParsedValue[int];
-    private mutable _timeout        : ParsedValue[string];
-    private mutable _timeoutValue   : TimeSpan?; // null means invalid text in _timeout
+    private         _symbols          : List[Deployment.CodeSymbol]                                  = List();
+    private         _freeParameters   : Dictionary[string, FreeParameterInfo]                        = Dictionary(StringComparer.OrdinalIgnoreCase);
+    private         _closedParameters : Dictionary[FormalParameterSymbol * int, ClosedParameterInfo] = Dictionary();
+    private         _exitCode         : ParsedValue[int];
+    private mutable _rebootExitCode   : ParsedValue[int];
+    private mutable _timeout          : ParsedValue[string];
+    private mutable _timeoutValue     : TimeSpan?; // null means invalid text in _timeout
 
     public Name : string { get; private set; }
 
     public Count : int { get { _symbols.Count } }
 
-    public this(symbol : Deployment.CodeSymbol)
+    public this(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object])
     {
       Name            = symbol.Name;
       _exitCode       = symbol.Expected;
       _rebootExitCode = symbol.ForReboot;
       _timeout        = symbol.Timeout;
       _timeoutValue   = ParseTimeout(_timeout);
-      AddSymbol(symbol);
+      AddSymbol(symbol, values);
     }
 
-    public TryAdd(symbol : Deployment.CodeSymbol) : bool
+    public TryAdd(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object]) : bool
     {
       when (_rebootExitCode.HasValue)
         return false;
@@ -63,18 +73,18 @@ namespace Tdl2Json
       when (!_timeoutValue.HasValue || !otherTimeout.HasValue)
         return false;
 
-      foreach (parameter in symbol.Parameters)
+      foreach (parameter when !values.ContainsKey(parameter.Name) in symbol.Parameters)
       {
         mutable parameterInfo;
-        when (_parameters.TryGetValue(parameter.Name, out parameterInfo))
+        when (_freeParameters.TryGetValue(parameter.Name, out parameterInfo))
         {
-          def defaultValue = Deployments.GetDefaultValue(parameter);
+          def defaultValue = DeploymentCompiler.GetDefaultValue(parameter);
           when (!Equals(parameterInfo.DefaultValue, defaultValue))
             return false;
         }
       }
 
-      AddSymbol(symbol);
+      AddSymbol(symbol, values);
 
       Name = Name + Separators.DeploymentCodeSeparator + symbol.Name;
 
@@ -90,10 +100,11 @@ namespace Tdl2Json
       true
     }
 
-    public Compile(deploymentScriptHeader : string, deploymentToolPath : string, customName : string = null) : QuickType.Deployment
+    public Compile(deploymentScriptHeader : string, deploymentToolPath : string) : QuickType.Deployment
     {
-      def scriptArgs = Dictionary();
-      def defaults   = Dictionary();
+      def scriptArgs = SortedDictionary();
+      def defaults   = SortedDictionary();
+      defaults.Add(" TDL Name ", Name);
 
       def deploymentParameters = StringBuilder();
       def deploymentCode       = StringBuilder();
@@ -101,16 +112,8 @@ namespace Tdl2Json
 
       def getParameterReference(p) { "$_csharp_" + p }
 
-      foreach (pair in _parameters)
+      def declareScriptParameter(name : string, type : TypeSymbol)
       {
-        def name          = pair.Key;
-        def parameterInfo = pair.Value;
-
-        scriptArgs.Add(name, "$(" + name + ")");
-
-        when (parameterInfo.DefaultValue != null)
-          defaults.Add(name, parameterInfo.DefaultValue);
-
         when (scriptArgs.Count > 1)
           _ = deploymentParameters.AppendLine(",");
 
@@ -118,7 +121,7 @@ namespace Tdl2Json
         def parameterReference = getParameterReference(name);
 
         def (type, value) =
-          match (parameterInfo.Type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
+          match (type.FullName) // FIXMY: Какой трэш! Почему типы то не использовал?
           {
             | "System.String"  | "string" => ("string", $<#('@"' + $(parameterName).Replace('"', '""') + '"')#>)
             | "System.Boolean" | "bool"   => ("string", $<#switch($(parameterName)) { "0" { "false" } "false" { "false" } "" { "false" } $$null { "false" } default { "true" } }#>)
@@ -129,9 +132,44 @@ namespace Tdl2Json
         _ = deploymentPrologue.AppendLine($<#$(parameterReference) = $(value)#>);
       }
 
-      foreach (symbol in _symbols)
+      foreach (pair in _freeParameters)
       {
-        _ = deploymentCode.AppendLine("{");
+        def name          = pair.Key;
+        def parameterInfo = pair.Value;
+
+        scriptArgs.Add(name, "$(" + name + ")");
+
+        when (parameterInfo.DefaultValue != null)
+          defaults.Add(name, parameterInfo.DefaultValue);
+
+        declareScriptParameter(name, parameterInfo.Type);
+      }
+
+      mutable nameCounter : int;
+      foreach (pair in _closedParameters)
+      {
+        def parameterInfo = pair.Value;
+        when (string.IsNullOrEmpty(parameterInfo.Name))
+        {
+          def makeName()
+          {
+            def name = pair.Key[0].Name + nameCounter.ToString();
+            ++nameCounter;
+            if (_freeParameters.ContainsKey(name))
+              makeName()
+            else
+              parameterInfo.Name = name
+          }
+          makeName();
+
+          scriptArgs.Add(parameterInfo.Name, parameterInfo.Value);
+          declareScriptParameter(parameterInfo.Name, parameterInfo.Type);
+        }
+      }
+
+      foreach (symbol in _symbols with symbolIndex)
+      {
+        _ = deploymentCode.Append("{ // ").AppendLine(symbol.Name);
         foreach (command in (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands)
         {
           def commandVariable = "command" + command.StepNumberIn;
@@ -153,7 +191,11 @@ namespace Tdl2Json
                 | DefExpr.Reference as x =>
                   match (x.Reference.Ref.Symbol)
                   {
-                    | FormalParameterSymbol as p       => getParameterReference(p.Name)
+                    | FormalParameterSymbol as p       =>
+                      def key = (p, symbolIndex);
+                      mutable parameterInfo;
+                      getParameterReference(if (_closedParameters.TryGetValue(key, out parameterInfo)) parameterInfo.Name else p.Name);
+
                     | CommmandCallOutputArgumentSymbol => x.ToString()
                     | x => throw NotSupportedException($"Reference to '$(x)' is not supported in deployment code.")
                   }
@@ -180,7 +222,7 @@ namespace Tdl2Json
       def deploymentScript = StringBuilder(DeploymentScriptTemplate)
         .Replace("{{Parameters}}", deploymentParameters.ToString())
         .Replace("{{Prologue}}",   deploymentPrologue.ToString())
-        .Replace("{{Name}}",       customName ?? Name)
+        .Replace("{{Name}}",       Name)
         .Replace("{{Source}}",     deploymentCode.ToString())
         .Replace("{{Tool}}",       deploymentToolPath)
         .ToString();
@@ -199,14 +241,26 @@ namespace Tdl2Json
       }
     }
 
-    private AddSymbol(symbol : Deployment.CodeSymbol) : void
+    private AddSymbol(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object]) : void
     {
+      def symbolIndex = _symbols.Count;
       _symbols.Add(symbol);
 
-      foreach (parameter when !_parameters.ContainsKey(parameter.Name) in symbol.Parameters)
+      foreach (parameter in symbol.Parameters)
       {
-        def parameterInfo = ParameterInfo(parameter.Type, Deployments.GetDefaultValue(parameter));
-        _parameters.Add(parameter.Name, parameterInfo);
+        mutable value;
+        if (values.TryGetValue(parameter.Name, out value))
+        {
+          def key = (parameter, symbolIndex);
+          def parameterInfo = _closedParameters.Values.FirstOrDefault(p => Equals(p.Value, value) && TdlTypeUnifier.Instance.TryUnify(p.Type, parameter.Type))
+            ?? ClosedParameterInfo(parameter.Type, value);
+          _closedParameters.Add(key, parameterInfo);
+        }
+        else unless (_freeParameters.ContainsKey(parameter.Name))
+        {
+          def parameterInfo = FreeParameterInfo(parameter.Type, DeploymentCompiler.GetDefaultValue(parameter));
+          _freeParameters.Add(parameter.Name, parameterInfo);
+        }
       }
     }
 
