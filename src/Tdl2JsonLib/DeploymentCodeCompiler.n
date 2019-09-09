@@ -104,6 +104,7 @@ namespace Tdl2Json
     {
       def scriptArgs = SortedDictionary();
       def defaults   = SortedDictionary();
+      defaults.Add(" TDL Name ", Name);
 
       def deploymentParameters = StringBuilder();
       def deploymentCode       = StringBuilder();
@@ -168,7 +169,7 @@ namespace Tdl2Json
 
       foreach (symbol in _symbols with symbolIndex)
       {
-        _ = deploymentCode.AppendLine("{");
+        _ = deploymentCode.Append("{ // ").AppendLine(symbol.Name);
         foreach (command in (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands)
         {
           def commandVariable = "command" + command.StepNumberIn;
