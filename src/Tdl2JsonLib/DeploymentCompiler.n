@@ -170,7 +170,7 @@ namespace Tdl2Json
                 DictionaryEquals(existingDeployment.DefaultValues, deployment.DefaultValues))
               tempName
             else
-              saveDeployment(compiler.Name + index.ToString(), index + 1)
+              saveDeployment(compiler.Name + Separators.DeploymentNumberSeparator + index.ToString(), index + 1)
           else
           {
             _deployments.Add(tempName, deployment);
