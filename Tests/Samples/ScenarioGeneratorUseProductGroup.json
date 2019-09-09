@@ -2,30 +2,12 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "DeployDataCollectors": {
-      "Type": "Script",
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\tis-dfs\\autotests\\Components\\UserScenarios\\Hive\\HiveDeploy\\DeployDataCollectors.ps1"
-    },
-    "DeployMultiProduct": {
-      "Type": "Script",
-      "RebootExitCode": 101,
-      "ReturnValue": 0,
-      "ScriptArgs": {
-        "MultiProductConfigFile": "$(MultiProductConfig)",
-        "DeployerFlags": "$(DeploymentConditions)",
-        "UpdateSource": "$(UpdateSourceAddress)"
-      },
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\DeployMultiProduct.ps1"
-    },
-    "ApplyDplScript": {
+    "ApplyDplScriptApp2_19": {
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {
-        "DplScript": "$(PrepareForTestScript)",
-        "OverrideTestSettings": "$(OverrideTestSettingsDirectory)"
+        "DplScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\App219"
       },
       "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
@@ -50,39 +32,23 @@
       "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
     },
-    "ApplyDplScriptApp2_19": {
+    "DeployDataCollectors": {
       "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "\\\\tis-dfs\\autotests\\Components\\UserScenarios\\Hive\\HiveDeploy\\DeployDataCollectors.ps1"
+    },
+    "DeployMultiProduct": {
+      "Type": "Script",
+      "RebootExitCode": 101,
       "ReturnValue": 0,
       "ScriptArgs": {
-        "DplScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
-        "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\App219"
+        "MultiProductConfigFile": "$(MultiProductConfig)",
+        "DeployerFlags": "$(DeploymentConditions)",
+        "UpdateSource": "$(UpdateSourceAddress)"
       },
       "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
-    },
-    "DeployMultiProductWithDeployerAndPreparingKsm60": {
-      "Type": "Sequence",
-      "Deployments": [
-        "DeployMultiProduct",
-        "ApplyDplScriptKsm60",
-        "DeployDataCollectors"
-      ]
-    },
-    "DeployMultiProductWithDeployerAndPreparingKsm65": {
-      "Type": "Sequence",
-      "Deployments": [
-        "DeployMultiProduct",
-        "ApplyDplScriptKsm65",
-        "DeployDataCollectors"
-      ]
-    },
-    "DeployMultiProductWithDeployerAndPreparingApp2_19": {
-      "Type": "Sequence",
-      "Deployments": [
-        "DeployMultiProduct",
-        "ApplyDplScriptApp2_19",
-        "DeployDataCollectors"
-      ]
+      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\DeployMultiProduct.ps1"
     }
   },
   "Platforms": {
@@ -367,7 +333,9 @@
   "TestScenarios": {
     "SbSFuncScenarios1-1": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -389,7 +357,9 @@
     },
     "SbSFuncScenarios1-2": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -411,7 +381,9 @@
     },
     "SbSFuncScenarios1-3": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -433,7 +405,9 @@
     },
     "SbSFuncScenarios1-4": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -455,7 +429,9 @@
     },
     "SbSFuncScenarios1-5": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -477,7 +453,9 @@
     },
     "SbSFuncScenarios1-6": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -499,7 +477,9 @@
     },
     "SbSFuncScenarios1-7": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -521,7 +501,9 @@
     },
     "SbSFuncScenarios1-8": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -543,7 +525,9 @@
     },
     "SbSFuncScenarios1-9": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -565,7 +549,9 @@
     },
     "SbSFuncScenarios1-10": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -587,7 +573,9 @@
     },
     "SbSFuncScenarios1-11": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -609,7 +597,9 @@
     },
     "SbSFuncScenarios1-12": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -631,7 +621,9 @@
     },
     "SbSFuncScenarios1-13": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -653,7 +645,9 @@
     },
     "SbSFuncScenarios1-14": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -675,7 +669,9 @@
     },
     "SbSFuncScenarios1-15": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -697,7 +693,9 @@
     },
     "SbSFuncScenarios1-16": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -719,7 +717,9 @@
     },
     "SbSFuncScenarios1-17": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -741,7 +741,9 @@
     },
     "SbSFuncScenarios1-18": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -763,7 +765,9 @@
     },
     "SbSFuncScenarios1-19": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -785,7 +789,9 @@
     },
     "SbSFuncScenarios1-20": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -807,7 +813,9 @@
     },
     "SbSFuncScenarios1-21": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -829,7 +837,9 @@
     },
     "SbSFuncScenarios1-22": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -851,7 +861,9 @@
     },
     "SbSFuncScenarios1-23": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -873,7 +885,9 @@
     },
     "SbSFuncScenarios1-24": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -895,7 +909,9 @@
     },
     "SbSFuncScenarios1-25": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -917,7 +933,9 @@
     },
     "SbSFuncScenarios1-26": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -939,7 +957,9 @@
     },
     "SbSFuncScenarios1-27": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -961,7 +981,9 @@
     },
     "SbSFuncScenarios1-28": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -983,7 +1005,9 @@
     },
     "SbSFuncScenarios1-29": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1005,7 +1029,9 @@
     },
     "SbSFuncScenarios1-30": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1027,7 +1053,9 @@
     },
     "SbSFuncScenarios1-31": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1049,7 +1077,9 @@
     },
     "SbSFuncScenarios1-32": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1071,7 +1101,9 @@
     },
     "SbSFuncScenarios1-33": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1093,7 +1125,9 @@
     },
     "SbSFuncScenarios1-34": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1115,7 +1149,9 @@
     },
     "SbSFuncScenarios1-35": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1137,7 +1173,9 @@
     },
     "SbSFuncScenarios1-36": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1159,7 +1197,9 @@
     },
     "SbSFuncScenarios1-37": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1181,7 +1221,9 @@
     },
     "SbSFuncScenarios1-38": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1203,7 +1245,9 @@
     },
     "SbSFuncScenarios1-39": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1225,7 +1269,9 @@
     },
     "SbSFuncScenarios1-40": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1247,7 +1293,9 @@
     },
     "SbSFuncScenarios1-41": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1269,7 +1317,9 @@
     },
     "SbSFuncScenarios1-42": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1291,7 +1341,9 @@
     },
     "SbSFuncScenarios1-43": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1313,7 +1365,9 @@
     },
     "SbSFuncScenarios1-44": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1335,7 +1389,9 @@
     },
     "SbSFuncScenarios1-45": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1357,7 +1413,9 @@
     },
     "SbSFuncScenarios1-46": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1379,7 +1437,9 @@
     },
     "SbSFuncScenarios1-47": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1401,7 +1461,9 @@
     },
     "SbSFuncScenarios1-48": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1423,7 +1485,9 @@
     },
     "SbSFuncScenarios1-49": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1445,7 +1509,9 @@
     },
     "SbSFuncScenarios1-50": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1467,7 +1533,9 @@
     },
     "SbSFuncScenarios1-51": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1489,7 +1557,9 @@
     },
     "SbSFuncScenarios1-52": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1511,7 +1581,9 @@
     },
     "SbSFuncScenarios1-53": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1533,7 +1605,9 @@
     },
     "SbSFuncScenarios1-54": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1555,7 +1629,9 @@
     },
     "SbSFuncScenarios1-55": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1577,7 +1653,9 @@
     },
     "SbSFuncScenarios1-56": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1599,7 +1677,9 @@
     },
     "SbSFuncScenarios1-57": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1621,7 +1701,9 @@
     },
     "SbSFuncScenarios1-58": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1643,7 +1725,9 @@
     },
     "SbSFuncScenarios1-59": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1665,7 +1749,9 @@
     },
     "SbSFuncScenarios1-60": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1687,7 +1773,9 @@
     },
     "SbSFuncScenarios1-61": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1709,7 +1797,9 @@
     },
     "SbSFuncScenarios1-62": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1731,7 +1821,9 @@
     },
     "SbSFuncScenarios1-63": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1753,7 +1845,9 @@
     },
     "SbSFuncScenarios1-64": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1775,7 +1869,9 @@
     },
     "SbSFuncScenarios1-65": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1797,7 +1893,9 @@
     },
     "SbSFuncScenarios1-66": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1819,7 +1917,9 @@
     },
     "SbSFuncScenarios1-67": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1841,7 +1941,9 @@
     },
     "SbSFuncScenarios1-68": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1863,7 +1965,9 @@
     },
     "SbSFuncScenarios1-69": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1885,7 +1989,9 @@
     },
     "SbSFuncScenarios1-70": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1907,7 +2013,9 @@
     },
     "SbSFuncScenarios1-71": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1929,7 +2037,9 @@
     },
     "SbSFuncScenarios1-72": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1951,7 +2061,9 @@
     },
     "SbSFuncScenarios1-73": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1973,7 +2085,9 @@
     },
     "SbSFuncScenarios1-74": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -1995,7 +2109,9 @@
     },
     "SbSFuncScenarios1-75": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2017,7 +2133,9 @@
     },
     "SbSFuncScenarios1-76": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2039,7 +2157,9 @@
     },
     "SbSFuncScenarios1-77": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2061,7 +2181,9 @@
     },
     "SbSFuncScenarios1-78": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2083,7 +2205,9 @@
     },
     "SbSFuncScenarios1-79": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2105,7 +2229,9 @@
     },
     "SbSFuncScenarios1-80": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2127,7 +2253,9 @@
     },
     "SbSFuncScenarios1-81": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2149,7 +2277,9 @@
     },
     "SbSFuncScenarios1-82": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2171,7 +2301,9 @@
     },
     "SbSFuncScenarios1-83": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2193,7 +2325,9 @@
     },
     "SbSFuncScenarios1-84": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2215,7 +2349,9 @@
     },
     "SbSFuncScenarios1-85": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2237,7 +2373,9 @@
     },
     "SbSFuncScenarios1-86": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2259,7 +2397,9 @@
     },
     "SbSFuncScenarios1-87": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2281,7 +2421,9 @@
     },
     "SbSFuncScenarios1-88": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2303,7 +2445,9 @@
     },
     "SbSFuncScenarios1-89": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2325,7 +2469,9 @@
     },
     "SbSFuncScenarios1-90": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2347,7 +2493,9 @@
     },
     "SbSFuncScenarios1-91": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2369,7 +2517,9 @@
     },
     "SbSFuncScenarios1-92": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2391,7 +2541,9 @@
     },
     "SbSFuncScenarios1-93": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2413,7 +2565,9 @@
     },
     "SbSFuncScenarios1-94": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2435,7 +2589,9 @@
     },
     "SbSFuncScenarios1-95": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2457,7 +2613,9 @@
     },
     "SbSFuncScenarios1-96": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2479,7 +2637,9 @@
     },
     "SbSFuncScenarios1-97": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2501,7 +2661,9 @@
     },
     "SbSFuncScenarios1-98": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2523,7 +2685,9 @@
     },
     "SbSFuncScenarios1-99": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2545,7 +2709,9 @@
     },
     "SbSFuncScenarios1-100": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2567,7 +2733,9 @@
     },
     "SbSFuncScenarios1-101": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -2589,7 +2757,9 @@
     },
     "SbSFuncScenarios1-102": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {

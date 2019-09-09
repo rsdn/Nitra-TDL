@@ -2,23 +2,6 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "CurrySeq": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Seq": {
-            "Par": 1000
-          }
-        }
-      ]
-    },
-    "Seq": {
-      "Type": "Sequence",
-      "Deployments": [
-        "A",
-        "B"
-      ]
-    },
     "A": {
       "Type": "Script",
       "ScriptArgs": {
@@ -40,9 +23,64 @@
       "ScriptPath": "b.ps1"
     }
   },
-  "Platforms": {},
-  "Products": {},
-  "Suites": {},
-  "TestScenarios": {},
+  "Platforms": {
+    "win7-x86": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product"
+      },
+      "BranchName": "master",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "win7-x86"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario": {
+      "Deployments": [
+        {
+          "A": {
+            "Par": 1000
+          }
+        },
+        {
+          "B": {
+            "Par": 1000
+          }
+        }
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287"
+    }
+  },
   "TestEntities": {}
 }

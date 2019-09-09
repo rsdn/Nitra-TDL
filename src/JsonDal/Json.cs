@@ -9,6 +9,7 @@
 namespace QuickType
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
 
     using System.Globalization;
@@ -142,19 +143,7 @@ namespace QuickType
         #endregion
 
         [JsonProperty("Deployments", NullValueHandling = NullValueHandling.Ignore)]
-        public object[] Deployments { get; set; }
-    }
-
-    public partial class PurpleDeployment
-    {
-        [JsonProperty("additionalProperties", NullValueHandling = NullValueHandling.Ignore)]
-        public string AdditionalProperties { get; set; }
-    }
-
-    public partial class ValueClass
-    {
-        [JsonProperty("additionalProperties", NullValueHandling = NullValueHandling.Ignore)]
-        public string AdditionalProperties { get; set; }
+        public TestGroupDeployment[] Deployments { get; set; }
     }
 
     /// <summary>
@@ -309,12 +298,6 @@ namespace QuickType
         public string LocalTestBinariesFolder { get; set; }
     }
 
-    public partial class FluffyDeployment
-    {
-        [JsonProperty("additionalProperties", NullValueHandling = NullValueHandling.Ignore)]
-        public string AdditionalProperties { get; set; }
-    }
-
     public partial class EnvironmentElement
     {
         /// <summary>
@@ -344,15 +327,6 @@ namespace QuickType
     /// </summary>
     public enum TypeEnum { Script, Select, Sequence, Reboot, Empty };
 
-    public partial struct DeploymentDeploymentUnion
-    {
-        public PurpleDeployment PurpleDeployment;
-        public string String;
-
-        public static implicit operator DeploymentDeploymentUnion(PurpleDeployment PurpleDeployment) => new DeploymentDeploymentUnion { PurpleDeployment = PurpleDeployment };
-        public static implicit operator DeploymentDeploymentUnion(string String) => new DeploymentDeploymentUnion { String = String };
-    }
-
     public partial struct PlatformValue
     {
         public Platform Platform;
@@ -371,13 +345,10 @@ namespace QuickType
         public static implicit operator ProductValue(string[] StringArray) => new ProductValue { StringArray = StringArray };
     }
 
-    public partial struct TestGroupDeployment
+    public partial class TestGroupDeployment
     {
-        public FluffyDeployment FluffyDeployment;
-        public string String;
-
-        public static implicit operator TestGroupDeployment(FluffyDeployment FluffyDeployment) => new TestGroupDeployment { FluffyDeployment = FluffyDeployment };
-        public static implicit operator TestGroupDeployment(string String) => new TestGroupDeployment { String = String };
+        public Dictionary<string, object> Parameters;
+        public string DeploymentName;
     }
 
     public partial struct TestCase
@@ -416,7 +387,6 @@ namespace QuickType
             DateParseHandling = DateParseHandling.None,
             Converters =
             {
-                DeploymentDeploymentUnionConverter.Singleton,
                 TypeEnumConverter.Singleton,
                 PlatformValueConverter.Singleton,
                 ProductValueConverter.Singleton,
@@ -425,44 +395,6 @@ namespace QuickType
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
         };
-    }
-
-    internal class DeploymentDeploymentUnionConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(DeploymentDeploymentUnion) || t == typeof(DeploymentDeploymentUnion?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            switch (reader.TokenType)
-            {
-                case JsonToken.String:
-                case JsonToken.Date:
-                    var stringValue = serializer.Deserialize<string>(reader);
-                    return new DeploymentDeploymentUnion { String = stringValue };
-                case JsonToken.StartObject:
-                    var objectValue = serializer.Deserialize<PurpleDeployment>(reader);
-                    return new DeploymentDeploymentUnion { PurpleDeployment = objectValue };
-            }
-            throw new Exception("Cannot unmarshal type DeploymentDeploymentUnion");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (DeploymentDeploymentUnion)untypedValue;
-            if (value.String != null)
-            {
-                serializer.Serialize(writer, value.String);
-                return;
-            }
-            if (value.PurpleDeployment != null)
-            {
-                serializer.Serialize(writer, value.PurpleDeployment);
-                return;
-            }
-            throw new Exception("Cannot marshal type DeploymentDeploymentUnion");
-        }
-
-        public static readonly DeploymentDeploymentUnionConverter Singleton = new DeploymentDeploymentUnionConverter();
     }
 
     internal class TypeEnumConverter : JsonConverter
@@ -670,7 +602,7 @@ namespace QuickType
 
     internal class TestGroupDeploymentConverter : JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(TestGroupDeployment) || t == typeof(TestGroupDeployment?);
+        public override bool CanConvert(Type t) => t == typeof(TestGroupDeployment);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
@@ -679,10 +611,10 @@ namespace QuickType
                 case JsonToken.String:
                 case JsonToken.Date:
                     var stringValue = serializer.Deserialize<string>(reader);
-                    return new TestGroupDeployment { String = stringValue };
+                    return new TestGroupDeployment { DeploymentName = stringValue };
                 case JsonToken.StartObject:
-                    var objectValue = serializer.Deserialize<FluffyDeployment>(reader);
-                    return new TestGroupDeployment { FluffyDeployment = objectValue };
+                    var x = serializer.Deserialize<Dictionary<string, Dictionary<string, object>>>(reader).Single();
+                    return new TestGroupDeployment { DeploymentName = x.Key, Parameters = x.Value };
             }
             throw new Exception("Cannot unmarshal type TestGroupDeployment");
         }
@@ -690,17 +622,18 @@ namespace QuickType
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
         {
             var value = (TestGroupDeployment)untypedValue;
-            if (value.String != null)
+
+            if ((value.Parameters?.Count ?? 0) > 0)
             {
-                serializer.Serialize(writer, value.String);
-                return;
+                writer.WriteStartObject();
+                writer.WritePropertyName(value.DeploymentName); ;
+                serializer.Serialize(writer, value.Parameters);
+                writer.WriteEndObject();
             }
-            if (value.FluffyDeployment != null)
+            else
             {
-                serializer.Serialize(writer, value.FluffyDeployment);
-                return;
+                writer.WriteValue(value.DeploymentName);
             }
-            throw new Exception("Cannot marshal type TestGroupDeployment");
         }
 
         public static readonly TestGroupDeploymentConverter Singleton = new TestGroupDeploymentConverter();

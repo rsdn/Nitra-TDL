@@ -2,14 +2,6 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "Reboot-00:20:00": {
-      "Type": "Reboot",
-      "RebootTimeout": "00:20:00"
-    },
-    "Reboot-00:40:00": {
-      "Type": "Reboot",
-      "RebootTimeout": "00:40:00"
-    },
     "Execute_Deploy": {
       "Type": "Script",
       "ReturnValue": 42,
@@ -27,47 +19,13 @@
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\CSharp_Deployer\\executeDeploy.ps1",
       "Timeout": "01:00:00"
     },
-    "Deploy_Gated": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
-      ]
+    "Reboot-00:20:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "00:20:00"
     },
-    "Deploy_Middle": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ]
-    },
-    "Deploy_Finish": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Deploy_Middle": {
-            "AutotestsPath": "finish"
-          }
-        }
-      ]
-    },
-    "DeploymentList": {
-      "Type": "Sequence",
-      "Deployments": [
-        "Execute_Deploy",
-        "Reboot-00:20:00",
-        "Deploy_Gated",
-        "Reboot-00:40:00",
-        "Deploy_Middle",
-        "Reboot-00:20:00",
-        "Deploy_Finish"
-      ]
+    "Reboot-00:40:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "00:40:00"
     }
   },
   "Platforms": {
@@ -199,7 +157,11 @@
   "TestScenarios": {
     "SbSTestScenario1-1": {
       "Deployments": [
-        "Deploy_Gated"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
       ],
       "Environments": [
         {
@@ -221,7 +183,11 @@
     },
     "SbSTestScenario1-2": {
       "Deployments": [
-        "Deploy_Middle"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "middle"
+          }
+        }
       ],
       "Environments": [
         {
@@ -243,7 +209,12 @@
     },
     "SbSTestScenario1-3": {
       "Deployments": [
-        "Deploy_Finish"
+        {
+          "Execute_Deploy": {
+            "AutotestsPath": "finish",
+            "DeploymentSequenceName": "middle"
+          }
+        }
       ],
       "Environments": [
         {
@@ -265,7 +236,11 @@
     },
     "SbSTestScenario1-4": {
       "Deployments": [
-        "Deploy_Gated"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
       ],
       "Environments": [
         {
@@ -287,7 +262,11 @@
     },
     "SbSTestScenario1-5": {
       "Deployments": [
-        "Deploy_Middle"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "middle"
+          }
+        }
       ],
       "Environments": [
         {
@@ -309,7 +288,12 @@
     },
     "SbSTestScenario1-6": {
       "Deployments": [
-        "Deploy_Finish"
+        {
+          "Execute_Deploy": {
+            "AutotestsPath": "finish",
+            "DeploymentSequenceName": "middle"
+          }
+        }
       ],
       "Environments": [
         {
@@ -331,7 +315,11 @@
     },
     "SbSTestScenario1-7": {
       "Deployments": [
-        "Deploy_Gated"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
       ],
       "Environments": [
         {
@@ -353,7 +341,11 @@
     },
     "SbSTestScenario1-8": {
       "Deployments": [
-        "Deploy_Middle"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "middle"
+          }
+        }
       ],
       "Environments": [
         {
@@ -375,7 +367,12 @@
     },
     "SbSTestScenario1-9": {
       "Deployments": [
-        "Deploy_Finish"
+        {
+          "Execute_Deploy": {
+            "AutotestsPath": "finish",
+            "DeploymentSequenceName": "middle"
+          }
+        }
       ],
       "Environments": [
         {
@@ -411,7 +408,11 @@
     "GatedChain1": {
       "Area": "GatedTestsChain1",
       "Deployments": [
-        "Deploy_Gated"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
       ],
       "Environments": [
         {
@@ -436,7 +437,11 @@
     "GatedChain2": {
       "Area": "GatedTestsChain2",
       "Deployments": [
-        "Deploy_Gated"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
       ],
       "Environments": [
         {
@@ -473,7 +478,11 @@
     "GatedChain3": {
       "Area": "GatedTestsChain2",
       "Deployments": [
-        "Deploy_Gated"
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
       ],
       "Environments": [
         {
@@ -514,7 +523,8 @@
     },
     "GateTests_App42": {
       "TestScenarios": [
-        "GatedChain3"
+        "GatedChain3",
+        "GatedChain4"
       ]
     },
     "GateTests": {
@@ -522,6 +532,61 @@
         "GateTests_App4",
         "GateTests_App42"
       ]
+    },
+    "GatedChain4": {
+      "Area": "GatedTestsChain2",
+      "Deployments": [
+        "Execute_Deploy",
+        "Reboot-00:20:00",
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        },
+        "Reboot-00:40:00",
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "middle"
+          }
+        },
+        "Reboot-00:20:00",
+        {
+          "Execute_Deploy": {
+            "AutotestsPath": "finish",
+            "DeploymentSequenceName": "middle"
+          }
+        }
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "gated_platforms"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+          }
+        ]
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "BDA24CAF-BF05-49EC-9884-129A48C42F8E"
     }
   },
   "TestEntities": {}

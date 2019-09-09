@@ -2,3 +2,35 @@ deployment CurrySeq = Seq( Par: 1000);
 deployment Seq = A, B;
 deployment A(int Par = 700) script "a.ps1" {}
 deployment B(int Par = 700) script "b.ps1" {}
+
+platform win7-x86;
+
+product type ProductType
+{
+  string Name;
+  string Version;
+  string BranchName;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0.0.0";
+  BranchName = "master";
+}
+
+scenario Scenario
+{
+  deployment CurrySeq;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
+  Timeout = "00:30";
+}
+
+suite Suite
+{
+  platform win7-x86;
+  product Product;
+  Scenario();
+}

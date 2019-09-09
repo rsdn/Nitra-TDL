@@ -1,67 +1,96 @@
 external { string Foo; }
 
-deployment D1(string Message = Foo)
+deployment Basic(string Message = Foo, bool Flag, int Value)
 {
   KL.Autotests.Commands.LogMessage(Message);
-  expected 0;
+  KL.Autotests.Commands.ComplexOperation(IsVerbose: Flag);
 }
-
-deployment D2(bool IsVerbose = false)
+deployment Curry1 = Basic(Message: "111");
+deployment Curry2 = Basic(Message: "---");
+deployment Curry3 = Basic(Message: "---");
+deployment Curry4(string AnotherMessage) = Basic(Message: AnotherMessage);
+deployment CurrySeq = Curry1, Curry2, Curry3, Curry4, Basic;
+select deployment SelectorSeq(V1, V2)
 {
-  KL.Autotests.Commands.ComplexOperation(IsVerbose);
-  expected 0;
+  | "XXX", "YYY" => Curry1, Curry2, Curry3, Curry4, Basic
 }
+deployment CurrySelector = SelectorSeq(V2: "YYY");
 
-deployment D3()
-  script "file.ps1"
-{}
+// same deployment sequence for CurryFinal1 and CurryFinal2
+// Basic("111"), Basic("---"), Basic("---"), Basic("333"), Basic(Foo)
+deployment CurryFinal1 = CurrySelector(V1: "XXX", AnotherMessage: "333", Flag: false, Value: 0);
+deployment CurryFinal2 = CurrySeq(AnotherMessage: "333", Flag: false, Value: 0);
 
-deployment S1 = D1, D2;
 
-deployment S2 = D1, D2, D3;
-
-deployment S3 = D3, D1, D2;
-
-deployment S4 = D1, D3, D2;
-
-select deployment SS1(F)
+select deployment ComplexSelector(V1)
 {
-  | "X" => D1, D2
+  | "AAA" => Curry1
+  | "BBB" => Curry2
 }
 
-select deployment SS2(F)
+deployment ComplexFinal1 = ComplexSelector(V1: "AAA", Flag: true, Value: 1);
+deployment ComplexFinal2 = ComplexSelector(V1: "BBB", Flag: true, Value: 1);
+
+platform win7-x86;
+
+product type ProductType
 {
-  | "X" => D1, D2, D3
+  string Name;
+  string Version;
+  string BranchName;
 }
 
-select deployment SS3(F)
+product Product : ProductType
 {
-  | "X" => D3, D1, D2
+  Name = "Product";
+  Version = "1.0.0.0";
+  BranchName = "master";
 }
 
-select deployment SS4(F)
+scenario Scenario1
 {
-  | "X" => D1, D3, D2
+  deployment CurryFinal1;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
+  Timeout = "00:30";
 }
 
-deployment K1(string Message = "a")
+
+scenario Scenario2
 {
-  KL.Autotests.Commands.LogMessage(Message);
+  deployment CurryFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8288";
+  Timeout = "00:30";
 }
 
-deployment K2(string Message = "b")
+
+scenario Scenario3
 {
-  KL.Autotests.Commands.LogMessage(Message);
+  deployment ComplexFinal1;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8289";
+  Timeout = "00:30";
 }
 
-deployment K3(string Message = "a")
+
+scenario Scenario4
 {
-  KL.Autotests.Commands.LogMessage(Message);
+  deployment ComplexFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828A";
+  Timeout = "00:30";
 }
 
-deployment K4(string Message = "a")
+scenario Scenarios = Scenario1, Scenario2, Scenario3, Scenario4;
+
+suite Suite
 {
-  KL.Autotests.Commands.LogMessage(Message);
+  platform win7-x86;
+  product Product;
+  Scenarios();
 }
-
-deployment KK = K1, K2, K3, K4;

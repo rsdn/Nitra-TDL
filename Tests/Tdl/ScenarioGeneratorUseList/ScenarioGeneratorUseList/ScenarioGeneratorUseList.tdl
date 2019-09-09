@@ -1,4 +1,4 @@
-﻿platform win7-x86;
+platform win7-x86;
 platform win7-x64;
 platform win7 = win7-x86, win7-x64;
 
@@ -40,18 +40,6 @@ script @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Hive\Deplo
     DeployerFlags = DeploymentConditions;
     UpdateSource = UpdateSourceAddress;
     expected-for-reboot 101;
-    expected 0;
-}
-
-
-deployment ApplyDplScript(
-string PrepareForTestScript,
-string OverrideTestSettingsDirectory
-)
-script @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Hive\ApplyDpl.ps1"
-{
-    DplScript = PrepareForTestScript;
-    OverrideTestSettings = OverrideTestSettingsDirectory;
     expected 0;
 }
 

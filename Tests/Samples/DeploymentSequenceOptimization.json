@@ -2,217 +2,170 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "D1": {
+    "Tdl //// 0": {
       "Type": "Script",
-      "ReturnValue": 0,
       "ScriptArgs": {
-        "Message": "$(Message)"
+        "Flag1": 0,
+        "Message": "$(Message)",
+        "Message0": "111",
+        "Message3": "---",
+        "Message4": "333",
+        "Value2": 0
       },
       "DefaultValues": {
+        " TDL Name ": "Basic >>>> Basic >>>> Basic >>>> Basic >>>> Basic",
         "Message": "#(Foo)"
       },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KRDENCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlLA0KICBbc3RyaW5nXSAkTWVzc2FnZTAsDQogIFtzdHJpbmddICRGbGFnMSwNCiAgW2ludF0gJFZhbHVlMiwNCiAgW3N0cmluZ10gJE1lc3NhZ2UzLA0KICBbc3RyaW5nXSAkTWVzc2FnZTQNCikNCg0KJFRkbERlcGxveW1lbnROYW1lID0gQCcNCkJhc2ljID4+Pj4gQmFzaWMgPj4+PiBCYXNpYyA+Pj4+IEJhc2ljID4+Pj4gQmFzaWMNCidADQoNCmZ1bmN0aW9uIFRkbE1ha2VMaW5lRGlyZWN0aXZlIHsgDQogICAgIiNsaW5lICQoJE15SW52b2NhdGlvbi5TY3JpcHRMaW5lTnVtYmVyICsgMSkgIiIkKCRNeUludm9jYXRpb24uU2NyaXB0TmFtZSkiIiINCn0NCg0KDQokX2NzaGFycF9NZXNzYWdlID0gKCdAIicgKyAkTWVzc2FnZS5SZXBsYWNlKCciJywgJyIiJykgKyAnIicpDQokX2NzaGFycF9NZXNzYWdlMCA9ICgnQCInICsgJE1lc3NhZ2UwLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCiRfY3NoYXJwX0ZsYWcxID0gc3dpdGNoKCRGbGFnMSkgeyAiMCIgeyAiZmFsc2UiIH0gImZhbHNlIiB7ICJmYWxzZSIgfSAiIiB7ICJmYWxzZSIgfSAkbnVsbCB7ICJmYWxzZSIgfSBkZWZhdWx0IHsgInRydWUiIH0gfQ0KJF9jc2hhcnBfVmFsdWUyID0gJFZhbHVlMi5Ub1N0cmluZygiIiwgW1N5c3RlbS5HbG9iYWxpemF0aW9uLkN1bHR1cmVJbmZvXTo6SW52YXJpYW50Q3VsdHVyZSkNCiRfY3NoYXJwX01lc3NhZ2UzID0gKCdAIicgKyAkTWVzc2FnZTMuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfTWVzc2FnZTQgPSAoJ0AiJyArICRNZXNzYWdlNC5SZXBsYWNlKCciJywgJyIiJykgKyAnIicpDQoNCg0KV3JpdGUtT3V0cHV0ICRUZGxEZXBsb3ltZW50TmFtZQ0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0KeyAvLyBCYXNpYw0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlMDsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCnZhciBjb21tYW5kMSA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMS5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9GbGFnMTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQxKTsNCn0NCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTM7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp2YXIgY29tbWFuZDEgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Db21wbGV4T3BlcmF0aW9uPigpOw0KY29tbWFuZDEuSXNWZXJib3NlID0gJF9jc2hhcnBfRmxhZzE7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMSk7DQp9DQp7IC8vIEJhc2ljDQp2YXIgY29tbWFuZDAgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Mb2dNZXNzYWdlPigpOw0KY29tbWFuZDAuTWVzc2FnZSA9ICRfY3NoYXJwX01lc3NhZ2UzOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KdmFyIGNvbW1hbmQxID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuQ29tcGxleE9wZXJhdGlvbj4oKTsNCmNvbW1hbmQxLklzVmVyYm9zZSA9ICRfY3NoYXJwX0ZsYWcxOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDEpOw0KfQ0KeyAvLyBCYXNpYw0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlNDsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCnZhciBjb21tYW5kMSA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMS5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9GbGFnMTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQxKTsNCn0NCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCnZhciBjb21tYW5kMSA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMS5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9GbGFnMTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQxKTsNCn0NCg0KI2xpbmUgZGVmYXVsdA0KIkANCg0KJFRkbFRlbXBGaWxlID0gW1N5c3RlbS5JTy5QYXRoXTo6R2V0VGVtcEZpbGVOYW1lKCkNCg0KU2V0LUNvbnRlbnQgLVBhdGggJFRkbFRlbXBGaWxlIC1FbmNvZGluZyBVVEY4IC1WYWx1ZSAkVGRsRGVwbG95bWVudFNvdXJjZQ0KDQouXEtMLkF1dG90ZXN0cy5EZXBsb3llci5leGUgJFRkbERlcGxveW1lbnROYW1lICRUZGxUZW1wRmlsZQ0KDQokVGRsRXhpdENvZGUgPSAkTGFzdEV4aXRDb2RlDQoNClJlbW92ZS1JdGVtIC1QYXRoICRUZGxUZW1wRmlsZQ0KDQpleGl0ICRUZGxFeGl0Q29kZQ0K",
       "ScriptDataExtension": ".ps1"
     },
-    "D2": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {
-        "IsVerbose": "$(IsVerbose)"
-      },
-      "DefaultValues": {
-        "IsVerbose": 0
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRJc1ZlcmJvc2UNCikNCmZ1bmN0aW9uIFRkbE1ha2VMaW5lRGlyZWN0aXZlIHsgDQogICAgIiNsaW5lICQoJE15SW52b2NhdGlvbi5TY3JpcHRMaW5lTnVtYmVyICsgMSkgIiIkKCRNeUludm9jYXRpb24uU2NyaXB0TmFtZSkiIiINCn0NCg0KJF9jc2hhcnBfSXNWZXJib3NlID0gc3dpdGNoKCRJc1ZlcmJvc2UpIHsgIjAiIHsgImZhbHNlIiB9ICJmYWxzZSIgeyAiZmFsc2UiIH0gIiIgeyAiZmFsc2UiIH0gJG51bGwgeyAiZmFsc2UiIH0gZGVmYXVsdCB7ICJ0cnVlIiB9IH0NCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuQ29tcGxleE9wZXJhdGlvbj4oKTsNCmNvbW1hbmQwLklzVmVyYm9zZSA9ICRfY3NoYXJwX0lzVmVyYm9zZTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCn0NCg0KI2xpbmUgZGVmYXVsdA0KIkANCg0KJFRkbERlcGxveW1lbnROYW1lID0gQCcNCkQyDQonQA0KDQokVGRsVGVtcEZpbGUgPSBbU3lzdGVtLklPLlBhdGhdOjpHZXRUZW1wRmlsZU5hbWUoKQ0KDQpTZXQtQ29udGVudCAtUGF0aCAkVGRsVGVtcEZpbGUgLUVuY29kaW5nIFVURjggLVZhbHVlICRUZGxEZXBsb3ltZW50U291cmNlDQoNCi5cS0wuQXV0b3Rlc3RzLkRlcGxveWVyLmV4ZSAkVGRsRGVwbG95bWVudE5hbWUgJFRkbFRlbXBGaWxlDQoNCiRUZGxFeGl0Q29kZSA9ICRMYXN0RXhpdENvZGUNCg0KUmVtb3ZlLUl0ZW0gLVBhdGggJFRkbFRlbXBGaWxlDQoNCmV4aXQgJFRkbEV4aXRDb2RlDQo=",
-      "ScriptDataExtension": ".ps1"
-    },
-    "D3": {
-      "Type": "Script",
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "file.ps1"
-    },
-    "S1": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {
-        "Message": "$(Message)",
-        "IsVerbose": "$(IsVerbose)"
-      },
-      "DefaultValues": {
-        "Message": "#(Foo)",
-        "IsVerbose": 0
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlLA0KICBbc3RyaW5nXSAkSXNWZXJib3NlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCiRfY3NoYXJwX0lzVmVyYm9zZSA9IHN3aXRjaCgkSXNWZXJib3NlKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQoNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCn0NCnsNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMC5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9Jc1ZlcmJvc2U7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxEZXBsb3ltZW50TmFtZSA9IEAnDQpTMQ0KJ0ANCg0KJFRkbFRlbXBGaWxlID0gW1N5c3RlbS5JTy5QYXRoXTo6R2V0VGVtcEZpbGVOYW1lKCkNCg0KU2V0LUNvbnRlbnQgLVBhdGggJFRkbFRlbXBGaWxlIC1FbmNvZGluZyBVVEY4IC1WYWx1ZSAkVGRsRGVwbG95bWVudFNvdXJjZQ0KDQouXEtMLkF1dG90ZXN0cy5EZXBsb3llci5leGUgJFRkbERlcGxveW1lbnROYW1lICRUZGxUZW1wRmlsZQ0KDQokVGRsRXhpdENvZGUgPSAkTGFzdEV4aXRDb2RlDQoNClJlbW92ZS1JdGVtIC1QYXRoICRUZGxUZW1wRmlsZQ0KDQpleGl0ICRUZGxFeGl0Q29kZQ0K",
-      "ScriptDataExtension": ".ps1"
-    },
-    "D1 >>>> D2": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {
-        "Message": "$(Message)",
-        "IsVerbose": "$(IsVerbose)"
-      },
-      "DefaultValues": {
-        "Message": "#(Foo)",
-        "IsVerbose": 0
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlLA0KICBbc3RyaW5nXSAkSXNWZXJib3NlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCiRfY3NoYXJwX0lzVmVyYm9zZSA9IHN3aXRjaCgkSXNWZXJib3NlKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQoNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCn0NCnsNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMC5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9Jc1ZlcmJvc2U7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxEZXBsb3ltZW50TmFtZSA9IEAnDQpEMSA+Pj4+IEQyDQonQA0KDQokVGRsVGVtcEZpbGUgPSBbU3lzdGVtLklPLlBhdGhdOjpHZXRUZW1wRmlsZU5hbWUoKQ0KDQpTZXQtQ29udGVudCAtUGF0aCAkVGRsVGVtcEZpbGUgLUVuY29kaW5nIFVURjggLVZhbHVlICRUZGxEZXBsb3ltZW50U291cmNlDQoNCi5cS0wuQXV0b3Rlc3RzLkRlcGxveWVyLmV4ZSAkVGRsRGVwbG95bWVudE5hbWUgJFRkbFRlbXBGaWxlDQoNCiRUZGxFeGl0Q29kZSA9ICRMYXN0RXhpdENvZGUNCg0KUmVtb3ZlLUl0ZW0gLVBhdGggJFRkbFRlbXBGaWxlDQoNCmV4aXQgJFRkbEV4aXRDb2RlDQo=",
-      "ScriptDataExtension": ".ps1"
-    },
-    "S2": {
-      "Type": "Sequence",
-      "Deployments": [
-        "D1 >>>> D2",
-        "D3"
-      ]
-    },
-    "S3": {
-      "Type": "Sequence",
-      "Deployments": [
-        "D3",
-        "D1 >>>> D2"
-      ]
-    },
-    "S4": {
-      "Type": "Sequence",
-      "Deployments": [
-        "D1",
-        "D3",
-        "D2"
-      ]
-    },
-    "SS1 |||| X": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {
-        "Message": "$(Message)",
-        "IsVerbose": "$(IsVerbose)"
-      },
-      "DefaultValues": {
-        "Message": "#(Foo)",
-        "IsVerbose": 0
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlLA0KICBbc3RyaW5nXSAkSXNWZXJib3NlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCiRfY3NoYXJwX0lzVmVyYm9zZSA9IHN3aXRjaCgkSXNWZXJib3NlKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQoNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCn0NCnsNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMC5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9Jc1ZlcmJvc2U7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxEZXBsb3ltZW50TmFtZSA9IEAnDQpTUzEgfHx8fCBYDQonQA0KDQokVGRsVGVtcEZpbGUgPSBbU3lzdGVtLklPLlBhdGhdOjpHZXRUZW1wRmlsZU5hbWUoKQ0KDQpTZXQtQ29udGVudCAtUGF0aCAkVGRsVGVtcEZpbGUgLUVuY29kaW5nIFVURjggLVZhbHVlICRUZGxEZXBsb3ltZW50U291cmNlDQoNCi5cS0wuQXV0b3Rlc3RzLkRlcGxveWVyLmV4ZSAkVGRsRGVwbG95bWVudE5hbWUgJFRkbFRlbXBGaWxlDQoNCiRUZGxFeGl0Q29kZSA9ICRMYXN0RXhpdENvZGUNCg0KUmVtb3ZlLUl0ZW0gLVBhdGggJFRkbFRlbXBGaWxlDQoNCmV4aXQgJFRkbEV4aXRDb2RlDQo=",
-      "ScriptDataExtension": ".ps1"
-    },
-    "SS1": {
-      "Type": "Select",
-      "Condition": "$(F)",
-      "Values": {
-        "X": "SS1 |||| X"
-      }
-    },
-    "SS2 |||| X": {
-      "Type": "Sequence",
-      "Deployments": [
-        "D1 >>>> D2",
-        "D3"
-      ]
-    },
-    "SS2": {
-      "Type": "Select",
-      "Condition": "$(F)",
-      "Values": {
-        "X": "SS2 |||| X"
-      }
-    },
-    "SS3 |||| X": {
-      "Type": "Sequence",
-      "Deployments": [
-        "D3",
-        "D1 >>>> D2"
-      ]
-    },
-    "SS3": {
-      "Type": "Select",
-      "Condition": "$(F)",
-      "Values": {
-        "X": "SS3 |||| X"
-      }
-    },
-    "SS4 |||| X": {
-      "Type": "Sequence",
-      "Deployments": [
-        "D1",
-        "D3",
-        "D2"
-      ]
-    },
-    "SS4": {
-      "Type": "Select",
-      "Condition": "$(F)",
-      "Values": {
-        "X": "SS4 |||| X"
-      }
-    },
-    "K1": {
+    "Tdl //// 1": {
       "Type": "Script",
       "ScriptArgs": {
-        "Message": "$(Message)"
+        "Flag1": 1,
+        "Message0": "111",
+        "Value2": 1
       },
       "DefaultValues": {
-        "Message": "a"
+        " TDL Name ": "Basic"
       },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzENCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlMCwNCiAgW3N0cmluZ10gJEZsYWcxLA0KICBbaW50XSAkVmFsdWUyDQopDQoNCiRUZGxEZXBsb3ltZW50TmFtZSA9IEAnDQpCYXNpYw0KJ0ANCg0KZnVuY3Rpb24gVGRsTWFrZUxpbmVEaXJlY3RpdmUgeyANCiAgICAiI2xpbmUgJCgkTXlJbnZvY2F0aW9uLlNjcmlwdExpbmVOdW1iZXIgKyAxKSAiIiQoJE15SW52b2NhdGlvbi5TY3JpcHROYW1lKSIiIg0KfQ0KDQoNCiRfY3NoYXJwX01lc3NhZ2UwID0gKCdAIicgKyAkTWVzc2FnZTAuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfRmxhZzEgPSBzd2l0Y2goJEZsYWcxKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQokX2NzaGFycF9WYWx1ZTIgPSAkVmFsdWUyLlRvU3RyaW5nKCIiLCBbU3lzdGVtLkdsb2JhbGl6YXRpb24uQ3VsdHVyZUluZm9dOjpJbnZhcmlhbnRDdWx0dXJlKQ0KDQoNCldyaXRlLU91dHB1dCAkVGRsRGVwbG95bWVudE5hbWUNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTA7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp2YXIgY29tbWFuZDEgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Db21wbGV4T3BlcmF0aW9uPigpOw0KY29tbWFuZDEuSXNWZXJib3NlID0gJF9jc2hhcnBfRmxhZzE7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMSk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
       "ScriptDataExtension": ".ps1"
     },
-    "K2": {
+    "Tdl //// 2": {
       "Type": "Script",
       "ScriptArgs": {
-        "Message": "$(Message)"
+        "Flag1": 1,
+        "Message0": "---",
+        "Value2": 1
       },
       "DefaultValues": {
-        "Message": "b"
+        " TDL Name ": "Basic"
       },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzINCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlMCwNCiAgW3N0cmluZ10gJEZsYWcxLA0KICBbaW50XSAkVmFsdWUyDQopDQoNCiRUZGxEZXBsb3ltZW50TmFtZSA9IEAnDQpCYXNpYw0KJ0ANCg0KZnVuY3Rpb24gVGRsTWFrZUxpbmVEaXJlY3RpdmUgeyANCiAgICAiI2xpbmUgJCgkTXlJbnZvY2F0aW9uLlNjcmlwdExpbmVOdW1iZXIgKyAxKSAiIiQoJE15SW52b2NhdGlvbi5TY3JpcHROYW1lKSIiIg0KfQ0KDQoNCiRfY3NoYXJwX01lc3NhZ2UwID0gKCdAIicgKyAkTWVzc2FnZTAuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfRmxhZzEgPSBzd2l0Y2goJEZsYWcxKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQokX2NzaGFycF9WYWx1ZTIgPSAkVmFsdWUyLlRvU3RyaW5nKCIiLCBbU3lzdGVtLkdsb2JhbGl6YXRpb24uQ3VsdHVyZUluZm9dOjpJbnZhcmlhbnRDdWx0dXJlKQ0KDQoNCldyaXRlLU91dHB1dCAkVGRsRGVwbG95bWVudE5hbWUNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTA7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp2YXIgY29tbWFuZDEgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Db21wbGV4T3BlcmF0aW9uPigpOw0KY29tbWFuZDEuSXNWZXJib3NlID0gJF9jc2hhcnBfRmxhZzE7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMSk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
       "ScriptDataExtension": ".ps1"
-    },
-    "K3": {
-      "Type": "Script",
-      "ScriptArgs": {
-        "Message": "$(Message)"
+    }
+  },
+  "Platforms": {
+    "win7-x86": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product"
       },
-      "DefaultValues": {
-        "Message": "a"
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzMNCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
-      "ScriptDataExtension": ".ps1"
-    },
-    "K4": {
-      "Type": "Script",
-      "ScriptArgs": {
-        "Message": "$(Message)"
-      },
-      "DefaultValues": {
-        "Message": "a"
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzQNCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
-      "ScriptDataExtension": ".ps1"
-    },
-    "K3 >>>> K4": {
-      "Type": "Script",
-      "ScriptArgs": {
-        "Message": "$(Message)"
-      },
-      "DefaultValues": {
-        "Message": "a"
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UgPSAoJ0AiJyArICRNZXNzYWdlLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0Kew0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSzMgPj4+PiBLNA0KJ0ANCg0KJFRkbFRlbXBGaWxlID0gW1N5c3RlbS5JTy5QYXRoXTo6R2V0VGVtcEZpbGVOYW1lKCkNCg0KU2V0LUNvbnRlbnQgLVBhdGggJFRkbFRlbXBGaWxlIC1FbmNvZGluZyBVVEY4IC1WYWx1ZSAkVGRsRGVwbG95bWVudFNvdXJjZQ0KDQouXEtMLkF1dG90ZXN0cy5EZXBsb3llci5leGUgJFRkbERlcGxveW1lbnROYW1lICRUZGxUZW1wRmlsZQ0KDQokVGRsRXhpdENvZGUgPSAkTGFzdEV4aXRDb2RlDQoNClJlbW92ZS1JdGVtIC1QYXRoICRUZGxUZW1wRmlsZQ0KDQpleGl0ICRUZGxFeGl0Q29kZQ0K",
-      "ScriptDataExtension": ".ps1"
-    },
-    "KK": {
-      "Type": "Sequence",
-      "Deployments": [
-        "K1",
-        "K2",
-        "K3 >>>> K4"
+      "BranchName": "master",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "win7-x86"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenarios"
       ]
     }
   },
-  "Platforms": {},
-  "Products": {},
-  "Suites": {},
-  "TestScenarios": {},
+  "TestScenarios": {
+    "Scenario1": {
+      "Deployments": [
+        "Tdl //// 0"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287"
+    },
+    "Scenario2": {
+      "Deployments": [
+        "Tdl //// 0"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8288"
+    },
+    "Scenario3": {
+      "Deployments": [
+        "Tdl //// 1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8289"
+    },
+    "Scenario4": {
+      "Deployments": [
+        "Tdl //// 2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828A"
+    },
+    "Scenarios": {
+      "TestScenarios": [
+        "Scenario1",
+        "Scenario2",
+        "Scenario3",
+        "Scenario4"
+      ]
+    }
+  },
   "TestEntities": {}
 }

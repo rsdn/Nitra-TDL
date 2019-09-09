@@ -16,42 +16,6 @@
       "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\storage\\CoreTechnologies\\AutotestProjectBuilds\\MacAutotests\\Deployer\\deployer.py"
     },
-    "TestUI": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_ui.py"
-    },
-    "TestDeployArtifacts": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_deploy_artifacts.py"
-    },
-    "TestDeployArtifactsWithTimeout": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_deploy_artifacts.py",
-      "Timeout": "00:00:02"
-    },
-    "TestAirCli": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\test_air_cli.py"
-    },
-    "EnableSelenium": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\enable_selenium.sh"
-    },
     "RebootWithScript": {
       "Type": "Script",
       "RebootExitCode": 101,
@@ -60,20 +24,6 @@
       "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\Reboot\\deployReboot.sh",
       "Timeout": "00:02:00"
-    },
-    "DeployWithTestBot": {
-      "Type": "Sequence",
-      "Deployments": [
-        "InstallProduct",
-        "RebootWithScript"
-      ]
-    },
-    "DeployToRunPyAsTest": {
-      "Type": "Script",
-      "ReturnValue": 0,
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\Scripts\\App2_2019\\run_py_test_deploy.py"
     }
   },
   "Platforms": {
@@ -323,7 +273,8 @@
   "TestScenarios": {
     "InterpreczRollback": {
       "Deployments": [
-        "DeployWithTestBot"
+        "InstallProduct",
+        "RebootWithScript"
       ],
       "Environments": [
         {
@@ -384,7 +335,8 @@
     },
     "InterpreczSmoke": {
       "Deployments": [
-        "DeployWithTestBot"
+        "InstallProduct",
+        "RebootWithScript"
       ],
       "Environments": [
         {

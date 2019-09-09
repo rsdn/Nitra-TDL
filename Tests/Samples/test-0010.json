@@ -2,61 +2,6 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "Reboot-00:15:00": {
-      "Type": "Reboot",
-      "RebootTimeout": "00:15:00"
-    },
-    "RebootAgent": {
-      "Type": "Sequence",
-      "Deployments": [
-        "Reboot-00:15:00"
-      ]
-    },
-    "Disable UAC Impl": {
-      "Type": "Script",
-      "ReturnValue": 42,
-      "ScriptArgs": {
-        "UacAction": "$(UacAction)"
-      },
-      "DefaultValues": {
-        "UacAction": "Disable"
-      },
-      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\ManageUAC\\ManageUAC.ps1"
-    },
-    "Disable UAC": {
-      "Type": "Sequence",
-      "Deployments": [
-        "Disable UAC Impl",
-        "RebootAgent"
-      ]
-    },
-    "Install product no uac-1124": {
-      "Type": "Sequence",
-      "Deployments": [
-        "Disable UAC",
-        "Install product NoBackdoor TraceLevel_1000"
-      ]
-    },
-    "Install product NoBackdoor TraceLevel_1000": {
-      "Type": "Select",
-      "Condition": "$(InstallationType)",
-      "Values": {
-        "C3EEBA2A-D830-4947-83B2-045529DCB327": "_Install product NoBackdoor TraceLevel_1000",
-        "Regular": "_Install product NoBackdoor TraceLevel_1000",
-        "Upgrade 2019": "Install 2019 -> Install product NoBackdoor TraceLevel_1000"
-      }
-    },
-    "_Install product NoBackdoor TraceLevel_1000": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "_Install product": {
-            "ForceTraceLevel": "1000",
-            "InstallLicenceBackdoor": "Off"
-          }
-        }
-      ]
-    },
     "_Install product": {
       "Type": "Script",
       "ReturnValue": 42,
@@ -207,29 +152,42 @@
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy.ps1"
     },
-    "Install 2019 -> Install product NoBackdoor TraceLevel_1000": {
-      "Type": "Sequence",
-      "Deployments": [
-        "Install Base Product 2019",
-        "_Install product NoBackdoor TraceLevel_1000",
-        "RebootAgent"
-      ]
+    "Disable UAC Impl": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "UacAction": "$(UacAction)"
+      },
+      "DefaultValues": {
+        "UacAction": "Disable"
+      },
+      "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\ManageUAC\\ManageUAC.ps1"
     },
-    "Install Base Product 2019": {
-      "Type": "Sequence",
-      "Deployments": [
-        {
-          "Install Base Product": {
-            "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2019.MP0.AdditionalContinuousIntegration"
+    "Install product NoBackdoor TraceLevel_1000": {
+      "Type": "Select",
+      "Condition": "$(InstallationType)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": {
+          "_Install product": {
+            "ForceTraceLevel": "1000",
+            "InstallLicenceBackdoor": "Off"
           }
-        }
-      ]
+        },
+        "Regular": {
+          "_Install product": {
+            "ForceTraceLevel": "1000",
+            "InstallLicenceBackdoor": "Off"
+          }
+        },
+        "Upgrade 2019": "Install product NoBackdoor TraceLevel_1000 |||| Upgrade 2019"
+      }
     },
-    "Install Base Product": {
+    "Install product NoBackdoor TraceLevel_1000 |||| Upgrade 2019": {
       "Type": "Sequence",
       "Deployments": [
         {
           "_Install product": {
+            "AdditionalFiles": "\\\\tis-dfs.company.ru\\Autotests\\App2\\AdditionalFiles\\App2_2019.MP0.AdditionalContinuousIntegration",
             "BuildPath": "$(SessionWorkFolder)\\BaseProductBuild",
             "DisableTestModulesInstallation": 1,
             "DisableVSCollectorsDeployment": 1,
@@ -239,8 +197,19 @@
             "TurnOffDumpOnAssert": 1,
             "UseCollections": "Off"
           }
-        }
+        },
+        {
+          "_Install product": {
+            "ForceTraceLevel": "1000",
+            "InstallLicenceBackdoor": "Off"
+          }
+        },
+        "Reboot-00:15:00"
       ]
+    },
+    "Reboot-00:15:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "00:15:00"
     }
   },
   "Platforms": {
@@ -307,7 +276,9 @@
     "KpmDownloadAndInstallMultiMachineDevice1": {
       "Area": "KPMIntergration",
       "Deployments": [
-        "Install product no uac-1124"
+        "Disable UAC Impl",
+        "Reboot-00:15:00",
+        "Install product NoBackdoor TraceLevel_1000"
       ],
       "Environments": [
         {
@@ -347,7 +318,8 @@
     "KpmDownloadAndInstallMultiMachineDevice2": {
       "Area": "KPMIntergration",
       "Deployments": [
-        "Disable UAC"
+        "Disable UAC Impl",
+        "Reboot-00:15:00"
       ],
       "Environments": [
         {

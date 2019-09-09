@@ -2,30 +2,12 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "DeployDataCollectors": {
-      "Type": "Script",
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\tis-dfs\\autotests\\Components\\UserScenarios\\Hive\\HiveDeploy\\DeployDataCollectors.ps1"
-    },
-    "DeployMultiProduct": {
-      "Type": "Script",
-      "RebootExitCode": 101,
-      "ReturnValue": 0,
-      "ScriptArgs": {
-        "MultiProductConfigFile": "$(MultiProductConfig)",
-        "DeployerFlags": "$(DeploymentConditions)",
-        "UpdateSource": "$(UpdateSourceAddress)"
-      },
-      "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\DeployMultiProduct.ps1"
-    },
-    "ApplyDplScript": {
+    "ApplyDplScriptApp2_19": {
       "Type": "Script",
       "ReturnValue": 0,
       "ScriptArgs": {
-        "DplScript": "$(PrepareForTestScript)",
-        "OverrideTestSettings": "$(OverrideTestSettingsDirectory)"
+        "DplScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\App219"
       },
       "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
@@ -50,39 +32,23 @@
       "DefaultValues": {},
       "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
     },
-    "ApplyDplScriptApp2_19": {
+    "DeployDataCollectors": {
       "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "\\\\tis-dfs\\autotests\\Components\\UserScenarios\\Hive\\HiveDeploy\\DeployDataCollectors.ps1"
+    },
+    "DeployMultiProduct": {
+      "Type": "Script",
+      "RebootExitCode": 101,
       "ReturnValue": 0,
       "ScriptArgs": {
-        "DplScript": "\\\\sdfs\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
-        "OverrideTestSettings": "\\\\sdfs\\autotests\\Components\\TestSettings\\App219"
+        "MultiProductConfigFile": "$(MultiProductConfig)",
+        "DeployerFlags": "$(DeploymentConditions)",
+        "UpdateSource": "$(UpdateSourceAddress)"
       },
       "DefaultValues": {},
-      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
-    },
-    "DeployMultiProductWithDeployerAndPreparingKsm60": {
-      "Type": "Sequence",
-      "Deployments": [
-        "DeployMultiProduct",
-        "ApplyDplScriptKsm60",
-        "DeployDataCollectors"
-      ]
-    },
-    "DeployMultiProductWithDeployerAndPreparingKsm65": {
-      "Type": "Sequence",
-      "Deployments": [
-        "DeployMultiProduct",
-        "ApplyDplScriptKsm65",
-        "DeployDataCollectors"
-      ]
-    },
-    "DeployMultiProductWithDeployerAndPreparingApp2_19": {
-      "Type": "Sequence",
-      "Deployments": [
-        "DeployMultiProduct",
-        "ApplyDplScriptApp2_19",
-        "DeployDataCollectors"
-      ]
+      "ScriptPath": "\\\\sdfs\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\DeployMultiProduct.ps1"
     }
   },
   "Platforms": {
@@ -367,7 +333,9 @@
   "TestScenarios": {
     "SbSFuncScenarios1-1": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -389,7 +357,9 @@
     },
     "SbSFuncScenarios1-2": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -411,7 +381,9 @@
     },
     "SbSFuncScenarios1-3": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -433,7 +405,9 @@
     },
     "SbSFuncScenarios1-4": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm60"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -455,7 +429,9 @@
     },
     "SbSFuncScenarios1-5": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingKsm65"
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm65",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
@@ -477,7 +453,9 @@
     },
     "SbSFuncScenarios1-6": {
       "Deployments": [
-        "DeployMultiProductWithDeployerAndPreparingApp2_19"
+        "DeployMultiProduct",
+        "ApplyDplScriptApp2_19",
+        "DeployDataCollectors"
       ],
       "Environments": [
         {
