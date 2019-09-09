@@ -26,7 +26,8 @@ namespace Tdl2Json
       | Transparent { Symbol : Deployment.CodeSymbol; Values : IReadOnlyDictionary[string, object] }
     }
 
-    private _deployments             : SortedDictionary[string, QuickType.Deployment] = SortedDictionary();
+    private _compiledDeployments     : Dictionary[string * int, string * QuickType.Deployment] = Dictionary();
+    private _deployments             : SortedDictionary[string, QuickType.Deployment]          = SortedDictionary();
     private _deploymentScriptHeader  : string;
     private _deploymentToolPath      : string;
     private mutable _emptyDeployment : QuickType.TestGroupDeployment;
@@ -162,22 +163,25 @@ namespace Tdl2Json
       def finalizeCompiler()
       {
         def deployment = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
-        def saveDeployment(tempName, index)
+        def saveDeployment(index)
         {
+          def compiledKey = (compiler.Name, index);
           mutable existingDeployment;
-          if (_deployments.TryGetValue(tempName, out existingDeployment))
-            if (DictionaryEquals(existingDeployment.ScriptArgs,    deployment.ScriptArgs) &&
-                DictionaryEquals(existingDeployment.DefaultValues, deployment.DefaultValues))
-              tempName
+          if (_compiledDeployments.TryGetValue(compiledKey, out existingDeployment))
+            if (DictionaryEquals(existingDeployment[1].ScriptArgs, deployment.ScriptArgs)
+              && DictionaryEquals(existingDeployment[1].DefaultValues, deployment.DefaultValues))
+              existingDeployment[0]
             else
-              saveDeployment(compiler.Name + Separators.DeploymentNumberSeparator + index.ToString(), index + 1)
+              saveDeployment(index + 1)
           else
           {
-            _deployments.Add(tempName, deployment);
-            tempName
+            def newName = "Tdl" + Separators.DeploymentNumberSeparator + _compiledDeployments.Count.ToString();
+            _compiledDeployments.Add(compiledKey, (newName, deployment));
+            _deployments.Add(newName, deployment);
+            newName
           }
         }
-        def name = saveDeployment(compiler.Name, 0);
+        def name = saveDeployment(0);
         result.Add(MakeDeploymentReference(name, null));
         compiler = null;
       }
