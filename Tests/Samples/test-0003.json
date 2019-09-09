@@ -2,6 +2,12 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
+    "DeployCollectors": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\DeployDataCollectors.ps1"
+    },
     "DeployWithDeployer": {
       "Type": "Script",
       "RebootExitCode": 42,
@@ -17,19 +23,6 @@
         "DeployerTimeoutSec": 900
       },
       "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\Deploy.ps1"
-    },
-    "DeployCollectors": {
-      "Type": "Script",
-      "ScriptArgs": {},
-      "DefaultValues": {},
-      "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\DeployDataCollectors.ps1"
-    },
-    "DeployWithDeployer_NoReboot": {
-      "Type": "Sequence",
-      "Deployments": [
-        "DeployWithDeployer",
-        "DeployCollectors"
-      ]
     }
   },
   "Platforms": {
@@ -121,7 +114,8 @@
   "TestScenarios": {
     "FacadeProductStopStart": {
       "Deployments": [
-        "DeployWithDeployer_NoReboot"
+        "DeployWithDeployer",
+        "DeployCollectors"
       ],
       "Environments": [
         {
@@ -183,7 +177,8 @@
     },
     "InternetExplorer_CheckDnT": {
       "Deployments": [
-        "DeployWithDeployer_NoReboot"
+        "DeployWithDeployer",
+        "DeployCollectors"
       ],
       "Environments": [
         {
@@ -206,7 +201,8 @@
     },
     "ScenarioWOAllowReboot": {
       "Deployments": [
-        "DeployWithDeployer_NoReboot"
+        "DeployWithDeployer",
+        "DeployCollectors"
       ],
       "Environments": [
         {

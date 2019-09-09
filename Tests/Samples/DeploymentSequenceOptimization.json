@@ -2,6 +2,28 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
+    "Basic": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Flag1": 1,
+        "Message0": "111",
+        "Value2": 1
+      },
+      "DefaultValues": {},
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlMCwNCiAgW3N0cmluZ10gJEZsYWcxLA0KICBbaW50XSAkVmFsdWUyDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UwID0gKCdAIicgKyAkTWVzc2FnZTAuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfRmxhZzEgPSBzd2l0Y2goJEZsYWcxKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQokX2NzaGFycF9WYWx1ZTIgPSAkVmFsdWUyLlRvU3RyaW5nKCIiLCBbU3lzdGVtLkdsb2JhbGl6YXRpb24uQ3VsdHVyZUluZm9dOjpJbnZhcmlhbnRDdWx0dXJlKQ0KDQoNCiRUZGxEZXBsb3ltZW50U291cmNlID0gQCINCiQoVGRsTWFrZUxpbmVEaXJlY3RpdmUpDQp7DQp2YXIgY29tbWFuZDAgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Mb2dNZXNzYWdlPigpOw0KY29tbWFuZDAuTWVzc2FnZSA9ICRfY3NoYXJwX01lc3NhZ2UwOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KdmFyIGNvbW1hbmQxID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuQ29tcGxleE9wZXJhdGlvbj4oKTsNCmNvbW1hbmQxLklzVmVyYm9zZSA9ICRfY3NoYXJwX0ZsYWcxOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDEpOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KQmFzaWMNCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
+      "ScriptDataExtension": ".ps1"
+    },
+    "Basic //// 0": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Flag1": 1,
+        "Message0": "---",
+        "Value2": 1
+      },
+      "DefaultValues": {},
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlMCwNCiAgW3N0cmluZ10gJEZsYWcxLA0KICBbaW50XSAkVmFsdWUyDQopDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCiRfY3NoYXJwX01lc3NhZ2UwID0gKCdAIicgKyAkTWVzc2FnZTAuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfRmxhZzEgPSBzd2l0Y2goJEZsYWcxKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQokX2NzaGFycF9WYWx1ZTIgPSAkVmFsdWUyLlRvU3RyaW5nKCIiLCBbU3lzdGVtLkdsb2JhbGl6YXRpb24uQ3VsdHVyZUluZm9dOjpJbnZhcmlhbnRDdWx0dXJlKQ0KDQoNCiRUZGxEZXBsb3ltZW50U291cmNlID0gQCINCiQoVGRsTWFrZUxpbmVEaXJlY3RpdmUpDQp7DQp2YXIgY29tbWFuZDAgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Mb2dNZXNzYWdlPigpOw0KY29tbWFuZDAuTWVzc2FnZSA9ICRfY3NoYXJwX01lc3NhZ2UwOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KdmFyIGNvbW1hbmQxID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuQ29tcGxleE9wZXJhdGlvbj4oKTsNCmNvbW1hbmQxLklzVmVyYm9zZSA9ICRfY3NoYXJwX0ZsYWcxOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDEpOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KQmFzaWMNCidADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
+      "ScriptDataExtension": ".ps1"
+    },
     "Basic >>>> Basic >>>> Basic >>>> Basic >>>> Basic": {
       "Type": "Script",
       "ScriptArgs": {
@@ -89,10 +111,54 @@
       "Timeout": "00:30",
       "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8288"
     },
+    "Scenario3": {
+      "Deployments": [
+        "Basic"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8289"
+    },
+    "Scenario4": {
+      "Deployments": [
+        "Basic //// 0"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828A"
+    },
     "Scenarios": {
       "TestScenarios": [
         "Scenario1",
-        "Scenario2"
+        "Scenario2",
+        "Scenario3",
+        "Scenario4"
       ]
     }
   },

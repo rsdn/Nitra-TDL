@@ -68,7 +68,7 @@ scenario GatedChain3 // W: Unused scenario.
 
 parallel scenario GateTests_App4 = GatedChain1, GatedChain2;
 
-scenario GateTests_App42 = GatedChain3;
+scenario GateTests_App42 = GatedChain3, GatedChain4;
 
 scenario GateTests = GateTests_App4, GateTests_App42;
 
@@ -81,4 +81,22 @@ suite Gate_2
     AutotestsPath = AutotestsPath;
     BaseDistribTestModules = BaseDistribTestModules;
     GateTests();
+}
+
+
+scenario GatedChain4
+{
+    deployment DeploymentList;
+    environments (gated_platforms, App4);
+    sequence
+    {
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry;
+      method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    }
+    Area = @"GatedTestsChain2";
+    UniqueId = @"BDA24CAF-BF05-49EC-9884-129A48C42F8E";
+    TfsId = 0;
+    RevertAgentAfter = true;
+    Timeout = "00:00:10";
 }

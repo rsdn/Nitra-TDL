@@ -21,6 +21,16 @@ deployment CurrySelector = SelectorSeq(V2: "YYY");
 deployment CurryFinal1 = CurrySelector(V1: "XXX", AnotherMessage: "333", Flag: false, Value: 0);
 deployment CurryFinal2 = CurrySeq(AnotherMessage: "333", Flag: false, Value: 0);
 
+
+select deployment ComplexSelector(V1)
+{
+  | "AAA" => Curry1
+  | "BBB" => Curry2
+}
+
+deployment ComplexFinal1 = ComplexSelector(V1: "AAA", Flag: true, Value: 1);
+deployment ComplexFinal2 = ComplexSelector(V1: "BBB", Flag: true, Value: 1);
+
 platform win7-x86;
 
 product type ProductType
@@ -56,7 +66,27 @@ scenario Scenario2
   Timeout = "00:30";
 }
 
-scenario Scenarios = Scenario1, Scenario2;
+
+scenario Scenario3
+{
+  deployment ComplexFinal1;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8289";
+  Timeout = "00:30";
+}
+
+
+scenario Scenario4
+{
+  deployment ComplexFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828A";
+  Timeout = "00:30";
+}
+
+scenario Scenarios = Scenario1, Scenario2, Scenario3, Scenario4;
 
 suite Suite
 {
