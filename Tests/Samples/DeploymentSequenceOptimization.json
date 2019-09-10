@@ -5,12 +5,12 @@
     "Tdl //// 0": {
       "Type": "Script",
       "ScriptArgs": {
-        "Flag1": 0,
+        "Flag1": "$(Flag1)",
         "Message": "$(Message)",
-        "Message0": "111",
-        "Message3": "---",
-        "Message4": "333",
-        "Value2": 0
+        "Message0": "$(Message0)",
+        "Message3": "$(Message3)",
+        "Message4": "$(Message4)",
+        "Value2": "$(Value2)"
       },
       "DefaultValues": {
         " TDL Name ": "Basic >>>> Basic >>>> Basic >>>> Basic >>>> Basic",
@@ -22,22 +22,9 @@
     "Tdl //// 1": {
       "Type": "Script",
       "ScriptArgs": {
-        "Flag1": 1,
-        "Message0": "111",
-        "Value2": 1
-      },
-      "DefaultValues": {
-        " TDL Name ": "Basic"
-      },
-      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlMCwNCiAgW3N0cmluZ10gJEZsYWcxLA0KICBbaW50XSAkVmFsdWUyDQopDQoNCiRUZGxEZXBsb3ltZW50TmFtZSA9IEAnDQpCYXNpYw0KJ0ANCg0KZnVuY3Rpb24gVGRsTWFrZUxpbmVEaXJlY3RpdmUgeyANCiAgICAiI2xpbmUgJCgkTXlJbnZvY2F0aW9uLlNjcmlwdExpbmVOdW1iZXIgKyAxKSAiIiQoJE15SW52b2NhdGlvbi5TY3JpcHROYW1lKSIiIg0KfQ0KDQoNCiRfY3NoYXJwX01lc3NhZ2UwID0gKCdAIicgKyAkTWVzc2FnZTAuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfRmxhZzEgPSBzd2l0Y2goJEZsYWcxKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQokX2NzaGFycF9WYWx1ZTIgPSAkVmFsdWUyLlRvU3RyaW5nKCIiLCBbU3lzdGVtLkdsb2JhbGl6YXRpb24uQ3VsdHVyZUluZm9dOjpJbnZhcmlhbnRDdWx0dXJlKQ0KDQoNCldyaXRlLU91dHB1dCAkVGRsRGVwbG95bWVudE5hbWUNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTA7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp2YXIgY29tbWFuZDEgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Db21wbGV4T3BlcmF0aW9uPigpOw0KY29tbWFuZDEuSXNWZXJib3NlID0gJF9jc2hhcnBfRmxhZzE7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMSk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
-      "ScriptDataExtension": ".ps1"
-    },
-    "Tdl //// 2": {
-      "Type": "Script",
-      "ScriptArgs": {
-        "Flag1": 1,
-        "Message0": "---",
-        "Value2": 1
+        "Flag1": "$(Flag1)",
+        "Message0": "$(Message0)",
+        "Value2": "$(Value2)"
       },
       "DefaultValues": {
         " TDL Name ": "Basic"
@@ -76,7 +63,15 @@
   "TestScenarios": {
     "Scenario1": {
       "Deployments": [
-        "Tdl //// 0"
+        {
+          "Tdl //// 0": {
+            "Flag1": 0,
+            "Message0": "111",
+            "Message3": "---",
+            "Message4": "333",
+            "Value2": 0
+          }
+        }
       ],
       "Environments": [
         {
@@ -97,7 +92,15 @@
     },
     "Scenario2": {
       "Deployments": [
-        "Tdl //// 0"
+        {
+          "Tdl //// 0": {
+            "Flag1": 0,
+            "Message0": "111",
+            "Message3": "---",
+            "Message4": "333",
+            "Value2": 0
+          }
+        }
       ],
       "Environments": [
         {
@@ -118,7 +121,13 @@
     },
     "Scenario3": {
       "Deployments": [
-        "Tdl //// 1"
+        {
+          "Tdl //// 1": {
+            "Flag1": 1,
+            "Message0": "111",
+            "Value2": 1
+          }
+        }
       ],
       "Environments": [
         {
@@ -139,7 +148,13 @@
     },
     "Scenario4": {
       "Deployments": [
-        "Tdl //// 2"
+        {
+          "Tdl //// 1": {
+            "Flag1": 1,
+            "Message0": "---",
+            "Value2": 1
+          }
+        }
       ],
       "Environments": [
         {
