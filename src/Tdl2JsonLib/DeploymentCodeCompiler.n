@@ -39,6 +39,8 @@ namespace Tdl2Json
 
     private static DeploymentScriptTemplate : string = ReadStringResource("Tdl2Json.DeploymentScriptTemplate.ps1");
 
+    private         _initialStack     : list[DeploymentSymbol];
+    private mutable _currentStack     : list[DeploymentSymbol];
     private         _symbols          : List[Deployment.CodeSymbol]                                  = List();
     private         _freeParameters   : Dictionary[string, FreeParameterInfo]                        = Dictionary(StringComparer.OrdinalIgnoreCase);
     private         _closedParameters : Dictionary[FormalParameterSymbol * int, ClosedParameterInfo] = Dictionary();
@@ -51,17 +53,18 @@ namespace Tdl2Json
 
     public Count : int { get { _symbols.Count } }
 
-    public this(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object])
+    public this(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object], callStack : list[DeploymentSymbol])
     {
       Name            = symbol.Name;
       _exitCode       = symbol.Expected;
       _rebootExitCode = symbol.ForReboot;
       _timeout        = symbol.Timeout;
       _timeoutValue   = ParseTimeout(_timeout);
-      AddSymbol(symbol, values);
+      _initialStack   = callStack;
+      AddSymbol(symbol, values, callStack);
     }
 
-    public TryAdd(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object]) : bool
+    public TryAdd(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object], callStack : list[DeploymentSymbol]) : bool
     {
       when (_rebootExitCode.HasValue)
         return false;
@@ -84,7 +87,7 @@ namespace Tdl2Json
         }
       }
 
-      AddSymbol(symbol, values);
+      AddSymbol(symbol, values, callStack);
 
       Name = Name + Separators.DeploymentCodeSeparator + symbol.Name;
 
@@ -98,6 +101,26 @@ namespace Tdl2Json
       _rebootExitCode = symbol.ForReboot;
 
       true
+    }
+
+    public TryGetNearestCaller() : DeploymentSymbol
+    {
+      mutable a = _initialStack;
+      mutable b = _currentStack;
+      def lengthDiff = a.Length - b.Length;
+
+      for (mutable i = 0; i < lengthDiff; ++i)
+        a = a.Tail;
+
+      for (mutable i = lengthDiff; i < 0; ++i)
+        b = b.Tail;
+
+      def loop(_, _)
+      {
+        | (h1 :: t1, h2 :: t2) => if (h1 : object == h2) h1 else loop(t1, t2)
+        | _ => null
+      }
+      loop(a, b)
     }
 
     public Compile(deploymentScriptHeader : string, deploymentToolPath : string) : QuickType.Deployment * IDictionary[string, object]
@@ -228,23 +251,24 @@ namespace Tdl2Json
         .ToString();
 
       (QuickType.Deployment() <-
-      {
-        Type                = QuickType.TypeEnum.Script;
-        ScriptPath          = null;
-        ScriptData          = Encoding.UTF8.GetBytes(deploymentScript);
-        ScriptDataExtension = ".ps1";
-        ReturnValue         = if (_exitCode.HasValue)       _exitCode.Value       else null;
-        RebootExitCode      = if (_rebootExitCode.HasValue) _rebootExitCode.Value else null;
-        Timeout             = if (_timeout.HasValue)        _timeout.Value        else null;
-        ScriptArgs          = scriptArgs;
-        DefaultValues       = defaults;
+        {
+          Type                = QuickType.TypeEnum.Script;
+          ScriptPath          = null;
+          ScriptData          = Encoding.UTF8.GetBytes(deploymentScript);
+          ScriptDataExtension = ".ps1";
+          ReturnValue         = if (_exitCode.HasValue)       _exitCode.Value       else null;
+          RebootExitCode      = if (_rebootExitCode.HasValue) _rebootExitCode.Value else null;
+          Timeout             = if (_timeout.HasValue)        _timeout.Value        else null;
+          ScriptArgs          = scriptArgs;
+          DefaultValues       = defaults;
       }, closedArgs)
     }
 
-    private AddSymbol(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object]) : void
+    private AddSymbol(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object], callStack : list[DeploymentSymbol]) : void
     {
       def symbolIndex = _symbols.Count;
       _symbols.Add(symbol);
+      _currentStack = callStack;
 
       foreach (parameter in symbol.Parameters)
       {
