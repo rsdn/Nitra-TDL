@@ -162,7 +162,7 @@ namespace Tdl2Json
 
       def finalizeCompiler()
       {
-        def deployment = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
+        def (deployment, values) = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
         def saveDeployment(index)
         {
           def compiledKey = (compiler.Name, index);
@@ -182,7 +182,7 @@ namespace Tdl2Json
           }
         }
         def name = saveDeployment(0);
-        result.Add(MakeDeploymentReference(name, null));
+        result.Add(MakeDeploymentReference(name, values));
         compiler = null;
       }
 
@@ -318,7 +318,7 @@ namespace Tdl2Json
       parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary()
     }
 
-    private static MakeDeploymentReference(name : string, values : Dictionary[string, object]) : QuickType.TestGroupDeployment
+    private static MakeDeploymentReference(name : string, values : IDictionary[string, object]) : QuickType.TestGroupDeployment
     {
       QuickType.TestGroupDeployment() <-
       {

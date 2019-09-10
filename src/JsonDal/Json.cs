@@ -347,7 +347,7 @@ namespace QuickType
 
     public partial class TestGroupDeployment
     {
-        public Dictionary<string, object> Parameters;
+        public IDictionary<string, object> Parameters;
         public string DeploymentName;
     }
 

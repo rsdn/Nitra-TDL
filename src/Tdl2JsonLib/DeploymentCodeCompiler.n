@@ -100,10 +100,11 @@ namespace Tdl2Json
       true
     }
 
-    public Compile(deploymentScriptHeader : string, deploymentToolPath : string) : QuickType.Deployment
+    public Compile(deploymentScriptHeader : string, deploymentToolPath : string) : QuickType.Deployment * IDictionary[string, object]
     {
       def scriptArgs = SortedDictionary();
       def defaults   = SortedDictionary();
+      def closedArgs = SortedDictionary();
       defaults.Add(" TDL Name ", Name);
 
       def deploymentParameters = StringBuilder();
@@ -114,6 +115,7 @@ namespace Tdl2Json
 
       def declareScriptParameter(name : string, type : TypeSymbol)
       {
+        scriptArgs.Add(name, "$(" + name + ")");
         when (scriptArgs.Count > 1)
           _ = deploymentParameters.AppendLine(",");
 
@@ -136,8 +138,6 @@ namespace Tdl2Json
       {
         def name          = pair.Key;
         def parameterInfo = pair.Value;
-
-        scriptArgs.Add(name, "$(" + name + ")");
 
         when (parameterInfo.DefaultValue != null)
           defaults.Add(name, parameterInfo.DefaultValue);
@@ -162,7 +162,7 @@ namespace Tdl2Json
           }
           makeName();
 
-          scriptArgs.Add(parameterInfo.Name, parameterInfo.Value);
+          closedArgs.Add(parameterInfo.Name, parameterInfo.Value);
           declareScriptParameter(parameterInfo.Name, parameterInfo.Type);
         }
       }
@@ -227,7 +227,7 @@ namespace Tdl2Json
         .Replace("{{Tool}}",       deploymentToolPath)
         .ToString();
 
-      QuickType.Deployment() <-
+      (QuickType.Deployment() <-
       {
         Type                = QuickType.TypeEnum.Script;
         ScriptPath          = null;
@@ -238,7 +238,7 @@ namespace Tdl2Json
         Timeout             = if (_timeout.HasValue)        _timeout.Value        else null;
         ScriptArgs          = scriptArgs;
         DefaultValues       = defaults;
-      }
+      }, closedArgs)
     }
 
     private AddSymbol(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object]) : void
