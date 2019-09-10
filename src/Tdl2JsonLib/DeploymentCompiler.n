@@ -23,7 +23,12 @@ namespace Tdl2Json
     variant SequenceItem
     {
       | Opaque      { reference : QuickType.TestGroupDeployment }
-      | Transparent { Symbol : Deployment.CodeSymbol; Values : IReadOnlyDictionary[string, object] }
+      | Transparent
+        {
+          Symbol    : Deployment.CodeSymbol;
+          Values    : IReadOnlyDictionary[string, object];
+          CallStack : list[DeploymentSymbol];
+        }
     }
 
     private _compiledDeployments     : Dictionary[string * int, string * QuickType.Deployment] = Dictionary();
@@ -78,12 +83,13 @@ namespace Tdl2Json
 
     private CompileSequence(deployments : Seq[DeploymentSymbol], rootValues : Dictionary[string, object]) : array[QuickType.TestGroupDeployment]
     {
-      def walk(d : DeploymentSymbol, values : Dictionary[string, object], sequence : List[SequenceItem])
+      def walk(d : DeploymentSymbol, values : Dictionary[string, object], sequence : List[SequenceItem], mutable callStack : list[DeploymentSymbol])
       {
+        callStack = d :: callStack;
         match (d)
         {
           | Deployment.EmptySymbol         => ()
-          | Deployment.CodeSymbol     as s => sequence.Add(SequenceItem.Transparent(s, values))
+          | Deployment.CodeSymbol     as s => sequence.Add(SequenceItem.Transparent(s, values, callStack))
           | DeploymentRebootSymbol    as s =>
             unless (_deployments.ContainsKey(s.Name))
               CompileReboot(s);
@@ -96,7 +102,7 @@ namespace Tdl2Json
 
           | Deployment.SetSymbol      as s =>
             foreach (d in s.Deployments)
-              walk(d, values, sequence);
+              walk(d, values, sequence, callStack);
 
           | Deployment.CurryingSymbol as s =>
             foreach (p in s.Parameters)
@@ -114,7 +120,7 @@ namespace Tdl2Json
             def innerValues = Dictionary(values, values.Comparer);
             foreach (x in s.ParameterValues)
               innerValues[x.Symbol.Name] = x.Expr.ToObject(values);
-            walk(s.BaseDeployment, innerValues, sequence);
+            walk(s.BaseDeployment, innerValues, sequence, callStack);
 
           | Deployment.SelectSymbol   as s =>
             def parameters = s.Parameters;
@@ -140,7 +146,7 @@ namespace Tdl2Json
               foreach (c when c.SequenceEqual(parameterValues) in s.Cases with i)
               {
                 foreach (d in s.Deployments[i])
-                  walk(d, values, sequence);
+                  walk(d, values, sequence, callStack);
                 return;
               }
             }
@@ -155,7 +161,7 @@ namespace Tdl2Json
 
       def sequence = List();
       foreach (d in deployments)
-        walk(d, rootValues, sequence);
+        walk(d, rootValues, sequence, []);
 
       def result = List();
       mutable compiler : DeploymentCodeCompiler;
@@ -175,7 +181,8 @@ namespace Tdl2Json
               saveDeployment(index + 1)
           else
           {
-            def newName = "Tdl" + Separators.DeploymentNumberSeparator + _compiledDeployments.Count.ToString();
+            def caller  = compiler.TryGetNearestCaller();
+            def newName = (caller?.Name ?? "Tdl") + Separators.DeploymentNumberSeparator + _compiledDeployments.Count.ToString();
             _compiledDeployments.Add(compiledKey, (newName, deployment));
             _deployments.Add(newName, deployment);
             newName
@@ -193,13 +200,13 @@ namespace Tdl2Json
             finalizeCompiler();
           result.Add(r);
 
-        | SequenceItem.Transparent(c, v) =>
+        | SequenceItem.Transparent(symbol, values, callStack) =>
           if (compiler : object == null)
-            compiler = DeploymentCodeCompiler(c, v);
-          else unless (compiler.TryAdd(c, v))
+            compiler = DeploymentCodeCompiler(symbol, values, callStack);
+          else unless (compiler.TryAdd(symbol, values, callStack))
           {
             finalizeCompiler();
-            compiler = DeploymentCodeCompiler(c, v);
+            compiler = DeploymentCodeCompiler(symbol, values, callStack);
           }
       }
 
