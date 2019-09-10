@@ -193,7 +193,7 @@ namespace Tdl2Json
       foreach (symbol in _symbols with symbolIndex)
       {
         _ = deploymentCode.Append("{ // ").AppendLine(symbol.Name);
-        foreach (command in (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands)
+        foreach (command in DeploymentCompiler.GetCommands(symbol))
         {
           def commandVariable = "command" + command.StepNumberIn;
           def commandType     = command.TypeRef.Symbol.FullName;
