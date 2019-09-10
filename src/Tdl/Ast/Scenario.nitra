@@ -144,7 +144,7 @@ namespace Tdl
         Froms.ContainingTable           = Symbol.MemberTable;
         Deployment.Scope                = Scope.HideWith(Symbol.MemberTable);
         Platform.Scope                  = Deployment.Scope;
-        Product.Scope                   = Deployment.Scope;
+        Product.Scope                   = TdlUtils.ProductScopeFilter(Deployment.Scope);
         Method.Scope                    = Deployment.Scope;
         Definitions.DefinitionScope     = context.GetScenarioParameterScope();
         Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope);

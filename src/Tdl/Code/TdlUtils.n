@@ -1692,5 +1692,14 @@ namespace Tdl
     {
       attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttribites.DashboardVisibleSymbol)
     }
+
+    public ProductScopeFilter(scope : Scope) : Scope
+    {
+      def filter(symbol : DeclarationSymbol) : bool
+      {
+        symbol is Tdl.VarSymbol || symbol is Tdl.ProductSymbol
+      }
+      FilteringScope(scope, filter)
+    }
   } // module
 } // namespace
