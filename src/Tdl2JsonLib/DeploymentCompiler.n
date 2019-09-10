@@ -31,6 +31,8 @@ namespace Tdl2Json
     private _deploymentScriptHeader  : string;
     private _deploymentToolPath      : string;
     private mutable _emptyDeployment : QuickType.TestGroupDeployment;
+    private mutable _implCount       : int;
+    private mutable _thunkCount      : int;
 
     public this(deploymentScriptHeader : string, deploymentToolPath : string)
     {
@@ -163,7 +165,7 @@ namespace Tdl2Json
       def finalizeCompiler()
       {
         def (deployment, values) = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
-        def saveDeployment(index)
+        def saveImpl(index)
         {
           def compiledKey = (compiler.Name, index);
           mutable existingDeployment;
@@ -172,17 +174,43 @@ namespace Tdl2Json
               && DictionaryEquals(existingDeployment[1].DefaultValues, deployment.DefaultValues))
               existingDeployment[0]
             else
-              saveDeployment(index + 1)
+              saveImpl(index + 1)
           else
           {
-            def newName = "Tdl" + Separators.DeploymentNumberSeparator + _compiledDeployments.Count.ToString();
+            def newName = "Impl" + Separators.DeploymentNumberSeparator + _implCount.ToString();
             _compiledDeployments.Add(compiledKey, (newName, deployment));
             _deployments.Add(newName, deployment);
+            ++_implCount;
             newName
           }
         }
-        def name = saveDeployment(0);
-        result.Add(MakeDeploymentReference(name, values));
+        def implName = saveImpl(0);
+        def saveThunk(index)
+        {
+          def compiledKey = (implName, index);
+          mutable existingDeployment;
+          if (_compiledDeployments.TryGetValue(compiledKey, out existingDeployment))
+            if (DictionaryEquals(existingDeployment[1].Deployments[0].Parameters, values))
+              existingDeployment[0]
+            else
+              saveThunk(index + 1)
+          else
+          {
+            def newName = "Thunk" + Separators.DeploymentNumberSeparator + _thunkCount.ToString();
+            def deployment =
+              QuickType.Deployment() <-
+              {
+                Type = QuickType.TypeEnum.Sequence;
+                Deployments = array[MakeDeploymentReference(implName, values)];
+              };
+            _compiledDeployments.Add(compiledKey, (newName, deployment));
+            _deployments.Add(newName, deployment);
+            ++_thunkCount;
+            newName
+          }
+        }
+        def name = if (values.Count > 0) saveThunk(0) else implName;
+        result.Add(MakeDeploymentReference(name, null));
         compiler = null;
       }
 

@@ -2,7 +2,7 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "Tdl //// 0": {
+    "Impl //// 0": {
       "Type": "Script",
       "ScriptArgs": {
         "Flag1": "$(Flag1)",
@@ -19,7 +19,7 @@
       "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlLA0KICBbc3RyaW5nXSAkTWVzc2FnZTAsDQogIFtzdHJpbmddICRGbGFnMSwNCiAgW2ludF0gJFZhbHVlMiwNCiAgW3N0cmluZ10gJE1lc3NhZ2UzLA0KICBbc3RyaW5nXSAkTWVzc2FnZTQNCikNCg0KJFRkbERlcGxveW1lbnROYW1lID0gQCcNCkJhc2ljID4+Pj4gQmFzaWMgPj4+PiBCYXNpYyA+Pj4+IEJhc2ljID4+Pj4gQmFzaWMNCidADQoNCmZ1bmN0aW9uIFRkbE1ha2VMaW5lRGlyZWN0aXZlIHsgDQogICAgIiNsaW5lICQoJE15SW52b2NhdGlvbi5TY3JpcHRMaW5lTnVtYmVyICsgMSkgIiIkKCRNeUludm9jYXRpb24uU2NyaXB0TmFtZSkiIiINCn0NCg0KDQokX2NzaGFycF9NZXNzYWdlID0gKCdAIicgKyAkTWVzc2FnZS5SZXBsYWNlKCciJywgJyIiJykgKyAnIicpDQokX2NzaGFycF9NZXNzYWdlMCA9ICgnQCInICsgJE1lc3NhZ2UwLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCiRfY3NoYXJwX0ZsYWcxID0gc3dpdGNoKCRGbGFnMSkgeyAiMCIgeyAiZmFsc2UiIH0gImZhbHNlIiB7ICJmYWxzZSIgfSAiIiB7ICJmYWxzZSIgfSAkbnVsbCB7ICJmYWxzZSIgfSBkZWZhdWx0IHsgInRydWUiIH0gfQ0KJF9jc2hhcnBfVmFsdWUyID0gJFZhbHVlMi5Ub1N0cmluZygiIiwgW1N5c3RlbS5HbG9iYWxpemF0aW9uLkN1bHR1cmVJbmZvXTo6SW52YXJpYW50Q3VsdHVyZSkNCiRfY3NoYXJwX01lc3NhZ2UzID0gKCdAIicgKyAkTWVzc2FnZTMuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfTWVzc2FnZTQgPSAoJ0AiJyArICRNZXNzYWdlNC5SZXBsYWNlKCciJywgJyIiJykgKyAnIicpDQoNCg0KV3JpdGUtT3V0cHV0ICRUZGxEZXBsb3ltZW50TmFtZQ0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0KeyAvLyBCYXNpYw0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlMDsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCnZhciBjb21tYW5kMSA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMS5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9GbGFnMTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQxKTsNCn0NCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTM7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp2YXIgY29tbWFuZDEgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Db21wbGV4T3BlcmF0aW9uPigpOw0KY29tbWFuZDEuSXNWZXJib3NlID0gJF9jc2hhcnBfRmxhZzE7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMSk7DQp9DQp7IC8vIEJhc2ljDQp2YXIgY29tbWFuZDAgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Mb2dNZXNzYWdlPigpOw0KY29tbWFuZDAuTWVzc2FnZSA9ICRfY3NoYXJwX01lc3NhZ2UzOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KdmFyIGNvbW1hbmQxID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuQ29tcGxleE9wZXJhdGlvbj4oKTsNCmNvbW1hbmQxLklzVmVyYm9zZSA9ICRfY3NoYXJwX0ZsYWcxOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDEpOw0KfQ0KeyAvLyBCYXNpYw0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAkX2NzaGFycF9NZXNzYWdlNDsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCnZhciBjb21tYW5kMSA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMS5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9GbGFnMTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQxKTsNCn0NCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCnZhciBjb21tYW5kMSA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkNvbXBsZXhPcGVyYXRpb24+KCk7DQpjb21tYW5kMS5Jc1ZlcmJvc2UgPSAkX2NzaGFycF9GbGFnMTsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQxKTsNCn0NCg0KI2xpbmUgZGVmYXVsdA0KIkANCg0KJFRkbFRlbXBGaWxlID0gW1N5c3RlbS5JTy5QYXRoXTo6R2V0VGVtcEZpbGVOYW1lKCkNCg0KU2V0LUNvbnRlbnQgLVBhdGggJFRkbFRlbXBGaWxlIC1FbmNvZGluZyBVVEY4IC1WYWx1ZSAkVGRsRGVwbG95bWVudFNvdXJjZQ0KDQouXEtMLkF1dG90ZXN0cy5EZXBsb3llci5leGUgJFRkbERlcGxveW1lbnROYW1lICRUZGxUZW1wRmlsZQ0KDQokVGRsRXhpdENvZGUgPSAkTGFzdEV4aXRDb2RlDQoNClJlbW92ZS1JdGVtIC1QYXRoICRUZGxUZW1wRmlsZQ0KDQpleGl0ICRUZGxFeGl0Q29kZQ0K",
       "ScriptDataExtension": ".ps1"
     },
-    "Tdl //// 1": {
+    "Impl //// 1": {
       "Type": "Script",
       "ScriptArgs": {
         "Flag1": "$(Flag1)",
@@ -31,6 +31,44 @@
       },
       "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRNZXNzYWdlMCwNCiAgW3N0cmluZ10gJEZsYWcxLA0KICBbaW50XSAkVmFsdWUyDQopDQoNCiRUZGxEZXBsb3ltZW50TmFtZSA9IEAnDQpCYXNpYw0KJ0ANCg0KZnVuY3Rpb24gVGRsTWFrZUxpbmVEaXJlY3RpdmUgeyANCiAgICAiI2xpbmUgJCgkTXlJbnZvY2F0aW9uLlNjcmlwdExpbmVOdW1iZXIgKyAxKSAiIiQoJE15SW52b2NhdGlvbi5TY3JpcHROYW1lKSIiIg0KfQ0KDQoNCiRfY3NoYXJwX01lc3NhZ2UwID0gKCdAIicgKyAkTWVzc2FnZTAuUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfRmxhZzEgPSBzd2l0Y2goJEZsYWcxKSB7ICIwIiB7ICJmYWxzZSIgfSAiZmFsc2UiIHsgImZhbHNlIiB9ICIiIHsgImZhbHNlIiB9ICRudWxsIHsgImZhbHNlIiB9IGRlZmF1bHQgeyAidHJ1ZSIgfSB9DQokX2NzaGFycF9WYWx1ZTIgPSAkVmFsdWUyLlRvU3RyaW5nKCIiLCBbU3lzdGVtLkdsb2JhbGl6YXRpb24uQ3VsdHVyZUluZm9dOjpJbnZhcmlhbnRDdWx0dXJlKQ0KDQoNCldyaXRlLU91dHB1dCAkVGRsRGVwbG95bWVudE5hbWUNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsgLy8gQmFzaWMNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gJF9jc2hhcnBfTWVzc2FnZTA7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp2YXIgY29tbWFuZDEgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Db21wbGV4T3BlcmF0aW9uPigpOw0KY29tbWFuZDEuSXNWZXJib3NlID0gJF9jc2hhcnBfRmxhZzE7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMSk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
       "ScriptDataExtension": ".ps1"
+    },
+    "Thunk //// 0": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Impl //// 0": {
+            "Flag1": 0,
+            "Message0": "111",
+            "Message3": "---",
+            "Message4": "333",
+            "Value2": 0
+          }
+        }
+      ]
+    },
+    "Thunk //// 1": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Impl //// 1": {
+            "Flag1": 1,
+            "Message0": "111",
+            "Value2": 1
+          }
+        }
+      ]
+    },
+    "Thunk //// 2": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Impl //// 1": {
+            "Flag1": 1,
+            "Message0": "---",
+            "Value2": 1
+          }
+        }
+      ]
     }
   },
   "Platforms": {
@@ -63,15 +101,7 @@
   "TestScenarios": {
     "Scenario1": {
       "Deployments": [
-        {
-          "Tdl //// 0": {
-            "Flag1": 0,
-            "Message0": "111",
-            "Message3": "---",
-            "Message4": "333",
-            "Value2": 0
-          }
-        }
+        "Thunk //// 0"
       ],
       "Environments": [
         {
@@ -92,15 +122,7 @@
     },
     "Scenario2": {
       "Deployments": [
-        {
-          "Tdl //// 0": {
-            "Flag1": 0,
-            "Message0": "111",
-            "Message3": "---",
-            "Message4": "333",
-            "Value2": 0
-          }
-        }
+        "Thunk //// 0"
       ],
       "Environments": [
         {
@@ -121,13 +143,7 @@
     },
     "Scenario3": {
       "Deployments": [
-        {
-          "Tdl //// 1": {
-            "Flag1": 1,
-            "Message0": "111",
-            "Value2": 1
-          }
-        }
+        "Thunk //// 1"
       ],
       "Environments": [
         {
@@ -148,13 +164,7 @@
     },
     "Scenario4": {
       "Deployments": [
-        {
-          "Tdl //// 1": {
-            "Flag1": 1,
-            "Message0": "---",
-            "Value2": 1
-          }
-        }
+        "Thunk //// 2"
       ],
       "Environments": [
         {
