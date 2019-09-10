@@ -59,7 +59,7 @@ namespace Tdl2Json
         | Double    as d => d.Value
         | Single    as s => s.Value
         | None           => null
-        | Reference as r => "#(" + r.name + ")"
+        | Custom(e is Tdl.Expr) => e.ToObject()
         | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
     }

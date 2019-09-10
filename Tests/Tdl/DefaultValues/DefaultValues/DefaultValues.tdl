@@ -1,0 +1,45 @@
+external
+{
+  string Foo = "aaa";
+}
+
+product type ProductType
+{
+  string Name;
+  string Version;
+}
+
+product Product1 : ProductType
+{
+  Name = "Product 1";
+  Version = "1.0";
+}
+
+product Product2 : ProductType
+{
+  Name = "Product 2";
+  Version = "1.0";
+}
+
+platform Platform;
+
+scenario S1
+{
+  deployment Deploy;
+  environments (Platform, Product1);
+  method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
+
+suite Suite
+{
+  platform Platform;
+  product Product1;
+  S1();
+}
+
+deployment Deploy(ProductType AnotherProduct = Product2, string Text = Foo)
+ script "Deploy.ps1"
+{
+}

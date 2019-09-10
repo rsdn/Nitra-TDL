@@ -1,0 +1,79 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "DefaultValues": {
+    "Foo": "aaa"
+  },
+  "Deployments": {
+    "Deploy": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Text": "$(Text)"
+      },
+      "DefaultValues": {
+        "AnotherProduct": "$(Product:Product2)",
+        "Text": "#(Foo)"
+      },
+      "ScriptPath": "Deploy.ps1"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product1": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    },
+    "Product2": {
+      "Name": "Product 2",
+      "Parameters": {
+        "Name": "Product 2"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product1"
+      ],
+      "TestScenarios": [
+        "S1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S1": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product1"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20A84E6C-1028-48ED-B4E4-3DC8CB599E71"
+    }
+  },
+  "TestEntities": {}
+}

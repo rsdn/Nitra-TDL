@@ -40,7 +40,7 @@ namespace Tdl
       def makeDefaultParameters(ast : ExprBase) : ValueOption[DefaultValue]
       {
         | x   is DotNet.Expr.SimpleName when !x.IsRefEvaluated || !x.Ref.IsSymbolEvaluated => VNone()
-        | x   is DotNet.Expr.SimpleName when x.IsRefEvaluated && x.Ref.IsSymbolEvaluated => VSome(DefaultValue.Reference(x.Ref.Symbol.Name))
+        | x   is DotNet.Expr.SimpleName when x.IsRefEvaluated && x.Ref.IsSymbolEvaluated => VSome(DefaultValue.Custom(Tdl.Expr.Reference(x.Ref.Symbol)))
         | _ => DotNet.Coverters.MakeDefaultParametersOpt(ast)
       }
       DotNet.AstUtils.MakeDefault = makeDefaultParameters;
