@@ -62,7 +62,12 @@ namespace Tdl2Json
         | Reference as r => "#(" + r.name + ")"
         | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
-    }    
+    }
+
+    public static GetCommands(symbol : Deployment.CodeSymbol) : CommandCall.IAstList
+    {
+      (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands
+    }
 
     [Memoize]
     public Compile(seq : list[DeploymentSymbol]) : array[QuickType.TestGroupDeployment]
@@ -89,7 +94,10 @@ namespace Tdl2Json
         match (d)
         {
           | Deployment.EmptySymbol         => ()
-          | Deployment.CodeSymbol     as s => sequence.Add(SequenceItem.Transparent(s, values, callStack))
+          | Deployment.CodeSymbol     as s =>
+            when (GetCommands(s).Count > 0)
+              sequence.Add(SequenceItem.Transparent(s, values, callStack))
+
           | DeploymentRebootSymbol    as s =>
             unless (_deployments.ContainsKey(s.Name))
               CompileReboot(s);
