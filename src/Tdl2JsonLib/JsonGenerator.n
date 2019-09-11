@@ -640,7 +640,7 @@ namespace Tdl2Json
                   RevertAgentBefore       = getBool  ("RevertAgentBefore");
                   TfsId                   = getLong  ("TfsId");
                   Timeout                 = getString("Timeout");
-                  UniqueId                = getString("UniqueId");
+                  UniqueId                = getString("UniqueId").Trim('{', '}');
                   ProductGroupName        = getString("ProductGroupName");
                   FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
                   MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
