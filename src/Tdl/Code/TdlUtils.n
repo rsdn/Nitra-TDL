@@ -142,7 +142,7 @@ namespace Tdl
           _ = builder.Append(<#Deployment is not used in any scenario.#>);
         else
         {
-          _ = builder.Append(<#Deployment is used in the following scenarios:\n   #>);
+          _ = builder.Append("Deployment is used in the following scenarios:\n   ");
           _ = builder.Join(scenarios.Take(10), HintML.SymbolToHintMlWithSubHint(_, _));
           when (scenarios.Count > 10)
             _ = builder.Append($<#Deployment is used in $(scenarios.Count) scenarios.#>);
@@ -204,8 +204,6 @@ namespace Tdl
       builder.ToImmutable()
     }
 
-    // TODO: Пороверить, что все UniqueId у всех обрабатываемых сценариев был уникальны.
-    
     public MakeScenarios(scenariosRefs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[ScenarioSymbol]
     {
       def builder = ImmutableArray.CreateBuilder();
@@ -1700,6 +1698,44 @@ namespace Tdl
         symbol is Tdl.VarSymbol || symbol is Tdl.ProductSymbol
       }
       FilteringScope(scope, filter)
+    }
+
+    public ScenarioMakeHint(symbolCache : ISymbolCache, symbol : Scenario.DefSymbol) : string
+    {
+      def builder = StringBuilder();
+      try
+      {
+        symbolCache?.CacheSymbol(symbol);
+        _ = builder.Append("<keyword>").HintMlEscape(symbol.Kind).Append("</keyword> ")
+          .SymbolToHintMlWithSubHint(symbol)
+          .AppendLine();
+
+        def project = symbolCache :> Project;
+        def id = symbol.Id;
+        
+        def rootNs = (project.Data :> TdlProjectData).RootNamespace;
+
+        def symbols = rootNs.MemberTable.GetAllSymbols().ToArray();
+        def suites = symbols
+          .OfType.[Suite.DefSymbol]()
+          .Where(s => s.Statements.Any(st => (st :> SuiteStatement.CallScenario).Reference.AllScenarios.Any(sc => sc.Id == id)))
+          .ToList();
+        
+        if (suites.Count == 0)
+          _ = builder.Append(<#Данный сценарий не используется из ни в одном suite-е.#>);
+        else
+        {
+          def maxDisplyCount = 20;
+          _ = builder.Append("Данный сценарий используется из следующих suite-ов:<br/>   ");
+          _ = builder.Join(suites.Take(maxDisplyCount), HintML.SymbolToHintMlWithSubHint(_, _));
+          when (suites.Count > maxDisplyCount)
+            _ = builder.Append($<#Deployment is used in $(suites.Count) scenarios.#>);
+        }
+
+        _ = builder.MakeLocations(symbol);
+      }
+      catch { e => _ = builder.HintMlException(e); }
+      builder.ToString()
     }
   } // module
 } // namespace

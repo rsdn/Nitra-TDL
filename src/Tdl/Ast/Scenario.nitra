@@ -39,6 +39,7 @@ namespace Tdl
           in Filter         : object;
 
           Kind           = "scenario";
+          MakeHint       = TdlUtils.ScenarioMakeHint(symbolCache, this);
           SpanClass      = TdlLang.ScenarioSpanClass;
           IsSameIdentity = candidate is Tdl.Scenario;
         }
