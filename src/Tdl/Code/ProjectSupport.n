@@ -246,20 +246,19 @@ namespace Tdl
       def uniqueIds = scenarios.OfType.[Scenario.DefSymbol]()
         .Where(sd => sd.IsDefsEvaluated && sd.Defs.Any(d => d.Symbol.Name == "UniqueId"))
         .Select(sd => (sd, sd.Defs.Single(d => d.Symbol.Name == "UniqueId")));
-        def groupedByDef = uniqueIds.GroupBy((_, d) => d.Expr.ToString().ToUpperInvariant().Trim('{', '}'));
+        def groupedByDef = uniqueIds.GroupBy((_, d) => d.Expr.ToString().ToUpperInvariant().Trim('{', '}', '"'));
       
       foreach (group when group.Count() > 1 in groupedByDef)
       {
         def names = string.Join(", ", group.Select((sd, _) => sd.Name));
         foreach ((scenario, d) in group)
         {
-          def value = d.Expr;
           def decl  = scenario.FirstDeclarationOrDefault :> Scenario.Def;
           foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated in decl.Definitions)
           {
             when (definition.SymbolRef.Symbol.Id == d.Symbol.Id)
             {
-              definition.Reference.Error(context, $"Scenarios $names have the same UniqueId value ($value).", 0);
+              definition.Reference.Error(context, $"Scenarios $names have the same UniqueId value $(group.Key).", 0);
             }
           }
         }
