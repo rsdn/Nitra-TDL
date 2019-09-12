@@ -8,10 +8,11 @@
     "Deploy": {
       "Type": "Script",
       "ScriptArgs": {
-        "Text": "$(Text)"
+        "Text": "$(Text)",
+        "AnotherName": "$(Product:AnotherProduct.Name)"
       },
       "DefaultValues": {
-        "AnotherProduct": "$(Product:Product2)",
+        "AnotherProduct": "Product2",
         "Text": "#(Foo)"
       },
       "ScriptPath": "Deploy.ps1"

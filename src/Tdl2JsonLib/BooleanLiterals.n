@@ -12,13 +12,9 @@
 
     public Setup(mode : BooleanMarshalMode) : void
     {
-      | Boolean =>
-        True = true;
-        False = false;
-
-      | Integer =>
-        True  = 1;
-        False = 0;
+      | Boolean => (True, False) = (true, false)
+      | Integer => (True, False) = (1, 0)
+      | String  => (True, False) = ("True", "False")
     }
   }
 }

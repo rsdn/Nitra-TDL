@@ -21,6 +21,7 @@ namespace Tdl2Json
             {
                 ["boolean"] = BooleanMarshalMode.Boolean,
                 ["integer"] = BooleanMarshalMode.Integer,
+                ["string"] = BooleanMarshalMode.String,
             };
 
         private readonly OptionSet optionSet;

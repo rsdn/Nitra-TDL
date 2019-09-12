@@ -42,4 +42,5 @@ suite Suite
 deployment Deploy(ProductType AnotherProduct = Product2, string Text = Foo)
  script "Deploy.ps1"
 {
+  AnotherName = AnotherProduct.Name;
 }
