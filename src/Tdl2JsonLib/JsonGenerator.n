@@ -229,39 +229,22 @@ namespace Tdl2Json
       | Platform.SetSymbol as Set => (Set.Name, PlatformValue() <- { StringArray = Set.Platforms.Select(_.Name).ToArray(); });
       | _                         => ThrowNotSupportedSymbol(platformSymbol)
     }
-
-    toJson(expr : Tdl.Expr, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : object
-    {
-      match (expr)
-      {
-        | String    as str => str.Value
-        | False            => BooleanLiterals.False
-        | True             => BooleanLiterals.True
-        | Real      as x   => x.Value
-        | Integer   as x   => x.Value
-        | Reference(Symbol=VarSymbol as v) => toJson(dic[v], dic)
-        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s) => /*"Product:" +*/ s.Name
-        | Reference(Symbol=FieldSymbol(DeclaredIn=ExternalSymbol) as fld) => $"#($(fld.Name))"
-        | Reference as x   => "#(" + x.Symbol.Name + ")"
-        | Error     as e   => throw NotSupportedException("Error at: " + e.Location);
-        | List      as xs  => xs.Elems.Select(toJson(_, dic)).ToArray()
-        | x                => throw NotSupportedException("The '" + x + "' is not supported");
-      }
-    }
       
-    private CollectDefs(defs : Seq[Def], dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Seq[string * object]
+    private CollectDefs(defs : ImmutableArray[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Dictionary[string, object]
     {
+      def result = Dictionary();
       foreach(@def in defs)
       {
         def name = @def.Symbol.Name;
-        yield (name, toJson(@def.Expr, dic));
+        result.Add(name, @def.Expr.ToObject(variables=variables));
       }
+      result
     }
 
     private GenerateProduct(productSymbol : ProductSymbol) : string * ProductValue
     {
       | Product.DefSymbol as Def => 
-        def parameters = CollectDefs(Def.Defs).ToDictionary();
+        def parameters = CollectDefs(Def.Defs);
         def useAsFixedParameter(name : string) : string
         {
           mutable value;
@@ -280,10 +263,9 @@ namespace Tdl2Json
           {
             Product = Product() <- { 
               Name              = name;
-              BranchName = useAsFixedParameter("ReleaseName") ?? useAsFixedParameter("BranchName"); // 
+              BranchName        = useAsFixedParameter("ReleaseName") ?? useAsFixedParameter("BranchName"); // 
               Version           = useAsFixedParameter("Version");
               DumpServerProduct = useAsFixedParameter("DumpServerProduct");
-              Parameters  = parameters;
               Parameters        = parameters;
             }
           })
@@ -668,7 +650,7 @@ namespace Tdl2Json
 
     private GenerateEntity(symbol : EntitySymbol) : string * TestEntity
     {
-      def parameters = CollectDefs(symbol.Defs).ToDictionary();
+      def parameters = CollectDefs(symbol.Defs);
       def entity = TestEntity() <-
       {
         BranchName = parameters["BranchName"].ToString();
@@ -888,7 +870,7 @@ namespace Tdl2Json
         def platform   = TryResolveVar(dic, g.Platform) : PlatformSymbol;
         def product    = TryResolveVar(dic, g.Product)  : ProductSymbol;
 
-        def parameters = CollectDefs(g.Defs, dic).ToDictionary();
+        def parameters = CollectDefs(g.Defs, dic);
         foreach (d when !parameters.ContainsKey(d.Name) in g.DefaultDefs)
           parameters.Add(d.Name, ParameterDefaultValue);
         
@@ -916,7 +898,7 @@ namespace Tdl2Json
         | x is FieldSymbol           => x.IsIsDashboardVisibleEvaluated && x.IsDashboardVisible
         | _ => false
       }
-      def parameters = CollectDefs(suiteSymbol.Defs).ToDictionary();
+      def parameters = CollectDefs(suiteSymbol.Defs);
       foreach (d in suiteSymbol.DefaultDefs)
         parameters.Add(d.Name, ParameterDefaultValue);
       def entityOpt = suiteSymbol.EntityOpt;
