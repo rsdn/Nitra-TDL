@@ -1,4 +1,4 @@
-external { string Foo; }
+﻿external { string Foo; }
 
 deployment Basic(string Message = Foo, bool Flag, int Value)
 {
@@ -86,7 +86,16 @@ scenario Scenario4
   Timeout = "00:30";
 }
 
-scenario Scenarios = Scenario1, Scenario2, Scenario3, Scenario4;
+scenario Scenario5
+{
+  deployment ComplexFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828B";
+  Timeout = "00:30";
+}
+
+scenario Scenarios = Scenario1, Scenario2, Scenario3, Scenario4, Scenario5;
 
 suite Suite
 {
