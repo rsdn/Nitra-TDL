@@ -46,7 +46,7 @@ namespace Tdl
 
         Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
-        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
+        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef);
 
         TypeOpt.Scope               = Scope;
         TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
@@ -136,7 +136,7 @@ namespace Tdl
 
         Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable).HideWith(Symbol.MemberTable);
-        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Definitions.SymbolRef);
+        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef);
 
         TypeOpt.Scope               = Scope;
         TypeRef                     = TypeOpt.Ref.GetValueOrDefault();

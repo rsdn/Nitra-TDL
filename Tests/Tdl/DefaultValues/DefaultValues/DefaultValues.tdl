@@ -6,19 +6,18 @@ external
 product type ProductType
 {
   string Name;
-  string Version;
+  string Version = "1.0";
 }
 
 product Product1 : ProductType
 {
   Name = "Product 1";
-  Version = "1.0";
+  Version = "1.1";
 }
 
 product Product2 : ProductType
 {
   Name = "Product 2";
-  Version = "1.0";
 }
 
 platform Platform;
@@ -32,14 +31,20 @@ scenario S1
   Timeout = "00:10";
 }
 
-suite Suite
+suite type SuiteType
+{
+  string SuiteTypeField = "test";
+  string SuiteTypeField2;
+}
+
+suite Suite : SuiteType
 {
   platform Platform;
   product Product1;
   S1();
 }
 
-deployment Deploy(ProductType AnotherProduct = Product2, string Text = Foo)
+deployment Deploy(ProductType AnotherProduct = Product2, string Text = Foo, string SuiteTypeField)
  script "Deploy.ps1"
 {
   AnotherName = AnotherProduct.Name;

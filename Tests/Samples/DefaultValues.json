@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "DefaultValues": {
@@ -9,6 +9,7 @@
       "Type": "Script",
       "ScriptArgs": {
         "Text": "$(Text)",
+        "SuiteTypeField": "$(SuiteTypeField)",
         "AnotherName": "$(Product:AnotherProduct.Name)"
       },
       "DefaultValues": {
@@ -28,7 +29,7 @@
         "Name": "Product 1"
       },
       "BranchName": null,
-      "Version": "1.0"
+      "Version": "1.1"
     },
     "Product2": {
       "Name": "Product 2",
@@ -41,7 +42,9 @@
   },
   "Suites": {
     "Suite": {
-      "Parameters": {},
+      "Parameters": {
+        "SuiteTypeField": "test"
+      },
       "Platforms": [
         "Platform"
       ],

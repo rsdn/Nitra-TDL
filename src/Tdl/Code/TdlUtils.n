@@ -433,7 +433,7 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
 
-    public MakeDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
+    public MakeDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
@@ -470,6 +470,11 @@ namespace Tdl
 
         builder.Add(Def(sym, definition.Expr.Result));
       }
+      
+      def existsDefsNames = HashSet(builder.Select(x => x.Symbol.Name), StringComparer.InvariantCultureIgnoreCase);
+      foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr), Name=name) as field when !existsDefsNames.Contains(name) in type.Scope.GetAllSymbols())
+        builder.Add(Def(field, expr));
+
       builder.TryMoveToImmutable()
     }
 
