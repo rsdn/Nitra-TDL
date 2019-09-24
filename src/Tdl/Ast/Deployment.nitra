@@ -130,7 +130,7 @@ namespace Tdl
         Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
         Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams).HideWith(Symbol.ParameterScope);
 
-        Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, CurredParameters.SymbolRef);
+        Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, Symbol.Type, CurredParameters.SymbolRef);
         Symbol.BaseDeployment.IsUsed     = true;
         Parameters.Scope                 = Scope.UnionWith(context.GetExternalSymbolTable());
 

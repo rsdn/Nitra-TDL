@@ -209,11 +209,9 @@
 
     syntax TypeBody = outline_begin_before "{" inl Field* d "}" nl outline_end_before;
 
-    syntax ExternalBody = outline_begin_before "{" inl Fields=FieldWithDefault* d "}" nl outline_end_before;
+    syntax ExternalBody = outline_begin_before "{" inl Fields=Field* d "}" nl outline_end_before;
 
-    syntax Field = Attributes AnyType sm Name ";" nl;
-
-    syntax FieldWithDefault = Attributes AnyType sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
+    syntax Field = Attributes AnyType sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
     
     syntax DeploymentScriptBody = outline_begin_before "{" inl DefDeclaration* Options=DeploymentOption* d "}" nl outline_end_before;
 
