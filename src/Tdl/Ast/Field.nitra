@@ -26,6 +26,7 @@ namespace Tdl
     Symbol.DeclaredIn         = ContainingTable.Owner;
     Symbol.Value              = Value.Result;
     Symbol.IsDashboardVisible = TdlUtils.HasDashboardVisible(Attributes);
+    Value.ExpectedType        = Symbol.Type;
 
     Type  : QualifiedReference;
     Value : DefExpr?;

@@ -1,11 +1,11 @@
 external
 {
-  string Foo = "aaa";
+  string Foo = "external default";
 }
 
 product type ProductType
 {
-  string Name;
+  string Name = Foo;
   string Version = "1.0";
 }
 
@@ -33,8 +33,8 @@ scenario S1
 
 suite type SuiteType
 {
-  string SuiteTypeField = "test";
-  string SuiteTypeField2;
+  string SuiteTypeField1 = Foo;
+  string SuiteTypeField2 = "suite type default";
 }
 
 suite Suite : SuiteType
@@ -44,7 +44,7 @@ suite Suite : SuiteType
   S1();
 }
 
-deployment Deploy(ProductType AnotherProduct = Product2, string Text = Foo, string SuiteTypeField)
+deployment Deploy(ProductType AnotherProduct = Product2, string Text = Foo, string SuiteTypeField1, string SuiteTypeField2)
  script "Deploy.ps1"
 {
   AnotherName = AnotherProduct.Name;
