@@ -1,27 +1,4 @@
 ﻿{
-  "Products": {
-    "Product1": {
-      "Parameters": {
-        "ProductTypeField": [
-          "#(Foo)",
-          0,
-          0
-        ]
-      }
-    },
-    "Product2": {
-      "Parameters": {
-        "ProductTypeField": [
-          "#(Foo)",
-          0,
-          0
-        ]
-      }
-    }
-  }
-}
-Output:
-{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "DefaultValues": {
