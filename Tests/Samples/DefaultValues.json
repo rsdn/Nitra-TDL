@@ -1,4 +1,27 @@
 ﻿{
+  "Products": {
+    "Product1": {
+      "Parameters": {
+        "ProductTypeField": [
+          "#(Foo)",
+          0,
+          0
+        ]
+      }
+    },
+    "Product2": {
+      "Parameters": {
+        "ProductTypeField": [
+          "#(Foo)",
+          0,
+          0
+        ]
+      }
+    }
+  }
+}
+Output:
+{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "DefaultValues": {
@@ -27,7 +50,8 @@
     "Product1": {
       "Name": "Product 1",
       "Parameters": {
-        "Name": "Product 1"
+        "Name": "Product 1",
+        "ProductTypeField": "#(Foo)"
       },
       "BranchName": null,
       "Version": "1.1"
@@ -35,7 +59,8 @@
     "Product2": {
       "Name": "Product 2",
       "Parameters": {
-        "Name": "Product 2"
+        "Name": "Product 2",
+        "ProductTypeField": "#(Foo)"
       },
       "BranchName": null,
       "Version": "1.0"

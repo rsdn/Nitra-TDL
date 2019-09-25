@@ -5,8 +5,9 @@ external
 
 product type ProductType
 {
-  string Name = Foo;
+  string Name;
   string Version = "1.0";
+  string ProductTypeField = Foo;
 }
 
 product Product1 : ProductType
