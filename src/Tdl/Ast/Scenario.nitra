@@ -9,10 +9,12 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Scenario : NamespaceMember, UsedDeclaration, TypedDeclaration
+  abstract declaration Scenario : NamespaceMember, UsedDeclaration, TypedDeclaration, CustomAttributeHostDeclaration
   {
     symbol
     {
+    stage 2:
+      in TriggerPaths             : ImmutableArray[string];
     stage 3:
       in AggregateParametersScope : Scope;
       in AllScenarios             : ImmutableArray[ScenarioSymbol];
@@ -21,6 +23,7 @@ namespace Tdl
     }
 
     Symbol.AllScenarios = TdlUtils.CheckForRecursionScenario(self, context, Symbol, Symbol.AggregateParametersScope);
+    Symbol.TriggerPaths = TdlUtils.GetTriggerPaths(Attributes, context);
 
     unless (Symbol.IsUsed)
       Name.Warning(context, "Unused scenario.");

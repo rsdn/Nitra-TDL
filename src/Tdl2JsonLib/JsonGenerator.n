@@ -71,7 +71,9 @@ namespace Tdl2Json
                        transformatorOpt         : TransfomationFunc,
                        isTestMode               : bool,
                        booleanMarshalMode       : BooleanMarshalMode,
-                       jsonSchemaType           : string
+                       jsonSchemaType           : string,
+                       diffFile                 : string,
+                       repositoryRoot           : string
       ) : TransformationContext
     {
       BooleanLiterals.Setup(booleanMarshalMode);
@@ -108,7 +110,7 @@ namespace Tdl2Json
             deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
 
           GenerateJson(context.RootNamespace, context.InitialDeployment, context.FinalDeployment, context.ExternalSymbols, output,
-            deploymentScriptHeader, deploymentToolPath, jsonSchemaType);
+            deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot);
         }
       }
 
@@ -121,7 +123,8 @@ namespace Tdl2Json
       FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")
     ];
 
-    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, mode : CompilerMode, transformatorOutput : string) : TransformationContext
+    private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, mode : CompilerMode,
+      transformatorOutput : string) : TransformationContext
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
       
@@ -172,7 +175,8 @@ namespace Tdl2Json
     }
 
     private GenerateJson(root : NamespaceSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, externalSymbols : TableScope,
-      output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string) : void
+      output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string,
+      diffFile : string, repositoryRoot : string) : void
     {
       def stopwatch = Stopwatch.StartNew();
       JsonGenerator.ReportMessage("Generating JSON...");
@@ -182,14 +186,25 @@ namespace Tdl2Json
 
       def compiler    = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
       def symbols     = root.MemberTable.GetAllSymbols().ToImmutableArray();
+
+      mutable scenarioTrigger;
+      when (!string.IsNullOrEmpty(diffFile) && !string.IsNullOrEmpty(repositoryRoot))
+      {
+        scenarioTrigger = ScenarioTriggerProcessor(repositoryRoot);
+        foreach (symbol in symbols.OfType.[Tdl.ScenarioSymbol]())
+          scenarioTrigger.AddScenario(symbol);
+        using (reader = StreamReader(diffFile))
+          scenarioTrigger.LoadDiff(reader);
+      }
+
       def suites      = SortedDictionary();
       def suiteGroups = SortedDictionary();
       foreach (g is Suite.GeneratorSymbol in symbols)
-        GenerateSuiteGenerator(g, suites, suiteGroups);
+        GenerateSuiteGenerator(g, suites, suiteGroups, scenarioTrigger);
       foreach (s is Suite.ListSymbol in symbols)
         GenerateSuiteGroup(s, suiteGroups);
       foreach (s is Suite.DefSymbol in symbols)
-        suites.Add(GenerateSuite(s));
+        suites.Add(GenerateSuite(s, scenarioTrigger));
 
       def defaultValues = SortedDictionary();
       foreach (f is FieldSymbol in externalSymbols.GetAllSymbols())
@@ -853,7 +868,8 @@ namespace Tdl2Json
       suiteGroups.Add(suiteSymbol.Name, SuiteGroup() <- { Suites = suites })
     }
 
-    private GenerateSuiteGenerator(g : Suite.GeneratorSymbol, suites : IDictionary[string, TestSuite], suiteGroups : IDictionary[string, SuiteGroup]) : void
+    private GenerateSuiteGenerator(g : Suite.GeneratorSymbol, suites : IDictionary[string, TestSuite], suiteGroups : IDictionary[string, SuiteGroup],
+      scenarioTrigger : ScenarioTriggerProcessor) : void
     {
       def nameBase = g.Name;
       def names = List();
@@ -879,7 +895,7 @@ namespace Tdl2Json
         {
           Platforms     = array[platform.Name];
           Products      = array[product.Name];
-          TestScenarios = g.Statements.OfType.[Tdl.SuiteStatement.CallScenario]().Select(s => s.Reference.Name).ToArray();
+          TestScenarios = GetSuiteScenarioList(g.Statements, scenarioTrigger);
           Parameters    = parameters;
           TestEntity    = entityOpt;
         };
@@ -890,7 +906,7 @@ namespace Tdl2Json
       suiteGroups.Add(nameBase, SuiteGroup() <- { Suites = names; });
     }
 
-    private GenerateSuite(suiteSymbol : Suite.DefSymbol) : string * TestSuite
+    private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : ScenarioTriggerProcessor) : string * TestSuite
     {
       def isDashboardVisible(symbol : TypedDeclarationSymbol) : bool
       {
@@ -907,13 +923,25 @@ namespace Tdl2Json
       {
         Platforms                  = array[suiteSymbol.Platform.Name];
         Products                   = array[suiteSymbol.Product.Name];
-        TestScenarios              = suiteSymbol.Statements.OfType.[Tdl.SuiteStatement.CallScenario]().Select(s => s.Reference.Name).ToArray();
+        TestScenarios              = GetSuiteScenarioList(suiteSymbol.Statements, scenarioTrigger);
         Parameters                 = parameters;
         TestEntity                 = if (entityOpt.HasValue) entityOpt.Value.Name else null;
         DashboardVisibleParameters = if (dashboardVisibles.IsEmpty()) null else dashboardVisibles;
       };
 
       (suiteSymbol.Name, suite)
+    }
+
+    private GetSuiteScenarioList(statements : ImmutableArray[SuiteStatement], scenarioTrigger : ScenarioTriggerProcessor) : array[string]
+    {
+      def names = List();
+      foreach (call is Tdl.SuiteStatement.CallScenario in statements)
+      {
+        def scenario = call.Reference;
+        when (scenarioTrigger == null || scenarioTrigger.IsTriggered(scenario))
+          names.Add(scenario.Name);
+      }
+      names.ToArray();
     }
   } // module
 } // namespace

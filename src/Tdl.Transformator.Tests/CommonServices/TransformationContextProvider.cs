@@ -28,7 +28,9 @@ namespace Tdl.Transformator.Tests.CommonServices
                 transformatorOpt: transformationContext => context = transformationContext,
                 isTestMode: false,
                 booleanMarshalMode: BooleanMarshalMode.Boolean,
-                jsonSchemaType: "prod");
+                jsonSchemaType: "prod",
+                diffFile: null,
+                repositoryRoot: null);
 
             if (context == null)
             {

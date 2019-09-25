@@ -410,7 +410,7 @@ namespace Tdl
 
       try
       {
-        def path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(str.Location.Source.File.FullName), rawValue.Value));
+        def path = ExpandPathRelativeToAst(str, rawValue.Value);
 
         unless (File.Exists(path))
           str.Error(context, $"Deployment file '$(path)' not found.");
@@ -643,33 +643,43 @@ namespace Tdl
       foreach (d in suiteDefs)
         _ = definedParameters.Add(d.Symbol.NameId);
 
+      mutable hasUnconditionalScenario;
       def undefinedParameters = HashSet();
       foreach (statement in suiteStatements)
       {
-        | CallScenario(scenaro) when scenaro.IsAggregateParametersScopeEvaluated =>
-          def scenarioScope = scenaro.AggregateParametersScope;
-          foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
-          {
-            when (definedParameters.Contains(parameter.NameId)
-               || parameter.HasDefault()
-               || parameter.DeclaredIn is Deployment.SelectSymbol
-               || parameter.Type is SuiteTypeSymbol)
-              continue; // OK
+        | CallScenario(scenaro) =>
+          when (scenaro.IsTriggerPathsEvaluated && scenaro.TriggerPaths.Length == 0)
+            hasUnconditionalScenario = true;
 
-            when (undefinedParameters.Add(parameter.NameId))
+          when (scenaro.IsAggregateParametersScopeEvaluated)
+          {
+            def scenarioScope = scenaro.AggregateParametersScope;
+            foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
             {
-              def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
-              using (root = msgs.RootError(ast.Name, $"Value is not specified for parameter '$(parameter)' declared in '$(parameter.DeclaredIn)'."))
+              when (definedParameters.Contains(parameter.NameId)
+                 || parameter.HasDefault()
+                 || parameter.DeclaredIn is Deployment.SelectSymbol
+                 || parameter.Type is SuiteTypeSymbol)
+                continue; // OK
+
+              when (undefinedParameters.Add(parameter.NameId))
               {
-                def parameterDefinition = parameter.FirstParsedDeclarationOrDefault;
-                when (parameterDefinition != null)
-                  root.Hint(parameterDefinition.Name.Location, "Parameter definition.");
+                def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
+                using (root = msgs.RootError(ast.Name, $"Value is not specified for parameter '$(parameter)' declared in '$(parameter.DeclaredIn)'."))
+                {
+                  def parameterDefinition = parameter.FirstParsedDeclarationOrDefault;
+                  when (parameterDefinition != null)
+                    root.Hint(parameterDefinition.Name.Location, "Parameter definition.");
+                }
               }
             }
           }
 
         | _ => ()
       }
+
+      when (!hasUnconditionalScenario && suiteStatements.Length > 0)
+        ast.Name.Error(context, "Suite must contain at least one scenario without TriggerPath attribute.", 0);
     }
 
     public ResolveSuiteTypeSymbol(this context : DependentPropertyEvalContext, typeRef : Ref[DeclarationSymbol]) : SuiteTypeSymbol
@@ -1741,6 +1751,44 @@ namespace Tdl
       }
       catch { e => _ = builder.HintMlException(e); }
       builder.ToString()
+    }
+
+    public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableArray[string]
+    {
+      def builder = ImmutableArray.CreateBuilder();
+      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttribites.TriggerPathSymbol in ast)
+      {
+        foreach (x in r.Arguments)
+        {
+          | DotNet.Expr.Argument(Expr = DotNet.Expr.String as text) =>
+            def rawValue = ConvertStringLiteral(text.Value);
+            if (!rawValue.HasValue || string.IsNullOrEmpty(rawValue.Value))
+              x.Error(context, "Non empty string required.");
+            else
+            {
+              try
+              {
+                def path = ExpandPathRelativeToAst(text, rawValue.Value);
+                if (Directory.Exists(path) || File.Exists(path))
+                  builder.Add(path)
+                else
+                  x.Error(context, $"Trigger path '$(path)' not found.")
+              }
+              catch
+              {
+                | e is Exception => x.Error(context, $"Failed to process trigger path ($(e.GetType())): $(e.Message)")
+              }
+            }
+
+          | _ => x.Error(context, "String literal expected.", 0)
+        }
+      }
+      builder.TryMoveToImmutable()
+    }
+
+    private ExpandPathRelativeToAst(ast : IAst, path : string) : string
+    {
+      Path.GetFullPath(Path.Combine(Path.GetDirectoryName(ast.Location.Source.File.FullName), path))
     }
   } // module
 } // namespace

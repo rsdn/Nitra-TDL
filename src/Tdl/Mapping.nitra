@@ -78,6 +78,7 @@ namespace Tdl
         ScenarioBody.Action                     -> Actions;
         ScenarioBody.Environments.Elems.Item1   -> Environments;
         ScenarioBody.DefDeclarations            -> Definitions;
+        Attributes                              -> Attributes;
         match (ScenarioBody.FilterOpt)
         {
           | Some(x) -> Some(x.Condition)
@@ -98,14 +99,15 @@ namespace Tdl
         SelectScenario.Platform                   -> Platform;
         SelectScenario.Product                    -> Product;
         SelectScenario.DefDeclarations            -> Definitions;
+        Attributes                                -> Attributes;
         match (SelectScenario.FilterOpt)
         {
           | Some(x) -> Some(x.Condition)
           | None()  -> None()
         } -> FilterOpt;
       }
-    | ScenarioSet       -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Span.StartPos);  }
-    | ParallelScenario  -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Parallel, true); }
+    | ScenarioSet       -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Span.StartPos);  Attributes -> Attributes; }
+    | ParallelScenario  -> Scenario.Set { Name -> Name; Scenarios.Item1 -> Scenarios; IsMultiMachine = ParsedValue(Parallel, true); Attributes -> Attributes; }
     | SuiteType         -> SuiteType    { Name -> Name; TypeBody.Fields -> Fields; }
     | Suite             -> Suite.Def
       {

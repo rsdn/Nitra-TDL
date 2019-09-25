@@ -1,0 +1,98 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+
+using Tdl;
+
+namespace Tdl2Json
+{
+  class ScenarioTriggerProcessor
+  {
+    private _scenarioTable      : Dictionary[string, List[ScenarioSymbol]] = Dictionary();
+    private _triggeredScenarios : HashSet[ScenarioSymbol]                  = HashSet();
+    private _repositoryRoot     : string;
+
+    public this(repositoryRoot : string)
+    {
+      _repositoryRoot = Path.GetFullPath(repositoryRoot)
+        .TrimEnd(array[Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]);
+    }
+
+    public AddScenario(symbol : ScenarioSymbol) : void
+    {
+      def triggerPaths = symbol.TriggerPaths;
+      unless (triggerPaths.IsDefaultOrEmpty)
+      {
+        foreach (path in triggerPaths)
+        {
+          mutable list;
+          unless (_scenarioTable.TryGetValue(path, out list))
+          {
+            list = List();
+            _scenarioTable.Add(path, list);
+          }
+          list.Add(symbol);
+        }
+      }
+    }
+
+    public IsTriggered(symbol : ScenarioSymbol) : bool
+    {
+      symbol.TriggerPaths.IsDefaultOrEmpty || _triggeredScenarios.Contains(symbol)
+    }
+
+    public LoadDiff(input : TextReader) : void
+    {
+      mutable line : int;
+      while (true)
+      {
+        def text = input.ReadLine();
+        when (string.IsNullOrEmpty(text))
+          break;
+        ++line;
+
+        match (text[0])
+        {
+          | 'A' /* Addition     */
+          | 'C' /* Copy         */
+          | 'D' /* Deletion     */
+          | 'M' /* Modification */
+          | 'R' /* Renaming     */
+          | 'T' /* TypeChange   */
+          | 'U' /* UnmergedFile */ => ()
+          | x => throw FormatException($"Invalid diff file format at line $line: bad update type '$x'")
+        }
+
+        mutable pos = 1;
+        while (pos < text.Length && char.IsWhiteSpace(text[pos]))
+          ++pos;
+
+        def relativePath = text.Substring(pos);
+        when (string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath))
+          throw FormatException($"Invalid diff file format at line $line: bad relative path '$relativePath'");
+
+        def fullPath = Path.GetFullPath(Path.Combine(_repositoryRoot, relativePath));
+
+        def loop(path)
+        {
+          mutable list;
+          when (_scenarioTable.TryGetValue(path, out list))
+            foreach (s in list)
+              _ = _triggeredScenarios.Add(s);
+
+          def directory = Path.GetDirectoryName(path);
+          when (directory != _repositoryRoot)
+            loop(directory);
+        }
+        loop(fullPath)
+      }
+    }
+  }
+}

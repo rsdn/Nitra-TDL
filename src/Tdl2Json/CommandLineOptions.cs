@@ -54,6 +54,10 @@ namespace Tdl2Json
 
         public BooleanMarshalMode BooleanMarshalMode { get; private set; }
 
+        public string DiffFile { get; private set; }
+
+        public string RepositoryPath { get; private set; }
+
         public bool IsTestMode => ComilerMessagesTest || SampleOutputFile != null;
 
         public CommandLineOptions()
@@ -72,6 +76,8 @@ namespace Tdl2Json
                 { "d|debug",                  "Start with debugger prompt",                              _ => Debugger.Launch() },
                 { "b|bool-marshal-mode=",    $"Marshal mode for boolean values: {string.Join(", ", BooleanMarshalModes.Keys)}.", SetBooleanMarshalMode },
                 { "json-schema-type=",        "JSON schema type.",                                       v => JsonSchemaType = v, true },
+                { "diff-file=",               "Diff file path (--name-status format).",                  v => DiffFile = v },
+                { "repo-directory=",          "Repository root path.",                                   v => RepositoryPath = v },
                 new ResponseFileSource(),
 
                 // backward compatibility
@@ -112,6 +118,9 @@ namespace Tdl2Json
 
             if (InputFiles.Count == 0)
                 throw new OptionException("At least one input TDL file required.", "");
+
+            if (string.IsNullOrEmpty(DiffFile) != string.IsNullOrEmpty(RepositoryPath))
+                throw new OptionException("Both diff file and repository root paths must be specified.", "");
         }
 
         public void PrintHelp(TextWriter writer)
