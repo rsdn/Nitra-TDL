@@ -11,6 +11,8 @@
       <DeploymentScriptHeader       ParameterType="System.String" Required="false" />
       <DeploymentToolPath           ParameterType="System.String" Required="false" />
       <BooleanMarshalMode           ParameterType="System.String" Required="false" />
+      <DiffFile                     ParameterType="System.String" Required="false" />
+      <RepositoryPath               ParameterType="System.String" Required="false" />
       <Sources                      ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <References                   ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <OutputFile                   ParameterType="System.String" Required="true" Output="true" />
@@ -24,6 +26,11 @@
     <PropertyGroup>
       <TdlOutputPath Condition=" '$(TdlOutputPath)' == '' ">$(OutDir)$(TargetName).json</TdlOutputPath>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(TdlTargetBranch)' == '' ">
+      <TdlTargetBranchVariableName Condition=" '$(TdlTargetBranchVariableName)' == '' ">TARGETBRANCH</TdlTargetBranchVariableName>
+      <TdlTargetBranch>$([System.Environment]::GetVariable($(TdlTargetBranchVariableName)))</TdlTargetBranch>
+      <TdlTargetBranch Condition=" '$(TdlTargetBranch)' != '' " >$(TdlTargetBranch.Replace('refs/heads/', 'refs/remotes/origin/'))</TdlTargetBranch>
+    </PropertyGroup>
     <ItemGroup>
       <TdlCompile Include="@(Nitra)"   Condition=" '%(Extension)' == '.tdl' " />
       <TdlCompile Include="@(None)"    Condition=" '%(Extension)' == '.tdl' " />
@@ -35,16 +42,38 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="PrepareDiffTesting" Condition=" '$(TdlTargetBranch)' != '' " DependsOnTargets="PrepareTdlCompile">
+    <PropertyGroup>
+      <TdlDiffFile Condition=" '$(TdlDiffFile)' == '' " >$(OutDir)$(TargetName)-diff.txt</TdlDiffFile>
+    </PropertyGroup>
+
+    <Exec Command="git rev-parse --show-toplevel" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="TdlRepositoryPath" />
+    </Exec>
+
+    <Exec Command="git diff &quot;$(TdlTargetBranch)&quot; --name-status" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="TdlDiffContent" />
+    </Exec>
+
+    <WriteLinesToFile File="$(TdlDiffFile)" Lines="$(TdlDiffContent)" Overwrite="true" Encoding="Unicode" />
+
+    <ItemGroup>
+      <FileWrites Include="$(TdlDiffFile)" />
+    </ItemGroup>
+  </Target>
+
   <Target Name="CoreCompile"
           Inputs="$(MSBuildAllProjects);@(TdlCompile);@(TdlDependency);@(ReferencePath)"
           Outputs="$(TdlOutputPath)"
-          DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile">
+          DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile;PrepareDiffTesting">
     <TdlTask Condition=" '$(BuildingProject)' != 'false' "
             ToolPath                     = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
             WorkingDirectory             = "$(MSBuildProjectDirectory)"
             DeploymentScriptHeader       = "$(TdlDeploymentScriptHeader)"
             DeploymentToolPath           = "$(TdlDeploymentToolPath)"
             BooleanMarshalMode           = "$(TdlBooleanMarshalMode)"
+            RepositoryPath               = "$(TdlRepositoryPath)"
+            DiffFile                     = "$(TdlDiffFile)"
             References                   = "@(ReferencePath)"
             Sources                      = "@(TdlCompile)"
             OutputFile                   = "$(TdlOutputPath)">

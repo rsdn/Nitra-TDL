@@ -66,6 +66,18 @@ public class TdlTask : ToolTask
         set;
     }
 
+    public string DiffFile
+    {
+        get;
+        set;
+    }
+
+    public string RepositoryPath
+    {
+        get;
+        set;
+    }
+
     protected override string GenerateFullPathToTool()
     {
         return null;
@@ -99,6 +111,14 @@ public class TdlTask : ToolTask
         if (!string.IsNullOrEmpty(BooleanMarshalMode))
         {
             buffer.Add("-bool-marshal-mode:" + EscapeFilePath(BooleanMarshalMode));
+        }
+        if (!string.IsNullOrEmpty(DiffFile))
+        {
+            buffer.Add("-diff-file:" + EscapeFilePath(DiffFile));
+        }
+        if (!string.IsNullOrEmpty(RepositoryPath))
+        {
+            buffer.Add("-repo-directory:" + EscapeFilePath(RepositoryPath));
         }
         buffer.Add("-out:" + EscapeFilePath(OutputFile));
         return string.Join(Environment.NewLine, buffer);

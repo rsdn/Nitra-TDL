@@ -75,20 +75,20 @@
           syntax Parameter = Name;
         }
 
-      | ProductType       = "product" sm "type" sm Name nl TypeBody;
-      | Product           = "product"           sm Name sm ":" Type=Reference nl ProductBody;
-      | ProductSet        = "product"           sm Name sm ":" Type=Reference sm "=" sm Products=(Reference; "," sm)+ ";" nl;
-      | Scenario          = "scenario"          sm Name Parameters? nl ScenarioBody;
-      | ScenarioSet       = "scenario"          sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
-      | ScenarioGenerator = "scenario"          sm Name Parameters? sm "=" sm From+ sm "select" sm SelectScenario ";" nl;
-      | ParallelScenario  = Parallel="parallel" sm "scenario" sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
-      | SuiteType         = "suite" sm "type"   sm Name nl TypeBody;
-      | Suite             = "suite"             sm Name BaseType? nl SuiteBody;
-      | SuiteList         = "suite"             sm Name sm "=" sm Suites=(Reference; "," sm)+ ";" nl;
-      | SuiteGenerator    = "suite"             sm Name BaseType? sm "=" sm From+ sm "select" sm SuiteScenario ";" nl;
-      | External          = "external"          sm ExternalBody;
-      | Barrier           = "barrier"           sm Name "timeout" sm Timeout=StringLiteral ";" nl;
-      | Entity            = "entity" sm Name nl EntityBody;
+      | ProductType       = "product" sm "type"   sm Name nl TypeBody;
+      | Product           = "product"             sm Name sm ":" Type=Reference nl ProductBody;
+      | ProductSet        = "product"             sm Name sm ":" Type=Reference sm "=" sm Products=(Reference; "," sm)+ ";" nl;
+      | Scenario          = Attributes "scenario" sm Name Parameters? nl ScenarioBody;
+      | ScenarioSet       = Attributes "scenario" sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
+      | ScenarioGenerator = Attributes "scenario" sm Name Parameters? sm "=" sm From+ sm "select" sm SelectScenario ";" nl;
+      | ParallelScenario  = Attributes Parallel="parallel" sm "scenario" sm Name sm "=" sm Scenarios=(Reference; "," sm)+ ";" nl;
+      | SuiteType         = "suite" sm "type"     sm Name nl TypeBody;
+      | Suite             = "suite"               sm Name BaseType? nl SuiteBody;
+      | SuiteList         = "suite"               sm Name sm "=" sm Suites=(Reference; "," sm)+ ";" nl;
+      | SuiteGenerator    = "suite"               sm Name BaseType? sm "=" sm From+ sm "select" sm SuiteScenario ";" nl;
+      | External          = "external"            sm ExternalBody;
+      | Barrier           = "barrier"             sm Name "timeout" sm Timeout=StringLiteral ";" nl;
+      | Entity            = "entity"              sm Name nl EntityBody;
     }
 
     syntax BaseType = sm ":" sm Type=Reference;

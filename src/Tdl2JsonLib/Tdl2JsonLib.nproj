@@ -159,6 +159,9 @@
     <Compile Include="TransformationContext.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ScenarioTriggerProcessor.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Utils.n">
       <SubType>Code</SubType>
     </Compile>
