@@ -28,7 +28,7 @@
     </PropertyGroup>
     <PropertyGroup Condition=" '$(TdlTargetBranch)' == '' ">
       <TdlTargetBranchVariableName Condition=" '$(TdlTargetBranchVariableName)' == '' ">TARGETBRANCH</TdlTargetBranchVariableName>
-      <TdlTargetBranch>$([System.Environment]::GetVariable($(TdlTargetBranchVariableName)))</TdlTargetBranch>
+      <TdlTargetBranch>$([System.Environment]::GetEnvironmentVariable($(TdlTargetBranchVariableName)))</TdlTargetBranch>
       <TdlTargetBranch Condition=" '$(TdlTargetBranch)' != '' " >$(TdlTargetBranch.Replace('refs/heads/', 'refs/remotes/origin/'))</TdlTargetBranch>
     </PropertyGroup>
     <ItemGroup>
