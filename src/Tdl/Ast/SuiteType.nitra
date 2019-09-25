@@ -17,7 +17,7 @@ namespace Tdl
     }
 
     Fields.ContainingTable = Symbol.MemberTable;
-    Fields.Scope = Scope;
+    Fields.Scope = Scope.UnionWith(context.GetExternalSymbolTable());
 
     DefinePredefinedFields(context, Symbol.MemberTable);
     

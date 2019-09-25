@@ -21,7 +21,7 @@ namespace Tdl
     Symbol.BaseTypeSet |= context.GetProductTypeSymbol();
 
     Fields.ContainingTable = Symbol.MemberTable;
-    Fields.Scope = Scope;
+    Fields.Scope = Scope.UnionWith(context.GetExternalSymbolTable());
     
     Fields : Field*;
   }
