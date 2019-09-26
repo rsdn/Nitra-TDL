@@ -15,6 +15,7 @@ namespace Tdl
     {
     stage 2:
       in TriggerPaths             : ImmutableArray[string];
+      in IsUnconditional          : bool;
     stage 3:
       in AggregateParametersScope : Scope;
       in AllScenarios             : ImmutableArray[ScenarioSymbol];
@@ -23,7 +24,6 @@ namespace Tdl
     }
 
     Symbol.AllScenarios = TdlUtils.CheckForRecursionScenario(self, context, Symbol, Symbol.AggregateParametersScope);
-    Symbol.TriggerPaths = TdlUtils.GetTriggerPaths(Attributes, context);
 
     unless (Symbol.IsUsed)
       Name.Warning(context, "Unused scenario.");
@@ -74,6 +74,9 @@ namespace Tdl
         FilterOpt.ExpectedType          = context.GetBooleanType();
         Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
 
+        Symbol.TriggerPaths             = TdlUtils.GetTriggerPaths(Attributes, context).ToImmutableArray();
+        Symbol.IsUnconditional          = Symbol.TriggerPaths.IsEmpty;
+
         ReportDuplicateBarrier(context, Symbol.Actions);
         CheckMaxReboots(context, Symbol.Actions);
 
@@ -102,11 +105,18 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Scenario;
         }
 
+      stage 2:
+        out ThisTriggerPaths : ImmutableHashSet[string];
+
         Scenarios.Scope                 = Scope;
         Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios, context);
         Symbol.MultiMachineId           = if (Symbol.IsMultiMachine) context.NewGuid() else Guid.Empty;
         Symbol.IsMultiMachine           = IsMultiMachine.HasValue && IsMultiMachine.Value;
+
+        ThisTriggerPaths                = TdlUtils.GetTriggerPaths(Attributes, context);
+        Symbol.TriggerPaths             = await TdlUtils.GetTriggerPaths(ThisTriggerPaths, Symbol.Scenarios);
+        Symbol.IsUnconditional          = await TdlUtils.GetIsUnconditional(ThisTriggerPaths, Symbol.Scenarios);
 
         when (Symbol.IsMultiMachine)
           CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
@@ -170,6 +180,9 @@ namespace Tdl
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
         FilterOpt.ExpectedType          = context.GetBooleanType();
         Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
+
+        Symbol.TriggerPaths             = TdlUtils.GetTriggerPaths(Attributes, context).ToImmutableArray();
+        Symbol.IsUnconditional          = Symbol.TriggerPaths.IsEmpty;
 
         Deployment.CheckExpected(context, context.ToTdlContext().DeploymentType, DeploymentRef.Symbol.Type);
         Method.    CheckExpected(context, context.ToTdlContext().MethodType,     MethodRef.Symbol.Type);

@@ -648,7 +648,7 @@ namespace Tdl
       foreach (statement in suiteStatements)
       {
         | CallScenario(scenaro) =>
-          when (scenaro.IsTriggerPathsEvaluated && scenaro.TriggerPaths.Length == 0)
+          when (scenaro.IsUnconditional)
             hasUnconditionalScenario = true;
 
           when (scenaro.IsAggregateParametersScopeEvaluated)
@@ -1753,9 +1753,9 @@ namespace Tdl
       builder.ToString()
     }
 
-    public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableArray[string]
+    public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableHashSet[string]
     {
-      def builder = ImmutableArray.CreateBuilder();
+      def builder = ImmutableHashSet.CreateBuilder();
       foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttribites.TriggerPathSymbol in ast)
       {
         foreach (x in r.Arguments)
@@ -1769,10 +1769,8 @@ namespace Tdl
               try
               {
                 def path = ExpandPathRelativeToAst(text, rawValue.Value);
-                if (Directory.Exists(path) || File.Exists(path))
-                  builder.Add(path)
-                else
-                  x.Error(context, $"Trigger path '$(path)' not found.")
+                when (builder.Add(path) && !Directory.Exists(path) && !File.Exists(path))
+                  x.Error(context, $"Trigger path '$(path)' not found.");
               }
               catch
               {
@@ -1783,7 +1781,35 @@ namespace Tdl
           | _ => x.Error(context, "String literal expected.", 0)
         }
       }
-      builder.TryMoveToImmutable()
+      builder.ToImmutable()
+    }
+
+    public GetTriggerPaths(mutable triggerPaths : ImmutableHashSet[string], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[ImmutableArray[string]]
+    {
+      foreach (s in scenarios)
+      {
+        unless (s.IsTriggerPathsEvaluated)
+          return VNone();
+
+          triggerPaths = triggerPaths.Union(s.TriggerPaths);
+      }
+      VSome(triggerPaths.ToImmutableArray())
+    }
+
+    public GetIsUnconditional(triggerPaths : ImmutableHashSet[string], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[bool]
+    {
+      when (triggerPaths.IsEmpty)
+      {
+        foreach (s in scenarios)
+        {
+          unless (s.IsIsUnconditionalEvaluated)
+            return VNone();
+
+          when (s.IsUnconditional)
+            return VSome(true);
+        }
+      }
+      VSome(false)
     }
 
     private ExpandPathRelativeToAst(ast : IAst, path : string) : string
