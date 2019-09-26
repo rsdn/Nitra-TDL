@@ -50,13 +50,17 @@ namespace Tdl2Json
 
     public LoadDiff(input : TextReader) : void
     {
-      mutable line : int;
+      mutable line : uint;
       while (true)
       {
-        def text = input.ReadLine();
-        when (string.IsNullOrEmpty(text))
-          break;
         ++line;
+        def text = input.ReadLine();
+        match (text)
+        {
+          | null                => break
+          | x when x.Length < 3 => continue
+          | _                   => ()
+        }
 
         match (text[0])
         {
@@ -70,12 +74,8 @@ namespace Tdl2Json
           | x => throw FormatException($"Invalid diff file format at line $line: bad update type '$x'")
         }
 
-        mutable pos = 1;
-        while (pos < text.Length && char.IsWhiteSpace(text[pos]))
-          ++pos;
-
-        def relativePath = text.Substring(pos);
-        when (string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath))
+        def relativePath = text.Substring(2).Trim();
+        when (try { string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath) } catch { | _ => true })
           throw FormatException($"Invalid diff file format at line $line: bad relative path '$relativePath'");
 
         def fullPath = Path.GetFullPath(Path.Combine(_repositoryRoot, relativePath));
