@@ -74,24 +74,37 @@ namespace Tdl2Json
           | x => throw FormatException($"Invalid diff file format at line $line: bad update type '$x'")
         }
 
-        def relativePath = text.Substring(2).Trim();
-        when (try { string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath) } catch { | _ => true })
-          throw FormatException($"Invalid diff file format at line $line: bad relative path '$relativePath'");
-
-        def fullPath = Path.GetFullPath(Path.Combine(_repositoryRoot, relativePath));
-
-        def loop(path)
+        def processPath(pos)
         {
-          mutable list;
-          when (_scenarioTable.TryGetValue(path, out list))
-            foreach (s in list)
-              _ = _triggeredScenarios.Add(s);
+          def nextTabPos   = text.IndexOf('\t', pos);
+          def relativePath = if (nextTabPos < 0) text.Substring(pos) else text.Substring(pos, nextTabPos - pos);
+          when (try { string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath) } catch { | _ => true })
+            throw FormatException($"Invalid diff file format at line $line: bad relative path '$relativePath'");
 
-          def directory = Path.GetDirectoryName(path);
-          when (directory != _repositoryRoot)
-            loop(directory);
+          def fullPath = Path.GetFullPath(Path.Combine(_repositoryRoot, relativePath));
+
+          def walkUpward(path)
+          {
+            mutable list;
+            when (_scenarioTable.TryGetValue(path, out list))
+              foreach (s in list)
+                _ = _triggeredScenarios.Add(s);
+
+            def directory = Path.GetDirectoryName(path);
+            when (directory != _repositoryRoot)
+              walkUpward(directory);
+          }
+          walkUpward(fullPath);
+
+          when (nextTabPos > 0)
+            processPath(nextTabPos + 1);
         }
-        loop(fullPath)
+
+        def firstTabPos = text.IndexOf('\t');
+        if (firstTabPos > 0)
+          processPath(firstTabPos + 1);
+        else
+          throw FormatException($"Invalid diff file format at line $line: tab character not found '$text'");
       }
     }
   }
