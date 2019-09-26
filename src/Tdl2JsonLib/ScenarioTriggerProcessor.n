@@ -27,10 +27,9 @@ namespace Tdl2Json
 
     public AddScenario(symbol : ScenarioSymbol) : void
     {
-      def triggerPaths = symbol.TriggerPaths;
-      unless (triggerPaths.IsDefaultOrEmpty)
+      unless (symbol.IsUnconditional)
       {
-        foreach (path in triggerPaths)
+        foreach (path in symbol.TriggerPaths)
         {
           mutable list;
           unless (_scenarioTable.TryGetValue(path, out list))
@@ -45,7 +44,7 @@ namespace Tdl2Json
 
     public IsTriggered(symbol : ScenarioSymbol) : bool
     {
-      symbol.TriggerPaths.IsDefaultOrEmpty || _triggeredScenarios.Contains(symbol)
+      symbol.IsUnconditional || _triggeredScenarios.Contains(symbol)
     }
 
     public LoadDiff(input : TextReader) : void
