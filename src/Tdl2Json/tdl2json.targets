@@ -55,7 +55,7 @@
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlDiffContent" />
     </Exec>
 
-    <WriteLinesToFile File="$(TdlDiffFile)" Lines="$(TdlDiffContent)" Overwrite="true" Encoding="Unicode" />
+    <WriteLinesToFile File="$(TdlDiffFile)" Lines="$(TdlDiffContent)" Overwrite="true" Encoding="utf-8" />
 
     <ItemGroup>
       <FileWrites Include="$(TdlDiffFile)" />
