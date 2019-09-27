@@ -26,16 +26,6 @@
     <PropertyGroup>
       <TdlOutputPath Condition=" '$(TdlOutputPath)' == '' ">$(OutDir)$(TargetName).json</TdlOutputPath>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(TdlTargetBranch)' == '' ">
-      <TdlTargetBranchVariableName Condition=" '$(TdlTargetBranchVariableName)' == '' ">TARGETBRANCH</TdlTargetBranchVariableName>
-      <TdlTargetBranch>$([System.Environment]::GetEnvironmentVariable($(TdlTargetBranchVariableName)))</TdlTargetBranch>
-      <TdlTargetBranch Condition=" '$(TdlTargetBranch)' != '' " >$(TdlTargetBranch.Replace('refs/heads/', 'refs/remotes/origin/'))</TdlTargetBranch>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(TdlSourceBranch)' == '' ">
-      <TdlSourceBranchVariableName Condition=" '$(TdlSourceBranchVariableName)' == '' ">SOURCEBRANCH</TdlSourceBranchVariableName>
-      <TdlSourceBranch>$([System.Environment]::GetEnvironmentVariable($(TdlSourceBranchVariableName)))</TdlSourceBranch>
-      <TdlSourceBranch Condition=" '$(TdlSourceBranch)' != '' " >$(TdlSourceBranch.Replace('refs/heads/', 'refs/remotes/origin/'))</TdlSourceBranch>
-    </PropertyGroup>
     <ItemGroup>
       <TdlCompile Include="@(Nitra)"   Condition=" '%(Extension)' == '.tdl' " />
       <TdlCompile Include="@(None)"    Condition=" '%(Extension)' == '.tdl' " />
@@ -47,7 +37,17 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="PrepareDiffTesting" Condition=" '$(TdlTargetBranch)' != '' " DependsOnTargets="PrepareTdlCompile">
+  <Target Name="PrepareGitDiff" Condition=" '$(TARGETBRANCH)' != '' AND '$(SOURCEVERSION)' != '' " DependsOnTargets="PrepareTdlCompile">
+    <Exec Command="git show --pretty=%P -s" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="TdlMergeParents" />
+    </Exec>
+
+    <PropertyGroup>
+      <TdlDiffExpression Condition=" '$(TdlDiffExpression)' != '' ">$(TdlMergeParents.Trim().Replace(' ', '...'))</TdlDiffExpression>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="RunGitDiff" Condition=" '$(TdlDiffExpression)' != '' " DependsOnTargets="PrepareGitDiff">
     <PropertyGroup>
       <TdlDiffFile Condition=" '$(TdlDiffFile)' == '' " >$(OutDir)$(TargetName)-diff.txt</TdlDiffFile>
     </PropertyGroup>
@@ -56,7 +56,7 @@
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlRepositoryPath" />
     </Exec>
 
-    <Exec Command="git diff &quot;$(TdlTargetBranch)...$(TdlSourceBranch)&quot; --name-status" ConsoleToMSBuild="true">
+    <Exec Command="git diff $(TdlDiffExpression) --name-status" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlDiffContent" />
     </Exec>
 
@@ -64,13 +64,13 @@
 
     <ItemGroup>
       <FileWrites Include="$(TdlDiffFile)" />
-    </ItemGroup>
+    </ItemGroup>  
   </Target>
 
   <Target Name="CoreCompile"
           Inputs="$(MSBuildAllProjects);@(TdlCompile);@(TdlDependency);@(ReferencePath)"
           Outputs="$(TdlOutputPath)"
-          DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile;PrepareDiffTesting">
+          DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile;RunGitDiff">
     <TdlTask Condition=" '$(BuildingProject)' != 'false' "
             ToolPath                     = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
             WorkingDirectory             = "$(MSBuildProjectDirectory)"
