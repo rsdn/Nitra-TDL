@@ -37,17 +37,17 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="PrepareGitDiff" Condition=" '$(TARGETBRANCH)' != '' AND '$(SOURCEVERSION)' != '' " DependsOnTargets="PrepareTdlCompile">
-    <Exec Command="git show --pretty=%P -s" ConsoleToMSBuild="true">
+  <Target Name="PrepareDiffTesting" Condition=" '$(TARGETBRANCH)' != '' AND '$(SOURCEVERSION)' != '' " DependsOnTargets="PrepareTdlCompile">
+    <Exec Command="git show -s --format=%%P" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlMergeParents" />
     </Exec>
 
     <PropertyGroup>
-      <TdlDiffExpression Condition=" '$(TdlDiffExpression)' != '' ">$(TdlMergeParents.Trim().Replace(' ', '...'))</TdlDiffExpression>
+      <TdlDiffExpression Condition=" '$(TdlDiffExpression)' == '' ">$(TdlMergeParents.Trim().Replace(' ', '...'))</TdlDiffExpression>
     </PropertyGroup>
   </Target>
 
-  <Target Name="RunGitDiff" Condition=" '$(TdlDiffExpression)' != '' " DependsOnTargets="PrepareGitDiff">
+  <Target Name="RunGitDiff">
     <PropertyGroup>
       <TdlDiffFile Condition=" '$(TdlDiffFile)' == '' " >$(OutDir)$(TargetName)-diff.txt</TdlDiffFile>
     </PropertyGroup>
@@ -70,7 +70,10 @@
   <Target Name="CoreCompile"
           Inputs="$(MSBuildAllProjects);@(TdlCompile);@(TdlDependency);@(ReferencePath)"
           Outputs="$(TdlOutputPath)"
-          DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile;RunGitDiff">
+          DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile;PrepareDiffTesting">
+
+    <CallTarget Targets="RunGitDiff" Condition=" '$(TdlDiffExpression)' != '' " />
+
     <TdlTask Condition=" '$(BuildingProject)' != 'false' "
             ToolPath                     = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
             WorkingDirectory             = "$(MSBuildProjectDirectory)"
