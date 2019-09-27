@@ -51,7 +51,7 @@
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlRepositoryPath" />
     </Exec>
 
-    <Exec Command="git diff &quot;$(TdlTargetBranch)&quot; --name-status" ConsoleToMSBuild="true">
+    <Exec Command="git diff &quot;$(TdlTargetBranch)...&quot; --name-status" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlDiffContent" />
     </Exec>
 
