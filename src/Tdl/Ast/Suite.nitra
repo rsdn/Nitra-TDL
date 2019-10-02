@@ -147,8 +147,8 @@ namespace Tdl
         EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
         Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
 
-        Platform.  CheckExpected(context, context.ToTdlContext().PlatformType,   PlatformRef.Symbol.Type);
-        Product.   CheckExpected(context, context.GetProductTypeSymbol(),    ProductRef.Symbol.Type);
+        Platform.  CheckExpected(context, context.GetPlatformTypeSymbol(), PlatformRef.Symbol.Type);
+        Product.   CheckExpected(context, context.GetProductTypeSymbol(),  ProductRef.Symbol.Type);
         SetUsed(Symbol.Statements);
         ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
 

@@ -12,7 +12,6 @@ namespace Tdl
   abstract declaration TdlType : Type
   {
     | Deployment { symbol { ToString = "Deployment"; } }
-    | Platform   { symbol { ToString = "Platform"; } }
     | Scenario   { symbol { ToString = "Scenario"; } }
     | Method     { symbol { ToString = "Method"; } }
     | Entity     { symbol { ToString = "Entity"; } }

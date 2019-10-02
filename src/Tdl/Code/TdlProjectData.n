@@ -18,7 +18,7 @@ namespace Tdl
 {
   public class TdlProjectData : DotNetProjectData
   {
-    public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, entityFieldsScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol, isTestMode : bool, baseProductType : ProductTypeSymbol)
+    public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, entityFieldsScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol, isTestMode : bool, baseProductType : ProductTypeSymbol, platformType : PlatformTypeSymbol)
     {
       base(backEnd, context, rootNamespace);
       ScenarioParameterScope        = scenarioParameterScope;
@@ -31,6 +31,7 @@ namespace Tdl
       CommandScopeFactory           = fun (scope) { FilteringScope(scope, symbol => GetCommandSymbolKind(symbol) == CommandSymbolKind.NamespaceOrCommand) }
       CommandParametersScopeFactory = fun (scope) { FilteringScope(scope, symbol => (GetCommandSymbolKind(symbol) & CommandSymbolKind.InputOrOutput) != 0) }
       BaseProductType               = baseProductType;
+      PlatformType                  = platformType;
     }
 
     public ScenarioParameterScope        : TableScope                            { get; }
@@ -43,6 +44,7 @@ namespace Tdl
     public CommandScopeFactory           : ScopeFactory                          { get; }
     public CommandParametersScopeFactory : ScopeFactory                          { get; }
     public BaseProductType               : ProductTypeSymbol                     { get; }
+    public PlatformType                  : PlatformTypeSymbol                    { get; }
 
     private         _methodScopeFactoryCache    : Dictionary[int, bool] = Dictionary();
     private         _commandScopeFactoryCache   : Dictionary[int, CommandSymbolKind] = Dictionary();

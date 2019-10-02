@@ -186,7 +186,7 @@ namespace Tdl
 
         Deployment.CheckExpected(context, context.ToTdlContext().DeploymentType, DeploymentRef.Symbol.Type);
         Method.    CheckExpected(context, context.ToTdlContext().MethodType,     MethodRef.Symbol.Type);
-        Platform.  CheckExpected(context, context.ToTdlContext().PlatformType,   PlatformRef.Symbol.Type);
+        Platform.  CheckExpected(context, context.GetPlatformTypeSymbol(),       PlatformRef.Symbol.Type);
         Product.   CheckExpected(context, context.GetProductTypeSymbol(),        ProductRef.Symbol.Type);
 
         SetUsed(Symbol.Deployment, true);
