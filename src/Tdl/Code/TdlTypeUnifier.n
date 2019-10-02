@@ -39,8 +39,7 @@ namespace Tdl
             return false;
 
           true
-        | (_ is ProductTypeSymbol, _ is TdlType.ProductSymbol) => true
-        | (_ is TdlType.ProductSymbol, _ is ProductTypeSymbol) => true
+
         | _ =>
           when (typeSymbol1 : object is ConstructedTypeSymbol(TypeInfo=ti1, Args=args1))
           when (ti1 : object is SupportsInheritanceTypeSymbol(IsBaseTypeSetEvaluated=true, BaseTypeSet=baseTypeSet))
@@ -77,7 +76,6 @@ namespace Tdl
     {
       match(subtype, supertype)
       {
-        | (_ is ProductTypeSymbol, _ is TdlType.ProductSymbol) => true
         | (sub is TopConstructedTypeSymbol, super is TopConstructedTypeSymbol) =>
           SubtypeUnifyUnwraped(sub.TypeInfo, super.TypeInfo, ref updatedVariables)
           && UnifyAll(sub.Args, super.Args, ref updatedVariables)
