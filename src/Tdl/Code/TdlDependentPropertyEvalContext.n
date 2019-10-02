@@ -26,7 +26,6 @@ namespace Tdl
 
     public DeploymentType    : TdlType.DeploymentSymbol;
     public PlatformType      : TdlType.PlatformSymbol;
-    public ProductType       : TdlType.ProductSymbol;
     public EntityType        : TdlType.EntitySymbol;
     public MethodType        : FunctionTypeSymbol;
     public ScenarioType      : TdlType.ScenarioSymbol;
