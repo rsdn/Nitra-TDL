@@ -62,6 +62,11 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.BaseProductType
     }
 
+    public GetPlatformTypeSymbol(this context : DependentPropertyEvalContext) : PlatformTypeSymbol
+    {
+      ToTdlContext(context).TdlProjectData.PlatformType
+    }
+
     public GetScenarioParameterScope(this context : DependentPropertyEvalContext) : Scope
     {
       ToTdlContext(context).TdlProjectData.ScenarioParameterScope
@@ -1629,7 +1634,7 @@ namespace Tdl
       prop.EvalProperties(context);
 
       def name = "Platforms";
-      def platformType = ToTdlContext(context).PlatformType;
+      def platformType = context.GetPlatformTypeSymbol();
       def name = Name(Location.Default, name);
       def prop = ExternalDeclaration.[Member.PropertySymbol](name).DefineSymbol(table);
       def flags = ModifierSet(context);
