@@ -2,7 +2,7 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "DefaultValues": {
-    "Foo": "external default"
+    "ExternalField": "external default"
   },
   "Deployments": {
     "Deploy": {
@@ -15,7 +15,7 @@
       },
       "DefaultValues": {
         "AnotherProduct": "Product2",
-        "Text": "#(Foo)"
+        "Text": "#(ExternalField)"
       },
       "ScriptPath": "Deploy.ps1"
     }
@@ -28,7 +28,7 @@
       "Name": "Product 1",
       "Parameters": {
         "Name": "Product 1",
-        "ProductTypeField": "#(Foo)"
+        "ProductTypeField": "#(ExternalField)"
       },
       "BranchName": null,
       "Version": "1.1"
@@ -37,7 +37,7 @@
       "Name": "Product 2",
       "Parameters": {
         "Name": "Product 2",
-        "ProductTypeField": "#(Foo)"
+        "ProductTypeField": "#(ExternalField)"
       },
       "BranchName": null,
       "Version": "1.0"
@@ -46,7 +46,7 @@
   "Suites": {
     "Suite": {
       "Parameters": {
-        "SuiteTypeField1": "#(Foo)",
+        "SuiteTypeField1": "#(ExternalField)",
         "SuiteTypeField2": "suite type default"
       },
       "Platforms": [
