@@ -4,12 +4,17 @@ using DotNet.AstUtils;
 using Nitra;
 using Nitra.Declarations;
 
+using System.Collections.Immutable;
+
 namespace Tdl
 {
   ignore-case declaration ProductType : NamespaceMember, Container, Type, SupportsInheritanceType
   {
     symbol
     {
+    stage 3:
+      in Defs : ImmutableArray[Def];
+
       Scope          = MemberTable;
       Kind           = "product type";
       IsSameIdentity = candidate is Tdl.ProductType;
@@ -20,9 +25,16 @@ namespace Tdl
 
     Symbol.BaseTypeSet |= context.GetProductTypeSymbol();
 
-    Fields.ContainingTable = Symbol.MemberTable;
-    Fields.Scope = Scope.UnionWith(context.GetExternalSymbolTable());
+    Fields.ContainingTable      = Symbol.MemberTable;
+    Fields.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
+    Definitions.DefinitionScope = Symbol.Scope;
+    Definitions.Scope           = Scope.HideWith(context.GetExternalSymbolTable());
+    Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol, Definitions.SymbolRef);
+
+    DefinePredefinedFields(context, Symbol.MemberTable);
+    UpdateDefaultValues(context, Symbol.Defs, Symbol.MemberTable, Scope);
     
-    Fields : Field*;
+    Fields      : Field*;
+    Definitions : Definition*;
   }
 }

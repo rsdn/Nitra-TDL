@@ -63,7 +63,7 @@ namespace Tdl
         ParameterCurryings.Item1 -> CurredParameters;
       }
     | DeploymentSelect -> Deployment.Select   { Name -> Name; Modifier -> Modifier; Parameters.Item1 -> Parameters; Cases -> Cases; }
-    | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; [] -> TypeBase; }
+    | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; [] -> TypeBase; TypeBody.DefDeclarations -> Definitions; }
     | Product          -> Product.Def         { Name -> Name; Type -> ProductType; ProductBody.DefDeclarations -> Definitions; }
     | ProductSet       -> Product.Set         { Name -> Name; Type -> ProductType; Products.Item1 -> Products; }
     | Scenario         -> Scenario.Def

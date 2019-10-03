@@ -207,7 +207,7 @@
 
     syntax ProductBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
 
-    syntax TypeBody = outline_begin_before "{" inl Field* d "}" nl outline_end_before;
+    syntax TypeBody = outline_begin_before "{" inl Field* DefDeclaration* d "}" nl outline_end_before;
 
     syntax ExternalBody = outline_begin_before "{" inl Fields=Field* d "}" nl outline_end_before;
 
