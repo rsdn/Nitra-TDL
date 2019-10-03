@@ -1615,21 +1615,43 @@ namespace Tdl
       loop(data.RootNamespace.Scope, names)
     }
 
-    public DefinePredefinedFields(this _ast : IAst, context : DependentPropertyEvalContext, table : TableScope) : void
+    public UpdateDefaultValues(this _ast : ProductType, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], memberScope : TableScope, globalScope : Scope) : void
+    {
+      foreach (Def(Symbol=FieldSymbol(IsValueEvaluated=false) as fld, Expr=e) in defs)
+        fld.Value = VSome(e);
+
+      foreach (FieldSymbol(IsValueEvaluated=false, Name="Platforms") as fld in memberScope.GetAllSymbols())
+        fld.Value = VSome(Tdl.Expr.List(globalScope.GetAllSymbols().OfType.[PlatformSymbol]().Select(p => Tdl.Expr.Reference(p)).ToImmutableArray(), GetPlatformTypeSymbol(context)));
+    }
+    
+    public DefinePredefinedFields(this _ast : ProductType, context : DependentPropertyEvalContext, table : TableScope) : void
+    {
+      def collectionName = "System.Collections.Generic.IReadOnlyList";
+      def name = "Platforms";
+      def name = Name(Location.Default, name);
+      def prop = ExternalDeclaration.[Tdl.FieldSymbol](name).DefineSymbol(table);
+      def flags = ModifierSet(context);
+      flags.Add(Modifiers.Public);
+      def type = context.ConstructType(collectionName, GetPlatformTypeSymbol(context));
+      prop.Type = type;
+      
+      prop.EvalProperties(context);
+    }
+
+    public DefinePredefinedFields(this _ast : SuiteType, context : DependentPropertyEvalContext, table : TableScope) : void
     {
       //def baseSuiteType = SuiteTypeSymbol();
       //def baseTypeSet = BaseTypeReferenceSet(context);
       //baseTypeSet.AddParent();
       //symbol.BaseTypeSet = baseTypeSet;
       def collectionName = "System.Collections.Generic.ICollection";
-      def baseProductType = GetProductTypeSymbol(context);
       def name = "Products";
       def name = Name(Location.Default, name);
       def prop = ExternalDeclaration.[Member.PropertySymbol](name).DefineSymbol(table);
       def flags = ModifierSet(context);
       flags.Add(Modifiers.Public);
       prop.Flags = flags;
-      prop.Type = context.ConstructType(collectionName, baseProductType);
+      prop.Type = context.ConstructType(collectionName, GetProductTypeSymbol(context));
       prop.CustomAttributes = array(0);
       prop.EvalProperties(context);
 

@@ -203,10 +203,15 @@ namespace Tdl2Json
       def suites      = SortedDictionary();
       def suiteGroups = SortedDictionary();
       def scenarios   = SortedDictionary();
+
+      foreach (s is PlatformSymbol in symbols)
+        platforms.Add(s.Name, GeneratePlatform(s));
+
+      def platformNameSet = HashSet(platforms.Select(p => p.Key), StringComparer.InvariantCultureIgnoreCase);
+
       foreach (symbol in symbols)
       {
-        | PlatformSymbol        as s => platforms.Add(s.Name, GeneratePlatform(s))
-        | ProductSymbol         as s => products .Add(s.Name, GenerateProduct(s))
+        | ProductSymbol         as s => products .Add(s.Name, GenerateProduct(s, platformNameSet))
         | EntitySymbol          as s => entities .Add(s.Name, GenerateEntity(s))
         | Suite.DefSymbol       as s => suites   .Add(s.Name, GenerateSuite(s, scenarioTrigger))
         | Suite.GeneratorSymbol as s => GenerateSuiteGenerator(s, suites, suiteGroups, scenarioTrigger)
@@ -256,7 +261,7 @@ namespace Tdl2Json
       | _                         => ThrowNotSupportedSymbol(platformSymbol)
     }
       
-    private CollectDefs(defs : ImmutableArray[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Dictionary[string, object]
+    private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Dictionary[string, object]
     {
       def result = Dictionary();
       foreach(@def in defs)
@@ -267,35 +272,55 @@ namespace Tdl2Json
       result
     }
 
-    private GenerateProduct(productSymbol : ProductSymbol) : ProductValue
+    private GenerateProduct(productSymbol : ProductSymbol, platformNameSet : HashSet[string]) : ProductValue
     {
-      | Product.DefSymbol as Def => 
-        def parameters = CollectDefs(Def.Defs);
-        def useAsFixedParameter(name : string) : string
-        {
-          mutable value;
-          if (parameters.TryGetValue(name, out value))
+      match (productSymbol)
+      {
+        | Product.DefSymbol as Def =>
+          def isPlatforms(x : Def) : bool
           {
-            _ = parameters.Remove(name);
-            value :> string
+            x.Symbol.Name.Equals("Platforms", StringComparison.CurrentCultureIgnoreCase)
           }
-          else
-            null
-        }
-        def name = useAsFixedParameter("Name");
-        parameters.Add("Name", name);
-        ProductValue() <- 
-        {
-          Product = Product() <- { 
-            Name              = name;
-            BranchName        = useAsFixedParameter("ReleaseName") ?? useAsFixedParameter("BranchName"); // 
-            Version           = useAsFixedParameter("Version");
-            DumpServerProduct = useAsFixedParameter("DumpServerProduct");
-            Parameters        = parameters;
+          def parameters = CollectDefs(Def.Defs.Where(x => !isPlatforms(x)));
+          def useAsFixedParameter(name : string) : string
+          {
+            mutable value;
+            if (parameters.TryGetValue(name, out value))
+            {
+              _ = parameters.Remove(name);
+              value :> string
+            }
+            else
+              null
           }
-        }
-      | Product.SetSymbol as Set => ProductValue() <- { StringArray = Set.AllProducts.Select(p => p.Name).ToArray(); }
-      | _ => ThrowNotSupportedSymbol(productSymbol)
+          def name = useAsFixedParameter("Name");
+          parameters.Add("Name", name);
+          def expr = Def.Defs.FirstOrDefault(isPlatforms);
+          def platforms =
+            if (expr : object == null)
+              null
+            else
+            {
+              def platforms = expr.Expr.GetExprList().Select(_.ToString()).ToArray();
+              if (platformNameSet.SetEquals(platforms))
+                null // ignore if all platforms included
+              else
+                platforms.OrderBy(x => x).ToArray()
+            };
+          ProductValue() <- 
+          {
+            Product = Product() <- { 
+              Name              = name;
+              BranchName        = useAsFixedParameter("ReleaseName") ?? useAsFixedParameter("BranchName"); // 
+              Version           = useAsFixedParameter("Version");
+              DumpServerProduct = useAsFixedParameter("DumpServerProduct");
+              Parameters        = parameters;
+              Platforms         = platforms;
+            }
+          }
+        | Product.SetSymbol as Set => ProductValue() <- { StringArray = Set.AllProducts.Select(p => p.Name).ToArray(); }
+        | _ => ThrowNotSupportedSymbol(productSymbol)
+      }
     }
 
     private GetAssemblyAndMethodName(typeSymbolOpt : DeclarationSymbol, [NotNull] methodSymbol : Member.MethodSymbol) : string * string
