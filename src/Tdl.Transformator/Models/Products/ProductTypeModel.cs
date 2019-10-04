@@ -20,7 +20,8 @@ namespace Tdl.Transformator.Models.Products
             {
                 if (declarationSymbol is FieldSymbol fieldSymbol)
                 {
-                    ParameterValues.Add(new FieldModel(fieldSymbol));
+                    if (fieldSymbol.FirstParsedDeclarationOrDefault != null) // пропускаем сгенерированные символы
+                        ParameterValues.Add(new FieldModel(fieldSymbol));
                 }
                 else
                 {
