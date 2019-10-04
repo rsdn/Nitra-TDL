@@ -16,17 +16,14 @@ namespace Tdl.Transformator.Models.Parameters
             [ItemNotNull, NotNull]
             Definition.IAstList definitions)
         {
-            if (defs.Count() != definitions.Count())
-            {
-                throw new InvalidOperationException("counts aren't equal");
-            }
-
+            var defMap = defs.ToDictionary(d => d.Symbol, d => d.Expr);
             var definitionModels = new List<DefinitionModel>();
-            for (var i = 0; i < defs.Count(); i++)
+
+            foreach (var def in definitions)
             {
-                var def2 = definitions.ElementAt(i);
-                definitionModels.Add(new DefinitionModel(
-                    def2.Reference.Text, defs[i].Expr.ToExpression(), def2.Location));
+                var sym = def.SymbolRef.Symbol;
+                var expr = defMap[sym];
+                definitionModels.Add(new DefinitionModel(def.Reference.Text, expr.ToExpression(), def.Location));
             }
 
             return definitionModels;
