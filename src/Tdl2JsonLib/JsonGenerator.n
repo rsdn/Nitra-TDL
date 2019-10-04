@@ -461,7 +461,7 @@ namespace Tdl2Json
           RevertAgentBefore       = getBool  ("RevertAgentBefore");
           TfsId                   = getLong  ("TfsId");
           Timeout                 = getString("Timeout");
-          UniqueId                = uniqueId.ToString();
+          UniqueId                = uniqueId;
           ProductGroupName        = getString("ProductGroupName");
           FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase, dic);
         };
@@ -486,6 +486,14 @@ namespace Tdl2Json
           def getString(name : string) : string
           {
             r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+          }
+          def getGuid(name : string) : Guid?
+          {
+            def str = r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+            if (string.IsNullOrWhiteSpace(str))
+              null
+            else
+              Guid.Parse(str)
           }
           def getBool(name : string) : bool?
           {
@@ -638,7 +646,7 @@ namespace Tdl2Json
               RevertAgentBefore       = getBool  ("RevertAgentBefore");
               TfsId                   = getLong  ("TfsId");
               Timeout                 = getString("Timeout");
-              UniqueId                = getString("UniqueId").Trim('{', '}');
+              UniqueId                = getGuid("UniqueId");
               ProductGroupName        = getString("ProductGroupName");
               FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
               MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;

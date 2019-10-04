@@ -430,11 +430,23 @@ namespace Tdl
       }
     }
 
-    public MakeDefinitions(definitions : Definition.IAstList, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
+    public MakeDefinitions(context : DependentPropertyEvalContext, definitions : Definition.IAstList, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
-        builder.Add(Def(definition.SymbolRef.Symbol, definition.Expr.Result));
+      {
+        def sym    = definition.SymbolRef.Symbol;
+        def result = definition.Expr.Result;
+        when (sym.Name.Equals("UniqueId", StringComparison.InvariantCultureIgnoreCase))
+        {
+          def strGuid = result.GetValue().ToString();
+          mutable guid;
+          unless (Guid.TryParse(strGuid, out guid))
+            definition.Expr.Error(context, <#Invalid GUID.#>);
+        }
+        
+        builder.Add(Def(sym, result));
+      }
       builder.TryMoveToImmutable()
     }
 
