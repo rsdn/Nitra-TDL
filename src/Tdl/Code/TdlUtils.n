@@ -1105,7 +1105,7 @@ namespace Tdl
           match (d.Expr)
           {
             | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference => isUsedVar = true;
+            | Tdl.Expr.Reference => isUsedVar = true; paramMap[d.Symbol] = null;
             | _ => ()
           }
           
@@ -1118,7 +1118,7 @@ namespace Tdl
           match (d.Expr)
           {
             | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference => isUsedVar = true;
+            | Tdl.Expr.Reference => isUsedVar = true; paramMap[d.Symbol] = null;
             | _ => ()
           }
       }
@@ -1132,7 +1132,7 @@ namespace Tdl
         foreach (p in s.Parameters with k)
         {
           mutable value;
-          when (paramMap.TryGetValue(p, out value))
+          when (paramMap.TryGetValue(p, out value) && value != null)
             values[k] = value;
         }
         
