@@ -431,7 +431,7 @@
       },
       "TfsId": 0,
       "Timeout": "00:00:10",
-      "UniqueId": "BDA24CAF-BF05-49EC-9884-129A48C42F8C",
+      "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42f8c",
       "MultiMachineId": "aaaaaaad-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     },
     "GatedChain2": {
@@ -472,7 +472,7 @@
       },
       "TfsId": 0,
       "Timeout": "00:00:10",
-      "UniqueId": "BDA24CAF-BF05-49EC-9884-129A48C42F8D",
+      "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42f8d",
       "MultiMachineId": "aaaaaaad-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     },
     "GatedChain3": {
@@ -513,7 +513,7 @@
       },
       "TfsId": 0,
       "Timeout": "00:00:10",
-      "UniqueId": "BDA24CAF-BF05-49EC-9884-129A48C42F8F"
+      "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42f8f"
     },
     "GateTests_App4": {
       "TestScenarios": [
@@ -586,7 +586,7 @@
       },
       "TfsId": 0,
       "Timeout": "00:00:10",
-      "UniqueId": "BDA24CAF-BF05-49EC-9884-129A48C42F8E"
+      "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42f8e"
     }
   },
   "TestEntities": {}

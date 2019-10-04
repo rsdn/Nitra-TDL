@@ -88,7 +88,7 @@
         "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
       },
       "Timeout": "00:10",
-      "UniqueId": "20A84E6C-1028-48ED-B4E4-3DC8CB599E71"
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e71"
     }
   },
   "TestEntities": {}

@@ -101,7 +101,7 @@
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
       },
       "Timeout": "00:01",
-      "UniqueId": "21D09B4E-C988-4E33-AEC8-B3614452A619"
+      "UniqueId": "21d09b4e-c988-4e33-aec8-b3614452a619"
     },
     "Scenario2": {
       "FilterExpression": "(((string)globals[\"X\"]) != \"BBB\")",
@@ -123,7 +123,7 @@
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
       },
       "Timeout": "00:01",
-      "UniqueId": "21D09B4E-C988-4E33-AEC8-B3614452A61A"
+      "UniqueId": "21d09b4e-c988-4e33-aec8-b3614452a61a"
     }
   },
   "TestEntities": {}

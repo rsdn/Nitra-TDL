@@ -118,7 +118,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "00:30",
-      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287"
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f8287"
     },
     "Scenario2": {
       "Deployments": [
@@ -139,7 +139,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "00:30",
-      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8288"
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f8288"
     },
     "Scenario3": {
       "Deployments": [
@@ -160,7 +160,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "00:30",
-      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8289"
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f8289"
     },
     "Scenario4": {
       "Deployments": [
@@ -181,7 +181,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "00:30",
-      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828A"
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f828a"
     },
     "Scenario5": {
       "Deployments": [
@@ -202,7 +202,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "00:30",
-      "UniqueId": "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828B"
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f828b"
     },
     "Scenarios": {
       "TestScenarios": [

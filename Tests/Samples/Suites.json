@@ -205,7 +205,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "00:05:00",
-      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e8",
       "LocalTestBinariesFolder": "C:\\Tests"
     }
   },

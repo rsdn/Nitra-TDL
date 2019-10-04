@@ -246,9 +246,15 @@ namespace Tdl
       def uniqueIds = scenarios.OfType.[Scenario.DefSymbol]()
         .Where(sd => sd.IsDefsEvaluated && sd.Defs.Any(d => d.Symbol.Name == "UniqueId"))
         .Select(sd => (sd, sd.Defs.Single(d => d.Symbol.Name == "UniqueId")));
-        def groupedByDef = uniqueIds.GroupBy((_, d) => d.Expr.GetValue().ToString().ToUpperInvariant().Trim('{', '}'));
+      def toGuid(strGuid : string) : Guid
+      {
+          mutable guid;
+          _ = Guid.TryParse(strGuid, out guid);
+          guid
+      }
+      def groupedByDef = uniqueIds.GroupBy((_, d) => toGuid(d.Expr.GetValue().ToString()));
       
-      foreach (group when group.Count() > 1 in groupedByDef)
+      foreach (group when group.Key != Guid.Empty && group.Count() > 1 in groupedByDef)
       {
         def names = string.Join(", ", group.Select((sd, _) => sd.Name));
         foreach ((scenario, d) in group)

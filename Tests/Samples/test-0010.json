@@ -312,7 +312,7 @@
       },
       "TfsId": 891723,
       "Timeout": "00:40:00",
-      "UniqueId": "3028FAB1-767B-4628-9F20-CCAD45AF16A0",
+      "UniqueId": "3028fab1-767b-4628-9f20-ccad45af16a0",
       "MultiMachineId": "aaaaaaac-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     },
     "KpmDownloadAndInstallMultiMachineDevice2": {
@@ -349,7 +349,7 @@
       },
       "TfsId": 891723,
       "Timeout": "00:40:00",
-      "UniqueId": "691F0DCE-96C5-4DC2-96D8-8707D169EB53",
+      "UniqueId": "691f0dce-96c5-4dc2-96d8-8707d169eb53",
       "MultiMachineId": "aaaaaaac-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     }
   },

@@ -152,7 +152,7 @@
       },
       "TfsId": 0,
       "Timeout": "00:00:10",
-      "UniqueId": "7E9EDB31-B4C7-431A-AD51-EAAA52498E6A"
+      "UniqueId": "7e9edb31-b4c7-431a-ad51-eaaa52498e6a"
     },
     "Scenario2": {
       "TestScenarios": [
@@ -209,7 +209,7 @@
       },
       "TfsId": 0,
       "Timeout": "00:00:10",
-      "UniqueId": "6ADCB4F5-751B-48F6-9A78-FE9E6AFB176E"
+      "UniqueId": "6adcb4f5-751b-48f6-9a78-fe9e6afb176e"
     }
   },
   "TestEntities": {}

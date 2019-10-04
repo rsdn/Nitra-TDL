@@ -289,7 +289,7 @@ namespace QuickType
         public string Timeout { get; set; }
 
         [JsonProperty("UniqueId", NullValueHandling = NullValueHandling.Ignore)]
-        public string UniqueId { get; set; }
+        public Guid? UniqueId { get; set; }
 
         [JsonProperty("MultiMachineId", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public Guid? MultiMachineId { get; set; }

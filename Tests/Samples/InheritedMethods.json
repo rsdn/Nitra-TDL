@@ -70,7 +70,7 @@
         "MethodName": "Ns1.DerivedClass.Method1"
       },
       "Timeout": "00:05:00",
-      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e8",
       "LocalTestBinariesFolder": "C:\\Tests"
     },
     "Test2": {
@@ -94,7 +94,7 @@
         "MethodName": "Ns1.DerivedClass.Method2"
       },
       "Timeout": "00:05:00",
-      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E7",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e7",
       "LocalTestBinariesFolder": "C:\\Tests"
     },
     "Test3": {
@@ -118,7 +118,7 @@
         "MethodName": "Ns1.DerivedClass.VirtualMethod"
       },
       "Timeout": "00:05:00",
-      "UniqueId": "C4B36F0E-820E-4AF3-BC95-9C552ECB04E9",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e9",
       "LocalTestBinariesFolder": "C:\\Tests"
     }
   },
