@@ -695,7 +695,8 @@ namespace Tdl2Json
       when (initialDeployment != null && !NList.Contains(deployments, initialDeployment))
         deployments ::= initialDeployment;
 
-      compiler.Compile(deployments)
+      def result = compiler.Compile(deployments);
+      compiler.GetCompositeDeployment(scenarioDeployment.Name, result)
     }
 
     private GenerateEntity(symbol : EntitySymbol) : TestEntity
