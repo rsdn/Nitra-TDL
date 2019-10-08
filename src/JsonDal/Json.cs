@@ -178,7 +178,7 @@ namespace QuickType
         [JsonProperty("DumpServerProduct", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string DumpServerProduct { get; set; }
 
-        [JsonProperty("Platforms", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("SupportedPlatforms", NullValueHandling = NullValueHandling.Ignore)]
         public string[] Platforms { get; set; }
     }
 
