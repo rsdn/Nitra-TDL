@@ -352,3 +352,24 @@ namespace Ns1
         }
     }
 }
+
+namespace Autotest.Kis.Suites.Dump
+{
+    [TestClass]
+    public class WithoutSendingDumpTest
+    {
+        [TestMethod]
+        public void WhenOnlyOneDumpFileNotTooOldThenDumpListShouldContainOneFile()
+        {
+        }
+    }
+
+    [TestClass]
+    public class SendingDumpOnNonExistentConfigurationServerTest
+    {
+        [TestMethod]
+        public void CheckSendingDumpWithRunningConfigurationServerWithoutConfig()
+        {
+        }
+    }
+}

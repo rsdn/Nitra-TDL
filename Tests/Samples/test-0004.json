@@ -2,6 +2,62 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
+    "Deploy_Finish": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Execute_Deploy": {
+            "AutotestsPath": "finish",
+            "DeploymentSequenceName": "middle"
+          }
+        }
+      ]
+    },
+    "Deploy_Gated": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        }
+      ]
+    },
+    "Deploy_Middle": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "middle"
+          }
+        }
+      ]
+    },
+    "DeploymentList": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Execute_Deploy",
+        "Reboot-00:20:00",
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "gated"
+          }
+        },
+        "Reboot-00:40:00",
+        {
+          "Execute_Deploy": {
+            "DeploymentSequenceName": "middle"
+          }
+        },
+        "Reboot-00:20:00",
+        {
+          "Execute_Deploy": {
+            "AutotestsPath": "finish",
+            "DeploymentSequenceName": "middle"
+          }
+        }
+      ]
+    },
     "Execute_Deploy": {
       "Type": "Script",
       "ReturnValue": 42,
@@ -29,46 +85,6 @@
     }
   },
   "Platforms": {
-    "win7-x86": {},
-    "win7-x64": {},
-    "win_7": [
-      "win7-x86",
-      "win7-x64"
-    ],
-    "win811-x86": {},
-    "win811-x64": {},
-    "win_811": [
-      "win811-x86",
-      "win811-x64"
-    ],
-    "w10rs3-x86": {},
-    "w10rs3-x64": {},
-    "win_10_rs3": [
-      "w10rs3-x86",
-      "w10rs3-x64"
-    ],
-    "w10rs4-x86": {},
-    "w10rs4-x64": {},
-    "win_10_rs4": [
-      "w10rs4-x86",
-      "w10rs4-x64"
-    ],
-    "w10rs5-x86": {},
-    "w10rs5-x64": {},
-    "win_10_rs5": [
-      "w10rs5-x86",
-      "w10rs5-x64"
-    ],
-    "win_10": [
-      "w10rs3-x86",
-      "w10rs3-x64",
-      "w10rs4-x86",
-      "w10rs4-x64",
-      "w10rs5-x86",
-      "w10rs5-x64"
-    ],
-    "win2008r2": {},
-    "win2012r2": {},
     "all_pc": [
       "win7-x86",
       "win7-x64",
@@ -94,17 +110,53 @@
       "w10rs3-x64",
       "win7-x64",
       "win2012r2"
-    ]
+    ],
+    "w10rs3-x64": {},
+    "w10rs3-x86": {},
+    "w10rs4-x64": {},
+    "w10rs4-x86": {},
+    "w10rs5-x64": {},
+    "w10rs5-x86": {},
+    "win_10": [
+      "w10rs3-x86",
+      "w10rs3-x64",
+      "w10rs4-x86",
+      "w10rs4-x64",
+      "w10rs5-x86",
+      "w10rs5-x64"
+    ],
+    "win_10_rs3": [
+      "w10rs3-x86",
+      "w10rs3-x64"
+    ],
+    "win_10_rs4": [
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ],
+    "win_10_rs5": [
+      "w10rs5-x86",
+      "w10rs5-x64"
+    ],
+    "win_7": [
+      "win7-x86",
+      "win7-x64"
+    ],
+    "win_811": [
+      "win811-x86",
+      "win811-x64"
+    ],
+    "win2008r2": {},
+    "win2012r2": {},
+    "win7-x64": {},
+    "win7-x86": {},
+    "win811-x64": {},
+    "win811-x86": {}
   },
   "Products": {
-    "Kes11_1": {
-      "Name": "App4",
-      "Parameters": {
-        "Name": "App4"
-      },
-      "BranchName": "Main",
-      "Version": "11.1"
-    },
+    "App4": [
+      "Kes11_1",
+      "Kes11_0"
+    ],
     "Kes11_0": {
       "Name": "App4",
       "Parameters": {
@@ -113,10 +165,14 @@
       "BranchName": "Main",
       "Version": "11.0"
     },
-    "App4": [
-      "Kes11_1",
-      "Kes11_0"
-    ]
+    "Kes11_1": {
+      "Name": "App4",
+      "Parameters": {
+        "Name": "App4"
+      },
+      "BranchName": "Main",
+      "Version": "11.1"
+    }
   },
   "Suites": {
     "Gate_2": {
@@ -155,264 +211,10 @@
     }
   },
   "TestScenarios": {
-    "SbSTestScenario1-1": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w10rs4-x64"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-2": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w10rs4-x86"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24cb0-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-3": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "AutotestsPath": "finish",
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "win_10_rs3"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24cb2-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-4": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w10rs4-x64"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24cb5-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-5": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w10rs4-x86"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24cb9-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-6": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "AutotestsPath": "finish",
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "win_10_rs3"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24cbe-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-7": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w10rs4-x64"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24cc4-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-8": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w10rs4-x86"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24ccb-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1-9": {
-      "Deployments": [
-        {
-          "Execute_Deploy": {
-            "AutotestsPath": "finish",
-            "DeploymentSequenceName": "middle"
-          }
-        }
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "win_10_rs3"
-          ],
-          "Products": [
-            "App4"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
-      },
-      "Timeout": "02:30:00",
-      "UniqueId": "bda24cd3-bf05-49ec-9884-129a48c42fff",
-      "ProductGroupName": "SbSProductGroup-1"
-    },
-    "SbSTestScenario1": {
-      "TestScenarios": [
-        "SbSTestScenario1-1",
-        "SbSTestScenario1-2",
-        "SbSTestScenario1-3",
-        "SbSTestScenario1-4",
-        "SbSTestScenario1-5",
-        "SbSTestScenario1-6",
-        "SbSTestScenario1-7",
-        "SbSTestScenario1-8",
-        "SbSTestScenario1-9"
-      ]
-    },
     "GatedChain1": {
       "Area": "GatedTestsChain1",
       "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
+        "Deploy_Gated"
       ],
       "Environments": [
         {
@@ -437,11 +239,7 @@
     "GatedChain2": {
       "Area": "GatedTestsChain2",
       "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
+        "Deploy_Gated"
       ],
       "Environments": [
         {
@@ -478,11 +276,7 @@
     "GatedChain3": {
       "Area": "GatedTestsChain2",
       "Deployments": [
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        }
+        "Deploy_Gated"
       ],
       "Environments": [
         {
@@ -515,47 +309,10 @@
       "Timeout": "00:00:10",
       "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42f8f"
     },
-    "GateTests_App4": {
-      "TestScenarios": [
-        "GatedChain1",
-        "GatedChain2"
-      ]
-    },
-    "GateTests_App42": {
-      "TestScenarios": [
-        "GatedChain3",
-        "GatedChain4"
-      ]
-    },
-    "GateTests": {
-      "TestScenarios": [
-        "GateTests_App4",
-        "GateTests_App42"
-      ]
-    },
     "GatedChain4": {
       "Area": "GatedTestsChain2",
       "Deployments": [
-        "Execute_Deploy",
-        "Reboot-00:20:00",
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "gated"
-          }
-        },
-        "Reboot-00:40:00",
-        {
-          "Execute_Deploy": {
-            "DeploymentSequenceName": "middle"
-          }
-        },
-        "Reboot-00:20:00",
-        {
-          "Execute_Deploy": {
-            "AutotestsPath": "finish",
-            "DeploymentSequenceName": "middle"
-          }
-        }
+        "DeploymentList"
       ],
       "Environments": [
         {
@@ -587,6 +344,235 @@
       "TfsId": 0,
       "Timeout": "00:00:10",
       "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42f8e"
+    },
+    "GateTests": {
+      "TestScenarios": [
+        "GateTests_App4",
+        "GateTests_App42"
+      ]
+    },
+    "GateTests_App4": {
+      "TestScenarios": [
+        "GatedChain1",
+        "GatedChain2"
+      ]
+    },
+    "GateTests_App42": {
+      "TestScenarios": [
+        "GatedChain3",
+        "GatedChain4"
+      ]
+    },
+    "SbSTestScenario1": {
+      "TestScenarios": [
+        "SbSTestScenario1-1",
+        "SbSTestScenario1-2",
+        "SbSTestScenario1-3",
+        "SbSTestScenario1-4",
+        "SbSTestScenario1-5",
+        "SbSTestScenario1-6",
+        "SbSTestScenario1-7",
+        "SbSTestScenario1-8",
+        "SbSTestScenario1-9"
+      ]
+    },
+    "SbSTestScenario1-1": {
+      "Deployments": [
+        "Deploy_Gated"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24caf-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-2": {
+      "Deployments": [
+        "Deploy_Middle"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x86"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24cb0-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-3": {
+      "Deployments": [
+        "Deploy_Finish"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win_10_rs3"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24cb2-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-4": {
+      "Deployments": [
+        "Deploy_Gated"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24cb5-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-5": {
+      "Deployments": [
+        "Deploy_Middle"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x86"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24cb9-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-6": {
+      "Deployments": [
+        "Deploy_Finish"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win_10_rs3"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24cbe-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-7": {
+      "Deployments": [
+        "Deploy_Gated"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24cc4-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-8": {
+      "Deployments": [
+        "Deploy_Middle"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x86"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24ccb-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
+    },
+    "SbSTestScenario1-9": {
+      "Deployments": [
+        "Deploy_Finish"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win_10_rs3"
+          ],
+          "Products": [
+            "App4"
+          ]
+        }
+      ],
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "bda24cd3-bf05-49ec-9884-129a48c42fff",
+      "ProductGroupName": "SbSProductGroup-1"
     }
   },
   "TestEntities": {}

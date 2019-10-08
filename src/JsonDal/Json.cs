@@ -15,6 +15,7 @@ namespace QuickType
     using System.Globalization;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
+    using JsonDal;
 
     /// <summary>
     /// Объект конфигурации
@@ -348,10 +349,55 @@ namespace QuickType
         public static implicit operator ProductValue(string[] StringArray) => new ProductValue { StringArray = StringArray };
     }
 
-    public partial class TestGroupDeployment
+    public partial class TestGroupDeployment : IEquatable<TestGroupDeployment>
     {
-        public IDictionary<string, object> Parameters;
         public string DeploymentName;
+        public IDictionary<string, object> Parameters;
+
+        public override bool Equals(object obj) => Equals(obj as TestGroupDeployment);
+
+        public bool Equals(TestGroupDeployment other)
+        {
+            if (other == null || !string.Equals(DeploymentName, other.DeploymentName))
+                return false;
+            
+            return Parameters.DictionaryEquals(other.Parameters, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1920629986;
+            var ordinalIgnoreCase = StringComparer.OrdinalIgnoreCase;
+            hashCode = hashCode * -1521134295 + ordinalIgnoreCase.GetHashCode(DeploymentName);
+
+            if (Parameters == null)
+                return hashCode;
+
+            foreach (var (name, value) in Parameters)
+            {
+                hashCode = hashCode * -1521134295 + ordinalIgnoreCase.GetHashCode(name);
+
+                if (value != null)
+                    hashCode = hashCode * -1521134295 + value.GetHashCode();
+            }
+
+            return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return $"{DeploymentName}({string.Join(", ", Parameters?.Select(kvp => kvp.Key + ": " + kvp.Value) ?? Enumerable.Empty<string>())})";
+        }
+
+        public static bool operator ==(TestGroupDeployment deployment1, TestGroupDeployment deployment2)
+        {
+            return EqualityComparer<TestGroupDeployment>.Default.Equals(deployment1, deployment2);
+        }
+
+        public static bool operator !=(TestGroupDeployment deployment1, TestGroupDeployment deployment2)
+        {
+            return !(deployment1 == deployment2);
+        }
     }
 
     public partial struct TestCase

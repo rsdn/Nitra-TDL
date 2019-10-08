@@ -1,0 +1,208 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "DefaultValues": {
+    "DeployerExePath": "C:\\\\AutotestBinaries\\Autotests.Deployer.exe",
+    "LocalTestBinariesFolder": "C:\\\\AutotestBinaries"
+  },
+  "Deployments": {
+    "Base Product selector": {
+      "Type": "Select",
+      "Condition": "$(InstallationType)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "Empty",
+        "Upgrade": {
+          "Download Product distributive selector MainProduct": {
+            "ProductBinariesPath": "{SessionWorkFolder}\\BaseProductBuild",
+            "TurnOffDumpOnAssert": 1
+          }
+        }
+      }
+    },
+    "Download Product distributive selector MainProduct": {
+      "Type": "Select",
+      "Condition": "$(MainProduct)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "Empty",
+        "KIS": "Empty",
+        "KAV": "Empty",
+        "KFA": "Empty",
+        "SAAS": "Empty"
+      }
+    },
+    "Empty": {
+      "Type": "Empty"
+    },
+    "Install product Custom DumpWriter error reporting mode": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Base Product selector",
+        {
+          "Install product Full Core": {
+            "DumpWriterErrorReportingMode": "FileOnDisk"
+          }
+        },
+        "Reboot selector"
+      ]
+    },
+    "Install product Full Core": {
+      "Type": "Select",
+      "Condition": "$(MainProduct)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "Empty",
+        "KIS": "Empty",
+        "KAV": "Empty",
+        "KFA": "Empty",
+        "SAAS": "Empty"
+      }
+    },
+    "Reboot selector": {
+      "Type": "Select",
+      "Condition": "$(InstallationType)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "Empty",
+        "Upgrade": "RebootAgent"
+      }
+    },
+    "Reboot-00:15:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "00:15:00"
+    },
+    "RebootAgent": {
+      "Type": "Select",
+      "Condition": "$(NeedStartStopProduct)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "Reboot-00:15:00",
+        "true": "Reboot-00:15:00",
+        "before": "Reboot-00:15:00"
+      }
+    }
+  },
+  "Platforms": {
+    "all_pc": [
+      "win_7",
+      "win_811",
+      "win_10"
+    ],
+    "all_pc_and_servers": [
+      "win_7",
+      "win_811",
+      "win_10",
+      "sbs2011",
+      "win2008r2",
+      "win2012r2",
+      "win-2019",
+      "xs-14393"
+    ],
+    "all_servers": [
+      "sbs2011",
+      "win2008r2",
+      "win2012r2",
+      "win-2019",
+      "xs-14393"
+    ],
+    "sbs2011": {},
+    "win_10": {},
+    "win_7": {},
+    "win_811": {},
+    "win2008r2": {},
+    "win2012r2": {},
+    "win-2019": {},
+    "xs-14393": {}
+  },
+  "Products": {
+    "KFA": {
+      "Name": "KFA",
+      "Parameters": {
+        "Name": "KFA",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;ksde*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "Kis.",
+        "TestAppPackName": "KasperskyLab.Kis.UI.TestApp.zip"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)",
+      "DumpServerProduct": "KAV.21.0.0.0"
+    }
+  },
+  "Suites": {
+    "Kfa.BvtPvt.Dumps": {
+      "Parameters": {
+        "ExcludeMasks": "*.iso,*.vhd,*_full.exe",
+        "DistribFiles": "#(DistribFiles)",
+        "DistribTestModules": "#(DistribTestModules)",
+        "InstallationType": "C3EEBA2A-D830-4947-83B2-045529DCB327",
+        "MainProduct": "C3EEBA2A-D830-4947-83B2-045529DCB327",
+        "NeedStartStopProduct": "C3EEBA2A-D830-4947-83B2-045529DCB327"
+      },
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "KFA"
+      ],
+      "TestScenarios": [
+        "BvtPvt-Dumps-scenarios"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "BvtPvt-Dumps-scenarios": {
+      "TestScenarios": [
+        "WhenOnlyOneDumpFileNotTooOldThenDumpListShouldContainOneFile",
+        "CheckSendingDumpWithRunningConfigurationServerWithoutConfig"
+      ]
+    },
+    "CheckSendingDumpWithRunningConfigurationServerWithoutConfig": {
+      "Area": "Dump",
+      "Deployments": [
+        "Install product Custom DumpWriter error reporting mode"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc_and_servers"
+          ],
+          "Products": [
+            "KFA"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": false,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Kis.Suites.Dump.SendingDumpOnNonExistentConfigurationServerTest.CheckSendingDumpWithRunningConfigurationServerWithoutConfig"
+      },
+      "TfsId": 182944,
+      "Timeout": "00:30:00",
+      "UniqueId": "a0a416ce-a86e-430b-b8d1-1ebd23de3703"
+    },
+    "WhenOnlyOneDumpFileNotTooOldThenDumpListShouldContainOneFile": {
+      "Area": "Dump",
+      "Deployments": [
+        "Install product Custom DumpWriter error reporting mode"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc_and_servers"
+          ],
+          "Products": [
+            "KFA"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": false,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Kis.Suites.Dump.WithoutSendingDumpTest.WhenOnlyOneDumpFileNotTooOldThenDumpListShouldContainOneFile"
+      },
+      "TfsId": 182944,
+      "Timeout": "00:30:00",
+      "UniqueId": "c64cc0a9-d6cd-42d1-a838-2a0aecc98c2a"
+    }
+  },
+  "TestEntities": {}
+}

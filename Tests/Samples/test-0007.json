@@ -37,6 +37,13 @@
       "ScriptArgs": {},
       "DefaultValues": {},
       "ScriptPath": "\\\\domain.com\\global\\Builds2\\Ido-Dev\\TestAgent.Python-monorep\\1.2.0.404\\drop\\Domain.Hive.TestAgent\\install_linux.sh"
+    },
+    "LinuxDeploy": {
+      "Type": "Sequence",
+      "Deployments": [
+        "InstallTestAgent",
+        "InstallProduct"
+      ]
     }
   },
   "Platforms": {
@@ -74,10 +81,15 @@
     }
   },
   "TestScenarios": {
+    "BuildAcceptance": {
+      "TestScenarios": [
+        "FirstTestFile",
+        "SecondTestFile"
+      ]
+    },
     "FirstTestFile": {
       "Deployments": [
-        "InstallTestAgent",
-        "InstallProduct"
+        "LinuxDeploy"
       ],
       "Environments": [
         {
@@ -100,8 +112,7 @@
     },
     "SecondTestFile": {
       "Deployments": [
-        "InstallTestAgent",
-        "InstallProduct"
+        "LinuxDeploy"
       ],
       "Environments": [
         {
@@ -121,12 +132,6 @@
       },
       "Timeout": "01:00:00",
       "UniqueId": "73b136a8-2032-4abb-b5dc-85283cda1d92"
-    },
-    "BuildAcceptance": {
-      "TestScenarios": [
-        "FirstTestFile",
-        "SecondTestFile"
-      ]
     }
   },
   "TestEntities": {}

@@ -21,6 +21,21 @@
         "Par": 700
       },
       "ScriptPath": "b.ps1"
+    },
+    "CurrySeq": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "A": {
+            "Par": 1000
+          }
+        },
+        {
+          "B": {
+            "Par": 1000
+          }
+        }
+      ]
     }
   },
   "Platforms": {
@@ -53,16 +68,7 @@
   "TestScenarios": {
     "Scenario": {
       "Deployments": [
-        {
-          "A": {
-            "Par": 1000
-          }
-        },
-        {
-          "B": {
-            "Par": 1000
-          }
-        }
+        "CurrySeq"
       ],
       "Environments": [
         {

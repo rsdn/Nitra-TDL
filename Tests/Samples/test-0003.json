@@ -23,31 +23,24 @@
         "DeployerTimeoutSec": 900
       },
       "ScriptPath": "\\\\tis-dfs\\Autotests\\Components\\DeploymentScripts\\Hive\\Deploy.ps1"
+    },
+    "DeployWithDeployer_NoReboot": {
+      "Type": "Sequence",
+      "Deployments": [
+        "DeployWithDeployer",
+        "DeployCollectors"
+      ]
     }
   },
   "Platforms": {
-    "w10rs4-x86": {},
     "w10rs4-x64": {},
+    "w10rs4-x86": {},
     "win10": [
       "w10rs4-x86",
       "w10rs4-x64"
     ]
   },
   "Products": {
-    "App6 2020.MP0": {
-      "Name": "App6",
-      "Parameters": {
-        "Name": "App6",
-        "ProductConfigurationPath": "\\\\sdfs\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ProductConfiguration\\2020.MP0\\App6.xml",
-        "ComponentConfigurationPath": "\\\\tis-dfs\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ComponentConfiguration\\2020.MP0\\Delivery.xml",
-        "DeploymentConditions": "/App9",
-        "DistributiveOriginalPath": "#(App2_DistributivePath)",
-        "ModulesPath": "#(App2_ModulesPath)",
-        "SuiteName": "App6.2020.MP0.Ext.PullRequest"
-      },
-      "BranchName": "20.MP0",
-      "Version": "#(App2_FullVersion)"
-    },
     "App4 11.1": {
       "Name": "App4",
       "Parameters": {
@@ -65,7 +58,21 @@
     "App4 11.1__App6 2020.MP0": [
       "App4 11.1",
       "App6 2020.MP0"
-    ]
+    ],
+    "App6 2020.MP0": {
+      "Name": "App6",
+      "Parameters": {
+        "Name": "App6",
+        "ProductConfigurationPath": "\\\\sdfs\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ProductConfiguration\\2020.MP0\\App6.xml",
+        "ComponentConfigurationPath": "\\\\tis-dfs\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ComponentConfiguration\\2020.MP0\\Delivery.xml",
+        "DeploymentConditions": "/App9",
+        "DistributiveOriginalPath": "#(App2_DistributivePath)",
+        "ModulesPath": "#(App2_ModulesPath)",
+        "SuiteName": "App6.2020.MP0.Ext.PullRequest"
+      },
+      "BranchName": "20.MP0",
+      "Version": "#(App2_FullVersion)"
+    }
   },
   "Suites": {
     "Ext.Delivery": {
@@ -112,10 +119,15 @@
     }
   },
   "TestScenarios": {
+    "ExclusiveTestGroup": {
+      "TestScenarios": [
+        "FacadeProductStopStart",
+        "InternetExplorer_CheckDnT"
+      ]
+    },
     "FacadeProductStopStart": {
       "Deployments": [
-        "DeployWithDeployer",
-        "DeployCollectors"
+        "DeployWithDeployer_NoReboot"
       ],
       "Environments": [
         {
@@ -177,8 +189,7 @@
     },
     "InternetExplorer_CheckDnT": {
       "Deployments": [
-        "DeployWithDeployer",
-        "DeployCollectors"
+        "DeployWithDeployer_NoReboot"
       ],
       "Environments": [
         {
@@ -201,8 +212,7 @@
     },
     "ScenarioWOAllowReboot": {
       "Deployments": [
-        "DeployWithDeployer",
-        "DeployCollectors"
+        "DeployWithDeployer_NoReboot"
       ],
       "Environments": [
         {
@@ -222,12 +232,6 @@
       "TfsId": 1203634,
       "Timeout": "00:20:00",
       "UniqueId": "0fb5a0e1-1b7e-4ae9-9a63-46a27f375546"
-    },
-    "ExclusiveTestGroup": {
-      "TestScenarios": [
-        "FacadeProductStopStart",
-        "InternetExplorer_CheckDnT"
-      ]
     }
   },
   "TestEntities": {}

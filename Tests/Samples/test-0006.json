@@ -2,6 +2,13 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
+    "DeployWithTestBot": {
+      "Type": "Sequence",
+      "Deployments": [
+        "InstallProduct",
+        "RebootWithScript"
+      ]
+    },
     "InstallProduct": {
       "Type": "Script",
       "ReturnValue": 0,
@@ -27,17 +34,6 @@
     }
   },
   "Platforms": {
-    "osx9": {},
-    "osx10": {},
-    "osx11": {},
-    "osx12": {},
-    "osx13": {},
-    "osx14": {},
-    "Debug": [
-      "osx11",
-      "osx12",
-      "osx13"
-    ],
     "All": [
       "osx9",
       "osx10",
@@ -46,10 +42,21 @@
       "osx13",
       "osx14"
     ],
+    "Debug": [
+      "osx11",
+      "osx12",
+      "osx13"
+    ],
+    "osx10": {},
     "osx10__osx9": [
       "osx10",
       "osx9"
-    ]
+    ],
+    "osx11": {},
+    "osx12": {},
+    "osx13": {},
+    "osx14": {},
+    "osx9": {}
   },
   "Products": {
     "All": [
@@ -65,30 +72,11 @@
       "App3 for Mac 1.0 MR3",
       "App3 for Mac 1.0 MR4"
     ],
-    "App4 for Mac 10 SP2": {
-      "Name": "App4 for Mac",
-      "Parameters": {
-        "Name": "App4 for Mac",
-        "ProductType": "Kes",
-        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App410SP2",
-        "ProductInfoJson": "kes-10-2.json",
-        "ProductInstallerJson": "um/installers/kes10-2-install.json"
-      },
-      "BranchName": "10",
-      "Version": "10.2.0.267"
-    },
-    "App4 for Mac 10 SP2 MR1": {
-      "Name": "App4 for Mac",
-      "Parameters": {
-        "Name": "App4 for Mac",
-        "ProductType": "Kes",
-        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App410SP2MR1",
-        "ProductInfoJson": "kes-10-2.json",
-        "ProductInstallerJson": "um/installers/kes10-2-install.json"
-      },
-      "BranchName": "10",
-      "Version": "10.2.1.319"
-    },
+    "App2": [
+      "App2 for Mac 2018 MR1",
+      "App2 for Mac 2018 MR2",
+      "App2 for Mac 2019"
+    ],
     "App2 for Mac 2018 MR1": {
       "Name": "App2 for Mac",
       "Parameters": {
@@ -125,42 +113,11 @@
       "BranchName": "19",
       "Version": "19.0.0.295"
     },
-    "App5 for Mac 2019": {
-      "Name": "App5 for Mac",
-      "Parameters": {
-        "Name": "App5 for Mac",
-        "ProductType": "Ksecl",
-        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52019",
-        "ProductInfoJson": "ksecl-19-0.json",
-        "ProductInstallerJson": "um/installers/ksecl19-0-install.json"
-      },
-      "BranchName": "19",
-      "Version": "19.0.0.294"
-    },
-    "App5 for Mac 2018 MR1": {
-      "Name": "App5 for Mac",
-      "Parameters": {
-        "Name": "App5 for Mac",
-        "ProductType": "Ksecl",
-        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52018MR1",
-        "ProductInfoJson": "ksecl-18-0.json",
-        "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
-      },
-      "BranchName": "18 MR1",
-      "Version": "18.0.1.35"
-    },
-    "App5 for Mac 2018 MR2": {
-      "Name": "App5 for Mac",
-      "Parameters": {
-        "Name": "App5 for Mac",
-        "ProductType": "Ksecl",
-        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52018MR2",
-        "ProductInfoJson": "ksecl-18-0.json",
-        "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
-      },
-      "BranchName": "18 MR2",
-      "Version": "18.0.2.60"
-    },
+    "App3": [
+      "App3 for Mac 1.0 MR2",
+      "App3 for Mac 1.0 MR3",
+      "App3 for Mac 1.0 MR4"
+    ],
     "App3 for Mac 1.0 MR2": {
       "Name": "App3 for Mac",
       "Parameters": {
@@ -201,27 +158,34 @@
       "App4 for Mac 10 SP2",
       "App4 for Mac 10 SP2 MR1"
     ],
-    "App2": [
-      "App2 for Mac 2018 MR1",
-      "App2 for Mac 2018 MR2",
-      "App2 for Mac 2019"
-    ],
-    "App5": [
-      "App5 for Mac 2019",
-      "App5 for Mac 2018 MR1",
-      "App5 for Mac 2018 MR2"
-    ],
-    "App3": [
-      "App3 for Mac 1.0 MR2",
-      "App3 for Mac 1.0 MR3",
-      "App3 for Mac 1.0 MR4"
-    ],
-    "App4__App3": [
-      "App4 for Mac 10 SP2",
+    "App4 for Mac 10 SP2": {
+      "Name": "App4 for Mac",
+      "Parameters": {
+        "Name": "App4 for Mac",
+        "ProductType": "Kes",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App410SP2",
+        "ProductInfoJson": "kes-10-2.json",
+        "ProductInstallerJson": "um/installers/kes10-2-install.json"
+      },
+      "BranchName": "10",
+      "Version": "10.2.0.267"
+    },
+    "App4 for Mac 10 SP2 MR1": {
+      "Name": "App4 for Mac",
+      "Parameters": {
+        "Name": "App4 for Mac",
+        "ProductType": "Kes",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App410SP2MR1",
+        "ProductInfoJson": "kes-10-2.json",
+        "ProductInstallerJson": "um/installers/kes10-2-install.json"
+      },
+      "BranchName": "10",
+      "Version": "10.2.1.319"
+    },
+    "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019": [
       "App4 for Mac 10 SP2 MR1",
-      "App3 for Mac 1.0 MR2",
-      "App3 for Mac 1.0 MR3",
-      "App3 for Mac 1.0 MR4"
+      "App2 for Mac 2019",
+      "App5 for Mac 2019"
     ],
     "App4__App2 for Mac 2018 MR1__App2 for Mac 2018 MR2__App5 for Mac 2018 MR1__App5 for Mac 2018 MR2__App3": [
       "App4 for Mac 10 SP2",
@@ -246,11 +210,54 @@
       "App3 for Mac 1.0 MR3",
       "App3 for Mac 1.0 MR4"
     ],
-    "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019": [
+    "App4__App3": [
+      "App4 for Mac 10 SP2",
       "App4 for Mac 10 SP2 MR1",
-      "App2 for Mac 2019",
-      "App5 for Mac 2019"
-    ]
+      "App3 for Mac 1.0 MR2",
+      "App3 for Mac 1.0 MR3",
+      "App3 for Mac 1.0 MR4"
+    ],
+    "App5": [
+      "App5 for Mac 2019",
+      "App5 for Mac 2018 MR1",
+      "App5 for Mac 2018 MR2"
+    ],
+    "App5 for Mac 2018 MR1": {
+      "Name": "App5 for Mac",
+      "Parameters": {
+        "Name": "App5 for Mac",
+        "ProductType": "Ksecl",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52018MR1",
+        "ProductInfoJson": "ksecl-18-0.json",
+        "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
+      },
+      "BranchName": "18 MR1",
+      "Version": "18.0.1.35"
+    },
+    "App5 for Mac 2018 MR2": {
+      "Name": "App5 for Mac",
+      "Parameters": {
+        "Name": "App5 for Mac",
+        "ProductType": "Ksecl",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52018MR2",
+        "ProductInfoJson": "ksecl-18-0.json",
+        "ProductInstallerJson": "um/installers/ksecl18-0-install.json"
+      },
+      "BranchName": "18 MR2",
+      "Version": "18.0.2.60"
+    },
+    "App5 for Mac 2019": {
+      "Name": "App5 for Mac",
+      "Parameters": {
+        "Name": "App5 for Mac",
+        "ProductType": "Ksecl",
+        "ProductPath": "\\\\tis-dfs\\Autotests\\Components\\Temp\\Marikyan\\MacProducts\\App52019",
+        "ProductInfoJson": "ksecl-19-0.json",
+        "ProductInstallerJson": "um/installers/ksecl19-0-install.json"
+      },
+      "BranchName": "19",
+      "Version": "19.0.0.294"
+    }
   },
   "Suites": {
     "Interprecz": {
@@ -271,10 +278,15 @@
     }
   },
   "TestScenarios": {
+    "Interprecz": {
+      "TestScenarios": [
+        "InterpreczRollback",
+        "InterpreczSmoke"
+      ]
+    },
     "InterpreczRollback": {
       "Deployments": [
-        "InstallProduct",
-        "RebootWithScript"
+        "DeployWithTestBot"
       ],
       "Environments": [
         {
@@ -335,8 +347,7 @@
     },
     "InterpreczSmoke": {
       "Deployments": [
-        "InstallProduct",
-        "RebootWithScript"
+        "DeployWithTestBot"
       ],
       "Environments": [
         {
@@ -393,12 +404,6 @@
       },
       "Timeout": "00:15:00",
       "UniqueId": "19a25e05-9f4e-42bb-97e3-40f2c3775c4f"
-    },
-    "Interprecz": {
-      "TestScenarios": [
-        "InterpreczRollback",
-        "InterpreczSmoke"
-      ]
     }
   },
   "TestEntities": {}

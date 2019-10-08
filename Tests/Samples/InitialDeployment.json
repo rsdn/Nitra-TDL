@@ -2,42 +2,6 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "Reboot-10:00": {
-      "Type": "Reboot",
-      "RebootTimeout": "10:00"
-    },
-    "DeployP1": {
-      "Type": "Script",
-      "ScriptArgs": {
-        "DeploymentParameter": "$(DeploymentParameter)"
-      },
-      "DefaultValues": {},
-      "ScriptPath": "deploy.ps1"
-    },
-    "Setup |||| A": {
-      "Type": "Sequence",
-      "Deployments": [
-        "A",
-        "Reboot-10:00",
-        "B"
-      ]
-    },
-    "Setup": {
-      "Type": "Select",
-      "Condition": "$(InitialDeploymentParameter)",
-      "Values": {
-        "A": "Setup |||| A",
-        "B": "B"
-      }
-    },
-    "Finalize": {
-      "Type": "Script",
-      "ScriptArgs": {
-        "FinalDeploymentParameter": "$(FinalDeploymentParameter)"
-      },
-      "DefaultValues": {},
-      "ScriptPath": "finalize.ps1"
-    },
     "A": {
       "Type": "Script",
       "ScriptArgs": {},
@@ -49,6 +13,57 @@
       "ScriptArgs": {},
       "DefaultValues": {},
       "ScriptPath": "A.ps1"
+    },
+    "DeployP1": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "DeploymentParameter": "$(DeploymentParameter)"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "deploy.ps1"
+    },
+    "Finalize": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "FinalDeploymentParameter": "$(FinalDeploymentParameter)"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "finalize.ps1"
+    },
+    "Reboot-10:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "10:00"
+    },
+    "Setup": {
+      "Type": "Select",
+      "Condition": "$(InitialDeploymentParameter)",
+      "Values": {
+        "A": "Setup |||| A",
+        "B": "B"
+      }
+    },
+    "Setup |||| A": {
+      "Type": "Sequence",
+      "Deployments": [
+        "A",
+        "Reboot-10:00",
+        "B"
+      ]
+    },
+    "Setup-DeployP1-Finalize": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Setup",
+        "DeployP1",
+        "Finalize"
+      ]
+    },
+    "Setup-Finalize": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Setup",
+        "Finalize"
+      ]
     }
   },
   "Platforms": {
@@ -132,9 +147,7 @@
   "TestScenarios": {
     "Scenario1": {
       "Deployments": [
-        "Setup",
-        "DeployP1",
-        "Finalize"
+        "Setup-DeployP1-Finalize"
       ],
       "Environments": [
         {
@@ -159,11 +172,14 @@
         "Scenario1"
       ]
     },
+    "Scenario3": {
+      "TestScenarios": [
+        "Scenario3-1"
+      ]
+    },
     "Scenario3-1": {
       "Deployments": [
-        "Setup",
-        "DeployP1",
-        "Finalize"
+        "Setup-DeployP1-Finalize"
       ],
       "Environments": [
         {
@@ -183,15 +199,9 @@
       "Timeout": "00:00:10",
       "UniqueId": "93586316-7b2f-4418-b069-7838d6d407b3"
     },
-    "Scenario3": {
-      "TestScenarios": [
-        "Scenario3-1"
-      ]
-    },
     "Scenario4": {
       "Deployments": [
-        "Setup",
-        "Finalize"
+        "Setup-Finalize"
       ],
       "Environments": [
         {

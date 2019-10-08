@@ -38,6 +38,7 @@ namespace Tdl2Json
     private mutable _emptyDeployment : QuickType.TestGroupDeployment;
     private mutable _implCount       : int;
     private mutable _thunkCount      : int;
+    private _compositeDeployments    : Dictionary[list[QuickType.TestGroupDeployment], string] = Dictionary();
 
     public this(deploymentScriptHeader : string, deploymentToolPath : string)
     {
@@ -252,7 +253,8 @@ namespace Tdl2Json
       when (result.Count == 0)
         result.Add(GetEmptyDeployment());
 
-      result.ToArray()
+      def rusults = result.ToArray();
+      rusults
     }
 
     private CompileReboot(symbol : DeploymentRebootSymbol) : void
@@ -381,6 +383,40 @@ namespace Tdl2Json
           return false;
 
       true
+    }
+
+    public GetCompositeDeployment(prototypeName : string, deployments : array[QuickType.TestGroupDeployment]) : array[QuickType.TestGroupDeployment]
+    {
+      when (deployments.Length == 1 && (deployments[0].Parameters == null || deployments[0].Parameters.Count == 0))
+        return deployments;
+      
+      mutable compositeDeploymentName;
+      def key = deployments.ToNList();
+      unless (_compositeDeployments.TryGetValue(key, out compositeDeploymentName))
+      {
+        mutable counter = 0;
+        compositeDeploymentName = prototypeName;
+        when (_deployments.ContainsKey(compositeDeploymentName) && deployments.Length > 1)
+        {
+          def name = $<#..$(deployments; "-"; _.DeploymentName)#>;
+          unless (_deployments.ContainsKey(name))
+            compositeDeploymentName = name;
+        }
+        while (_deployments.ContainsKey(compositeDeploymentName))
+        {
+          counter++;
+          compositeDeploymentName = prototypeName + "-" + counter;
+        }
+        
+        _compositeDeployments.Add(key, compositeDeploymentName);
+        def deployment = QuickType.Deployment() <-
+        {
+          Type        = QuickType.TypeEnum.Sequence;
+          Deployments = deployments;
+        };
+        _deployments.Add(compositeDeploymentName, deployment);
+      }
+      array[QuickType.TestGroupDeployment() <- { DeploymentName=compositeDeploymentName; }]
     }
   }
 }

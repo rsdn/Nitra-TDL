@@ -152,6 +152,13 @@
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\Deployment\\deploy.ps1"
     },
+    "Disable UAC": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Disable UAC Impl",
+        "Reboot-00:15:00"
+      ]
+    },
     "Disable UAC Impl": {
       "Type": "Script",
       "ReturnValue": 42,
@@ -162,6 +169,14 @@
         "UacAction": "Disable"
       },
       "ScriptPath": "\\\\tis-dfs.company.ru\\Autotests\\App2\\DeploymentScripts\\ManageUAC\\ManageUAC.ps1"
+    },
+    "Install product no uac-1124": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Disable UAC Impl",
+        "Reboot-00:15:00",
+        "Install product NoBackdoor TraceLevel_1000"
+      ]
     },
     "Install product NoBackdoor TraceLevel_1000": {
       "Type": "Select",
@@ -223,16 +238,16 @@
       "win811-x64",
       "win811-x86"
     ],
+    "w10rs4-x64": {},
+    "w10rs5-x64": {},
+    "w10rs5-x86": {},
+    "w10rs6-x64": {},
+    "w10rs6-x86": {},
+    "win10-x64": {},
     "win7-x64": {},
     "win7-x86": {},
     "win811-x64": {},
-    "win811-x86": {},
-    "win10-x64": {},
-    "w10rs4-x64": {},
-    "w10rs5-x86": {},
-    "w10rs5-x64": {},
-    "w10rs6-x64": {},
-    "w10rs6-x86": {}
+    "win811-x86": {}
   },
   "Products": {
     "App6": {
@@ -267,18 +282,10 @@
     }
   },
   "TestScenarios": {
-    "KpmDownloadAndInstallMultiMachineScenario": {
-      "TestScenarios": [
-        "KpmDownloadAndInstallMultiMachineDevice1",
-        "KpmDownloadAndInstallMultiMachineDevice2"
-      ]
-    },
     "KpmDownloadAndInstallMultiMachineDevice1": {
       "Area": "KPMIntergration",
       "Deployments": [
-        "Disable UAC Impl",
-        "Reboot-00:15:00",
-        "Install product NoBackdoor TraceLevel_1000"
+        "Install product no uac-1124"
       ],
       "Environments": [
         {
@@ -318,8 +325,7 @@
     "KpmDownloadAndInstallMultiMachineDevice2": {
       "Area": "KPMIntergration",
       "Deployments": [
-        "Disable UAC Impl",
-        "Reboot-00:15:00"
+        "Disable UAC"
       ],
       "Environments": [
         {
@@ -351,6 +357,12 @@
       "Timeout": "00:40:00",
       "UniqueId": "691f0dce-96c5-4dc2-96d8-8707d169eb53",
       "MultiMachineId": "aaaaaaac-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    },
+    "KpmDownloadAndInstallMultiMachineScenario": {
+      "TestScenarios": [
+        "KpmDownloadAndInstallMultiMachineDevice1",
+        "KpmDownloadAndInstallMultiMachineDevice2"
+      ]
     }
   },
   "TestEntities": {}

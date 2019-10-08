@@ -2,16 +2,22 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "Deploy_MyK_CIWD_Certificates": {
+    "Deploy_CIWD_Autotests": {
       "Type": "Script",
       "ReturnValue": 42,
       "ScriptArgs": {
-        "PathToCerts": "$(PathToCerts)"
+        "AutotestsPath": "$(AutotestsPath)",
+        "TargetFolder": "$(TargetFolder)",
+        "Browser": "$(Browser)",
+        "UserCountry": "$(UserCountry)",
+        "UserLanguage": "$(UserLanguage)",
+        "UcpInstanceType": "$(UcpInstanceType)"
       },
       "DefaultValues": {
-        "PathToCerts": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs"
+        "AutotestsPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\BinaryStorage\\Autotests\\Win\\CIWD",
+        "TargetFolder": "C:\\Autotests"
       },
-      "ScriptPath": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs\\installCertificates.ps1"
+      "ScriptPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\Hive\\Deployments\\Portal\\Scripts\\GetPortalAutotestsByPath.ps1"
     },
     "Deploy_MyK_Autotests": {
       "Type": "Script",
@@ -30,41 +36,43 @@
       },
       "ScriptPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\Hive\\Deployments\\Portal\\Scripts\\GetPortalAutotestsByPath.ps1"
     },
-    "Deploy_CIWD_Autotests": {
+    "Deploy_MyK_CIWD_Certificates": {
       "Type": "Script",
       "ReturnValue": 42,
       "ScriptArgs": {
-        "AutotestsPath": "$(AutotestsPath)",
-        "TargetFolder": "$(TargetFolder)",
-        "Browser": "$(Browser)",
-        "UserCountry": "$(UserCountry)",
-        "UserLanguage": "$(UserLanguage)",
-        "UcpInstanceType": "$(UcpInstanceType)"
+        "PathToCerts": "$(PathToCerts)"
       },
       "DefaultValues": {
-        "AutotestsPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\BinaryStorage\\Autotests\\Win\\CIWD",
-        "TargetFolder": "C:\\Autotests"
+        "PathToCerts": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs"
       },
-      "ScriptPath": "\\\\sdfs.avp.ru\\autotests\\PMCA\\Hive\\Deployments\\Portal\\Scripts\\GetPortalAutotestsByPath.ps1"
+      "ScriptPath": "\\\\tis-dfs.avp.ru\\Autotests\\UCP\\Deployment\\Certs\\installCertificates.ps1"
+    },
+    "Deployment_MyK_CIWD": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Deploy_MyK_CIWD_Certificates",
+        "Deploy_MyK_Autotests",
+        "Deploy_CIWD_Autotests"
+      ]
     }
   },
   "Platforms": {
-    "win7-x64": {},
-    "w10rs5-x64": {},
-    "osx13-x64": {},
-    "iOS-9": {},
-    "Android-9": {},
     "AllPlatforms": [
       "win7-x64",
       "w10rs5-x64",
       "osx13-x64"
-    ]
+    ],
+    "Android-9": {},
+    "iOS-9": {},
+    "osx13-x64": {},
+    "w10rs5-x64": {},
+    "win7-x64": {}
   },
   "Products": {
-    "MyK": {
-      "Name": "MyK",
+    "CIWD": {
+      "Name": "CIWD",
       "Parameters": {
-        "Name": "MyK",
+        "Name": "CIWD",
         "Browser": "Chrome",
         "UserCountry": "RussianFederation",
         "UserLanguage": "RussianRU",
@@ -73,10 +81,10 @@
       "BranchName": "Frontend",
       "Version": "Latest"
     },
-    "CIWD": {
-      "Name": "CIWD",
+    "MyK": {
+      "Name": "MyK",
       "Parameters": {
-        "Name": "CIWD",
+        "Name": "MyK",
         "Browser": "Chrome",
         "UserCountry": "RussianFederation",
         "UserLanguage": "RussianRU",
@@ -105,12 +113,15 @@
     }
   },
   "TestScenarios": {
+    "Debug": {
+      "TestScenarios": [
+        "debug_Run_tests_for_two_product"
+      ]
+    },
     "debug_Run_tests_for_two_product": {
       "Area": "Program",
       "Deployments": [
-        "Deploy_MyK_CIWD_Certificates",
-        "Deploy_MyK_Autotests",
-        "Deploy_CIWD_Autotests"
+        "Deployment_MyK_CIWD"
       ],
       "Environments": [
         {
@@ -138,11 +149,6 @@
       "Timeout": "00:15:00",
       "UniqueId": "c9e7c8cf-9c40-4f10-a8ce-08faa7e99b11",
       "LocalTestBinariesFolder": "C:\\Autotests"
-    },
-    "Debug": {
-      "TestScenarios": [
-        "debug_Run_tests_for_two_product"
-      ]
     }
   },
   "TestEntities": {}

@@ -16,6 +16,7 @@
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
 	  <SignAssembly>false</SignAssembly>
 	  <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
+	  <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
