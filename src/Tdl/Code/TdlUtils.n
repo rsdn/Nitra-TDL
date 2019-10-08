@@ -713,7 +713,7 @@ namespace Tdl
       else
       {
         def result = typeRef.Resolve();
-        if (result.IsUnresolved)
+        if (result.IsUnresolved || result.IsAmbiguous)
           makeDefaulteSuiteTypeSymbol()
         else
           result.Symbol
