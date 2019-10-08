@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {},
@@ -16,7 +16,7 @@
       },
       "BranchName": null,
       "Version": "1.0",
-      "Platforms": [
+      "SupportedPlatforms": [
         "Platform2",
         "Platform3",
         "Platform4"
@@ -29,7 +29,7 @@
       },
       "BranchName": null,
       "Version": "1.0",
-      "Platforms": [
+      "SupportedPlatforms": [
         "Platform1",
         "Platform2"
       ]
@@ -41,7 +41,7 @@
       },
       "BranchName": null,
       "Version": "1.0",
-      "Platforms": [
+      "SupportedPlatforms": [
         "Platform2",
         "Platform3",
         "Platform4"
