@@ -1,0 +1,32 @@
+scenario S1
+{
+  deployment Deploy;
+  environments (Platform, Product);
+  xcode "Standalone-VPN_iphonesimulator12.2-x86_64.xctestrun" path @"/Applications/Xcode 10.2.1.app";
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
+
+product type ProductType
+{
+  string Name = "Product 1";
+  string Version = "1.0";
+}
+
+product Product : ProductType
+{
+}
+
+platform Platform;
+
+suite Suite
+{
+  platform Platform;
+  product Product;
+  S1();
+}
+
+deployment Deploy()
+ script "Deploy.ps1"
+{
+}

@@ -27,6 +27,12 @@ namespace Tdl
         Arguments          : ImmutableArray[ParsedValue[string]];
         MaxRebootsCountOpt : ParsedValue[int];
       }
+    | XCode
+      {
+        Container          : ParsedValue[string];
+        XcodePath          : ParsedValue[string];
+        MaxRebootsCountOpt : ParsedValue[int];
+      }
     | Apk
       {
         Name               : ParsedValue[string];

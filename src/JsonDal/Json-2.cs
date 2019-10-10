@@ -123,6 +123,18 @@
         public int? MaxRebootsCount { get; set; }
     }
 
+    public sealed class XCode : TestMethodOrTestSequenceItemImpl
+    {
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string XCodeTestContainer { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string XcodePath { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
+    }
+
     public sealed class AndroidJava : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty(Required = Required.Always)]

@@ -44,6 +44,18 @@ namespace Tdl
         MaxRebootsCountOpt : ParsedValue[int];
       }
 
+    | XCode
+      {
+        ScenarioActions = ScenarioAction.XCode(Container.Location,
+          TdlUtils.ConvertStringLiteral(Container), 
+          TdlUtils.ConvertStringLiteral(XcodePath),
+          MaxRebootsCountOpt);
+
+        Container          : CSharp.StringLiteral;
+        XcodePath          : CSharp.StringLiteral;
+        MaxRebootsCountOpt : ParsedValue[int];
+      }
+
     | Apk
       {
         ScenarioActions = ScenarioAction.Apk(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
