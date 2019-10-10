@@ -559,6 +559,16 @@ namespace Tdl2Json
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
             }
+            def makeXCodeAction(c : ScenarioAction.XCode) : XCode
+            {
+                XCode() <-
+                {
+                  XCodeTestContainer         = c.Container.Value;
+                  XcodePath                  = c.XcodePath .Value;
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                  ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+                }
+            }
             def makeAndroidJavaAction(c : ScenarioAction.Apk) : AndroidJava
             {
                 AndroidJava() <-
@@ -606,21 +616,29 @@ namespace Tdl2Json
               | Script as s        => makeScriptAction(s)
               | Config as c        => makeConfigAction(c)
               | GTest  as g        => makeGTestAction(g)
+              | XCode as x         => makeXCodeAction(x)
               | Apk as a           => makeAndroidJavaAction(a)
               | Login as login     => LoginTestStep() <- { Login = LoginTestStep.Data() <- { User = login.User.Value; Password = login.Password.Value } }
               | Logoff             => LogoffTestStep() <- { Logoff = LogoffTestStep.Data() }
               | LockWorkstation    => LockWorkstationTestStep() <- { LockWorkstation = LockWorkstationTestStep.Data() }
               | _                  => assert(false, "Unsupported ScenarioAction: " + action)
             }
+
+            def tryGetSingleElem[T]() : ValueOption[T]
+            {
+              if (r.Actions.Length == 1 && r.Actions[0] is T) VSome(r.Actions[0] :> T) else VNone() 
+            }
                 
-            if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Config)
-              makeConfigAction(r.Actions[0] :> ScenarioAction.Config)
-            else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Script)
-              makeScriptAction(r.Actions[0] :> ScenarioAction.Script)
-            else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.GTest)
-              makeGTestAction(r.Actions[0] :> ScenarioAction.GTest)
-            else if (r.Actions.Length == 1 && r.Actions[0] is ScenarioAction.Apk)
-              makeAndroidJavaAction(r.Actions[0] :> ScenarioAction.Apk)
+            if (tryGetSingleElem() is VSome(action))
+              makeConfigAction(action)
+            else if (tryGetSingleElem() is VSome(action))
+              makeScriptAction(action)
+            else if (tryGetSingleElem() is VSome(action))
+              makeGTestAction(action)
+            else if (tryGetSingleElem() is VSome(action))
+              makeXCodeAction(action)
+            else if (tryGetSingleElem() is VSome(action))
+              makeAndroidJavaAction(action)
             else
               TestMethodSequence() <-
               {

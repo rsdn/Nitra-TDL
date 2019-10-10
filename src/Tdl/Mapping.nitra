@@ -255,6 +255,12 @@ namespace Tdl
         GTest.Arguments -> Arguments;
         MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
       } ]
+    | XCode    -> [ Action.XCode
+      {
+        XCode.Container -> Container;
+        XCode.XcodePath -> XcodePath;
+        MaxRebootsCountOpt = XCode.MaxRebootsCountOpt.ToInt();
+      } ]
     | Apk      -> [ Action.Apk
       {
         Apk.Name      -> Name;
@@ -316,6 +322,12 @@ namespace Tdl
         GTest.Name      -> Name;
         GTest.Arguments -> Arguments;
         MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
+      }
+    | XCode    -> Action.XCode
+      {
+        XCode.Container -> Container;
+        XCode.XcodePath -> XcodePath;
+        MaxRebootsCountOpt = XCode.MaxRebootsCountOpt.ToInt();
       }
     | Apk -> Action.Apk
       {
