@@ -191,6 +191,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"

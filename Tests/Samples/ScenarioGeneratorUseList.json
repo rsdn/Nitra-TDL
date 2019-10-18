@@ -379,6 +379,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
@@ -401,6 +402,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
@@ -423,6 +425,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
@@ -445,6 +448,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
@@ -467,6 +471,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
@@ -489,6 +494,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"

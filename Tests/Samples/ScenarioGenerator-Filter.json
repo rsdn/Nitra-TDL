@@ -10,14 +10,18 @@
     }
   },
   "Platforms": {
-    "Platform1": {},
-    "Platform2": {},
     "AllPlatforms": [
       "Platform1",
       "Platform2"
-    ]
+    ],
+    "Platform1": {},
+    "Platform2": {}
   },
   "Products": {
+    "AllProducts": [
+      "MyProduct1",
+      "MyProduct2"
+    ],
     "MyProduct1": {
       "Name": "MyProduct1",
       "Parameters": {
@@ -33,11 +37,7 @@
       },
       "BranchName": null,
       "Version": "1.0"
-    },
-    "AllProducts": [
-      "MyProduct1",
-      "MyProduct2"
-    ]
+    }
   },
   "Suites": {
     "MySuite": {
@@ -57,6 +57,14 @@
     }
   },
   "TestScenarios": {
+    "Generator1": {
+      "TestScenarios": [
+        "Generator1-1",
+        "Generator1-2",
+        "Generator1-3",
+        "Generator1-4"
+      ]
+    },
     "Generator1-1": {
       "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
       "Deployments": [
@@ -72,6 +80,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
@@ -95,6 +104,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
@@ -118,6 +128,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
@@ -141,6 +152,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
@@ -148,14 +160,6 @@
       "TfsId": 2,
       "Timeout": "02:30:00",
       "UniqueId": "42ddcb79-5563-4882-9a33-86afe07eb6b5"
-    },
-    "Generator1": {
-      "TestScenarios": [
-        "Generator1-1",
-        "Generator1-2",
-        "Generator1-3",
-        "Generator1-4"
-      ]
     }
   },
   "TestEntities": {}
