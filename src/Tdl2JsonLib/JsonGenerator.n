@@ -457,7 +457,7 @@ namespace Tdl2Json
           RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
           RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
           Responsible             = getString("Responsible");
-          RevertAgentAfter        = getBool  ("RevertAgentAfter");
+          RevertAgentAfter        = getBool  ("RevertAgentAfter") ?? true;
           RevertAgentBefore       = getBool  ("RevertAgentBefore");
           TfsId                   = getLong  ("TfsId");
           Timeout                 = getString("Timeout");
