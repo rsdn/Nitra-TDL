@@ -17,6 +17,7 @@ namespace Tdl
     stage 2:
       in AggregateParametersScope : Scope;
       in AllDeployments : ImmutableArray[DeploymentSymbol];
+      in DashboardVisibleParameters : ImmutableArray[DeclarationSymbol];
     }
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
@@ -33,8 +34,9 @@ namespace Tdl
       {
         symbol
         {
-          AggregateParametersScope = EmptyScope.Instance;
-          AllDeployments           = ImmutableArray.Empty;
+          AggregateParametersScope   = EmptyScope.Instance;
+          AllDeployments             = ImmutableArray.Empty;
+          DashboardVisibleParameters = ImmutableArray.Empty;
         }
       }
 
@@ -53,11 +55,12 @@ namespace Tdl
           MakeHint       = TdlUtils.DeploymentMakeHint(symbolCache, this);
         }
 
-        Content.Symbol                  = Symbol;
-        Symbol.AggregateParametersScope = Symbol.ParameterScope;
-        Definitions.Scope               = Symbol.ParameterScope;
-        Symbol.Defs                     = TdlUtils.MakeUntypedDefinitions(Definitions);
-        Parameters.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
+        Content.Symbol                    = Symbol;
+        Symbol.AggregateParametersScope   = Symbol.ParameterScope;
+        Definitions.Scope                 = Symbol.ParameterScope;
+        Symbol.Defs                       = TdlUtils.MakeUntypedDefinitions(Definitions);
+        Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, null);
 
         Content         : DeploymentScriptContent;
         Definitions     : Definition*;
@@ -74,12 +77,13 @@ namespace Tdl
           MakeHint       = TdlUtils.DeploymentMakeHint(symbolCache, this);
         }
 
-        Parameters.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
-        Commands.StepNumberIn           = 0;
-        Commands.Variables              = Symbol.Variables;
-        Commands.OuterScope             = Scope;
-        Commands.LocalScope             = Symbol.ParameterScope.UnionWith(Symbol.Variables);
-        Symbol.AggregateParametersScope = Symbol.ParameterScope;
+        Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
+        Commands.StepNumberIn             = 0;
+        Commands.Variables                = Symbol.Variables;
+        Commands.OuterScope               = Scope;
+        Commands.LocalScope               = Symbol.ParameterScope.UnionWith(Symbol.Variables);
+        Symbol.AggregateParametersScope   = Symbol.ParameterScope;
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, null);
 
         Commands : CommandCall*;
       }
@@ -95,11 +99,12 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Deployment;
         }
 
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployments);
-        Symbol.Deployments              = TdlUtils.MakeDeployments(Deployments.Ref);
+        Symbol.AggregateParametersScope   = await TdlUtils.MakeAggregateParametersScope(Symbol.Deployments);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(ImmutableArray.Empty, Symbol.Deployments);
+        Symbol.Deployments                = TdlUtils.MakeDeployments(Deployments.Ref);
 
-        Deployments.Scope               = Scope;
-        Deployments.ContainingTable     = ContainingTable;
+        Deployments.Scope                 = Scope;
+        Deployments.ContainingTable       = ContainingTable;
 
         SetUsed(Symbol.Deployments, true);
 
@@ -121,18 +126,18 @@ namespace Tdl
 
         out BaseDeploymentRef : Ref[DeploymentSymbol];
 
-        BaseDeployment.Scope             = Scope;
-        BaseDeploymentRef                = BaseDeployment.Ref.Resolve();
-        Symbol.BaseDeployment            = BaseDeploymentRef.Symbol;
-
-        CurredParameters.Scope           = Scope.UnionWith(context.GetExternalSymbolTable()).HideWith(Symbol.ParameterScope);
-        CurredParameters.DefinitionScope = TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope);
-        Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
-        Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams).HideWith(Symbol.ParameterScope);
-
-        Symbol.ParameterValues           = TdlUtils.MakeDefinitions(CurredParameters, context, Symbol.Type, CurredParameters.SymbolRef);
-        Symbol.BaseDeployment.IsUsed     = true;
-        Parameters.Scope                 = Scope.UnionWith(context.GetExternalSymbolTable());
+        BaseDeployment.Scope              = Scope;
+        BaseDeploymentRef                 = BaseDeployment.Ref.Resolve();
+        Symbol.BaseDeployment             = BaseDeploymentRef.Symbol;
+                                          
+        CurredParameters.Scope            = Scope.UnionWith(context.GetExternalSymbolTable()).HideWith(Symbol.ParameterScope);
+        CurredParameters.DefinitionScope  = TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope);
+        Symbol.ExcludedParams             = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
+        Symbol.AggregateParametersScope   = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams).HideWith(Symbol.ParameterScope);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, array[Symbol.BaseDeployment]);
+        Symbol.ParameterValues            = TdlUtils.MakeDefinitions(CurredParameters, context, Symbol.Type, CurredParameters.SymbolRef);
+        Symbol.BaseDeployment.IsUsed      = true;
+        Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
 
         BaseDeployment   : Reference;
         CurredParameters : Definition*;
@@ -149,12 +154,13 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Deployment;
         }
 
-        Symbol.Deployments              = Cases.Symbols;
-        Symbol.AggregateParametersScope = await TdlUtils.MakeSelectAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployments);
-        Parameters.Scope                = Scope;
-        Cases.Scope                     = TdlUtils.MakeDeploymentScope(Scope);
-        Cases.ContainingTable           = ContainingTable;
-        Symbol.Cases                    = Cases.Cases;
+        Symbol.Deployments                = Cases.Symbols;
+        Symbol.AggregateParametersScope   = await TdlUtils.MakeSelectAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployments);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, TdlUtils.Flatten(Symbol.Deployments));
+        Parameters.Scope                  = Scope;
+        Cases.Scope                       = TdlUtils.MakeDeploymentScope(Scope);
+        Cases.ContainingTable             = ContainingTable;
+        Symbol.Cases                      = Cases.Cases;
 
         CheckSelectDeployment(context, Cases, Parameters.Count);
 

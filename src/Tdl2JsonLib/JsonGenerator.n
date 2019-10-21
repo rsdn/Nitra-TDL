@@ -980,7 +980,7 @@ namespace Tdl2Json
     {
       def isDashboardVisible(symbol : TypedDeclarationSymbol) : bool
       {
-        | x is FormalParameterSymbol => x.CustomAttributes.Any(a => a is PredefinedAttribites.DashboardVisibleSymbol)
+        | x is FormalParameterSymbol => x.CustomAttributes.Any(a => a is PredefinedAttributes.DashboardVisibleSymbol)
         | x is FieldSymbol           => x.IsIsDashboardVisibleEvaluated && x.IsDashboardVisible
         | _ => false
       }

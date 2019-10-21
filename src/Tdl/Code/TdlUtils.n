@@ -523,6 +523,11 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
 
+    public Flatten[T](a : ImmutableArray[ImmutableArray[T]]) : Seq[T]
+    {
+      a.SelectMany(x => x)
+    }
+
     public Flatten(symbols : ImmutableArray[SuiteSymbol]) : ImmutableArray[SuiteSymbol]
     {
       def getChildren(symbol)
@@ -1761,7 +1766,7 @@ namespace Tdl
     }
     public HasDashboardVisible(attributes : DotNet.CustomAttributeReference.IAstList) : bool
     {
-      attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttribites.DashboardVisibleSymbol)
+      attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttributes.DashboardVisibleSymbol)
     }
 
     public ProductScopeFilter(scope : Scope) : Scope
@@ -1814,7 +1819,7 @@ namespace Tdl
     public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableHashSet[string]
     {
       def builder = ImmutableHashSet.CreateBuilder();
-      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttribites.TriggerPathSymbol in ast)
+      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttributes.TriggerPathSymbol in ast)
       {
         foreach (x in r.Arguments)
         {
@@ -1868,6 +1873,45 @@ namespace Tdl
         }
       }
       VSome(false)
+    }
+
+    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseDeployments : Seq[DeploymentSymbol]) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    {
+      mutable hashSet;
+
+      foreach (p in parameters)
+      {
+        unless (p.IsCustomAttributesEvaluated)
+          return VNone();
+
+        when (p.CustomAttributes.Any(_ is PredefinedAttributes.DashboardVisibleSymbol))
+        {
+          when (hashSet == null)
+            hashSet = HashSet();
+
+          _ = hashSet.Add(p);
+        }
+      }
+
+      when (baseDeployments != null)
+      {
+        foreach (d in baseDeployments)
+        {
+          unless (d.IsDashboardVisibleParametersEvaluated)
+            return VNone();
+
+          def additionalParameters = d.DashboardVisibleParameters;
+          unless (additionalParameters.IsDefaultOrEmpty)
+          {
+            when (hashSet == null)
+              hashSet = HashSet();
+
+            hashSet.UnionWith(additionalParameters);
+          }
+        }
+      }
+
+      VSome(if (hashSet == null) ImmutableArray.Empty else hashSet.ToImmutableArray())
     }
 
     private ExpandPathRelativeToAst(ast : IAst, path : string) : string

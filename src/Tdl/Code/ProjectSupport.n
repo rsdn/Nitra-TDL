@@ -183,10 +183,10 @@ namespace Tdl
       emptyDeployment.EvalProperties(context);
       initTypeSymbol(emptyDeployment);
 
-      def dashboardVisible = ExternalDeclaration.[Tdl.PredefinedAttribites.DashboardVisibleSymbol](Location.Default, "DashboardVisible", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def dashboardVisible = ExternalDeclaration.[Tdl.PredefinedAttributes.DashboardVisibleSymbol](Location.Default, "DashboardVisible", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(dashboardVisible);
 
-      def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttribites.TriggerPathSymbol](Location.Default, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttributes.TriggerPathSymbol](Location.Default, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(triggerPath);
       data
     }
