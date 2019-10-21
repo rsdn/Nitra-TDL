@@ -478,7 +478,7 @@ namespace Tdl
               unless (found)
               {
                 def msgs = context.GetFileData(definitions.Location.Source.File.Id).GetCompilerMessage();
-                using (root = msgs.ReportRootMessage(CompilerMessageType.Error, definition.Expr.Location, $"The '$(sel.Name)' select statement does not contain a '$(str.Value)' value.", 0))
+                using (root = msgs.ReportRootMessage(CompilerMessageType.Error, definition.Expr.Location, $"The \"$(sel.Name)\" select statement does not contain a \"$(str.Value)\" value.", 0))
                   root.ReportMessage(CompilerMessageType.Hint, sel.FirstDeclarationOrDefault.Name.Location, "The related select statement.", 0);
               }
             }
@@ -1088,7 +1088,6 @@ namespace Tdl
     
     MakeDefaultDefs(ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, getAllProducts : TypedDeclarationSymbol -> Seq[Product.DefSymbol]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
-      mutable isUsedVar = false;
       def filteringScope    = definitionScope :> FilteringScope;
       def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
                                                     .OfType.[FormalParameterSymbol]()
@@ -1105,11 +1104,11 @@ namespace Tdl
           match (d.Expr)
           {
             | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference => isUsedVar = true; paramMap[d.Symbol] = null;
+            | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
             | _ => ()
           }
           
-      foreach (ds in getAllProducts(product))
+      foreach (ds in getAllProducts(product)) // TODO: вычислить продукты сразу, так как они на первом проходе не вычисленны и остальные вычисления делать бессмысленно.
       {
         unless (ds.IsDefsEvaluated)
           return VNone();
@@ -1118,29 +1117,38 @@ namespace Tdl
           match (d.Expr)
           {
             | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference => isUsedVar = true; paramMap[d.Symbol] = null;
+            | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
             | _ => ()
           }
       }
 
-      foreach (s in selectDeployments)
+      foreach (selectDeployment in selectDeployments)
       {
-        unless (s.IsParametersEvaluated)
+        unless (selectDeployment.IsParametersEvaluated)
           return VNone();
-          
-        def values = array(s.Parameters.Length);
-        foreach (p in s.Parameters with k)
+
+        def len        = selectDeployment.Parameters.Length;
+        def names      = array(len);
+        def isUsedVars = array(len);
+        def values     = array(len);
+        foreach (p in selectDeployment.Parameters with k)
         {
+          names[k] = p.Name;
           mutable value;
-          when (paramMap.TryGetValue(p, out value) && value != null)
-            values[k] = value;
+          when (paramMap.TryGetValue(p, out value))
+          {
+            if (value == null)
+              isUsedVars[k] = true;
+            else
+              values[k] = value;
+          }
         }
         
-        unless (s.IsCasesEvaluated)
+        unless (selectDeployment.IsCasesEvaluated)
           return VNone();
           
         mutable isEntryPresent;
-        foreach (entry in s.Cases)
+        foreach (entry in selectDeployment.Cases)
         {
           when (entry.Length != values.Length)
             return VSome(ImmutableArray.Empty); // An error message has already been reported.
@@ -1154,12 +1162,23 @@ namespace Tdl
           }
           isEntryPresent |= isEntryMatch;
         }
-        when (!isEntryPresent && !isUsedVar)
+        when (!isEntryPresent && isUsedVars.All(x => !x))
         {
-          def entryStr = values.Select(v => if (v == null) "_" else <#"#> + v + '"');
-          def msgs     = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-          using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"The $(s.Name) select deployment has no ..$entryStr entry.", 0))
-            root.ReportMessage(CompilerMessageType.Hint, s.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
+          def notSetVar = List();
+          for (mutable i = 0; i < names.Length; i++)
+          {
+            def name  = names[i];
+            def value = values[i];
+            when (value == null)
+              notSetVar.Add("\"" + name + "\"");
+          }
+
+          def entryStr      = values.Select(v => if (v == null) "_" else "\"" + v + "\"");
+          def msgs          = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+          def suffix        = if (notSetVar.Count > 1) "s" else "";
+          def notSetVarText = if (notSetVar.Count > 0) $"Valiable$suffix: ..$notSetVar not set. And the" else "The";
+          using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"$notSetVarText \"$(selectDeployment.Name)\" select deployment has no ..$entryStr entry.", 0))
+            root.ReportMessage(CompilerMessageType.Hint, selectDeployment.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
           return VSome(ImmutableArray.Empty);
         }
       }
