@@ -14,6 +14,19 @@
         "isVerbose": 0
       },
       "ScriptPath": "a.ps1"
+    },
+    "Deployment2": {
+      "Type": "Sequence",
+      "DefaultValues": {
+        "AnotherMessage": "default another message"
+      },
+      "Deployments": [
+        {
+          "Deployment1": {
+            "Message": "$(AnotherMessage)"
+          }
+        }
+      ]
     }
   },
   "Platforms": {
@@ -49,9 +62,11 @@
         "S1"
       ],
       "DashboardVisibleParameters": [
+        "AnotherMessage",
         "Message",
         "SuiteTypeField1",
-        "ScenarioParam1"
+        "ScenarioParam1",
+        "isVerbose"
       ]
     },
     "SuiteGenerator-1": {
@@ -73,9 +88,11 @@
         "S1"
       ],
       "DashboardVisibleParameters": [
+        "AnotherMessage",
         "Message",
         "SuiteTypeField1",
-        "ScenarioParam1"
+        "ScenarioParam1",
+        "isVerbose"
       ]
     }
   },
@@ -89,7 +106,7 @@
   "TestScenarios": {
     "S1": {
       "Deployments": [
-        "Deployment1"
+        "Deployment2"
       ],
       "Environments": [
         {
