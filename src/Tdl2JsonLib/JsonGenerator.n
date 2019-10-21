@@ -950,6 +950,7 @@ namespace Tdl2Json
           TestScenarios = GetSuiteScenarioList(g.Statements, scenarioTrigger);
           Parameters    = parameters;
           TestEntity    = entityOpt;
+          DashboardVisibleParameters = GetDashboardVisibleParameters(g.Defs);
         };
 
         suites.Add(name, suite);
@@ -960,17 +961,10 @@ namespace Tdl2Json
 
     private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : ScenarioTriggerProcessor) : TestSuite
     {
-      def isDashboardVisible(symbol : TypedDeclarationSymbol) : bool
-      {
-        | x is FormalParameterSymbol => x.CustomAttributes.Any(a => a is PredefinedAttribites.DashboardVisibleSymbol)
-        | x is FieldSymbol           => x.IsIsDashboardVisibleEvaluated && x.IsDashboardVisible
-        | _ => false
-      }
       def parameters = CollectDefs(suiteSymbol.Defs);
       foreach (d in suiteSymbol.DefaultDefs)
         parameters.Add(d.Name, ParameterDefaultValue);
       def entityOpt = suiteSymbol.EntityOpt;
-      def dashboardVisibles = suiteSymbol.Defs.Where(x => isDashboardVisible(x.Symbol)).Select(x => x.Symbol.Name).ToList();
       TestSuite() <- 
       {
         Platforms                  = array[suiteSymbol.Platform.Name];
@@ -978,8 +972,24 @@ namespace Tdl2Json
         TestScenarios              = GetSuiteScenarioList(suiteSymbol.Statements, scenarioTrigger);
         Parameters                 = parameters;
         TestEntity                 = if (entityOpt.HasValue) entityOpt.Value.Name else null;
-        DashboardVisibleParameters = if (dashboardVisibles.IsEmpty()) null else dashboardVisibles;
+        DashboardVisibleParameters = GetDashboardVisibleParameters(suiteSymbol.Defs);
       }
+    }
+
+    private GetDashboardVisibleParameters(defs : ImmutableArray[Def]) : List[string]
+    {
+      def isDashboardVisible(symbol : TypedDeclarationSymbol) : bool
+      {
+        | x is FormalParameterSymbol => x.CustomAttributes.Any(a => a is PredefinedAttribites.DashboardVisibleSymbol)
+        | x is FieldSymbol           => x.IsIsDashboardVisibleEvaluated && x.IsDashboardVisible
+        | _ => false
+      }
+      
+      def result = List();
+      foreach (d when isDashboardVisible(d.Symbol) in defs)
+        result.Add(d.Symbol.Name);
+
+      if (result.Count == 0) null else result
     }
 
     private GetSuiteScenarioList(statements : ImmutableArray[SuiteStatement], scenarioTrigger : ScenarioTriggerProcessor) : array[string]

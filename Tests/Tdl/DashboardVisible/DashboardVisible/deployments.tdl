@@ -24,6 +24,21 @@ suite Suite : SuiteType
   S1();
 }
 
+suite SuiteGenerator : SuiteType =
+from a in [1]
+select
+{
+  platform Platform;
+  product Product;
+  Message         = "C# deployment";
+  SuiteTypeField1 = true;
+  SuiteTypeField2 = true;
+  ScenarioParam1  = 42;
+  ScenarioParam2  = 48;
+  NotVisible      = true;
+  S1();
+};
+
 product type ProductType
 {
   string Name;
