@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Deployment : NamespaceMember, TypedDeclaration, UsedDeclaration
+  abstract declaration Deployment : NamespaceMember, TypedDeclaration, UsedDeclaration, DashboardVisibleParametersHost
   {
     symbol
     {
@@ -17,7 +17,6 @@ namespace Tdl
     stage 2:
       in AggregateParametersScope : Scope;
       in AllDeployments : ImmutableArray[DeploymentSymbol];
-      in DashboardVisibleParameters : ImmutableArray[DeclarationSymbol];
     }
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);

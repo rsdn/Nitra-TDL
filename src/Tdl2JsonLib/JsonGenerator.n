@@ -950,7 +950,7 @@ namespace Tdl2Json
           TestScenarios = GetSuiteScenarioList(g.Statements, scenarioTrigger);
           Parameters    = parameters;
           TestEntity    = entityOpt;
-          DashboardVisibleParameters = GetDashboardVisibleParameters(g.Defs);
+          DashboardVisibleParameters = GetDashboardVisibleParameters(g.Type, g.Statements);
         };
 
         suites.Add(name, suite);
@@ -972,24 +972,22 @@ namespace Tdl2Json
         TestScenarios              = GetSuiteScenarioList(suiteSymbol.Statements, scenarioTrigger);
         Parameters                 = parameters;
         TestEntity                 = if (entityOpt.HasValue) entityOpt.Value.Name else null;
-        DashboardVisibleParameters = GetDashboardVisibleParameters(suiteSymbol.Defs);
+        DashboardVisibleParameters = GetDashboardVisibleParameters(suiteSymbol.Type, suiteSymbol.Statements);
       }
     }
 
-    private GetDashboardVisibleParameters(defs : ImmutableArray[Def]) : List[string]
+    private GetDashboardVisibleParameters(type : TypeSymbol, statements : ImmutableArray[SuiteStatement]) : List[string]
     {
-      def isDashboardVisible(symbol : TypedDeclarationSymbol) : bool
-      {
-        | x is FormalParameterSymbol => x.CustomAttributes.Any(a => a is PredefinedAttributes.DashboardVisibleSymbol)
-        | x is FieldSymbol           => x.IsIsDashboardVisibleEvaluated && x.IsDashboardVisible
-        | _ => false
-      }
-      
-      def result = List();
-      foreach (d when isDashboardVisible(d.Symbol) in defs)
-        result.Add(d.Symbol.Name);
+      def result = SortedSet();
 
-      if (result.Count == 0) null else result
+      foreach(field is FieldSymbol when field.IsIsDashboardVisibleEvaluated && field.IsDashboardVisible in type.Scope.AllSymbols)
+        _ = result.Add(field.Name);
+
+      foreach (call is Tdl.SuiteStatement.CallScenario in statements)
+      foreach (symbol in call.Reference.DashboardVisibleParameters)
+        _ = result.Add(symbol.Name);
+
+      if (result.Count == 0) null else result.ToList()
     }
 
     private GetSuiteScenarioList(statements : ImmutableArray[SuiteStatement], scenarioTrigger : ScenarioTriggerProcessor) : array[string]
