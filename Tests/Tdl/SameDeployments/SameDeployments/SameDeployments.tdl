@@ -117,7 +117,7 @@ deployment "Install product Custom DumpWriter error reporting mode" =
 
 select deployment "Base Product selector"(InstallationType)
 {
-    | _ => "Skip base product installation"
+    | not-set   => "Skip base product installation"
     | "Upgrade" => "_Install Base Product"
 }
 
@@ -155,11 +155,11 @@ deployment "Prepare WER dumps and gerate metadata rules"(
 
 select deployment "Download Product distributive selector MainProduct"(MainProduct)
 {
-    | _ => "Download Product distributive"
-    | "KIS" => "Download Product distributive for KIS"
-    | "KAV" => "Download Product distributive for KIS"
-    | "KFA" => "Download Product distributive for KIS"
-    | "SAAS" => "Download Product distributive for KIS"
+    | not-set => "Download Product distributive"
+    | "KIS"   => "Download Product distributive for KIS"
+    | "KAV"   => "Download Product distributive for KIS"
+    | "KFA"   => "Download Product distributive for KIS"
+    | "SAAS"  => "Download Product distributive for KIS"
 }
 
 deployment "Download Product distributive"(
@@ -275,11 +275,11 @@ deployment "_Install product Custom DumpWriter error reporting mode" = "Install 
 
 select deployment "Install product Full Core"(MainProduct)
 {
-    | _ => "_Install product Full Core"
-    | "KIS" => "Install product Full Core for KIS"
-    | "KAV" => "Install product Full Core for KIS"
-    | "KFA" => "Install product Full Core for KIS"
-    | "SAAS" => "Install product Full Core for KIS"
+    | not-set => "_Install product Full Core"
+    | "KIS"   => "Install product Full Core for KIS"
+    | "KAV"   => "Install product Full Core for KIS"
+    | "KFA"   => "Install product Full Core for KIS"
+    | "SAAS"  => "Install product Full Core for KIS"
 }
 
 deployment "Install product Full Core for KIS" = "_Install product Full Core"(
@@ -307,14 +307,14 @@ deployment "_Install product Full Core" =
 
 select deployment "Reboot selector"(InstallationType)
 {
-    | _ => "Skip reboot"
+    | not-set   => "Skip reboot"
     | "Upgrade" => "RebootAgent"
 }
 
 select deployment "RebootAgent"(NeedStartStopProduct)
 {
-    | _ => Reboot
-    | "true" => RebootWithStartStopProduct
+    | not-set  => Reboot
+    | "true"   => RebootWithStartStopProduct
     | "before" => StartStopProductWithReboot
 }
 

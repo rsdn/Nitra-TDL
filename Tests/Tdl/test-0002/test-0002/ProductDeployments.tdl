@@ -1,6 +1,6 @@
 ﻿select deployment "Install product"(InstallationType)
 {
-    | _ => "_Install product"
+    | not-set        => "_Install product"
     | "Upgrade 2019" => "Install 2019 -> Install product"
 }
 

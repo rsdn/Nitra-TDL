@@ -4,7 +4,7 @@ deployment A() script "a.ps1" {}
 
 deployment B() script "b.ps1" {}
 
-select deployment S(X) { | _ => A | "BBB" => B }
+select deployment S(X) { | not-set => A | "BBB" => B }
 
 product type ProductType
 {

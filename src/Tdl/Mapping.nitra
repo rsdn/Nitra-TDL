@@ -188,6 +188,7 @@ namespace Tdl
   {
     | String   -> String   { this.StringLiteral -> Value; }
     | Wildcard -> Wildcard { }
+    | NotSet   -> NotSet { }
   }
 
   map syntax Grammar.From -> From

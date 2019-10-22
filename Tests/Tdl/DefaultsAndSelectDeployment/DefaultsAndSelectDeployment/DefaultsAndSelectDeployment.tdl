@@ -17,9 +17,9 @@ suite "Kis.BvtPvt.DNT" : SessionParameters
 
 select deployment TakePrepareStepsForXPerfLogsCollection(XPerf)
 {
-    | _ => Empty
+    | not-set => Empty
     | "false" => Empty
-    | "true" => PrepareEnvironmentForXPerfLogsCollection
+    | "true"  => PrepareEnvironmentForXPerfLogsCollection
 }
 
 deployment PrepareEnvironmentForXPerfLogsCollection()

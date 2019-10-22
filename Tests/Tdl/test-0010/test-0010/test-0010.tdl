@@ -73,8 +73,8 @@ deployment "Install product no uac-1124" = "Disable UAC", "Install product NoBac
 
 select deployment "Install product NoBackdoor TraceLevel_1000"(InstallationType)
 {
-    | _ => "_Install product NoBackdoor TraceLevel_1000"
-    | "Regular" => "_Install product NoBackdoor TraceLevel_1000"
+    | not-set        => "_Install product NoBackdoor TraceLevel_1000"
+    | "Regular"      => "_Install product NoBackdoor TraceLevel_1000"
     | "Upgrade 2019" => "Install 2019 -> Install product NoBackdoor TraceLevel_1000"
 }
 deployment "_Install product NoBackdoor TraceLevel_1000" = "_Install product"(

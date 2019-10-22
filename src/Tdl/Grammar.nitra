@@ -125,8 +125,9 @@
     {
       syntax Value
       {
-        | String = StringLiteral
+        | String   = StringLiteral
         | Wildcard = "_"
+        | NotSet   = "not-set"
       }
     }
 
