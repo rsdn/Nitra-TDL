@@ -178,10 +178,9 @@ namespace Tdl
     | EmbedFile  -> EmbedFile  { Path -> Path; }
   }
 
-  map syntax Grammar.Case -> Case
+  map syntax Grammar.Case -> Case*
   {
-    Values.Item1      -> Values;
-    Deployments.Item1 -> Deployments;
+    Patterns(Deployments.Item1)
   }
 
   map syntax Grammar.Case.Value -> CaseValue
@@ -189,6 +188,12 @@ namespace Tdl
     | String   -> String   { this.StringLiteral -> Value; }
     | Wildcard -> Wildcard { }
     | NotSet   -> NotSet { }
+  }
+
+  map syntax Grammar.Case.Pattern(deployments : DeploymentExpr*) -> Case
+  {
+    Values.Item1 -> Values;
+    deployments  -> Deployments;
   }
 
   map syntax Grammar.From -> From
