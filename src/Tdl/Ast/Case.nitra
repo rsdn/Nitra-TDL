@@ -38,6 +38,13 @@ namespace Tdl
 
     | Wildcard
       {
+        Error(context, <#Syntax "_" is no longer supported. Use the "not-set" keyword instead.#>);
+
+        Text = null;
+      }
+
+    | NotSet
+      {
         Text = null;
       }
   }
