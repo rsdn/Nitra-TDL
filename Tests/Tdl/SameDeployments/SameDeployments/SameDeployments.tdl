@@ -156,9 +156,9 @@ deployment "Prepare WER dumps and gerate metadata rules"(
 select deployment "Download Product distributive selector MainProduct"(MainProduct)
 {
     | not-set => "Download Product distributive"
-    | "KIS"   => "Download Product distributive for KIS"
-    | "KAV"   => "Download Product distributive for KIS"
-    | "KFA"   => "Download Product distributive for KIS"
+    | "KIS"
+    | "KAV"
+    | "KFA"
     | "SAAS"  => "Download Product distributive for KIS"
 }
 

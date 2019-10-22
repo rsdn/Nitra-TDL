@@ -121,7 +121,7 @@
 
     syntax EntityBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
 
-    syntax Case = "|" sm (Value; "," sm)+ sm "=>" Deployments=(DeploymentExpr; "," sm)+ nl
+    syntax Case = Pattern+ "=>" Deployments=(DeploymentExpr; "," sm)+ nl
     {
       syntax Value
       {
@@ -129,6 +129,8 @@
         | Wildcard = "_"
         | NotSet   = "not-set"
       }
+
+      syntax Pattern = "|" sm (Value; "," sm)+ sm;
     }
 
     syntax From = "from" VarDecl "in" List=DefExpr
