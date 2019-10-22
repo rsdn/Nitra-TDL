@@ -32,9 +32,9 @@ namespace Tdl
       def it = this;
       match (it)
       {
-        | Reference(Symbol=Product.SetSymbol    as s) when varIndex == 0 => s.AllProducts   .Select(Expr.Reference)
-        | Reference(Symbol=Platform.SetSymbol   as s) when varIndex == 0 => s.Platforms     .Select(Expr.Reference)
-        | Reference(Symbol=Deployment.SetSymbol as s) when varIndex == 0 => s.AllDeployments.Select(Expr.Reference)
+        | Reference(Symbol=Product.SetSymbol    as s) when varIndex == 0 => s.AllProducts.Select(Expr.Reference)
+        | Reference(Symbol=Platform.SetSymbol   as s) when varIndex == 0 => s.Platforms  .Select(Expr.Reference)
+        | Reference(Symbol=Deployment.SetSymbol as s) when varIndex == 0 => s.Deployments.Select(Expr.Reference)
         | List as list =>
           def getElem(e : Expr) : Expr
           {
@@ -51,9 +51,9 @@ namespace Tdl
     {
       match (this)
       {
-        | Reference(Symbol=Product.SetSymbol    as s) => s.AllProducts   .Select(Expr.Reference)
-        | Reference(Symbol=Platform.SetSymbol   as s) => s.Platforms     .Select(Expr.Reference)
-        | Reference(Symbol=Deployment.SetSymbol as s) => s.AllDeployments.Select(Expr.Reference)
+        | Reference(Symbol=Product.SetSymbol    as s) => s.AllProducts.Select(Expr.Reference)
+        | Reference(Symbol=Platform.SetSymbol   as s) => s.Platforms  .Select(Expr.Reference)
+        | Reference(Symbol=Deployment.SetSymbol as s) => s.Deployments.Select(Expr.Reference)
         | List as list                                => list.Elems
         | _ => assert(false, $"Unsupporten expressoin type $(GetType().FullName)")
       }

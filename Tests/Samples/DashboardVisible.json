@@ -45,7 +45,6 @@
   "Suites": {
     "Suite": {
       "Parameters": {
-        "Message": "C# deployment",
         "SuiteTypeField1": 1,
         "SuiteTypeField2": 1,
         "ScenarioParam1": 42,
@@ -63,15 +62,14 @@
       ],
       "DashboardVisibleParameters": [
         "AnotherMessage",
+        "isVerbose",
         "Message",
-        "SuiteTypeField1",
         "ScenarioParam1",
-        "isVerbose"
+        "SuiteTypeField1"
       ]
     },
     "SuiteGenerator-1": {
       "Parameters": {
-        "Message": "C# deployment",
         "SuiteTypeField1": 1,
         "SuiteTypeField2": 1,
         "ScenarioParam1": 42,
@@ -89,10 +87,10 @@
       ],
       "DashboardVisibleParameters": [
         "AnotherMessage",
+        "isVerbose",
         "Message",
-        "SuiteTypeField1",
         "ScenarioParam1",
-        "isVerbose"
+        "SuiteTypeField1"
       ]
     }
   },

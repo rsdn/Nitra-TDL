@@ -1081,7 +1081,7 @@ namespace Tdl
               | Reference(Symbol=ProductSymbol as symbol) => symbol
               | _ => null
             }
-            return list.Select(toSymbol).Where(_ == null).SelectMany(getAllProducts);
+            return list.Select(toSymbol).Where(_ != null).SelectMany(getAllProducts);
           }
           []
         | _ => assert(false);
@@ -1360,20 +1360,32 @@ namespace Tdl
     public MakeAggregateParametersScope(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       def deployments = List();
+      foreach (deployment in GetScenarioGeneratorDeployments(deployment, froms, context))
+      {
+        unless (deployment.IsAllDeploymentsEvaluated)
+          return VNone();
+
+        deployments.AddRange(deployment.AllDeployments);
+      }
+
+      MakeAggregateParametersScope(deployments, parametersScope)
+    }
+
+    public GetScenarioGeneratorDeployments(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : Seq[DeploymentSymbol]
+    {
       def tdlContext  = context.ToTdlContext();
 
       def initialDeployment = tdlContext.InitialDeployment;
       when (initialDeployment != null)
-        deployments.Add(initialDeployment);
+        yield initialDeployment;
 
       def finalDeployment = tdlContext.FinalDeployment;
       when (finalDeployment != null)
-        deployments.Add(finalDeployment);
+        yield finalDeployment;
 
       match (deployment)
       {
-        | DeploymentSymbol as d when !d.IsAllDeploymentsEvaluated => return VNone();
-        | DeploymentSymbol as d => deployments.AddRange(d.AllDeployments);
+        | DeploymentSymbol as d => yield d
         | VarSymbol as v =>
           foreach (from in froms)
           foreach (var when v.Id == var.Id in from.Vars with i)
@@ -1381,17 +1393,15 @@ namespace Tdl
             def list = from.Elems.GetExprListForVar(i);
             foreach (x in list)
             {
-              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAllDeploymentsEvaluated => return VNone();
-              | Reference(Symbol=DeploymentSymbol as d) => deployments.AddRange(d.AllDeployments);
+              | Reference(Symbol=DeploymentSymbol as d) => yield d
               | _ => ()
             }
             break;
           }
         | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
       }
-      MakeAggregateParametersScope(deployments, parametersScope)
     }
-    
+
     public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
     {
       unless (maxRebootsCountOpt.HasValue)
@@ -1875,7 +1885,7 @@ namespace Tdl
       VSome(false)
     }
 
-    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseDeployments : Seq[DeploymentSymbol]) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[DashboardVisibleParametersHostSymbol]) : ValueOption[ImmutableArray[DeclarationSymbol]]
     {
       mutable hashSet;
 
@@ -1893,9 +1903,9 @@ namespace Tdl
         }
       }
 
-      when (baseDeployments != null)
+      when (baseSymbols != null)
       {
-        foreach (d in baseDeployments)
+        foreach (d in baseSymbols)
         {
           unless (d.IsDashboardVisibleParametersEvaluated)
             return VNone();
