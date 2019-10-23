@@ -42,13 +42,6 @@
     }
   },
   "TestScenarios": {
-    "Tests": {
-      "TestScenarios": [
-        "Test1",
-        "Test2",
-        "Test3"
-      ]
-    },
     "Test1": {
       "Deployments": [
         "Deploy1"
@@ -65,6 +58,7 @@
       ],
       "RerunCountOnTestFailure": 0,
       "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Ns1.DerivedClass.Method1"
@@ -89,6 +83,7 @@
       ],
       "RerunCountOnTestFailure": 0,
       "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Ns1.DerivedClass.Method2"
@@ -113,6 +108,7 @@
       ],
       "RerunCountOnTestFailure": 0,
       "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Ns1.DerivedClass.VirtualMethod"
@@ -120,6 +116,13 @@
       "Timeout": "00:05:00",
       "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e9",
       "LocalTestBinariesFolder": "C:\\Tests"
+    },
+    "Tests": {
+      "TestScenarios": [
+        "Test1",
+        "Test2",
+        "Test3"
+      ]
     }
   },
   "TestEntities": {}

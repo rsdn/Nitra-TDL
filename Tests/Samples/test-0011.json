@@ -38,51 +38,13 @@
     }
   },
   "TestScenarios": {
-    "AndroidJavaTestGroupKavsdk": {
-      "Deployments": [
-        "AndroidInstall"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w19-droid"
-          ],
-          "Products": [
-            "MobileSdk"
-          ]
-        }
-      ],
-      "NeedUnsignedAgent": true,
-      "TestMethod": {
-        "AndroidTestContainer": "KavSdk-full-debug-androidTest.apk",
-        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
-        "TestRunnerPath": "com.kavsdk.test/com.kavsdk.test.TestRunner"
-      },
-      "Timeout": "00:10:00",
-      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea1"
-    },
-    "AndroidJavaTestGroupKavatintegrationtest": {
-      "Deployments": [
-        "AndroidInstall"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "w19-droid"
-          ],
-          "Products": [
-            "MobileSdk"
-          ]
-        }
-      ],
-      "NeedUnsignedAgent": true,
-      "TestMethod": {
-        "AndroidTestContainer": "KavAtIntegrationTest-debug-androidTest.apk",
-        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
-        "TestRunnerPath": "com.kaspersky.kavatintegrationtest.test/com.kaspersky.kavatintegrationtest.test.TestRunner"
-      },
-      "Timeout": "00:02:00",
-      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea2"
+    "AndroidGroup": {
+      "TestScenarios": [
+        "AndroidJavaTestGroupKavsdk",
+        "AndroidJavaTestGroupKavatintegrationtest",
+        "AndroidJavaTestGroupAtsdk",
+        "AndroidJavaTestGroupWhocalls"
+      ]
     },
     "AndroidJavaTestGroupAtsdk": {
       "Deployments": [
@@ -99,6 +61,7 @@
         }
       ],
       "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AndroidTestContainer": "AntiTheftSdk-debug-androidTest.apk",
         "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
@@ -106,6 +69,54 @@
       },
       "Timeout": "00:02:00",
       "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea3"
+    },
+    "AndroidJavaTestGroupKavatintegrationtest": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AndroidTestContainer": "KavAtIntegrationTest-debug-androidTest.apk",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
+        "TestRunnerPath": "com.kaspersky.kavatintegrationtest.test/com.kaspersky.kavatintegrationtest.test.TestRunner"
+      },
+      "Timeout": "00:02:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea2"
+    },
+    "AndroidJavaTestGroupKavsdk": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AndroidTestContainer": "KavSdk-full-debug-androidTest.apk",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
+        "TestRunnerPath": "com.kavsdk.test/com.kavsdk.test.TestRunner"
+      },
+      "Timeout": "00:10:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea1"
     },
     "AndroidJavaTestGroupWhocalls": {
       "Deployments": [
@@ -122,6 +133,7 @@
         }
       ],
       "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AndroidTestContainer": "WhoCallsSdk-debug-androidTest.apk",
         "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
@@ -129,14 +141,6 @@
       },
       "Timeout": "00:02:00",
       "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea4"
-    },
-    "AndroidGroup": {
-      "TestScenarios": [
-        "AndroidJavaTestGroupKavsdk",
-        "AndroidJavaTestGroupKavatintegrationtest",
-        "AndroidJavaTestGroupAtsdk",
-        "AndroidJavaTestGroupWhocalls"
-      ]
     }
   },
   "TestEntities": {}

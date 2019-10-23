@@ -96,6 +96,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
@@ -118,6 +119,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"

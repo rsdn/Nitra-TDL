@@ -53,6 +53,7 @@
         }
       ],
       "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "TestSequence": [
           {

@@ -102,6 +102,7 @@
         }
       ],
       "RerunCountOnTestFailure": 0,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "TestScriptName": "utf_robot_wrapper.sh",
         "TestScriptArgs": "\"hello_tests.robot\"",
@@ -125,6 +126,7 @@
         }
       ],
       "RerunCountOnTestFailure": 0,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "TestScriptName": "utf_robot_wrapper.sh",
         "TestScriptArgs": "\"hello_tests_second.robot\"",
