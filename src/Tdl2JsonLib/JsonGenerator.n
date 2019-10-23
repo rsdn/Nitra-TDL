@@ -73,7 +73,8 @@ namespace Tdl2Json
                        booleanMarshalMode       : BooleanMarshalMode,
                        jsonSchemaType           : string,
                        diffFile                 : string,
-                       repositoryRoot           : string
+                       repositoryRoot           : string,
+                       isSampleGeneration       : bool
       ) : TransformationContext
     {
       BooleanLiterals.Setup(booleanMarshalMode);
@@ -110,7 +111,7 @@ namespace Tdl2Json
             deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
 
           GenerateJson(context.RootNamespace, context.InitialDeployment, context.FinalDeployment, context.ExternalSymbols, output,
-            deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot);
+            deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot, isSampleGeneration);
         }
       }
 
@@ -176,7 +177,7 @@ namespace Tdl2Json
 
     private GenerateJson(root : NamespaceSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, externalSymbols : TableScope,
       output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string,
-      diffFile : string, repositoryRoot : string) : void
+      diffFile : string, repositoryRoot : string, isSampleGeneration : bool) : void
     {
       def stopwatch = Stopwatch.StartNew();
       JsonGenerator.ReportMessage("Generating JSON...");
@@ -230,6 +231,15 @@ namespace Tdl2Json
           def value = v.ToObject();
           defaultValues.Add(f.Name, value);
         }
+      }
+
+      unless (isSampleGeneration)
+      {
+        def version             = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        def versionPropertyName = "!TDL Compiler Version!";
+        defaultValues.Add(versionPropertyName, version.ToString());
+        def versionPropertyName = "!TDL Compilation Local Time!";
+        defaultValues.Add(versionPropertyName, DateTime.Now);
       }
 
       def config = Root() <-
@@ -660,7 +670,7 @@ namespace Tdl2Json
               RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
               RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
               Responsible             = getString("Responsible");
-              RevertAgentAfter        = getBool  ("RevertAgentAfter");
+              RevertAgentAfter        = getBool  ("RevertAgentAfter") ?? true;
               RevertAgentBefore       = getBool  ("RevertAgentBefore");
               TfsId                   = getLong  ("TfsId");
               Timeout                 = getString("Timeout");

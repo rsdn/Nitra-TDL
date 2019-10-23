@@ -30,7 +30,8 @@ namespace Tdl.Transformator.Tests.CommonServices
                 booleanMarshalMode: BooleanMarshalMode.Boolean,
                 jsonSchemaType: "prod",
                 diffFile: null,
-                repositoryRoot: null);
+                repositoryRoot: null,
+                isSampleGeneration: true);
 
             if (context == null)
             {
