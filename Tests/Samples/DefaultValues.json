@@ -75,6 +75,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"

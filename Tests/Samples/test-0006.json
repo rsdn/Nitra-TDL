@@ -399,6 +399,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "TestConfigName": "um/interprecz/interprecz_smoke.json"
       },

@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
@@ -48,6 +48,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"

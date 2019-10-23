@@ -147,6 +147,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "TestSequence": [
           {
@@ -202,6 +203,7 @@
         }
       ],
       "RerunCountOnTestFailure": 1,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT"
@@ -225,6 +227,7 @@
         }
       ],
       "RerunCountOnTestFailure": 1,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT"

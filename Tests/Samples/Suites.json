@@ -20,24 +20,34 @@
     }
   },
   "Platforms": {
-    "win7-x86": {},
-    "win7-x64": {},
-    "win811-x86": {},
-    "win811-x64": {},
-    "w10rs3-x86": {},
     "w10rs3-x64": {},
-    "w10rs4-x86": {},
+    "w10rs3-x86": {},
     "w10rs4-x64": {},
-    "w10rs5-x86": {},
+    "w10rs4-x86": {},
     "w10rs5-x64": {},
-    "win2008r2": {},
-    "win2012r2": {},
+    "w10rs5-x86": {},
     "win_10_rs3": [
       "w10rs3-x86",
       "w10rs3-x64"
-    ]
+    ],
+    "win2008r2": {},
+    "win2012r2": {},
+    "win7-x64": {},
+    "win7-x86": {},
+    "win811-x64": {},
+    "win811-x86": {}
   },
   "Products": {
+    "Excel": {
+      "Name": "Excel",
+      "Parameters": {
+        "Name": "Excel",
+        "Size": 42,
+        "ParameterFromProduct": "B"
+      },
+      "BranchName": "Excel",
+      "Version": "#(ProductVersion)"
+    },
     "MonorepoHelloWorld": {
       "Name": "MonorepoHelloWorld",
       "Parameters": {
@@ -56,19 +66,47 @@
       },
       "BranchName": "Word",
       "Version": "#(ProductVersion)"
-    },
-    "Excel": {
-      "Name": "Excel",
-      "Parameters": {
-        "Name": "Excel",
-        "Size": 42,
-        "ParameterFromProduct": "B"
-      },
-      "BranchName": "Excel",
-      "Version": "#(ProductVersion)"
     }
   },
   "Suites": {
+    "GeneratedSuiteList-Excel-win_10_rs3-2": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "IntValue": 2,
+        "ProductA": "Excel",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld",
+        "AutotestAssemblies": "lib.dll"
+      },
+      "Platforms": [
+        "win_10_rs3"
+      ],
+      "Products": [
+        "Excel"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
+    "GeneratedSuiteList-Word-w10rs4-x86-1": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "IntValue": 1,
+        "ProductA": "Word",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld",
+        "AutotestAssemblies": "lib.dll"
+      },
+      "Platforms": [
+        "w10rs4-x86"
+      ],
+      "Products": [
+        "Word"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
     "Suite1": {
       "Parameters": {
         "Version": "#(ProductVersion)",
@@ -119,47 +157,15 @@
       "TestScenarios": [
         "Test1"
       ]
-    },
-    "GeneratedSuiteList-Word-w10rs4-x86-1": {
-      "Parameters": {
-        "Version": "#(ProductVersion)",
-        "IntValue": 1,
-        "ProductA": "Word",
-        "ProductB": "Word",
-        "ProductC": "MonorepoHelloWorld",
-        "AutotestAssemblies": "lib.dll"
-      },
-      "Platforms": [
-        "w10rs4-x86"
-      ],
-      "Products": [
-        "Word"
-      ],
-      "TestScenarios": [
-        "Test1"
-      ]
-    },
-    "GeneratedSuiteList-Excel-win_10_rs3-2": {
-      "Parameters": {
-        "Version": "#(ProductVersion)",
-        "IntValue": 2,
-        "ProductA": "Excel",
-        "ProductB": "Word",
-        "ProductC": "MonorepoHelloWorld",
-        "AutotestAssemblies": "lib.dll"
-      },
-      "Platforms": [
-        "win_10_rs3"
-      ],
-      "Products": [
-        "Excel"
-      ],
-      "TestScenarios": [
-        "Test1"
-      ]
     }
   },
   "SuiteGroups": {
+    "GeneratedSuiteList": {
+      "Suites": [
+        "GeneratedSuiteList-Word-w10rs4-x86-1",
+        "GeneratedSuiteList-Excel-win_10_rs3-2"
+      ]
+    },
     "SuiteList": {
       "Suites": [
         "Suite1",
@@ -173,12 +179,6 @@
       "Suites": [
         "Suite1",
         "Suite3"
-      ]
-    },
-    "GeneratedSuiteList": {
-      "Suites": [
-        "GeneratedSuiteList-Word-w10rs4-x86-1",
-        "GeneratedSuiteList-Excel-win_10_rs3-2"
       ]
     }
   },
@@ -200,6 +200,7 @@
       ],
       "RerunCountOnTestFailure": 0,
       "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"

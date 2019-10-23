@@ -24,10 +24,15 @@
     "w10rs5-x86": {}
   },
   "Products": {
-    "OfficeProduct": [
-      "Excel",
-      "Word"
-    ],
+    "Excel": {
+      "Name": "Excel",
+      "Parameters": {
+        "Name": "Excel",
+        "Size": 42
+      },
+      "BranchName": "Excel",
+      "Version": "#(ProductVersion)"
+    },
     "MonorepoHelloWorld": {
       "Name": "MonorepoHelloWorld",
       "Parameters": {
@@ -36,6 +41,10 @@
       "BranchName": "MonorepoHelloWorld",
       "Version": "#(ProductVersion)"
     },
+    "OfficeProduct": [
+      "Excel",
+      "Word"
+    ],
     "Word": {
       "Name": "Word",
       "Parameters": {
@@ -43,15 +52,6 @@
         "Size": 100
       },
       "BranchName": "Word",
-      "Version": "#(ProductVersion)"
-    },
-    "Excel": {
-      "Name": "Excel",
-      "Parameters": {
-        "Name": "Excel",
-        "Size": 42
-      },
-      "BranchName": "Excel",
       "Version": "#(ProductVersion)"
     }
   },
@@ -92,6 +92,7 @@
       ],
       "RerunCountOnTestFailure": 0,
       "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"

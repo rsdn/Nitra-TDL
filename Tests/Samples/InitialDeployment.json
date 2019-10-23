@@ -159,6 +159,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "ProgramName": "foo.exe",
         "Arguments": []
@@ -214,6 +215,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "ProgramName": "foo.exe",
         "Arguments": []

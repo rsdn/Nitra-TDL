@@ -1,6 +1,0 @@
-﻿deployment SourceCode()
-  source @"exit 42"
-  extension ".ps1"
-{
-  expected 42;
-}

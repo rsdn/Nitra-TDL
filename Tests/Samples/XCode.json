@@ -51,6 +51,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "XCodeTestContainer": "Standalone-VPN_iphonesimulator12.2-x86_64.xctestrun",
         "XcodePath": "/Applications/Xcode 10.2.1.app"

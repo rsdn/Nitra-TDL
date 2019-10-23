@@ -133,6 +133,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "TestSequence": [
           {

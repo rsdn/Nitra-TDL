@@ -186,6 +186,99 @@
     }
   },
   "Platforms": {
+    "all_App9": [
+      "win7-x64",
+      "win811-x64",
+      "win10-x64",
+      "w10rs5-x64"
+    ],
+    "all_but_win10_App9": [
+      "win7-x64",
+      "win811-x64"
+    ],
+    "all_pc": [
+      "win7-x86",
+      "win7-x64",
+      "win811-x86",
+      "win811-x64",
+      "w10rs5-x86",
+      "w10rs5-x64",
+      "w10rs6-x86",
+      "w10rs6-x64"
+    ],
+    "all_pc_and_servers": [
+      "win7-x86",
+      "win7-x64",
+      "win811-x86",
+      "win811-x64",
+      "w10rs5-x86",
+      "w10rs5-x64",
+      "w10rs6-x86",
+      "w10rs6-x64",
+      "sbs2011",
+      "win2008r2",
+      "win2012r2",
+      "win-2019",
+      "xs-14393"
+    ],
+    "all_pc_and_servers_and_win_10_dg": [
+      "win7-x86",
+      "win7-x64",
+      "win811-x86",
+      "win811-x64",
+      "w10rs5-x86",
+      "w10rs5-x64",
+      "w10rs6-x86",
+      "w10rs6-x64",
+      "sbs2011",
+      "win2008r2",
+      "win2012r2",
+      "win-2019",
+      "xs-14393",
+      "w10rs5-dg1",
+      "w10rs5-dg2"
+    ],
+    "all_pc_and_servers_and_win_10_dg_exclude_10rs6": [
+      "win7-x86",
+      "win7-x64",
+      "win811-x86",
+      "win811-x64",
+      "w10rs5-x86",
+      "w10rs5-x64",
+      "sbs2011",
+      "win2008r2",
+      "win2012r2",
+      "win-2019",
+      "xs-14393",
+      "w10rs5-dg1",
+      "w10rs5-dg2"
+    ],
+    "all_pc_exclude_win8plus_x64_only": [
+      "w10rs6-x86",
+      "w10rs5-x86",
+      "win811-x86",
+      "win7-x86",
+      "win7-x64"
+    ],
+    "all_servers": [
+      "sbs2011",
+      "win2008r2",
+      "win2012r2",
+      "win-2019",
+      "xs-14393"
+    ],
+    "App9_no_proxy": [
+      "win7-x64",
+      "win811-x64",
+      "win10-x64",
+      "w10rs5-x64"
+    ],
+    "not_win_10": [
+      "win7-x86",
+      "win7-x64",
+      "win811-x86",
+      "win811-x64"
+    ],
     "platform_group_1": [
       "w10rs5-x64",
       "w10rs6-x64",
@@ -195,57 +288,6 @@
       "win7-x86",
       "win811-x64",
       "win811-x86"
-    ],
-    "platform_group_2": [
-      "w10rs6-x64",
-      "w10rs6-x86",
-      "w10rs5-x64",
-      "w10rs5-x86"
-    ],
-    "platform_group_3": [
-      "win7-x64",
-      "win7-x86",
-      "win811-x64",
-      "win811-x86"
-    ],
-    "platform_group_4": [
-      "w10rs6-x86",
-      "w10rs5-x64",
-      "w10rs6-x64",
-      "w10rs5-x86",
-      "win811-x64",
-      "win811-x86"
-    ],
-    "platform_group_5": [
-      "w10rs5-x86",
-      "w10rs6-x86",
-      "win7-x64"
-    ],
-    "platform_group_6": [
-      "w10rs6-x86",
-      "w10rs5-x64",
-      "w10rs6-x64",
-      "w10rs5-x86",
-      "win7-x64",
-      "win7-x86",
-      "win811-x86"
-    ],
-    "platform_group_7": [
-      "w10rs6-x86",
-      "w10rs5-x86",
-      "win7-x86",
-      "win811-x86"
-    ],
-    "platform_group_8": [
-      "w10rs6-x86",
-      "w10rs5-x86",
-      "win7-x64",
-      "win7-x86",
-      "win811-x86"
-    ],
-    "platform_group_9": [
-      "win7-x64",
-      "win7-x86"
     ],
     "platform_group_10": [
       "w10rs6-x86",
@@ -310,6 +352,12 @@
       "win7-x86",
       "win811-x86"
     ],
+    "platform_group_2": [
+      "w10rs6-x64",
+      "w10rs6-x86",
+      "w10rs5-x64",
+      "w10rs5-x86"
+    ],
     "platform_group_20": [
       "w10rs6-x86",
       "win7-x64",
@@ -358,6 +406,12 @@
     ],
     "platform_group_29": [
       "win7-x86",
+      "win811-x86"
+    ],
+    "platform_group_3": [
+      "win7-x64",
+      "win7-x86",
+      "win811-x64",
       "win811-x86"
     ],
     "platform_group_30": [
@@ -423,6 +477,14 @@
       "win7-x64",
       "win811-x86"
     ],
+    "platform_group_4": [
+      "w10rs6-x86",
+      "w10rs5-x64",
+      "w10rs6-x64",
+      "w10rs5-x86",
+      "win811-x64",
+      "win811-x86"
+    ],
     "platform_group_40": [
       "w10rs6-x64",
       "w10rs6-x86",
@@ -431,13 +493,51 @@
       "win7-x64",
       "win811-x86"
     ],
-    "win_7": [
-      "win7-x86",
+    "platform_group_5": [
+      "w10rs5-x86",
+      "w10rs6-x86",
       "win7-x64"
     ],
-    "win_811": [
-      "win811-x86",
-      "win811-x64"
+    "platform_group_6": [
+      "w10rs6-x86",
+      "w10rs5-x64",
+      "w10rs6-x64",
+      "w10rs5-x86",
+      "win7-x64",
+      "win7-x86",
+      "win811-x86"
+    ],
+    "platform_group_7": [
+      "w10rs6-x86",
+      "w10rs5-x86",
+      "win7-x86",
+      "win811-x86"
+    ],
+    "platform_group_8": [
+      "w10rs6-x86",
+      "w10rs5-x86",
+      "win7-x64",
+      "win7-x86",
+      "win811-x86"
+    ],
+    "platform_group_9": [
+      "win7-x64",
+      "win7-x86"
+    ],
+    "sbs2008": {},
+    "sbs2011": {},
+    "w10rs4-x64": {},
+    "w10rs5-dg1": {},
+    "w10rs5-dg2": {},
+    "w10rs5-x64": {},
+    "w10rs5-x86": {},
+    "w10rs6-x64": {},
+    "w10rs6-x86": {},
+    "win_10": [
+      "w10rs5-x86",
+      "w10rs5-x64",
+      "w10rs6-x86",
+      "w10rs6-x64"
     ],
     "win_10_rs5": [
       "w10rs5-x86",
@@ -447,19 +547,17 @@
       "w10rs6-x86",
       "w10rs6-x64"
     ],
-    "win_10": [
-      "w10rs5-x86",
-      "w10rs5-x64",
-      "w10rs6-x86",
-      "w10rs6-x64"
-    ],
-    "win10_x64": [
-      "w10rs5-x64",
-      "w10rs6-x64"
+    "win_7": [
+      "win7-x86",
+      "win7-x64"
     ],
     "win_7_win_8": [
       "win7-x86",
       "win7-x64",
+      "win811-x86",
+      "win811-x64"
+    ],
+    "win_811": [
       "win811-x86",
       "win811-x64"
     ],
@@ -471,219 +569,123 @@
       "w10rs6-x86",
       "w10rs6-x64"
     ],
-    "App9_no_proxy": [
-      "win7-x64",
-      "win811-x64",
-      "win10-x64",
-      "w10rs5-x64"
-    ],
-    "all_pc": [
-      "win7-x86",
-      "win7-x64",
-      "win811-x86",
-      "win811-x64",
-      "w10rs5-x86",
+    "win10_x64": [
       "w10rs5-x64",
-      "w10rs6-x86",
       "w10rs6-x64"
     ],
-    "all_App9": [
-      "win7-x64",
-      "win811-x64",
-      "win10-x64",
-      "w10rs5-x64"
-    ],
-    "all_but_win10_App9": [
-      "win7-x64",
-      "win811-x64"
-    ],
-    "all_servers": [
-      "sbs2011",
-      "win2008r2",
-      "win2012r2",
-      "win-2019",
-      "xs-14393"
-    ],
-    "all_pc_and_servers": [
-      "win7-x86",
-      "win7-x64",
-      "win811-x86",
-      "win811-x64",
-      "w10rs5-x86",
-      "w10rs5-x64",
-      "w10rs6-x86",
-      "w10rs6-x64",
-      "sbs2011",
-      "win2008r2",
-      "win2012r2",
-      "win-2019",
-      "xs-14393"
-    ],
-    "all_pc_and_servers_and_win_10_dg": [
-      "win7-x86",
-      "win7-x64",
-      "win811-x86",
-      "win811-x64",
-      "w10rs5-x86",
-      "w10rs5-x64",
-      "w10rs6-x86",
-      "w10rs6-x64",
-      "sbs2011",
-      "win2008r2",
-      "win2012r2",
-      "win-2019",
-      "xs-14393",
-      "w10rs5-dg1",
-      "w10rs5-dg2"
-    ],
-    "all_pc_and_servers_and_win_10_dg_exclude_10rs6": [
-      "win7-x86",
-      "win7-x64",
-      "win811-x86",
-      "win811-x64",
-      "w10rs5-x86",
-      "w10rs5-x64",
-      "sbs2011",
-      "win2008r2",
-      "win2012r2",
-      "win-2019",
-      "xs-14393",
-      "w10rs5-dg1",
-      "w10rs5-dg2"
-    ],
-    "all_pc_exclude_win8plus_x64_only": [
-      "w10rs6-x86",
-      "w10rs5-x86",
-      "win811-x86",
-      "win7-x86",
-      "win7-x64"
-    ],
-    "not_win_10": [
-      "win7-x86",
-      "win7-x64",
-      "win811-x86",
-      "win811-x64"
-    ],
+    "win10-x64": {},
+    "win2008r2": {},
+    "win2012r2": {},
+    "win-2019": {},
     "win7-x64": {},
     "win7-x86": {},
     "win811-x64": {},
     "win811-x86": {},
-    "win10-x64": {},
-    "w10rs4-x64": {},
-    "w10rs5-x86": {},
-    "w10rs5-x64": {},
-    "w10rs6-x64": {},
-    "w10rs6-x86": {},
-    "w10rs5-dg1": {},
-    "w10rs5-dg2": {},
-    "sbs2008": {},
-    "sbs2011": {},
-    "win2008r2": {},
-    "win2012r2": {},
-    "xs-14393": {},
-    "win-2019": {}
+    "xs-14393": {}
   },
   "Products": {
-    "App6": [
-      "App6_Main",
-      "App6_MainOn19"
-    ],
-    "App2": [
-      "App2_Main",
-      "App2_MainOn19"
-    ],
-    "App7": [
-      "App7_Main",
-      "App7_MainOn19"
-    ],
-    "App8": [
-      "App8_Main",
-      "App8_MainOn19"
-    ],
-    "App11": [
-      "App11_Main",
-      "App11_MainOn19"
-    ],
-    "App9": [
-      "App9_Main",
-      "App9_MainOn19"
-    ],
     "App10": [
       "App10_Main",
       "App10_MainOn19"
     ],
+    "App10_Main": {
+      "Name": "App10",
+      "Parameters": {
+        "Name": "App10",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)"
+    },
+    "App10_MainOn19": {
+      "Name": "App10",
+      "Parameters": {
+        "Name": "App10",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "MainFrom19",
+      "Version": "#(ProductVersion)"
+    },
     "App10FS": [
       "App10FS_Main",
       "App10FS_MainOn19"
     ],
-    "App2-App9": [
-      "App2_Main",
-      "App2_MainOn19",
-      "App9_Main",
-      "App9_MainOn19"
+    "App10FS_Main": {
+      "Name": "App10FS",
+      "Parameters": {
+        "Name": "App10FS",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)"
+    },
+    "App10FS_MainOn19": {
+      "Name": "App10FS",
+      "Parameters": {
+        "Name": "App10FS",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "MainFrom19",
+      "Version": "#(ProductVersion)"
+    },
+    "App11": [
+      "App11_Main",
+      "App11_MainOn19"
     ],
-    "App7-App9": [
-      "App7_Main",
-      "App7_MainOn19",
-      "App9_Main",
-      "App9_MainOn19"
-    ],
-    "App8-App10": [
-      "App8_Main",
-      "App8_MainOn19",
-      "App10_Main",
-      "App10_MainOn19"
-    ],
-    "App2-App6": [
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19"
-    ],
-    "App2-App8": [
-      "App2_Main",
-      "App2_MainOn19",
-      "App8_Main",
-      "App8_MainOn19"
-    ],
-    "App6-App8": [
-      "App6_Main",
-      "App6_MainOn19",
-      "App8_Main",
-      "App8_MainOn19"
-    ],
-    "App7-App2-App6": [
-      "App7_Main",
-      "App7_MainOn19",
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19"
-    ],
-    "App2-App10-App6": [
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
-      "App10_Main",
-      "App10_MainOn19"
-    ],
-    "App2-App6-App8": [
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
-      "App8_Main",
-      "App8_MainOn19"
-    ],
-    "App6-App10-App10FS": [
-      "App6_Main",
-      "App6_MainOn19",
-      "App10_Main",
-      "App10_MainOn19",
-      "App10FS_Main",
-      "App10FS_MainOn19"
-    ],
+    "App11_Main": {
+      "Name": "App11",
+      "Parameters": {
+        "Name": "App11",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)"
+    },
+    "App11_MainOn19": {
+      "Name": "App11",
+      "Parameters": {
+        "Name": "App11",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "MainFrom19",
+      "Version": "#(ProductVersion)"
+    },
     "App11-App7-App2-App6": [
       "App11_Main",
       "App11_MainOn19",
@@ -693,6 +695,74 @@
       "App2_MainOn19",
       "App6_Main",
       "App6_MainOn19"
+    ],
+    "App11-App7-App2-App6-App10": [
+      "App11_Main",
+      "App11_MainOn19",
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App10_Main",
+      "App10_MainOn19"
+    ],
+    "App11-App7-App2-App6-App10-App10FS": [
+      "App11_Main",
+      "App11_MainOn19",
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App10_Main",
+      "App10_MainOn19",
+      "App10FS_Main",
+      "App10FS_MainOn19"
+    ],
+    "App11-App7-App2-App6-App8": [
+      "App11_Main",
+      "App11_MainOn19",
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19"
+    ],
+    "App11-App7-App2-App6-App8-App10": [
+      "App11_Main",
+      "App11_MainOn19",
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19",
+      "App10_Main",
+      "App10_MainOn19"
+    ],
+    "App11-App7-App2-App6-App8-App10-App10FS": [
+      "App11_Main",
+      "App11_MainOn19",
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19",
+      "App10_Main",
+      "App10_MainOn19",
+      "App10FS_Main",
+      "App10FS_MainOn19"
     ],
     "App11-App7-App2-App9": [
       "App11_Main",
@@ -704,9 +774,41 @@
       "App9_Main",
       "App9_MainOn19"
     ],
-    "App7-App2-App6-App10": [
-      "App7_Main",
-      "App7_MainOn19",
+    "App2": [
+      "App2_Main",
+      "App2_MainOn19"
+    ],
+    "App2_Main": {
+      "Name": "App2",
+      "Parameters": {
+        "Name": "App2",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)"
+    },
+    "App2_MainOn19": {
+      "Name": "App2",
+      "Parameters": {
+        "Name": "App2",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "MainFrom19",
+      "Version": "#(ProductVersion)"
+    },
+    "App2-App10-App6": [
       "App2_Main",
       "App2_MainOn19",
       "App6_Main",
@@ -714,15 +816,11 @@
       "App10_Main",
       "App10_MainOn19"
     ],
-    "App7-App2-App6-App8": [
-      "App7_Main",
-      "App7_MainOn19",
+    "App2-App6": [
       "App2_Main",
       "App2_MainOn19",
       "App6_Main",
-      "App6_MainOn19",
-      "App8_Main",
-      "App8_MainOn19"
+      "App6_MainOn19"
     ],
     "App2-App6-App10-App8": [
       "App2_Main",
@@ -734,15 +832,13 @@
       "App8_Main",
       "App8_MainOn19"
     ],
-    "App6-App8-App10-App10FS": [
+    "App2-App6-App8": [
+      "App2_Main",
+      "App2_MainOn19",
       "App6_Main",
       "App6_MainOn19",
       "App8_Main",
-      "App8_MainOn19",
-      "App10_Main",
-      "App10_MainOn19",
-      "App10FS_Main",
-      "App10FS_MainOn19"
+      "App8_MainOn19"
     ],
     "App2-App6-App8-App10": [
       "App2_Main",
@@ -751,52 +847,6 @@
       "App6_MainOn19",
       "App8_Main",
       "App8_MainOn19",
-      "App10_Main",
-      "App10_MainOn19"
-    ],
-    "App2-App8-App10-App10FS": [
-      "App2_Main",
-      "App2_MainOn19",
-      "App8_Main",
-      "App8_MainOn19",
-      "App10_Main",
-      "App10_MainOn19",
-      "App10FS_Main",
-      "App10FS_MainOn19"
-    ],
-    "App7-App2-App6-App10-App10FS": [
-      "App7_Main",
-      "App7_MainOn19",
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
-      "App10_Main",
-      "App10_MainOn19",
-      "App10FS_Main",
-      "App10FS_MainOn19"
-    ],
-    "App7-App2-App6-App8-App10": [
-      "App7_Main",
-      "App7_MainOn19",
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
-      "App8_Main",
-      "App8_MainOn19",
-      "App10_Main",
-      "App10_MainOn19"
-    ],
-    "App11-App7-App2-App6-App10": [
-      "App11_Main",
-      "App11_MainOn19",
-      "App7_Main",
-      "App7_MainOn19",
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
       "App10_Main",
       "App10_MainOn19"
     ],
@@ -824,39 +874,15 @@
       "App10FS_Main",
       "App10FS_MainOn19"
     ],
-    "App11-App7-App2-App6-App8": [
-      "App11_Main",
-      "App11_MainOn19",
-      "App7_Main",
-      "App7_MainOn19",
+    "App2-App8": [
       "App2_Main",
       "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
       "App8_Main",
       "App8_MainOn19"
     ],
-    "App11-App7-App2-App6-App10-App10FS": [
-      "App11_Main",
-      "App11_MainOn19",
-      "App7_Main",
-      "App7_MainOn19",
+    "App2-App8-App10-App10FS": [
       "App2_Main",
       "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
-      "App10_Main",
-      "App10_MainOn19",
-      "App10FS_Main",
-      "App10FS_MainOn19"
-    ],
-    "App7-App2-App6-App8-App10-App10FS": [
-      "App7_Main",
-      "App7_MainOn19",
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
       "App8_Main",
       "App8_MainOn19",
       "App10_Main",
@@ -864,142 +890,16 @@
       "App10FS_Main",
       "App10FS_MainOn19"
     ],
-    "App11-App7-App2-App6-App8-App10": [
-      "App11_Main",
-      "App11_MainOn19",
-      "App7_Main",
-      "App7_MainOn19",
+    "App2-App9": [
       "App2_Main",
       "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
-      "App8_Main",
-      "App8_MainOn19",
-      "App10_Main",
-      "App10_MainOn19"
+      "App9_Main",
+      "App9_MainOn19"
     ],
-    "App7-App11-App2-App10-App10FS-App6-App8": [
-      "App7_Main",
-      "App7_MainOn19",
-      "App11_Main",
-      "App11_MainOn19",
-      "App2_Main",
-      "App2_MainOn19",
-      "App10_Main",
-      "App10_MainOn19",
-      "App10FS_Main",
-      "App10FS_MainOn19",
+    "App6": [
       "App6_Main",
-      "App6_MainOn19",
-      "App8_Main",
-      "App8_MainOn19"
+      "App6_MainOn19"
     ],
-    "App11-App7-App2-App6-App8-App10-App10FS": [
-      "App11_Main",
-      "App11_MainOn19",
-      "App7_Main",
-      "App7_MainOn19",
-      "App2_Main",
-      "App2_MainOn19",
-      "App6_Main",
-      "App6_MainOn19",
-      "App8_Main",
-      "App8_MainOn19",
-      "App10_Main",
-      "App10_MainOn19",
-      "App10FS_Main",
-      "App10FS_MainOn19"
-    ],
-    "App11_Main": {
-      "Name": "App11",
-      "Parameters": {
-        "Name": "App11",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App2_Main": {
-      "Name": "App2",
-      "Parameters": {
-        "Name": "App2",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App7_Main": {
-      "Name": "App7",
-      "Parameters": {
-        "Name": "App7",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App8_Main": {
-      "Name": "App8",
-      "Parameters": {
-        "Name": "App8",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 1,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App10_Main": {
-      "Name": "App10",
-      "Parameters": {
-        "Name": "App10",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App10FS_Main": {
-      "Name": "App10FS",
-      "Parameters": {
-        "Name": "App10FS",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
     "App6_Main": {
       "Name": "App6",
       "Parameters": {
@@ -1013,126 +913,6 @@
         "InstallerExecutableFileMask": "startup.exe"
       },
       "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App6_Webpack_Main": {
-      "Name": "App6",
-      "Parameters": {
-        "Name": "App6",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*.cab;*.txt",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "KTS*full.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App9_Main": {
-      "Name": "App9",
-      "Parameters": {
-        "Name": "App9",
-        "AutotestBinariesExcludedFilesMasks": "kis*.Product.Config;ksm*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe",
-        "ConfigFilesFamily": "App9.",
-        "TestAppPackName": "CompanyLab.App9.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 1,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "Main",
-      "Version": "#(ProductVersion)"
-    },
-    "App11_MainOn19": {
-      "Name": "App11",
-      "Parameters": {
-        "Name": "App11",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "MainFrom19",
-      "Version": "#(ProductVersion)"
-    },
-    "App2_MainOn19": {
-      "Name": "App2",
-      "Parameters": {
-        "Name": "App2",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "MainFrom19",
-      "Version": "#(ProductVersion)"
-    },
-    "App7_MainOn19": {
-      "Name": "App7",
-      "Parameters": {
-        "Name": "App7",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "MainFrom19",
-      "Version": "#(ProductVersion)"
-    },
-    "App8_MainOn19": {
-      "Name": "App8",
-      "Parameters": {
-        "Name": "App8",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 1,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "MainFrom19",
-      "Version": "#(ProductVersion)"
-    },
-    "App10_MainOn19": {
-      "Name": "App10",
-      "Parameters": {
-        "Name": "App10",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "MainFrom19",
-      "Version": "#(ProductVersion)"
-    },
-    "App10FS_MainOn19": {
-      "Name": "App10FS",
-      "Parameters": {
-        "Name": "App10FS",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "App2.",
-        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
-        "DisableAddingTrustedApplications": 0,
-        "SkipRecommendedSettings": 0,
-        "InstallerExecutableFileMask": "startup.exe"
-      },
-      "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
     "App6_MainOn19": {
@@ -1150,6 +930,21 @@
       "BranchName": "MainFrom19",
       "Version": "#(ProductVersion)"
     },
+    "App6_Webpack_Main": {
+      "Name": "App6",
+      "Parameters": {
+        "Name": "App6",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*.cab;*.txt",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "KTS*full.exe"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)"
+    },
     "App6_Webpack_MainOn19": {
       "Name": "App6",
       "Parameters": {
@@ -1163,6 +958,211 @@
         "InstallerExecutableFileMask": "KTS*full.exe"
       },
       "BranchName": "MainFrom19",
+      "Version": "#(ProductVersion)"
+    },
+    "App6-App10-App10FS": [
+      "App6_Main",
+      "App6_MainOn19",
+      "App10_Main",
+      "App10_MainOn19",
+      "App10FS_Main",
+      "App10FS_MainOn19"
+    ],
+    "App6-App8": [
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19"
+    ],
+    "App6-App8-App10-App10FS": [
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19",
+      "App10_Main",
+      "App10_MainOn19",
+      "App10FS_Main",
+      "App10FS_MainOn19"
+    ],
+    "App7": [
+      "App7_Main",
+      "App7_MainOn19"
+    ],
+    "App7_Main": {
+      "Name": "App7",
+      "Parameters": {
+        "Name": "App7",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)"
+    },
+    "App7_MainOn19": {
+      "Name": "App7",
+      "Parameters": {
+        "Name": "App7",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "MainFrom19",
+      "Version": "#(ProductVersion)"
+    },
+    "App7-App11-App2-App10-App10FS-App6-App8": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App11_Main",
+      "App11_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App10_Main",
+      "App10_MainOn19",
+      "App10FS_Main",
+      "App10FS_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19"
+    ],
+    "App7-App2-App6": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19"
+    ],
+    "App7-App2-App6-App10": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App10_Main",
+      "App10_MainOn19"
+    ],
+    "App7-App2-App6-App10-App10FS": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App10_Main",
+      "App10_MainOn19",
+      "App10FS_Main",
+      "App10FS_MainOn19"
+    ],
+    "App7-App2-App6-App8": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19"
+    ],
+    "App7-App2-App6-App8-App10": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19",
+      "App10_Main",
+      "App10_MainOn19"
+    ],
+    "App7-App2-App6-App8-App10-App10FS": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App2_Main",
+      "App2_MainOn19",
+      "App6_Main",
+      "App6_MainOn19",
+      "App8_Main",
+      "App8_MainOn19",
+      "App10_Main",
+      "App10_MainOn19",
+      "App10FS_Main",
+      "App10FS_MainOn19"
+    ],
+    "App7-App9": [
+      "App7_Main",
+      "App7_MainOn19",
+      "App9_Main",
+      "App9_MainOn19"
+    ],
+    "App8": [
+      "App8_Main",
+      "App8_MainOn19"
+    ],
+    "App8_Main": {
+      "Name": "App8",
+      "Parameters": {
+        "Name": "App8",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 1,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "Main",
+      "Version": "#(ProductVersion)"
+    },
+    "App8_MainOn19": {
+      "Name": "App8",
+      "Parameters": {
+        "Name": "App8",
+        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;App9*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
+        "ConfigFilesFamily": "App2.",
+        "TestAppPackName": "CompanyLab.App2.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 0,
+        "SkipRecommendedSettings": 1,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "MainFrom19",
+      "Version": "#(ProductVersion)"
+    },
+    "App8-App10": [
+      "App8_Main",
+      "App8_MainOn19",
+      "App10_Main",
+      "App10_MainOn19"
+    ],
+    "App9": [
+      "App9_Main",
+      "App9_MainOn19"
+    ],
+    "App9_Main": {
+      "Name": "App9",
+      "Parameters": {
+        "Name": "App9",
+        "AutotestBinariesExcludedFilesMasks": "kis*.Product.Config;ksm*.Product.Config",
+        "ProductBinariesExcludedFilesMasks": "*_full.exe",
+        "ConfigFilesFamily": "App9.",
+        "TestAppPackName": "CompanyLab.App9.UI.TestApp.zip",
+        "DisableAddingTrustedApplications": 1,
+        "SkipRecommendedSettings": 0,
+        "InstallerExecutableFileMask": "startup.exe"
+      },
+      "BranchName": "Main",
       "Version": "#(ProductVersion)"
     },
     "App9_MainOn19": {
@@ -1201,392 +1201,7 @@
     }
   },
   "TestScenarios": {
-    "App1_-Main-BvtPvt-GUI-scenarios": {
-      "TestScenarios": [
-        "DetailedReportsApp1_App11-2297",
-        "ContextMenuOpenApp1_-2298",
-        "CheckStartMenuApp2_-2299",
-        "CheckApp2_ContextMenuUpdate-2300",
-        "TrayContextMenuScan-2361",
-        "LaunchAtStartup-2301",
-        "App1_MainWindowExpandFeaturesList-2302",
-        "OpenMainWindowFromMenu-2303",
-        "ProtectionIsDisabled-2304",
-        "SomeComponentsAreDisabled-2305",
-        "EnableProtection-2306",
-        "VideoPlayerWithGamingProfile-2307",
-        "App1_MainWindowOpened-2308",
-        "App1_AdditionalToolsContextMenu-2309",
-        "App1_UcpWelcomePageShownWhenManagementConsoleInvoked-2310",
-        "App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked-2311",
-        "App1_QuarantineViewShownWhenQuarantineFeatureInvoked-2312",
-        "App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked-2313",
-        "App1_BrowserConfigurationWizardShownWhenBrowserConfigurationFeatureInvoked-2314",
-        "App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked-2315",
-        "App1_BrowserOpenWhenRescueDiskFeatureInvoked-2316",
-        "App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked-2317",
-        "App1_AdditionalToolsCheckHelpButton-2318",
-        "App1_AllProductProcessClosedWhenExitItemClicked-2319",
-        "App1_CheckContextMenuContent-2320",
-        "App1_CheckContextMenuPauseProtection-2321",
-        "App1_CheckContextMenuProductBold-2322",
-        "App1_CheckContextMenuResumeProtection-2323",
-        "App1_ContextMenuAppearsWhenRightClickOnTrayIcon-2324",
-        "App1_IconAppearsWhenProductStarted-2325",
-        "App1_MainWindowFocusedWhenDoubleLeftClick-2326",
-        "App1_MainWindowFocusedWhenOneLeftClick-2327",
-        "App1_MainWindowOpenedWhenDoubleLeftClick-2328",
-        "App1_MainWindowOpenedWhenOneLeftClick-2329",
-        "App1_CheckMainWindowOpened-2330",
-        "App1_CheckUpperPanelProductName-2331",
-        "App1_CheckUpperPanelHelpButton-2332",
-        "App1_CheckUpperPanelCloseButton-2333",
-        "App1_CheckUpperPanelMinimizeButton-2334",
-        "App1_CheckProtectionStatusGreen-2335",
-        "App1_CheckProtectionStatusYellow-2336",
-        "App1_CheckProtectionStatusRed-2337",
-        "App1_CheckComponentsStatusScan-2338",
-        "App1_CheckComponentsStatusUpdate-2339",
-        "App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked-2340",
-        "App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked-2341",
-        "App1_CheckComponentsStatusAdditionalTools-2342",
-        "App1_CheckBottomPanelSettings-2343",
-        "App1_CheckBottomPanelSupport-2344",
-        "App1_CheckBottomPanelMoreProducts-2345",
-        "App1_CheckBottomPanelMyCompany-2346",
-        "App1_CheckBottomPanelLicenseInfo-2347",
-        "CheckApp1_FileProgrammAvailable-2348",
-        "CheckApp1_InstantMessengersProgrammAvailable-2349",
-        "CheckApp1_MailProgrammAvailable-2350",
-        "CheckApp1_MainWindowOpened-2351",
-        "CheckApp1_ProtectionSettingsOpened-2352",
-        "CheckApp1_SystemWatcherAvailable-2353",
-        "CheckApp1_WebProgrammAvailable-2354",
-        "ComponentDisabledProblemIgnored-2355",
-        "App1_CheckOnlineHelpWhenHelpInProtectionClicked-2356",
-        "InteractiveProtection-2357",
-        "DefaultPasswordProtectionScope-2358",
-        "PasswordProtectionExistingPassword-2359",
-        "PasswordForAllOperations-2360"
-      ]
-    },
-    "DetailedReportsApp1_App11-2297": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentBefore": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.ReportWindowTest.DetailedReportsApp1_App11"
-      },
-      "TfsId": 2347643,
-      "Timeout": "01:00:00",
-      "UniqueId": "5f21572f-bc10-4434-a842-8a8239a882f2"
-    },
-    "ContextMenuOpenApp1_-2298": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.SystemTrayTests.ContextMenuOpenApp1_"
-      },
-      "TfsId": 187340,
-      "Timeout": "01:00:00",
-      "UniqueId": "d7ec8287-66b0-40d6-8d34-925c7c6bcc6c"
-    },
-    "CheckStartMenuApp2_-2299": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_10"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.StartMenuTests.CheckStartMenuApp2_"
-      },
-      "TfsId": 187342,
-      "Timeout": "01:00:00",
-      "UniqueId": "54aa19d8-3237-4b2d-b665-bfad0a5520df"
-    },
-    "CheckApp2_ContextMenuUpdate-2300": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.SystemTrayTests.CheckApp2_ContextMenuUpdate"
-      },
-      "TfsId": 186134,
-      "Timeout": "01:00:00",
-      "UniqueId": "b9eb4472-c7c5-4c13-a2dc-470842e15a03"
-    },
-    "TrayContextMenuScan-2361": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.ScanTrayTests.TrayContextMenuScan"
-      },
-      "TfsId": 186133,
-      "Timeout": "01:00:00",
-      "UniqueId": "95e39c9d-a9c7-44e3-b78a-4c99888933e5"
-    },
-    "LaunchAtStartup-2301": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "TestSequence": [
-          {
-            "AssemblyName": "TestDll.dll",
-            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupEnable"
-          },
-          {
-            "ForceReboot": {}
-          },
-          {
-            "AssemblyName": "TestDll.dll",
-            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupEnableAftereReboot"
-          },
-          {
-            "AssemblyName": "TestDll.dll",
-            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupDisable"
-          },
-          {
-            "ForceReboot": {}
-          },
-          {
-            "AssemblyName": "TestDll.dll",
-            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupDisableAftereReboot"
-          }
-        ]
-      },
-      "TfsId": 187596,
-      "Timeout": "01:00:00",
-      "UniqueId": "72bf1514-bc2f-4105-8da2-83708e5f45ab"
-    },
-    "App1_MainWindowExpandFeaturesList-2302": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "TestMethod": {
-        "TestSequence": [
-          {
-            "ForceReboot": {}
-          },
-          {
-            "AssemblyName": "TestDll.dll",
-            "MethodName": "Autotest.App2.Suites.GUI.MainWindowTests.App1_MainWindowExpandFeaturesList"
-          }
-        ]
-      },
-      "TfsId": 183839,
-      "Timeout": "01:00:00",
-      "UniqueId": "f19eee0c-3c56-47bd-b98b-e242beac68e4"
-    },
-    "OpenMainWindowFromMenu-2303": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.SystemTrayTests.OpenMainWindowFromMenu"
-      },
-      "TfsId": 187667,
-      "Timeout": "01:00:00",
-      "UniqueId": "ca9c0c58-81f5-4067-a2b1-8e71312e2630"
-    },
-    "ProtectionIsDisabled-2304": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.ProblemListTests.ProtectionIsDisabled"
-      },
-      "TfsId": 187872,
-      "Timeout": "01:00:00",
-      "UniqueId": "4ccc0ec1-0ac7-4162-8072-1ad95769d601"
-    },
-    "SomeComponentsAreDisabled-2305": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.ProblemListTests.SomeComponentsAreDisabled"
-      },
-      "TfsId": 187871,
-      "Timeout": "01:00:00",
-      "UniqueId": "5dbe57df-b80d-41ae-a180-4f19c427789d"
-    },
-    "EnableProtection-2306": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.ProblemListTests.EnableProtection"
-      },
-      "TfsId": 187597,
-      "Timeout": "01:00:00",
-      "UniqueId": "84936fc7-263c-4ede-b1dc-dbfbde1c71d0"
-    },
-    "VideoPlayerWithGamingProfile-2307": {
-      "Area": "GUI",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
-      },
-      "TfsId": 186283,
-      "Timeout": "00:40:00",
-      "UniqueId": "8dc732fa-ebe1-4222-974f-fbba3b924656"
-    },
-    "App1_MainWindowOpened-2308": {
+    "App1_AdditionalToolsCheckHelpButton-2318": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -1604,11 +1219,11 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_MainWindowOpened"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_AdditionalToolsCheckHelpButton"
       },
       "TfsId": 2171078,
       "Timeout": "01:00:00",
-      "UniqueId": "1541e689-233f-471c-b25a-676d9e2bc4ad"
+      "UniqueId": "01409573-19e8-4dd0-8d72-c8941c5196b1"
     },
     "App1_AdditionalToolsContextMenu-2309": {
       "Area": "App1_",
@@ -1634,7 +1249,7 @@
       "Timeout": "01:00:00",
       "UniqueId": "e3f2f9ec-66ca-45da-afea-b8b20e1387c4"
     },
-    "App1_UcpWelcomePageShownWhenManagementConsoleInvoked-2310": {
+    "App1_AllProductProcessClosedWhenExitItemClicked-2319": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -1652,83 +1267,11 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_UcpWelcomePageShownWhenManagementConsoleInvoked"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_AllProductProcessClosedWhenExitItemClicked"
       },
-      "TfsId": 2171078,
+      "TfsId": 187341,
       "Timeout": "01:00:00",
-      "UniqueId": "73669940-9c91-4b24-ab80-e22188486e0c"
-    },
-    "App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked-2311": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked"
-      },
-      "TfsId": 2171078,
-      "Timeout": "01:00:00",
-      "UniqueId": "12c1732e-d842-40a8-bf74-ab6cf9ee593c"
-    },
-    "App1_QuarantineViewShownWhenQuarantineFeatureInvoked-2312": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_QuarantineViewShownWhenQuarantineFeatureInvoked"
-      },
-      "TfsId": 2171078,
-      "Timeout": "01:00:00",
-      "UniqueId": "4a62aa65-19d0-4918-84f5-5aeb12778f31"
-    },
-    "App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked-2313": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked"
-      },
-      "TfsId": 2171078,
-      "Timeout": "01:00:00",
-      "UniqueId": "209c9bee-d2ba-461e-b317-cc89354717f5"
+      "UniqueId": "235bd904-a78f-430a-b068-bb29d442dc96"
     },
     "App1_BrowserConfigurationWizardShownWhenBrowserConfigurationFeatureInvoked-2314": {
       "Area": "App1_",
@@ -1754,30 +1297,6 @@
       "Timeout": "01:00:00",
       "UniqueId": "15996c3b-5308-40fb-99cc-999442536451"
     },
-    "App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked-2315": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked"
-      },
-      "TfsId": 2171078,
-      "Timeout": "01:00:00",
-      "UniqueId": "c660e7e6-2851-41d8-9073-403056e99ef5"
-    },
     "App1_BrowserOpenWhenRescueDiskFeatureInvoked-2316": {
       "Area": "App1_",
       "Deployments": [
@@ -1802,7 +1321,7 @@
       "Timeout": "01:00:00",
       "UniqueId": "57c4f5f9-a857-4b82-9582-a76930718a93"
     },
-    "App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked-2317": {
+    "App1_CheckBottomPanelLicenseInfo-2347": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -1820,13 +1339,13 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelLicenseInfo"
       },
-      "TfsId": 2171078,
+      "TfsId": 2171073,
       "Timeout": "01:00:00",
-      "UniqueId": "82775f7a-b66d-424c-87f8-e846bd30b136"
+      "UniqueId": "a955bab8-caf8-4652-8ef3-aebbcb0dc038"
     },
-    "App1_AdditionalToolsCheckHelpButton-2318": {
+    "App1_CheckBottomPanelMoreProducts-2345": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -1844,13 +1363,13 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_AdditionalToolsCheckHelpButton"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelMoreProducts"
       },
-      "TfsId": 2171078,
+      "TfsId": 2171073,
       "Timeout": "01:00:00",
-      "UniqueId": "01409573-19e8-4dd0-8d72-c8941c5196b1"
+      "UniqueId": "c2eacf7b-f49f-44a6-90f7-fef4e82d8ad7"
     },
-    "App1_AllProductProcessClosedWhenExitItemClicked-2319": {
+    "App1_CheckBottomPanelMyCompany-2346": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -1868,11 +1387,131 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_ContextMenuTests.App1_AllProductProcessClosedWhenExitItemClicked"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelMyCompany"
       },
-      "TfsId": 187341,
+      "TfsId": 2171073,
       "Timeout": "01:00:00",
-      "UniqueId": "235bd904-a78f-430a-b068-bb29d442dc96"
+      "UniqueId": "724b66bb-de70-4d85-96b3-a182ee417aaf"
+    },
+    "App1_CheckBottomPanelSettings-2343": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelSettings"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "7adcfd18-cfaa-431b-b577-147e594d02a0"
+    },
+    "App1_CheckBottomPanelSupport-2344": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelSupport"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "eeeeb13a-dac2-441c-98c5-f2494a66d014"
+    },
+    "App1_CheckComponentsStatusAdditionalTools-2342": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusAdditionalTools"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "a29ddfbe-d345-4f5a-b8f6-9cd61dedca2f"
+    },
+    "App1_CheckComponentsStatusScan-2338": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusScan"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "0a630239-5c54-4260-9a67-145609c5bb0f"
+    },
+    "App1_CheckComponentsStatusUpdate-2339": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusUpdate"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "3631c4b0-4274-4047-b7d0-cca2b4740d48"
     },
     "App1_CheckContextMenuContent-2320": {
       "Area": "App1_",
@@ -1970,6 +1609,270 @@
       "Timeout": "01:00:00",
       "UniqueId": "b55563cc-d899-40fb-89b4-952258a5b762"
     },
+    "App1_CheckMainWindowOpened-2330": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckMainWindowOpened"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "c487d6f2-1791-4a1f-b864-59b5db95955f"
+    },
+    "App1_CheckOnlineHelpWhenHelpInProtectionClicked-2356": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.App1_CheckOnlineHelpWhenHelpInProtectionClicked"
+      },
+      "TfsId": 2171108,
+      "Timeout": "01:00:00",
+      "UniqueId": "92ae2004-0bdc-4d49-9ad7-1448739f5abc"
+    },
+    "App1_CheckProtectionStatusGreen-2335": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusGreen"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "8977b2b7-c004-419e-be23-cee6297aa36f"
+    },
+    "App1_CheckProtectionStatusRed-2337": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusRed"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "0800a535-9081-4ab2-899e-c8989a8f3233"
+    },
+    "App1_CheckProtectionStatusYellow-2336": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusYellow"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "a7cc0aae-d434-4aa6-ab09-abb8984bc66c"
+    },
+    "App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked-2340": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "cb3a57ea-192d-41fd-bbc8-a3356cd24472"
+    },
+    "App1_CheckUpperPanelCloseButton-2333": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelCloseButton"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "7aee0b2e-e5bc-498c-8d2a-3abdfd9ce4b4"
+    },
+    "App1_CheckUpperPanelHelpButton-2332": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelHelpButton"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "409450c0-8834-4e83-a58a-8a2c7d1bb83d"
+    },
+    "App1_CheckUpperPanelMinimizeButton-2334": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelMinimizeButton"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "c9efe13a-fc56-44c2-9631-770d867d7c62"
+    },
+    "App1_CheckUpperPanelProductName-2331": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelProductName"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "c57b1b1d-2ca2-446a-a6b8-31a340ef3e7b"
+    },
+    "App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked-2341": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked"
+      },
+      "TfsId": 2171073,
+      "Timeout": "01:00:00",
+      "UniqueId": "336effe9-3009-41f7-afd6-78efa6186cf0"
+    },
     "App1_ContextMenuAppearsWhenRightClickOnTrayIcon-2324": {
       "Area": "App1_",
       "Deployments": [
@@ -2017,6 +1920,106 @@
       "TfsId": 187341,
       "Timeout": "01:00:00",
       "UniqueId": "aa6344ca-db90-4474-9318-ed49cde02ff2"
+    },
+    "App1_-Main-BvtPvt-GUI-scenarios": {
+      "TestScenarios": [
+        "DetailedReportsApp1_App11-2297",
+        "ContextMenuOpenApp1_-2298",
+        "CheckStartMenuApp2_-2299",
+        "CheckApp2_ContextMenuUpdate-2300",
+        "TrayContextMenuScan-2361",
+        "LaunchAtStartup-2301",
+        "App1_MainWindowExpandFeaturesList-2302",
+        "OpenMainWindowFromMenu-2303",
+        "ProtectionIsDisabled-2304",
+        "SomeComponentsAreDisabled-2305",
+        "EnableProtection-2306",
+        "VideoPlayerWithGamingProfile-2307",
+        "App1_MainWindowOpened-2308",
+        "App1_AdditionalToolsContextMenu-2309",
+        "App1_UcpWelcomePageShownWhenManagementConsoleInvoked-2310",
+        "App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked-2311",
+        "App1_QuarantineViewShownWhenQuarantineFeatureInvoked-2312",
+        "App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked-2313",
+        "App1_BrowserConfigurationWizardShownWhenBrowserConfigurationFeatureInvoked-2314",
+        "App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked-2315",
+        "App1_BrowserOpenWhenRescueDiskFeatureInvoked-2316",
+        "App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked-2317",
+        "App1_AdditionalToolsCheckHelpButton-2318",
+        "App1_AllProductProcessClosedWhenExitItemClicked-2319",
+        "App1_CheckContextMenuContent-2320",
+        "App1_CheckContextMenuPauseProtection-2321",
+        "App1_CheckContextMenuProductBold-2322",
+        "App1_CheckContextMenuResumeProtection-2323",
+        "App1_ContextMenuAppearsWhenRightClickOnTrayIcon-2324",
+        "App1_IconAppearsWhenProductStarted-2325",
+        "App1_MainWindowFocusedWhenDoubleLeftClick-2326",
+        "App1_MainWindowFocusedWhenOneLeftClick-2327",
+        "App1_MainWindowOpenedWhenDoubleLeftClick-2328",
+        "App1_MainWindowOpenedWhenOneLeftClick-2329",
+        "App1_CheckMainWindowOpened-2330",
+        "App1_CheckUpperPanelProductName-2331",
+        "App1_CheckUpperPanelHelpButton-2332",
+        "App1_CheckUpperPanelCloseButton-2333",
+        "App1_CheckUpperPanelMinimizeButton-2334",
+        "App1_CheckProtectionStatusGreen-2335",
+        "App1_CheckProtectionStatusYellow-2336",
+        "App1_CheckProtectionStatusRed-2337",
+        "App1_CheckComponentsStatusScan-2338",
+        "App1_CheckComponentsStatusUpdate-2339",
+        "App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked-2340",
+        "App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked-2341",
+        "App1_CheckComponentsStatusAdditionalTools-2342",
+        "App1_CheckBottomPanelSettings-2343",
+        "App1_CheckBottomPanelSupport-2344",
+        "App1_CheckBottomPanelMoreProducts-2345",
+        "App1_CheckBottomPanelMyCompany-2346",
+        "App1_CheckBottomPanelLicenseInfo-2347",
+        "CheckApp1_FileProgrammAvailable-2348",
+        "CheckApp1_InstantMessengersProgrammAvailable-2349",
+        "CheckApp1_MailProgrammAvailable-2350",
+        "CheckApp1_MainWindowOpened-2351",
+        "CheckApp1_ProtectionSettingsOpened-2352",
+        "CheckApp1_SystemWatcherAvailable-2353",
+        "CheckApp1_WebProgrammAvailable-2354",
+        "ComponentDisabledProblemIgnored-2355",
+        "App1_CheckOnlineHelpWhenHelpInProtectionClicked-2356",
+        "InteractiveProtection-2357",
+        "DefaultPasswordProtectionScope-2358",
+        "PasswordProtectionExistingPassword-2359",
+        "PasswordForAllOperations-2360"
+      ]
+    },
+    "App1_MainWindowExpandFeaturesList-2302": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "ForceReboot": {}
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.GUI.MainWindowTests.App1_MainWindowExpandFeaturesList"
+          }
+        ]
+      },
+      "TfsId": 183839,
+      "Timeout": "01:00:00",
+      "UniqueId": "f19eee0c-3c56-47bd-b98b-e242beac68e4"
     },
     "App1_MainWindowFocusedWhenDoubleLeftClick-2326": {
       "Area": "App1_",
@@ -2066,6 +2069,30 @@
       "Timeout": "01:00:00",
       "UniqueId": "04fbaf85-9758-4812-b074-9a3e24cb2df9"
     },
+    "App1_MainWindowOpened-2308": {
+      "Area": "App1_",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_MainWindowOpened"
+      },
+      "TfsId": 2171078,
+      "Timeout": "01:00:00",
+      "UniqueId": "1541e689-233f-471c-b25a-676d9e2bc4ad"
+    },
     "App1_MainWindowOpenedWhenDoubleLeftClick-2328": {
       "Area": "App1_",
       "Deployments": [
@@ -2114,7 +2141,7 @@
       "Timeout": "01:00:00",
       "UniqueId": "329ff034-6323-40c3-bf3c-fbdc6b415dad"
     },
-    "App1_CheckMainWindowOpened-2330": {
+    "App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked-2311": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -2132,13 +2159,13 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckMainWindowOpened"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_OnlineServicesWindowShownWhenCloudProtectionFeatureInvoked"
       },
-      "TfsId": 2171073,
+      "TfsId": 2171078,
       "Timeout": "01:00:00",
-      "UniqueId": "c487d6f2-1791-4a1f-b864-59b5db95955f"
+      "UniqueId": "12c1732e-d842-40a8-bf74-ab6cf9ee593c"
     },
-    "App1_CheckUpperPanelProductName-2331": {
+    "App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked-2315": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -2156,13 +2183,13 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelProductName"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_PrivacyCleanerWizardShownWhePrivacyCleanerFeatureInvoked"
       },
-      "TfsId": 2171073,
+      "TfsId": 2171078,
       "Timeout": "01:00:00",
-      "UniqueId": "c57b1b1d-2ca2-446a-a6b8-31a340ef3e7b"
+      "UniqueId": "c660e7e6-2851-41d8-9073-403056e99ef5"
     },
-    "App1_CheckUpperPanelHelpButton-2332": {
+    "App1_QuarantineViewShownWhenQuarantineFeatureInvoked-2312": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -2180,13 +2207,13 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelHelpButton"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_QuarantineViewShownWhenQuarantineFeatureInvoked"
       },
-      "TfsId": 2171073,
+      "TfsId": 2171078,
       "Timeout": "01:00:00",
-      "UniqueId": "409450c0-8834-4e83-a58a-8a2c7d1bb83d"
+      "UniqueId": "4a62aa65-19d0-4918-84f5-5aeb12778f31"
     },
-    "App1_CheckUpperPanelCloseButton-2333": {
+    "App1_UcpWelcomePageShownWhenManagementConsoleInvoked-2310": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -2204,13 +2231,13 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelCloseButton"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_UcpWelcomePageShownWhenManagementConsoleInvoked"
       },
-      "TfsId": 2171073,
+      "TfsId": 2171078,
       "Timeout": "01:00:00",
-      "UniqueId": "7aee0b2e-e5bc-498c-8d2a-3abdfd9ce4b4"
+      "UniqueId": "73669940-9c91-4b24-ab80-e22188486e0c"
     },
-    "App1_CheckUpperPanelMinimizeButton-2334": {
+    "App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked-2313": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -2228,13 +2255,13 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckUpperPanelMinimizeButton"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_VulnerabilityScanShownWhenVulnerabilityScanFeatureInvoked"
       },
-      "TfsId": 2171073,
+      "TfsId": 2171078,
       "Timeout": "01:00:00",
-      "UniqueId": "c9efe13a-fc56-44c2-9631-770d867d7c62"
+      "UniqueId": "209c9bee-d2ba-461e-b317-cc89354717f5"
     },
-    "App1_CheckProtectionStatusGreen-2335": {
+    "App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked-2317": {
       "Area": "App1_",
       "Deployments": [
         "Install product"
@@ -2252,299 +2279,11 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusGreen"
+        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_AdditionalToolsTests.App1_WindowsTroubleshootingWizardShownWhenPostinfectionFeatureInvoked"
       },
-      "TfsId": 2171073,
+      "TfsId": 2171078,
       "Timeout": "01:00:00",
-      "UniqueId": "8977b2b7-c004-419e-be23-cee6297aa36f"
-    },
-    "App1_CheckProtectionStatusYellow-2336": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusYellow"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "a7cc0aae-d434-4aa6-ab09-abb8984bc66c"
-    },
-    "App1_CheckProtectionStatusRed-2337": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckProtectionStatusRed"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "0800a535-9081-4ab2-899e-c8989a8f3233"
-    },
-    "App1_CheckComponentsStatusScan-2338": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusScan"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "0a630239-5c54-4260-9a67-145609c5bb0f"
-    },
-    "App1_CheckComponentsStatusUpdate-2339": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusUpdate"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "3631c4b0-4274-4047-b7d0-cca2b4740d48"
-    },
-    "App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked-2340": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckReportMainWindowShownWhenReportsOnDashboardClicked"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "cb3a57ea-192d-41fd-bbc8-a3356cd24472"
-    },
-    "App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked-2341": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckVirtualKeyboardOsRebootNeededShownWhenVirtualKeyboardOnDashboardClicked"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "336effe9-3009-41f7-afd6-78efa6186cf0"
-    },
-    "App1_CheckComponentsStatusAdditionalTools-2342": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckComponentsStatusAdditionalTools"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "a29ddfbe-d345-4f5a-b8f6-9cd61dedca2f"
-    },
-    "App1_CheckBottomPanelSettings-2343": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelSettings"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "7adcfd18-cfaa-431b-b577-147e594d02a0"
-    },
-    "App1_CheckBottomPanelSupport-2344": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelSupport"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "eeeeb13a-dac2-441c-98c5-f2494a66d014"
-    },
-    "App1_CheckBottomPanelMoreProducts-2345": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelMoreProducts"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "c2eacf7b-f49f-44a6-90f7-fef4e82d8ad7"
-    },
-    "App1_CheckBottomPanelMyCompany-2346": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelMyCompany"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "724b66bb-de70-4d85-96b3-a182ee417aaf"
-    },
-    "App1_CheckBottomPanelLicenseInfo-2347": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiMainWindowTest.App1_CheckBottomPanelLicenseInfo"
-      },
-      "TfsId": 2171073,
-      "Timeout": "01:00:00",
-      "UniqueId": "a955bab8-caf8-4652-8ef3-aebbcb0dc038"
+      "UniqueId": "82775f7a-b66d-424c-87f8-e846bd30b136"
     },
     "CheckApp1_FileProgrammAvailable-2348": {
       "Area": "App1_",
@@ -2714,6 +2453,54 @@
       "Timeout": "01:00:00",
       "UniqueId": "9d6d656e-b69c-4d4c-9019-fb0bcf62a093"
     },
+    "CheckApp2_ContextMenuUpdate-2300": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.SystemTrayTests.CheckApp2_ContextMenuUpdate"
+      },
+      "TfsId": 186134,
+      "Timeout": "01:00:00",
+      "UniqueId": "b9eb4472-c7c5-4c13-a2dc-470842e15a03"
+    },
+    "CheckStartMenuApp2_-2299": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_10"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.StartMenuTests.CheckStartMenuApp2_"
+      },
+      "TfsId": 187342,
+      "Timeout": "01:00:00",
+      "UniqueId": "54aa19d8-3237-4b2d-b665-bfad0a5520df"
+    },
     "ComponentDisabledProblemIgnored-2355": {
       "Area": "GUI",
       "Deployments": [
@@ -2738,31 +2525,7 @@
       "Timeout": "00:40:00",
       "UniqueId": "1c27208c-1b7c-4f93-8050-c3170b1ae224"
     },
-    "App1_CheckOnlineHelpWhenHelpInProtectionClicked-2356": {
-      "Area": "App1_",
-      "Deployments": [
-        "Install product"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "platform_group_1"
-          ],
-          "Products": [
-            "App7"
-          ]
-        }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.App1_.App1_GuiSettingsTest.App1_CheckOnlineHelpWhenHelpInProtectionClicked"
-      },
-      "TfsId": 2171108,
-      "Timeout": "01:00:00",
-      "UniqueId": "92ae2004-0bdc-4d49-9ad7-1448739f5abc"
-    },
-    "InteractiveProtection-2357": {
+    "ContextMenuOpenApp1_-2298": {
       "Area": "GUI",
       "Deployments": [
         "Install product"
@@ -2780,11 +2543,11 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.InteractiveProtectionTests.InteractiveProtection"
+        "MethodName": "Autotest.App2.Suites.GUI.SystemTrayTests.ContextMenuOpenApp1_"
       },
-      "TfsId": 185121,
+      "TfsId": 187340,
       "Timeout": "01:00:00",
-      "UniqueId": "f3f51cf9-2692-444f-adba-efacd632c2db"
+      "UniqueId": "d7ec8287-66b0-40d6-8d34-925c7c6bcc6c"
     },
     "DefaultPasswordProtectionScope-2358": {
       "Area": "GUI",
@@ -2810,7 +2573,32 @@
       "Timeout": "01:00:00",
       "UniqueId": "95475de7-9823-492e-9b08-70ff03da9401"
     },
-    "PasswordProtectionExistingPassword-2359": {
+    "DetailedReportsApp1_App11-2297": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "RevertAgentBefore": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.ReportWindowTest.DetailedReportsApp1_App11"
+      },
+      "TfsId": 2347643,
+      "Timeout": "01:00:00",
+      "UniqueId": "5f21572f-bc10-4434-a842-8a8239a882f2"
+    },
+    "EnableProtection-2306": {
       "Area": "GUI",
       "Deployments": [
         "Install product"
@@ -2828,11 +2616,105 @@
       "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
-        "MethodName": "Autotest.App2.Suites.GUI.PasswordProtectionTestsSuite.PasswordProtectionExistingPassword"
+        "MethodName": "Autotest.App2.Suites.GUI.ProblemListTests.EnableProtection"
       },
-      "TfsId": 2204818,
+      "TfsId": 187597,
       "Timeout": "01:00:00",
-      "UniqueId": "1822f9d9-5528-48d6-92f2-1dfd2adec2af"
+      "UniqueId": "84936fc7-263c-4ede-b1dc-dbfbde1c71d0"
+    },
+    "InteractiveProtection-2357": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.InteractiveProtectionTests.InteractiveProtection"
+      },
+      "TfsId": 185121,
+      "Timeout": "01:00:00",
+      "UniqueId": "f3f51cf9-2692-444f-adba-efacd632c2db"
+    },
+    "LaunchAtStartup-2301": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupEnable"
+          },
+          {
+            "ForceReboot": {}
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupEnableAftereReboot"
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupDisable"
+          },
+          {
+            "ForceReboot": {}
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.GUI.LaunchProgramAtComputerStartup.LaunchAtStartupDisableAftereReboot"
+          }
+        ]
+      },
+      "TfsId": 187596,
+      "Timeout": "01:00:00",
+      "UniqueId": "72bf1514-bc2f-4105-8da2-83708e5f45ab"
+    },
+    "OpenMainWindowFromMenu-2303": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.SystemTrayTests.OpenMainWindowFromMenu"
+      },
+      "TfsId": 187667,
+      "Timeout": "01:00:00",
+      "UniqueId": "ca9c0c58-81f5-4067-a2b1-8e71312e2630"
     },
     "PasswordForAllOperations-2360": {
       "Area": "GUI",
@@ -2857,6 +2739,126 @@
       "TfsId": 187592,
       "Timeout": "01:00:00",
       "UniqueId": "3954235b-5ab4-462a-aaec-b000d91a5f7c"
+    },
+    "PasswordProtectionExistingPassword-2359": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.PasswordProtectionTestsSuite.PasswordProtectionExistingPassword"
+      },
+      "TfsId": 2204818,
+      "Timeout": "01:00:00",
+      "UniqueId": "1822f9d9-5528-48d6-92f2-1dfd2adec2af"
+    },
+    "ProtectionIsDisabled-2304": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.ProblemListTests.ProtectionIsDisabled"
+      },
+      "TfsId": 187872,
+      "Timeout": "01:00:00",
+      "UniqueId": "4ccc0ec1-0ac7-4162-8072-1ad95769d601"
+    },
+    "SomeComponentsAreDisabled-2305": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.ProblemListTests.SomeComponentsAreDisabled"
+      },
+      "TfsId": 187871,
+      "Timeout": "01:00:00",
+      "UniqueId": "5dbe57df-b80d-41ae-a180-4f19c427789d"
+    },
+    "TrayContextMenuScan-2361": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.ScanTrayTests.TrayContextMenuScan"
+      },
+      "TfsId": 186133,
+      "Timeout": "01:00:00",
+      "UniqueId": "95e39c9d-a9c7-44e3-b78a-4c99888933e5"
+    },
+    "VideoPlayerWithGamingProfile-2307": {
+      "Area": "GUI",
+      "Deployments": [
+        "Install product"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "platform_group_1"
+          ],
+          "Products": [
+            "App7"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
+      },
+      "TfsId": 186283,
+      "Timeout": "00:40:00",
+      "UniqueId": "8dc732fa-ebe1-4222-974f-fbba3b924656"
     }
   },
   "TestEntities": {}

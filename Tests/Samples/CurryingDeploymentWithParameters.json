@@ -21,6 +21,9 @@
     },
     "OverrideArgs": {
       "Type": "Sequence",
+      "DefaultValues": {
+        "Param2": 42
+      },
       "Deployments": [
         {
           "MyDeployment": {
@@ -30,10 +33,7 @@
             "WithoutDefault": "$(Param3)"
           }
         }
-      ],
-      "DefaultValues": {
-        "Param2": 42
-      }
+      ]
     }
   },
   "Platforms": {
@@ -83,6 +83,7 @@
           ]
         }
       ],
+      "RevertAgentAfter": true,
       "TestMethod": {
         "AssemblyName": "TestDll.dll",
         "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
