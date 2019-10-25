@@ -176,10 +176,11 @@ namespace Tdl
 
       def emptyDeployment = ExternalDeclaration.[Tdl.Deployment.EmptySymbol](Location.Default, EmptyDeploymentName, ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       // TODO: эти свойства должны вычисляться в EvalProperties
-      emptyDeployment.Type                     = deploymentType;
-      emptyDeployment.Scope                    = EmptyScope.Instance;
-      emptyDeployment.AllDeployments           = ImmutableArray.Create();
-      emptyDeployment.AggregateParametersScope = EmptyScope.Instance;
+      emptyDeployment.Type                       = deploymentType;
+      emptyDeployment.Scope                      = EmptyScope.Instance;
+      emptyDeployment.AllDeployments             = ImmutableArray.Empty;
+      emptyDeployment.AggregateParametersScope   = EmptyScope.Instance;
+      emptyDeployment.DashboardVisibleParameters = ImmutableArray.Empty;
       emptyDeployment.EvalProperties(context);
       initTypeSymbol(emptyDeployment);
 

@@ -1398,7 +1398,7 @@ namespace Tdl
             }
             break;
           }
-        | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
+        | _ => assert(false, $"Unsupported expression type $(deployment.GetType().FullName)");
       }
     }
 

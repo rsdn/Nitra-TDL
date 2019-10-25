@@ -208,7 +208,7 @@ namespace Tdl2Json
       foreach (s is PlatformSymbol in symbols)
         platforms.Add(s.Name, GeneratePlatform(s));
 
-      def platformNameSet = HashSet(platforms.Select(p => p.Key), StringComparer.InvariantCultureIgnoreCase);
+      def platformNameSet = HashSet(platforms.Keys, StringComparer.InvariantCultureIgnoreCase);
 
       foreach (symbol in symbols)
       {
