@@ -9,6 +9,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
+using Nitra;
+using Nitra.ProjectSystem;
 using Tdl;
 
 namespace Tdl2Json
@@ -24,6 +26,8 @@ namespace Tdl2Json
       _repositoryRoot = Path.GetFullPath(repositoryRoot)
         .TrimEnd(array[Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]);
     }
+
+    public Messages : CompilerMessageList { get; default CompilerMessageList() }
 
     public AddScenario(symbol : ScenarioSymbol) : void
     {
@@ -47,8 +51,10 @@ namespace Tdl2Json
       symbol.IsUnconditional || _triggeredScenarios.Contains(symbol)
     }
 
-    public LoadDiff(input : TextReader) : void
+    public LoadDiff(input : TextReader, filePath : string) : void
     {
+      def source = if (string.IsNullOrEmpty(filePath)) Location.Default.Source else SingleLineSourceSnapshot("", filePath);
+ 
       mutable line : uint;
       while (true)
       {
@@ -70,6 +76,12 @@ namespace Tdl2Json
           | 'R' /* Renaming     */
           | 'T' /* TypeChange   */
           | 'U' /* UnmergedFile */ => ()
+          | _ when text.StartsWith("warning:", StringComparison.OrdinalIgnoreCase) with messageType = CompilerMessageType.Warning
+          | _ when text.StartsWith("error:",   StringComparison.OrdinalIgnoreCase) with messageType = CompilerMessageType.Error =>
+            def message = "git diff:" + text.Substring(text.IndexOf(':') + 1);
+            Messages.ReportMessage(messageType, Location(source, 0), message, 0);
+            continue
+
           | x => throw FormatException($"Invalid diff file format at line $line: bad update type '$x'")
         }
 
