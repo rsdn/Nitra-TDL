@@ -110,8 +110,7 @@ namespace Tdl2Json
           when (string.IsNullOrEmpty(deploymentToolPath))
             deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
 
-          GenerateJson(context.RootNamespace, context.InitialDeployment, context.FinalDeployment, context.ExternalSymbols, output,
-            deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot, isSampleGeneration);
+          GenerateJson(context, output, deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot, isSampleGeneration);
         }
       }
 
@@ -175,9 +174,8 @@ namespace Tdl2Json
       stopwatch.Restart();
     }
 
-    private GenerateJson(root : NamespaceSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, externalSymbols : TableScope,
-      output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string, mutable jsonSchemaType : string,
-      diffFile : string, repositoryRoot : string, isSampleGeneration : bool) : void
+    private GenerateJson(context : TransformationContext, output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string,
+      mutable jsonSchemaType : string, diffFile : string, repositoryRoot : string, isSampleGeneration : bool) : void
     {
       def stopwatch = Stopwatch.StartNew();
       JsonGenerator.ReportMessage("Generating JSON...");
@@ -186,7 +184,7 @@ namespace Tdl2Json
         jsonSchemaType = if (IsExperimental) "dev" else "prod";
 
       def compiler    = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
-      def symbols     = root.MemberTable.GetAllSymbols().ToList();
+      def symbols     = context.RootNamespace.MemberTable.GetAllSymbols().ToList();
 
       mutable scenarioTrigger;
       when (!string.IsNullOrEmpty(diffFile) && !string.IsNullOrEmpty(repositoryRoot))
@@ -195,7 +193,8 @@ namespace Tdl2Json
         foreach (scenario is ScenarioSymbol in symbols)
           scenarioTrigger.AddScenario(scenario);
         using (reader = StreamReader(diffFile))
-          scenarioTrigger.LoadDiff(reader);
+          scenarioTrigger.LoadDiff(reader, diffFile);
+        _ = context.Messages.AddRange(scenarioTrigger.Messages);
       }
 
       def platforms   = SortedDictionary();
@@ -218,13 +217,13 @@ namespace Tdl2Json
         | Suite.GeneratorSymbol as s => GenerateSuiteGenerator(s, suites, suiteGroups, scenarioTrigger)
         | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
         | ScenarioSymbol        as s when IsScenarioTriggered(s, scenarioTrigger) =>
-          GenerateScenario(s, initialDeployment, finalDeployment, compiler, scenarioTrigger, scenarios)
+          GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, compiler, scenarioTrigger, scenarios)
 
         | _ => ()
       }
 
       def defaultValues = SortedDictionary();
-      foreach (f is FieldSymbol in externalSymbols.GetAllSymbols())
+      foreach (f is FieldSymbol in context.ExternalSymbols.GetAllSymbols())
       {
         when (f.Value is VSome(v))
         {
