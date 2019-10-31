@@ -42,10 +42,11 @@ suite Suite : SuiteType
 {
   platform Platform;
   product Product1;
+  Text = external.ExternalField;
   S1();
 }
 
-deployment Deploy(ProductType AnotherProduct = Product2, string Text = ExternalField, string SuiteTypeField1, string SuiteTypeField2)
+deployment Deploy(ProductType AnotherProduct = Product2, string Text = external.ExternalField, string SuiteTypeField1, string SuiteTypeField2)
  script "Deploy.ps1"
 {
   AnotherName = AnotherProduct.Name;
