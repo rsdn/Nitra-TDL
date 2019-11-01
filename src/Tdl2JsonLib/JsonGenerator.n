@@ -235,9 +235,9 @@ namespace Tdl2Json
       unless (isSampleGeneration)
       {
         def version             = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-        def versionPropertyName = "!TDL Compiler Version!";
+        def versionPropertyName = "$TDL Compiler Version$";
         defaultValues.Add(versionPropertyName, version.ToString());
-        def versionPropertyName = "!TDL Compilation Local Time!";
+        def versionPropertyName = "$TDL Compilation Local Time$";
         defaultValues.Add(versionPropertyName, DateTime.Now);
       }
 
