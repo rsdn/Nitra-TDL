@@ -55,15 +55,15 @@ namespace Tdl2Json
     {
       match (parameter.Default)
       {
-        | String    as s => s.Value
-        | Bool      as b => if (b.Value) BooleanLiterals.True else BooleanLiterals.False
-        | Number    as n => n.Value
-        | Decimal   as d => d.Value
-        | Double    as d => d.Value
-        | Single    as s => s.Value
-        | None           => null
+        | String    as s        => s.Value
+        | Bool      as b        => if (b.Value) BooleanLiterals.True else BooleanLiterals.False
+        | Number    as n        => n.Value
+        | Decimal   as d        => d.Value
+        | Double    as d        => d.Value
+        | Single    as s        => s.Value
+        | None                  => null
         | Custom(e is Tdl.Expr) => e.ToObject()
-        | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
+        | _                     => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
     }
 

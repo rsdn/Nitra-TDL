@@ -39,9 +39,15 @@ namespace Tdl
       //assert2(false);
       def makeDefaultParameters(ast : ExprBase) : ValueOption[DefaultValue]
       {
-        | x   is DotNet.Expr.SimpleName when !x.IsRefEvaluated || !x.Ref.IsSymbolEvaluated => VNone()
-        | x   is DotNet.Expr.SimpleName when x.IsRefEvaluated && x.Ref.IsSymbolEvaluated => VSome(DefaultValue.Custom(Tdl.Expr.Reference(x.Ref.Symbol)))
-        | _ => DotNet.Coverters.MakeDefaultParametersOpt(ast)
+        match (ast)
+        {
+          | DotNet.Expr.MemberAccess1(IsMemberEvaluated=false)
+          | DotNet.Expr.MemberAccess1 as ma when !ma.Member.IsSymbolEvaluated => VNone()
+          | DotNet.Expr.MemberAccess1 as ma => VSome(DefaultValue.Custom(Tdl.Expr.Reference(ma.Member.Symbol)))
+          | x   is DotNet.Expr.SimpleName when !x.IsRefEvaluated || !x.Ref.IsSymbolEvaluated => VNone()
+          | x   is DotNet.Expr.SimpleName when x.IsRefEvaluated && x.Ref.IsSymbolEvaluated => VSome(DefaultValue.Custom(Tdl.Expr.Reference(x.Ref.Symbol)))
+          | _ => DotNet.Coverters.MakeDefaultParametersOpt(ast)
+        }
       }
       DotNet.AstUtils.MakeDefault = makeDefaultParameters;
       DotNet.AstUtils2.ExtensionScopeFactory = CreateExtensionScopeFactory;

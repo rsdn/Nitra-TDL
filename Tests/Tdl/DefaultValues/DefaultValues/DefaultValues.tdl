@@ -42,7 +42,6 @@ suite Suite : SuiteType
 {
   platform Platform;
   product Product1;
-  Text = external.ExternalField;
   S1();
 }
 
