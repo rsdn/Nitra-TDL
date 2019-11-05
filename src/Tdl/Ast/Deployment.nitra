@@ -12,7 +12,7 @@ namespace Tdl
   {
     symbol
     {
-      Type = context.ToTdlContext().DeploymentType;
+      Type = context.GetDeploymentTypeSymbol();
 
     stage 2:
       in AggregateParametersScope : Scope;
