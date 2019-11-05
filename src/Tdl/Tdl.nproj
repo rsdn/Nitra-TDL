@@ -98,6 +98,9 @@
     <Compile Include="Ast\DeploymentModifier.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\DeploymentType.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ast\PlatformType.nitra">
       <SubType>Code</SubType>
     </Compile>

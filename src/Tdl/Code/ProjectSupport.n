@@ -173,11 +173,12 @@ namespace Tdl
 
       def baseProductType            = MakeBaseProductTypeSymbol(context, rootNamespace);
       def platformType               = MakePlatformTypeSymbol(context, rootNamespace);
+      def deploymentType             = MakeDeploymentTypeSymbol(context, rootNamespace);
       def externalSymbol             = MakeExternalSymbol(context, rootNamespace);
       def scenarioParameterScope     = TableScope("ScenarioParameterScope");
       def requiredScenarioParameters = MakeScenarioParametersScope(backEnd, context, scenarioParameterScope);
       def entityFieldsScope          = MakeEntityFieldsScope(backEnd, context, TableScope("EntityFieldsScope"));
-      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, entityFieldsScope, requiredScenarioParameters, externalSymbol, TestMode, baseProductType, platformType);
+      def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, entityFieldsScope, requiredScenarioParameters, externalSymbol, TestMode, baseProductType, platformType, deploymentType);
       context.TdlProjectData         = data;
 
       def emptyDeployment = ExternalDeclaration.[Tdl.Deployment.EmptySymbol](Location.Default, EmptyDeploymentName, ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
@@ -407,7 +408,15 @@ namespace Tdl
       symbol.EvalProperties(context);
       symbol
     }
-    
+
+    public MakeDeploymentTypeSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : DeploymentTypeSymbol
+    {
+      def symbol = ExternalDeclaration.[DeploymentTypeSymbol](Name(NoLocation, "Deployment")).DefineSymbol(rootNamespace.MemberTable);
+      symbol.BaseTypeSet = BaseTypeReferenceSet(null);
+      symbol.EvalProperties(context);
+      symbol
+    }
+
     public MakeBaseProductTypeSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : ProductTypeSymbol
     {
       def symbol = ExternalDeclaration.[ProductTypeSymbol](Name(NoLocation, "BaseProductType")).DefineSymbol(rootNamespace.MemberTable);
