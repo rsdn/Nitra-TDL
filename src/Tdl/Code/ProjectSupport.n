@@ -127,11 +127,10 @@ namespace Tdl
       def backEnd = CciBackEnd();
       _backEnd = backEnd;
       backEnd.CancellationToken = cancellationToken;
-      def deploymentType        = TdlType.DeploymentSymbol();
       def entityType            = TdlType.EntitySymbol();
       def methodType            = FunctionTypeSymbol();
       def scenarioType          = TdlType.ScenarioSymbol();
-      def context               = TdlDependentPropertyEvalContext(project, deploymentType, entityType, methodType, scenarioType);
+      def context               = TdlDependentPropertyEvalContext(project, entityType, methodType, scenarioType);
       def rootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
       def systemNsRef   = bindNs(rootNamespace.Scope, "System");
       when (systemNsRef.IsSymbolEvaluated)
@@ -165,7 +164,6 @@ namespace Tdl
       {
         type.EvalProperties(context);
       }
-      initTypeSymbol(deploymentType);
       initTypeSymbol(methodType);
       initTypeSymbol(entityType);
       initTypeSymbol(scenarioType);
