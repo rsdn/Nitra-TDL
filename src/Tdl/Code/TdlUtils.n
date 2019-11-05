@@ -57,6 +57,11 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.ExternalSymbolTable
     }
 
+    public GetDeploymentTypeSymbol(this context : DependentPropertyEvalContext) : DeploymentTypeSymbol
+    {
+      ToTdlContext(context).TdlProjectData.DeploymentType
+    }
+
     public GetProductTypeSymbol(this context : DependentPropertyEvalContext) : ProductTypeSymbol
     {
       ToTdlContext(context).TdlProjectData.BaseProductType
