@@ -270,9 +270,21 @@ namespace Tdl2Json
       | _                         => ThrowNotSupportedSymbol(platformSymbol)
     }
       
-    private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Dictionary[string, object]
+    private MakeDefs(defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], sessionInitializerOpt : out object, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
     {
-      def result = Dictionary();
+      def defs = CollectDefs(defs, variables);
+      foreach (d when !defs.ContainsKey(d.Name) in defaults)
+        defs.Add(d.Name, ParameterDefaultValue);
+          
+      when (defs.TryGetValue("SessionInitializer", out sessionInitializerOpt))
+        _ = defs.Remove("SessionInitializer");
+
+      defs
+    }
+
+    private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
+    {
+      def result = Hashtable();
       foreach(@def in defs)
       {
         def name = @def.Symbol.Name;
@@ -488,17 +500,19 @@ namespace Tdl2Json
 
       match (scenarioSymbol)
       {
+        | Tdl.Scenario.SetSymbol as s => addTestCase(scenarioSymbol.Name, TestGroup() <- { TestScenarios = GetScenarioList(s.Scenarios, scenarioTrigger) });
         | Tdl.Scenario.DefSymbol as r =>
+          def defs = r.Defs.ToHashtable(x => x.Symbol.Name, x => x.Expr);
+          def defs = defs;
           def parallelSetOpt = if (r.IsParallelSetOptEvaluated) r.ParallelSetOpt else null;
-          def barriersCount  = if (parallelSetOpt == null) Dictionary() 
-                                else parallelSetOpt.BarriersCount.ToDictionary();
+          def barriersCount  = parallelSetOpt?.BarriersCount?.ToDictionary() ?? Dictionary();
           def getString(name : string) : string
           {
-            r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+            defs.Get(name).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
           }
           def getGuid(name : string) : Guid?
           {
-            def str = r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
+            def str = defs.Get(name).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
             if (string.IsNullOrWhiteSpace(str))
               null
             else
@@ -506,22 +520,21 @@ namespace Tdl2Json
           }
           def getBool(name : string) : bool?
           {
-            r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr)
-              .Map(fun(expr)
-                {
-                  | Tdl.Expr.True  => Nullable(true)
-                  | Tdl.Expr.False => Nullable(false)
-                  | _              => throw NotSupportedException()
-                })
-              .WithDefault(null);
+            def toNullable(expr)
+            {
+              | Tdl.Expr.True  => Nullable(true)
+              | Tdl.Expr.False => Nullable(false)
+              | _              => throw NotSupportedException($"Supported expression '$expr' (Tdl.Expr.$(expr.GetType().Name))")
+            }
+            defs.Get(name).Map(toNullable).WithDefault(null);
           }
           def getLong(name : string) : long?
           {
-              r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
+              defs.Get(name).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
           }
           def getInt(name : string) : int?
           {
-              r.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
+              defs.Get(name).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
           }
           def artifactsCollectionTimeout = getString("ArtifactsCollectionTimeout");
           def getTestMethod() : TestMethod
@@ -625,9 +638,9 @@ namespace Tdl2Json
               | Script as s        => makeScriptAction(s)
               | Config as c        => makeConfigAction(c)
               | GTest  as g        => makeGTestAction(g)
-              | XCode as x         => makeXCodeAction(x)
-              | Apk as a           => makeAndroidJavaAction(a)
-              | Login as login     => LoginTestStep() <- { Login = LoginTestStep.Data() <- { User = login.User.Value; Password = login.Password.Value } }
+              | XCode  as x        => makeXCodeAction(x)
+              | Apk    as a        => makeAndroidJavaAction(a)
+              | Login  as login    => LoginTestStep() <- { Login = LoginTestStep.Data() <- { User = login.User.Value; Password = login.Password.Value } }
               | Logoff             => LogoffTestStep() <- { Logoff = LogoffTestStep.Data() }
               | LockWorkstation    => LockWorkstationTestStep() <- { LockWorkstation = LockWorkstationTestStep.Data() }
               | _                  => assert(false, "Unsupported ScenarioAction: " + action)
@@ -656,31 +669,30 @@ namespace Tdl2Json
               }
           }
 
-          addTestCase(scenarioSymbol.Name, TestGroup() <- 
-          {
-              Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler);
-              Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
-              TestMethod              = getTestMethod();
-              Area                    = getString("Area");
-              LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
-              ExternalAutotestId      = getInt   ("ExternalAutotestId");
-              NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
-              RequireInternet         = getBool  ("RequireInternet");
-              RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
-              RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
-              Responsible             = getString("Responsible");
-              RevertAgentAfter        = getBool  ("RevertAgentAfter") ?? true;
-              RevertAgentBefore       = getBool  ("RevertAgentBefore");
-              TfsId                   = getLong  ("TfsId");
-              Timeout                 = getString("Timeout");
-              UniqueId                = getGuid("UniqueId");
-              ProductGroupName        = getString("ProductGroupName");
-              FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
-              MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
-          })
-
-        | Tdl.Scenario.SetSymbol as s =>
-          addTestCase(scenarioSymbol.Name, TestGroup() <- { TestScenarios = GetScenarioList(s.Scenarios, scenarioTrigger) });
+          def testGroup =
+            TestGroup() <- 
+            {
+                Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler);
+                Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
+                TestMethod              = getTestMethod();
+                Area                    = getString("Area");
+                LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
+                ExternalAutotestId      = getInt   ("ExternalAutotestId");
+                NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
+                RequireInternet         = getBool  ("RequireInternet");
+                RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
+                RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
+                Responsible             = getString("Responsible");
+                RevertAgentAfter        = getBool  ("RevertAgentAfter") ?? true;
+                RevertAgentBefore       = getBool  ("RevertAgentBefore");
+                TfsId                   = getLong  ("TfsId");
+                Timeout                 = getString("Timeout");
+                UniqueId                = getGuid  ("UniqueId");
+                ProductGroupName        = getString("ProductGroupName");
+                FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
+                MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
+            };
+          addTestCase(scenarioSymbol.Name, testGroup);
 
         | Tdl.Scenario.GeneratorSymbol as g =>
           mutable counter : uint = 0;
@@ -705,7 +717,8 @@ namespace Tdl2Json
             addTestCase(name, GenerateTestGroup(g, uniqueId, dic, initialDeployment, finalDeployment, compiler));
             uniqueId = incGuid(uniqueId);
           }
-          addTestCase(scenarioSymbol.Name, TestGroup() <- { TestScenarios = names.ToArray() });
+          def testGroup = TestGroup() <- { TestScenarios = names.ToArray() };
+          addTestCase(scenarioSymbol.Name, testGroup);
 
         | _ => _ = ThrowNotSupportedSymbol(scenarioSymbol)
       }
@@ -929,37 +942,35 @@ namespace Tdl2Json
       suiteGroups.Add(suiteSymbol.Name, SuiteGroup() <- { Suites = suites })
     }
 
-    private GenerateSuiteGenerator(g : Suite.GeneratorSymbol, suites : IDictionary[string, TestSuite], suiteGroups : IDictionary[string, SuiteGroup],
+    private GenerateSuiteGenerator(gen : Suite.GeneratorSymbol, suites : IDictionary[string, TestSuite], suiteGroups : IDictionary[string, SuiteGroup],
       scenarioTrigger : ScenarioTriggerProcessor) : void
     {
-      def nameBase = g.Name;
+      def nameBase = gen.Name;
       def names = List();
 
-      foreach (dic in SubstituteVariables(g.Froms, 0))
+      foreach (dic in SubstituteVariables(gen.Froms, 0))
       {
         def toString(e : Tdl.Expr) : string
         {
           | String as s => s.Value
           | _ => e.ToString()
         }
+        mutable sessionInitializerOpt;
         def name = $<#$nameBase-..$(dic.Values; "-"; toString)#>;
         names.Add(name);
-        def platform   = TryResolveVar(dic, g.Platform) : PlatformSymbol;
-        def product    = TryResolveVar(dic, g.Product)  : ProductSymbol;
+        def platform   = TryResolveVar(dic, gen.Platform) : PlatformSymbol;
+        def product    = TryResolveVar(dic, gen.Product)  : ProductSymbol;
+        def entityOpt  = if (gen.EntityOpt.HasValue) (TryResolveVar(dic, gen.EntityOpt.Value)  : EntitySymbol).Name else null;
+        def defs       = MakeDefs(gen.Defs, gen.DefaultDefs, out sessionInitializerOpt, dic);
 
-        def parameters = CollectDefs(g.Defs, dic);
-        foreach (d when !parameters.ContainsKey(d.Name) in g.DefaultDefs)
-          parameters.Add(d.Name, ParameterDefaultValue);
-        
-        def entityOpt = if (g.EntityOpt.HasValue) (TryResolveVar(dic, g.EntityOpt.Value)  : EntitySymbol).Name else null;
         def suite = TestSuite() <- 
         {
-          Platforms     = array[platform.Name];
-          Products      = array[product.Name];
-          TestScenarios = GetSuiteScenarioList(g.Statements, scenarioTrigger);
-          Parameters    = parameters;
-          TestEntity    = entityOpt;
-          DashboardVisibleParameters = GetDashboardVisibleParameters(g.Defs);
+          Platforms                  = array[platform.Name];
+          Products                   = array[product.Name];
+          TestScenarios              = GetSuiteScenarioList(gen.Statements, scenarioTrigger);
+          Parameters                 = defs;
+          TestEntity                 = entityOpt;
+          DashboardVisibleParameters = GetDashboardVisibleParameters(gen.Defs);
         };
 
         suites.Add(name, suite);
@@ -970,16 +981,15 @@ namespace Tdl2Json
 
     private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : ScenarioTriggerProcessor) : TestSuite
     {
-      def parameters = CollectDefs(suiteSymbol.Defs);
-      foreach (d in suiteSymbol.DefaultDefs)
-        parameters.Add(d.Name, ParameterDefaultValue);
+      mutable sessionInitializerOpt;
+      def defs = MakeDefs(suiteSymbol.Defs, suiteSymbol.DefaultDefs, out sessionInitializerOpt);
       def entityOpt = suiteSymbol.EntityOpt;
       TestSuite() <- 
       {
         Platforms                  = array[suiteSymbol.Platform.Name];
         Products                   = array[suiteSymbol.Product.Name];
         TestScenarios              = GetSuiteScenarioList(suiteSymbol.Statements, scenarioTrigger);
-        Parameters                 = parameters;
+        Parameters                 = defs;
         TestEntity                 = if (entityOpt.HasValue) entityOpt.Value.Name else null;
         DashboardVisibleParameters = GetDashboardVisibleParameters(suiteSymbol.Defs);
       }
