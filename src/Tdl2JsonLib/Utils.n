@@ -7,11 +7,26 @@ using Nemerle.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Immutable;
 
 namespace Tdl2Json
 {
   module Utils
   {
+    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement]) : Hashtable[TKey, TElement]
+    {
+      ToHashtable(immutableArray, keySelector, elementSelector, EqualityComparer[TKey].Default);
+    }
+
+    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement], comparer : IEqualityComparer[TKey]) : Hashtable[TKey, TElement]
+    {
+      def result = Hashtable(immutableArray.Length, comparer);
+      foreach (v in immutableArray)
+          result.Add(keySelector(v), elementSelector(v));
+
+      result
+    }
+    
     public GetValue[K, V](this dic : Dictionary[K, V], key : K, dicName : string = null) : V
     {
       mutable value;

@@ -1,0 +1,56 @@
+external
+{
+}
+
+product type ProductType
+{
+  string Name;
+  string Version = "1.0";
+
+}
+
+product Product1 : ProductType
+{
+  Name = "Product 1";
+  Version = "1.1";
+}
+
+platform Platform;
+
+scenario S1
+{
+  deployment Deploy2;
+  environments (Platform, Product1);
+  method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
+
+suite type SuiteType
+{
+  Deployment SessionInitializer = Deploy1;
+}
+
+suite Suite1 : SuiteType
+{
+  platform Platform;
+  product Product1;
+  S1();
+}
+
+suite Suite2 : SuiteType
+{
+  platform Platform;
+  product Product1;
+  SessionInitializer = Deploy2;
+  S1();
+}
+
+deployment Deploy1(string Arg1 = "ss")
+ script "Deploy1.ps1"
+{
+}
+deployment Deploy2(string Arg1 = "ss")
+ script "Deploy2.ps1"
+{
+}
