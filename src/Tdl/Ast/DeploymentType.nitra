@@ -11,7 +11,7 @@ namespace Tdl
     symbol
     {
       Scope          = MemberTable;
-      Kind           = "product type";
+      Kind           = "deployment type";
       IsSameIdentity = candidate is Tdl.DeploymentType;
       SpanClass      = TdlLang.TdlTypeSpanClass;
     }
