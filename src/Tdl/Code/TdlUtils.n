@@ -57,6 +57,16 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.ExternalSymbolTable
     }
 
+    public GetIsPredefinedSuiteField(this context : DependentPropertyEvalContext) : string -> bool
+    {
+      value => ToTdlContext(context).PredefinedSuiteFields.Contains(value)
+    }
+
+    public GetIsNotPredefinedSuiteField(this context : DependentPropertyEvalContext) : string -> bool
+    {
+      value => !ToTdlContext(context).PredefinedSuiteFields.Contains(value)
+    }
+
     public GetDeploymentTypeSymbol(this context : DependentPropertyEvalContext) : DeploymentTypeSymbol
     {
       ToTdlContext(context).TdlProjectData.DeploymentType
@@ -455,7 +465,7 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
 
-    public MakeDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
+    public MakeDefinitions(definitions : IAstList[Definition], context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]], isIgnore : string -> bool = null) : ImmutableArray[Def]
     {
       def builder = ImmutableArray.CreateBuilder(definitions.Count);
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
@@ -495,7 +505,8 @@ namespace Tdl
       
       def existsDefsNames = HashSet(builder.Select(x => x.Symbol.Name), StringComparer.InvariantCultureIgnoreCase);
       foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr), Name=name) as field when !existsDefsNames.Contains(name) in type.Scope.GetAllSymbols())
-        builder.Add(Def(field, expr));
+        when (isIgnore == null || !isIgnore(name))
+          builder.Add(Def(field, expr));
 
       builder.TryMoveToImmutable()
     }
@@ -610,22 +621,47 @@ namespace Tdl
       }
       FilteringScope(scope, predicate)
     }
-    
-    public MakeParameterScope(scope : Scope) : Scope
+
+    public FilterDeployment(defs : ImmutableArray[Def]) : List[DeploymentSymbol]
     {
-      def internTable = Dictionary(ParameterComparer());
-      def isInternedSymbol(symbol)
+      def deployments = List();
+      foreach (Def(Expr=Expr.Reference(Symbol=DeploymentSymbol as d)) in defs)
+        deployments.Add(d);
+      deployments
+    }
+    
+    public FilterDeploymentDefs(defs : ImmutableArray[Def]) : List[TypedDeclarationSymbol * DeploymentSymbol]
+    {
+      def deployments = List();
+      foreach (Def(Symbol=s, Expr=Expr.Reference(Symbol=DeploymentSymbol as d)) in defs)
+        deployments.Add(s, d);
+      deployments
+    }
+
+    public MakeParameterScope(scope : Scope, predefineds : ImmutableArray[Def]) : ValueOption[Scope]
+    {
+      def deployments = FilterDeployment(predefineds);
+
+      def scopeOpt = MakeAggregateParametersScope(deployments, scope);
+
+      if (scopeOpt is VSome(scope))
       {
-        mutable internedSymbol;
-        if (internTable.TryGetValue(symbol, out internedSymbol))
-          symbol : object == internedSymbol
-        else
+        def internTable = Dictionary(ParameterComparer());
+        def isInternedSymbol(symbol)
         {
-          internTable.Add(symbol, symbol);
-          true
+          mutable internedSymbol;
+          if (internTable.TryGetValue(symbol, out internedSymbol))
+            symbol : object == internedSymbol
+          else
+          {
+            internTable.Add(symbol, symbol);
+            true
+          }
         }
+        VSome(FilteringScope(scope, isInternedSymbol))
       }
-      FilteringScope(scope, isInternedSymbol)
+      else
+        VNone()
     }
     
     public TryMoveToImmutable[T](this builder : ImmutableArray[T].Builder) : ImmutableArray[T]

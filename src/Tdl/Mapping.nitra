@@ -124,7 +124,7 @@ namespace Tdl
         }-> EntityOpt;
         SuiteBody.Platform.Reference -> Platform;
         SuiteBody.Product.Reference  -> Product;
-        SuiteBody.DefDeclarations    -> Definitions;
+        SuiteBody.DefDeclarations    -> AllDefinitions;
         SuiteBody.SuiteStatements    -> Statements;
       }
     | SuiteList        -> Suite.List
@@ -148,7 +148,7 @@ namespace Tdl
         }-> EntityOpt;
         SuiteScenario.Platform.Reference -> Platform;
         SuiteScenario.Product.Reference  -> Product;
-        SuiteScenario.DefDeclarations    -> Definitions;
+        SuiteScenario.DefDeclarations    -> AllDefinitions;
         SuiteScenario.SuiteStatements    -> Statements;
       }
     | External -> External { Name = Name(Location.WithSpan(KwExternal.FromStart()), "external"); ExternalBody.Fields -> Fields; }
@@ -365,17 +365,17 @@ namespace Tdl
 
   map syntax Grammar.DefDeclaration -> Definition
   {
-    Reference -> Reference;
-    DefExpr   -> Expr;
+    | Ordinary   -> Ordinary   { Reference -> Reference; DefExpr -> Expr; }
+    | Predefined -> Predefined { Reference -> Reference; DefExpr -> Expr; }
   }
 
-  map syntax Grammar.DefEnv -> Definition
+  map syntax Grammar.DefEnv -> Definition.Ordinary
   {
     Reference -> Reference;
     DefExpr   -> Expr;
   }
 
-  map syntax Grammar.ParameterCurrying -> Definition
+  map syntax Grammar.ParameterCurrying -> Definition.Ordinary
   {
     Reference -> Reference;
     DefExpr   -> Expr;

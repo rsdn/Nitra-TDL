@@ -16,6 +16,9 @@ namespace Tdl
 {
   public variant Expr
   {
+    public static NotSetValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
+    
+    | NotSet       { }
     | Error        { Location : Nitra.Location; }
     | String       { Value : string; }
     | True         { }
@@ -97,6 +100,7 @@ namespace Tdl
     {
       match (this)
       {
+        | NotSet             => NotSetValue
         | Error              => "<Error>"
         | String(value)      => "@\"" + value.Replace(@"\", @"\\").Replace("\"", @"\""") + '"'
         | True               => "true"
