@@ -240,7 +240,13 @@
       | InputShort = Reference
     }
 
-    syntax DefDeclaration = Reference sm "=" sm DefExpr ";" nl;
+    syntax DefDeclaration
+    {
+      | Ordinary   = !Predicate Reference sm "=" sm DefExpr ";" nl;
+      | Predefined = &Predicate Reference sm "=" sm DefExpr ";" nl;
+
+      void Predicate = "SessionInitializer" s "=";
+    }
     syntax DefEnv         = Reference sm "=" sm DefExpr;
 
     syntax DefExpr

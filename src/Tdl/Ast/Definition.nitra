@@ -9,7 +9,7 @@ namespace Tdl
   /// <summary>
   /// Description of Definition.
   /// </summary>
-  ast Definition : BindableAst
+  abstract ast Definition : BindableAst
   {
   stage 2:
     in DefinitionScope : Scope;
@@ -22,5 +22,8 @@ namespace Tdl
 
     Reference : Reference;
     Expr      : DefExpr;
+
+    | Ordinary   { }
+    | Predefined { }
   }
 }

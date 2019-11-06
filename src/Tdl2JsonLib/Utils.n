@@ -13,6 +13,24 @@ namespace Tdl2Json
 {
   module Utils
   {
+    public Remove[T](this elems : Seq[T], predicate : T -> bool, removedElem : out ValueOption[T]) : Seq[T]
+    {
+      removedElem = VNone();
+      def result = List();
+      foreach (elem in elems)
+      {
+        if (predicate(elem))
+        {
+          when (removedElem is VSome(prev))
+            throw InvalidOperationException($"Duplicate '$removedElem' ($(removedElem.GetType().FullName)) item (previos item: '$prev' ($(prev.GetType().FullName))) in the sequence: ..$elems");
+          removedElem = VSome(elem);
+        }
+        else
+          result.Add(elem);
+      }
+      result
+    }
+
     public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement]) : Hashtable[TKey, TElement]
     {
       ToHashtable(immutableArray, keySelector, elementSelector, EqualityComparer[TKey].Default);

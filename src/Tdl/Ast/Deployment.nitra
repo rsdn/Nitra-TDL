@@ -35,6 +35,8 @@ namespace Tdl
         {
           AggregateParametersScope = EmptyScope.Instance;
           AllDeployments           = ImmutableArray.Empty;
+          SpanClass                = TdlLang.DeploymentSpanClass;
+          IsSameIdentity           = candidate is Tdl.Deployment;
         }
       }
 
@@ -127,7 +129,7 @@ namespace Tdl
         Symbol.BaseDeployment            = BaseDeploymentRef.Symbol;
 
         CurredParameters.Scope           = Scope.UnionWith(context.GetExternalSymbolTable()).HideWith(Symbol.ParameterScope);
-        CurredParameters.DefinitionScope = TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope);
+        CurredParameters.DefinitionScope = await TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope, ImmutableArray.Empty);
         Symbol.ExcludedParams            = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
         Symbol.AggregateParametersScope  = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams).HideWith(Symbol.ParameterScope);
 

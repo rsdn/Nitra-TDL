@@ -316,7 +316,7 @@ namespace Tdl2Json
       def values      = Dictionary();
       for (mutable i; i < deployments.Length; ++i)
       {
-        def selector = string.Join(separator, cases[i].Select(v => v ?? JsonGenerator.ParameterDefaultValue));
+        def selector = string.Join(separator, cases[i].Select(v => v ?? Tdl.Expr.NotSetValue));
         def sequence = CompileSequence(deployments[i], Dictionary(StringComparer.OrdinalIgnoreCase));
         def handler  =
           if (sequence.Length == 1)

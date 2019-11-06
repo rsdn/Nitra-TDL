@@ -28,13 +28,15 @@ scenario S1
 
 suite type SuiteType
 {
-  Deployment SessionInitializer = Deploy1;
+  Deployment SessionInitializer = Deploy5;
+  int Xxx = 42;
 }
 
 suite Suite1 : SuiteType
 {
   platform Platform;
   product Product1;
+  Arg1 = "qqq";
   S1();
 }
 
@@ -42,15 +44,26 @@ suite Suite2 : SuiteType
 {
   platform Platform;
   product Product1;
-  SessionInitializer = Deploy2;
+  SessionInitializer = Deploy5;
+  Arg1 = "www";
+  Name1 = "Product 1";
   S1();
 }
 
-deployment Deploy1(string Arg1 = "ss")
+select deployment Deploy5(Name1)
+{
+  | "Product 1" => Deploy1
+  | not-set     => Deploy4
+}
+
+deployment Deploy4 = Deploy3, Deploy1, Deploy2;
+deployment Deploy3 = Deploy2(Arg1: "x");
+
+deployment Deploy1(string Arg1 = "ss", int Arg2 = 42)
  script "Deploy1.ps1"
 {
 }
-deployment Deploy2(string Arg1 = "ss")
+deployment Deploy2(string Arg1 = "aa")
  script "Deploy2.ps1"
 {
 }
