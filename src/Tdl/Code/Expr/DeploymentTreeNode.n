@@ -2,6 +2,7 @@
 
 using Nemerle;
 using Nemerle.Collections;
+using Nemerle.Extensions;
 using Nemerle.Text;
 using Nemerle.Utility;
 
@@ -11,8 +12,10 @@ using System.Linq;
 
 namespace Tdl
 {
+  [StructuralEquality]
   public variant DeploymentTreeNode
   {
+    [StructuralEquality]
     public variant Reson
     {
       | Cycled { deployment : DeploymentSymbol; }
@@ -35,6 +38,7 @@ namespace Tdl
         }
       }
     }
+
     | Leaf  { variables : Dictionary[string, Tdl.Expr]; deployment : DeploymentSymbol; }
     | Nodes { reson : Reson; nodes : list[DeploymentTreeNode]; }
 

@@ -147,6 +147,9 @@
     <Compile Include="Separators.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SessionActionCompiler.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\CompilerMessagesCheckResult.n">
       <SubType>Code</SubType>
     </Compile>

@@ -1,0 +1,179 @@
+﻿using DotNet;
+
+using Nitra;
+using Nitra.Declarations;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using QuickType;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Tdl;
+
+namespace Tdl2Json
+{
+  internal class SessionActionCompiler
+  {
+    _actionSequenceMap : Hashtable[list[DeploymentTreeNode.Leaf], string] = Hashtable();
+    _actionScriptMap   : Hashtable[DeploymentTreeNode.Leaf, PreSessionScriptAction] = Hashtable();
+    _actionNameMap     : Hashtable[string, int] = Hashtable();
+
+    public GetSessionActionName(action : DeploymentTreeNode, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
+    {
+      def leafs = ToList(action);
+
+      when (leafs.IsEmpty)
+        return null;
+
+      foreach (leaf in leafs)
+        TryAddLeaf(leaf, variables);
+
+      def name = GetOrMakeName(leafs);
+      name
+    }
+
+    private MakeArgValue(p : FormalParameterSymbol, values : Dictionary[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : object
+    {
+      def getPropertyValue(obj : object, prop : Declarations.DeclarationSymbol) : object * ResultKind
+      {
+        | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
+          def res = prod.Defs
+                        .Find(d => d.Symbol.Id == field.Id)
+                        .Map(d => d.Expr.Calc(values, variables, getPropertyValue))
+                        .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
+          res
+
+        | _ => ("unsuported expression", ResultKind.Error)
+      }
+      mutable expr;
+      def calc(expr : Tdl.Expr) : object
+      {
+        match (expr.Calc(values, variables, getPropertyValue))
+        {
+          | (_,     ResultKind.Missing)           => assert(false)
+          | (_,     ResultKind.NotSet)            => Tdl.Expr.NotSetValue
+          | (value, ResultKind.Value)             => value
+          | (value, ResultKind.ExternalParameter) => "#(" + value + ")"
+          | (value, ResultKind.GlobalParameter)   => "$(" + value + ")"
+          | (value, ResultKind.Product)           => value
+          | (value, ResultKind.Error)             => throw NotSupportedException("An error has occurred when calculating '$expression': " + value)
+          | (_,     ResultKind.External)          => throw NotSupportedException("Reference to externals root symbol is not allowed.")
+        }
+      }
+      if (values.TryGetValue(p.Name, out expr))
+        calc(expr)
+      else
+      {
+        match (p.Default)
+        {
+          | None
+          | Error
+          | Overflow               => "<error>"
+          | Null                   => "null"
+          | Number (value, _, _)   => value.ToString()
+          | String (value)         => value.ToString()
+          | Bool   (value)         => value.ToString()
+          | Custom (Tdl.Expr as e) => calc(e)
+          | Custom (value)         => value.ToString()
+          | Single (value)         => value.ToString()
+          | Double (value)         => value.ToString()
+          | Decimal(value)         => value.ToString()
+        }
+      }
+    }
+
+    public Compile() : Dictionary[string, PreSessionActionBase]
+    {
+      def result = Dictionary();
+
+      // Load leafs to _actionSequenceMap. Some leafs can be allredy added.
+      foreach (leafs in _actionSequenceMap.Keys)
+        foreach (leaf in leafs)
+          _ = GetOrMakeName([leaf]);
+
+      foreach (kw in _actionSequenceMap)
+      {
+        match (kw.Key)
+        {
+          | [] | null         => assert(false);
+          | [one]             => result.Add(kw.Value, _actionScriptMap[one]);
+          | (_ :: _) as nodes => result.Add(kw.Value, MakeGroup(nodes));
+        }
+      }
+
+      result
+    }
+
+    private TryAddLeaf(leaf : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : void
+    {
+      when (_actionScriptMap.ContainsKey(leaf))
+        return;
+
+      def action = MakePreSessionScriptAction(leaf, variables);
+      _actionScriptMap.Add(leaf, action);
+      _ = GetOrMakeName([leaf]);
+    }
+
+    private MakeGroup(script : list[DeploymentTreeNode.Leaf]) : PreSessionActionBase
+    {
+      def names = script.MapToArray(x => GetOrMakeName([x]));
+      PreSessionActionGroup() <-
+      {
+        Scripts = names;
+      }
+    }
+
+    private MakePreSessionScriptAction(scriptNode : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : PreSessionScriptAction
+    {
+      assert(scriptNode.deployment is Deployment.ScriptSymbol);
+      def script = scriptNode.deployment :> Deployment.ScriptSymbol;
+      assert(script.ScriptReference is ScriptReference.FilePath);
+      def path = (script.ScriptReference :> ScriptReference.FilePath).Path.Value;
+      def args = Hashtable();
+      foreach (p in script.Parameters)
+        args.Add(p.Name, MakeArgValue(p, scriptNode.variables, variables));
+
+      def result =
+        PreSessionScriptAction() <-
+        {
+          ScriptPath = path;
+          ScriptArgs = args;
+          ReturnValue = script.Expected.ToNullable();
+        };
+      result
+    }
+
+    private ToList(action : DeploymentTreeNode) : list[DeploymentTreeNode.Leaf]
+    {
+      | DeploymentTreeNode.Leaf as leaf => [leaf]
+      | DeploymentTreeNode.Nodes(Normal, nodes) when nodes.All(_ is DeploymentTreeNode.Leaf) =>
+        nodes.OfType().Filter(n => n.deployment is Deployment.ScriptSymbol
+                               && (n.deployment :> Deployment.ScriptSymbol).ScriptReference is ScriptReference.FilePath)
+      | DeploymentTreeNode.Nodes => []
+    }
+
+    private GetOrMakeName(seq : list[DeploymentTreeNode.Leaf]) : string
+    {
+      mutable name;
+      unless (_actionSequenceMap.TryGetValue(seq, out name))
+      {
+        def baseName = $<#..$(seq; "-"; x => x.deployment.Name)#>;
+        mutable counter;
+        _ = _actionNameMap.TryGetValue(baseName, out counter);
+        counter++;
+        name = $"$baseName-$counter";
+        _actionSequenceMap.Add(seq, name);
+        _actionNameMap[baseName] = counter;
+      }
+      name
+    }
+  } // class
+} // namespace

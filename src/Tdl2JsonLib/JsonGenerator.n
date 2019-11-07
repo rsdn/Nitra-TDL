@@ -181,8 +181,9 @@ namespace Tdl2Json
       when (string.IsNullOrEmpty(jsonSchemaType))
         jsonSchemaType = if (IsExperimental) "dev" else "prod";
 
-      def compiler    = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
-      def symbols     = context.RootNamespace.MemberTable.GetAllSymbols().ToList();
+      def sessionActionCompiler = SessionActionCompiler();
+      def compiler              = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
+      def symbols               = context.RootNamespace.MemberTable.GetAllSymbols().ToList();
 
       mutable scenarioTrigger;
       when (!string.IsNullOrEmpty(diffFile) && !string.IsNullOrEmpty(repositoryRoot))
@@ -211,8 +212,8 @@ namespace Tdl2Json
       {
         | ProductSymbol         as s => products .Add(s.Name, GenerateProduct(s, platformNameSet))
         | EntitySymbol          as s => entities .Add(s.Name, GenerateEntity(s))
-        | Suite.DefSymbol       as s => suites   .Add(s.Name, GenerateSuite(s, scenarioTrigger))
-        | Suite.GeneratorSymbol as s => GenerateSuiteGenerator(s, suites, suiteGroups, scenarioTrigger)
+        | Suite.DefSymbol       as s => suites   .Add(s.Name, GenerateSuite(s, scenarioTrigger, sessionActionCompiler))
+        | Suite.GeneratorSymbol as s => GenerateSuiteGenerator(s, suites, suiteGroups, scenarioTrigger, sessionActionCompiler)
         | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
         | ScenarioSymbol        as s when IsScenarioTriggered(s, scenarioTrigger) =>
           GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, compiler, scenarioTrigger, scenarios)
@@ -241,16 +242,17 @@ namespace Tdl2Json
 
       def config = Root() <-
       {
-        Version       = JsonVersion;
-        Schema        = $<#http://auto-reports.avp.ru/starter-schema/v$JsonVersion/$jsonSchemaType/schema.json#>;
-        Deployments   = compiler.GetResult();
-        Products      = products;
-        Platforms     = platforms;
-        Suites        = suites;
-        TestScenarios = scenarios;
-        SuiteGroups   = if (suiteGroups.Count == 0) null else suiteGroups;
-        TestEntities  = entities;
-        DefaultValues = if (defaultValues.Count == 0) null else defaultValues;
+        Version           = JsonVersion;
+        Schema            = $<#http://auto-reports.avp.ru/starter-schema/v$JsonVersion/$jsonSchemaType/schema.json#>;
+        Deployments       = compiler.GetResult();
+        Products          = products;
+        Platforms         = platforms;
+        Suites            = suites;
+        TestScenarios     = scenarios;
+        SuiteGroups       = if (suiteGroups.Count == 0) null else suiteGroups;
+        TestEntities      = entities;
+        DefaultValues     = if (defaultValues.Count == 0) null else defaultValues;
+        PreSessionActions = sessionActionCompiler.Compile();
       };
 
       def settings = ConverterSettings.Settings <- Formatting = Formatting.Indented;
@@ -268,9 +270,8 @@ namespace Tdl2Json
       | _                         => ThrowNotSupportedSymbol(platformSymbol)
     }
 
-    private MakeDefs(product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
+    private MakeDefs(defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
     {
-
       def defs2 = CollectDefs(defs, variables);
       foreach (d when !defs2.ContainsKey(d.Name) in defaults)
         defs2.Add(d.Name, Tdl.Expr.NotSetValue);
@@ -938,8 +939,13 @@ namespace Tdl2Json
       suiteGroups.Add(suiteSymbol.Name, SuiteGroup() <- { Suites = suites })
     }
 
-    private GenerateSuiteGenerator(gen : Suite.GeneratorSymbol, suites : IDictionary[string, TestSuite], suiteGroups : IDictionary[string, SuiteGroup],
-      scenarioTrigger : ScenarioTriggerProcessor) : void
+    private GenerateSuiteGenerator(
+      gen                   : Suite.GeneratorSymbol,
+      suites                : IDictionary[string, TestSuite],
+      suiteGroups           : IDictionary[string, SuiteGroup],
+      scenarioTrigger       : ScenarioTriggerProcessor,
+      sessionActionCompiler : SessionActionCompiler
+    ) : void
     {
       def nameBase = gen.Name;
       def names = List();
@@ -956,7 +962,7 @@ namespace Tdl2Json
         def platform   = TryResolveVar(dic, gen.Platform) : PlatformSymbol;
         def product    = TryResolveVar(dic, gen.Product)  : ProductSymbol;
         def entityOpt  = if (gen.EntityOpt.HasValue) (TryResolveVar(dic, gen.EntityOpt.Value)  : EntitySymbol).Name else null;
-        def defs       = MakeDefs(product, gen.Defs, gen.Predefineds, gen.DefaultDefs, dic);
+        def defs       = MakeDefs(gen.Defs, gen.DefaultDefs, dic);
 
         def suite = TestSuite() <-
         {
@@ -974,9 +980,10 @@ namespace Tdl2Json
       suiteGroups.Add(nameBase, SuiteGroup() <- { Suites = names; });
     }
 
-    private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : ScenarioTriggerProcessor) : TestSuite
+    private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : ScenarioTriggerProcessor, sessionActionCompiler : SessionActionCompiler) : TestSuite
     {
-      def defs = MakeDefs(suiteSymbol.Product, suiteSymbol.Defs, suiteSymbol.Predefineds, suiteSymbol.DefaultDefs);
+      def defs                  = MakeDefs(suiteSymbol.Defs, suiteSymbol.DefaultDefs);
+      def sessionInitializerOpt = if (suiteSymbol.SessionInitializer is VSome(init)) sessionActionCompiler.GetSessionActionName(init, variables=null) else null;
       def entityOpt = suiteSymbol.EntityOpt;
       TestSuite() <-
       {
@@ -986,6 +993,7 @@ namespace Tdl2Json
         Parameters                 = defs;
         TestEntity                 = if (entityOpt.HasValue) entityOpt.Value.Name else null;
         DashboardVisibleParameters = GetDashboardVisibleParameters(suiteSymbol.Defs);
+        PreSessionAction           = sessionInitializerOpt;
       }
     }
 

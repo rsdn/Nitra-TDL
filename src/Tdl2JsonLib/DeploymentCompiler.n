@@ -275,7 +275,7 @@ namespace Tdl2Json
       def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
       def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
-      def deploymentModel = QuickType.Deployment() <- 
+      def deploymentModel = QuickType.Deployment() <-
       {
         Type           = QuickType.TypeEnum.Script;
         ReturnValue    = if (script.Expected.HasValue)    script.Expected.Value  else null;
@@ -334,9 +334,9 @@ namespace Tdl2Json
         values.Add(selector, handler)
       }
 
-      _deployments.Add(sel.Name, 
-        QuickType.Deployment() <- 
-        { 
+      _deployments.Add(sel.Name,
+        QuickType.Deployment() <-
+        {
           Type      = QuickType.TypeEnum.Select;
           Condition = condition;
           Values    = values;
@@ -389,7 +389,7 @@ namespace Tdl2Json
     {
       when (deployments.Length == 1 && (deployments[0].Parameters == null || deployments[0].Parameters.Count == 0))
         return deployments;
-      
+
       mutable compositeDeploymentName;
       def key = deployments.ToNList();
       unless (_compositeDeployments.TryGetValue(key, out compositeDeploymentName))
@@ -407,7 +407,7 @@ namespace Tdl2Json
           counter++;
           compositeDeploymentName = prototypeName + "-" + counter;
         }
-        
+
         _compositeDeployments.Add(key, compositeDeploymentName);
         def deployment = QuickType.Deployment() <-
         {

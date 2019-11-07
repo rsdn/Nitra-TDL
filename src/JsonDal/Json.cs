@@ -84,6 +84,9 @@ namespace QuickType
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public IDictionary<string, TestEntity> TestEntities { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, PreSessionActionBase> PreSessionActions { get; set; }
     }
 
     /// <summary>
@@ -207,6 +210,9 @@ namespace QuickType
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public List<string> DashboardVisibleParameters { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string PreSessionAction { get; set; }
     }
 
     public partial class TestGroup
@@ -360,7 +366,7 @@ namespace QuickType
         {
             if (other == null || !string.Equals(DeploymentName, other.DeploymentName))
                 return false;
-            
+
             return Parameters.DictionaryEquals(other.Parameters, StringComparison.InvariantCultureIgnoreCase);
         }
 
