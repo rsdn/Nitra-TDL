@@ -1,0 +1,227 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+using Nitra.ProjectSystem;
+using Nitra.Runtime.GraphUtils;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+
+namespace Tdl
+{
+  public module Api
+  {
+    public SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedDeclarationSymbol, Tdl.Expr]]
+    {
+      if (index < froms.Length)
+      {
+        def from = froms[index];
+        foreach (dictionary in SubstituteVariables(froms, index + 1))
+        {
+          foreach (expr in from.Elems.GetExprList())
+          {
+            | Expr.Tuple as t =>
+              foreach (var in from.Vars with i)
+                dictionary[var] = t.Elems[i];
+              yield dictionary;
+
+            | _ =>
+              assert2(from.Vars.Length == 1);
+              def var = from.Vars[0];
+              dictionary[var] = expr;
+              yield dictionary;
+          }
+        }
+      }
+      else
+        yield Dictionary();
+    }
+
+    public MakeDeploymentsTree(root : DeploymentSymbol, product : ProductSymbol, defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : ValueOption[DeploymentTreeNode]
+    {
+      def vars =
+        if (product is Product.DefSymbol as productDef)
+          if (productDef.IsDefsEvaluated)
+            productDef.Defs.ToHashtable(p => p.Symbol.Name, p => p.Expr) // добавлять как при генерации кода для продуктов!
+          else
+            null
+        else
+          Hashtable();
+
+      when (vars == null)
+        return VNone();
+
+      foreach (d in defs)
+      {
+        def name = d.Symbol.Name;
+        when (vars.ContainsKey(name))
+          return VNone();
+        vars[name] = d.Expr;
+      }
+
+      foreach (d when !vars.ContainsKey(d.Name) in defaults)
+        vars.Add(d.Name, Tdl.Expr.NotSet());
+
+
+      VSome(MakeDeploymentsTree(ImmutableHashSet.Empty, root, vars, variables))
+    }
+
+    private MakeDeploymentsTree(visited : ImmutableHashSet[DeploymentSymbol], deployment : DeploymentSymbol, defs : Hashtable[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentTreeNode
+    {
+      def processList(visited : ImmutableHashSet[DeploymentSymbol], reson : DeploymentTreeNode.Reson, deployments : ImmutableArray[DeploymentSymbol]) : DeploymentTreeNode
+      {
+          def nodes = List();
+          foreach (d in deployments)
+          {
+            def res = MakeDeploymentsTree(visited, d, defs, variables);
+            match (res)
+            {
+              | Nodes(DeploymentTreeNode.Reson.Normal, _) as xs => nodes.AddRange(xs.nodes);
+              | Nodes
+              | Leaf => nodes.Add(res);
+            }
+          }
+          if (nodes.Count == 1)
+            nodes[0]
+          else
+            DeploymentTreeNode.Nodes(reson, nodes.ToNList())
+      }
+      match (deployment)
+      {
+        | Deployment.EmptySymbol | Deployment.ScriptSymbol | Deployment.CodeSymbol => DeploymentTreeNode.Leaf(defs, deployment)
+        | Deployment.SetSymbol as ld =>
+          when (visited.Contains(deployment))
+            return DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Cycled(deployment), []);
+          processList(visited.Add(deployment), DeploymentTreeNode.Reson.Normal(), ld.Deployments)
+
+        | Deployment.CurryingSymbol as curry =>
+          when (visited.Contains(deployment))
+            return DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Cycled(deployment), []);
+          def overriddenDefs = Hashtable(defs);
+          foreach (overridden in curry.ParameterValues)
+            overriddenDefs[overridden.Symbol.Name] = overridden.Expr;
+          MakeDeploymentsTree(visited.Add(curry), curry.BaseDeployment, overriddenDefs, variables)
+
+        | Deployment.SelectSymbol as sel =>
+          when (visited.Contains(deployment))
+            return DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Cycled(deployment), []);
+          def visited2 = visited.Add(sel);
+          def defs = defs;
+          def getPropertyValue(obj : object, prop : Declarations.DeclarationSymbol) : object * ResultKind
+          {
+            | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
+              def res = prod.Defs
+                            .Find(d => d.Symbol.Id == field.Id)
+                            .Map(d => d.Expr.Calc(defs, variables, getPropertyValue))
+                            .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
+              res
+
+            | _ => ("unsuported expression", ResultKind.Error)
+          }
+          def erroneousParameters = List();
+          def valueParts = List();
+          foreach (p in sel.Parameters with parameterIndex)
+          {
+            mutable expr;
+            if (defs.TryGetValue(p.Name, out expr))
+            {
+              match (expr.Calc(defs, variables, getPropertyValue))
+              {
+                | (_,     ResultKind.Missing) => assert(false)
+                | (value, ResultKind.Value)   => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));
+                | (_,     ResultKind.NotSet)  => valueParts.Add(null);
+                | (value, ResultKind.ExternalParameter) => erroneousParameters.Add((p, ResultKind.ExternalParameter, value));
+                | (value, ResultKind.Error as kind)
+                | (value, ResultKind.GlobalParameter as kind)
+                | (value, ResultKind.Product as kind)
+                | (value, ResultKind.External as kind) => erroneousParameters.Add((p, kind, value));
+              }
+            }
+            else
+              erroneousParameters.Add((p, ResultKind.Missing, null));
+          }
+          when (erroneousParameters.Count == 0)
+          {
+            foreach (case in sel.Cases with caseIndex)
+            {
+              when (case.Length != valueParts.Count)
+              {
+                // Report error
+                break;
+              }
+              mutable isMatch;
+              foreach (pattern when string.Equals(pattern, valueParts[i], StringComparison.OrdinalIgnoreCase) in case with i)
+                isMatch = true;
+              when (isMatch)
+                return processList(visited2, DeploymentTreeNode.Reson.Normal(), sel.Deployments[caseIndex]);
+            }
+          }
+          // Report error
+          DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Select(erroneousParameters.ToNList(), sel), sel.Deployments.Map(processList(visited2, DeploymentTreeNode.Reson.Normal(),_)))
+        | _ => assert(false)
+      }
+    }
+
+    internal TryMakeSessionInitializer(ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
+    {
+      TryMakeSessionAction("SessionInitializer", ast, context, product, defs, predefineds, defaults, variables)
+    }
+
+    private TryMakeSessionAction(actionName : string, ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
+    {
+      try
+      {
+        def sessionActionOpt = predefineds.Find(p => p.Symbol.Name == actionName);
+        when (sessionActionOpt is Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))))
+        {
+          def reportedErrors = HashSet();
+          def reportError(msg : string) : void
+          {
+            when (reportedErrors.Add(msg))
+              ast.Error(context, msg);
+          }
+          def loop(node : DeploymentTreeNode) : void
+          {
+            | Leaf(vars, Deployment.ScriptSymbol as script) =>
+              // TODO: Add checks for unsupported features.
+              foreach (p when !vars.ContainsKey(p.Name) in script.Parameters)
+                when (p.Default is DefaultValue.None)
+                  reportError($"'$(p.Name)' parameter of '$(script.Name)' deployment used in the $actionName is not set and does not have a default value.");
+
+            | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.Kind).");
+            | Nodes(Normal, nodes) =>
+              foreach (node in nodes)
+                loop(node);
+
+            | Nodes(reson, nodes)  =>
+              reportError($"Unable to use '$(d.Name)' in '$actionName' because $reson.");
+              foreach (node in nodes)
+                loop(node);
+          }
+          def treeOpt = MakeDeploymentsTree(d, product, defs, defaults, variables);
+          when (treeOpt is VSome(tree))
+          {
+            loop(tree);
+            return VSome(tree);
+          }
+        }
+        VNone()
+      }
+      catch VNone()
+    }
+  } // module
+} // namespace

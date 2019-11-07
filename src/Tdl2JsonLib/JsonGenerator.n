@@ -354,32 +354,6 @@ namespace Tdl2Json
       (assemblyName, methodName)
     }
 
-    private SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedDeclarationSymbol, Tdl.Expr]]
-    {
-      if (index < froms.Length)
-      {
-        def from = froms[index];
-        foreach (dictionary in SubstituteVariables(froms, index + 1))
-        {
-          foreach (expr in from.Elems.GetExprList())
-          {
-            | Expr.Tuple as t =>
-              foreach (var in from.Vars with i)
-                dictionary[var] = t.Elems[i];
-              yield dictionary;
-
-            | _ =>
-              assert2(from.Vars.Length == 1);
-              def var = from.Vars[0];
-              dictionary[var] = expr;
-              yield dictionary;
-          }
-        }
-      }
-      else
-        yield Dictionary();
-    }
-
     TryResolveVar[T](dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
@@ -705,7 +679,7 @@ namespace Tdl2Json
           }
           mutable uniqueId = Guid.Parse(GetFixedString(g, "UniqueId"));
           def names = List();
-          foreach (dic in SubstituteVariables(g.Froms, 0))
+          foreach (dic in Api.SubstituteVariables(g.Froms, 0))
           {
             counter++;
             def name = scenarioSymbol.Name + "-" + counter;
@@ -950,7 +924,7 @@ namespace Tdl2Json
       def nameBase = gen.Name;
       def names = List();
 
-      foreach (dic in SubstituteVariables(gen.Froms, 0))
+      foreach (dic in Api.SubstituteVariables(gen.Froms, 0))
       {
         def toString(e : Tdl.Expr) : string
         {

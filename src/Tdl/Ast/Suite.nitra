@@ -64,7 +64,7 @@ namespace Tdl
         EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
         Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
 
-        Symbol.SessionInitializer   = TdlUtils.TryMakeSessionInitializer(Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
+        Symbol.SessionInitializer   = Api.TryMakeSessionInitializer(Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
 
         SetUsed(Symbol.Statements);
         ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);

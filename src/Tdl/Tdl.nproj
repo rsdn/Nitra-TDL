@@ -191,6 +191,9 @@
     <Compile Include="Code\Expr\ResultKind.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\Api.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\UntypedDef.n">
       <SubType>Code</SubType>
     </Compile>
