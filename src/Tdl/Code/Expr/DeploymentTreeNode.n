@@ -3,16 +3,17 @@
 using Nemerle;
 using Nemerle.Collections;
 using Nemerle.Extensions;
+using Nemerle.Imperative;
 using Nemerle.Text;
 using Nemerle.Utility;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Tdl
 {
-  [StructuralEquality]
   public variant DeploymentTreeNode
   {
     [StructuralEquality]
@@ -39,8 +40,71 @@ namespace Tdl
       }
     }
 
-    | Leaf  { variables : Dictionary[string, Tdl.Expr]; deployment : DeploymentSymbol; }
-    | Nodes { reson : Reson; nodes : list[DeploymentTreeNode]; }
+    | Nodes
+      {
+        reson : Reson;
+        nodes : list[DeploymentTreeNode];
+
+        [OverrideObjectEquals]
+        public Equals(other : Nodes) : bool
+        {
+          reson.Equals(other.reson) && nodes.Equals(other.nodes)
+        }
+
+        public override GetHashCode() : int
+        {
+          reson.GetHashCode() ^ nodes.GetHashCode()
+        }
+      }
+
+    | Leaf
+      {
+        variables : Dictionary[string, Tdl.Expr];
+        deployment : DeploymentSymbol;
+
+        public Parameters : ImmutableArray[FormalParameterSymbol]
+        {
+          get
+          {
+            if (deployment is Deployment.ScriptSymbol as d)
+              d.Parameters
+            else
+              ImmutableArray.Empty
+          }
+        }
+
+        [OverrideObjectEquals]
+        public Equals(other : Leaf) : bool
+        {
+          when (deployment : object != other.deployment)
+            return false;
+
+          foreach (p in Parameters)
+          {
+            def name = p.Name;
+            mutable var1;
+            mutable var2;
+            _ = variables.TryGetValue(name, out var1);
+            _ = other.variables.TryGetValue(name, out var2);
+            unless (object.Equals(var1, var2))
+              return false;
+          }
+
+          true
+        }
+
+        public override GetHashCode() : int
+        {
+          mutable hash = deployment.GetHashCode();
+          mutable var1;
+          foreach (p in Parameters)
+            if (variables.TryGetValue(p.Name, out var1))
+              hash ^= var1?.GetHashCode();
+            else
+              hash ^= p.Default.GetHashCode();
+          hash
+        }
+      }
 
     public override ToString() : string
     {
