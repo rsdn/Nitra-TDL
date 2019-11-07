@@ -102,7 +102,7 @@ namespace Tdl
       def processList(visited : ImmutableHashSet[DeploymentSymbol], reson : DeploymentTreeNode.Reson, deployments : ImmutableArray[DeploymentSymbol]) : DeploymentTreeNode
       {
           def nodes = List();
-          foreach (d in deployments)
+          foreach (d when !(d is Deployment.EmptySymbol) in deployments)
           {
             def res = MakeDeploymentsTree(visited, d, defs, variables);
             match (res)
