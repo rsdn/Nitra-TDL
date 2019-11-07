@@ -913,6 +913,24 @@ namespace Tdl2Json
       suiteGroups.Add(suiteSymbol.Name, SuiteGroup() <- { Suites = suites })
     }
 
+    private TryGenerateAction(
+      actionName : string,
+      gen : Suite.GeneratorSymbol,
+      product : ProductSymbol,
+      variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
+      sessionActionCompiler : SessionActionCompiler
+    ) : string
+    {
+      def sessionActionOpt = gen.Predefineds.Find(p => p.Symbol.Name == actionName);
+      when (sessionActionOpt is Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))))
+      {
+        def resultOpt = Api.MakeDeploymentsTree(d, product, gen.Defs, gen.DefaultDefs, variables);
+        when (resultOpt is VSome(tree))
+          return sessionActionCompiler.GetSessionActionName(tree, variables)
+      }
+      null
+    }
+
     private GenerateSuiteGenerator(
       gen                   : Suite.GeneratorSymbol,
       suites                : IDictionary[string, TestSuite],
@@ -931,12 +949,13 @@ namespace Tdl2Json
           | String as s => s.Value
           | _ => e.ToString()
         }
-        def name = $<#$nameBase-..$(dic.Values; "-"; toString)#>;
+        def name           = $<#$nameBase-..$(dic.Values; "-"; toString)#>;
         names.Add(name);
-        def platform   = TryResolveVar(dic, gen.Platform) : PlatformSymbol;
-        def product    = TryResolveVar(dic, gen.Product)  : ProductSymbol;
-        def entityOpt  = if (gen.EntityOpt.HasValue) (TryResolveVar(dic, gen.EntityOpt.Value)  : EntitySymbol).Name else null;
-        def defs       = MakeDefs(gen.Defs, gen.DefaultDefs, dic);
+        def platform       = TryResolveVar(dic, gen.Platform) : PlatformSymbol;
+        def product        = TryResolveVar(dic, gen.Product)  : ProductSymbol;
+        def entityOpt      = if (gen.EntityOpt.HasValue) (TryResolveVar(dic, gen.EntityOpt.Value)  : EntitySymbol).Name else null;
+        def defs           = MakeDefs(gen.Defs, gen.DefaultDefs, dic);
+        def sessionInitOpt = TryGenerateAction("SessionInitializer", gen, product, dic, sessionActionCompiler);
 
         def suite = TestSuite() <-
         {
@@ -946,6 +965,7 @@ namespace Tdl2Json
           Parameters                 = defs;
           TestEntity                 = entityOpt;
           DashboardVisibleParameters = GetDashboardVisibleParameters(gen.Defs);
+          PreSessionAction           = sessionInitOpt;
         };
 
         suites.Add(name, suite);

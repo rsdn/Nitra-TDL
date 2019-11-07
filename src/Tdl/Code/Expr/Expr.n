@@ -2,6 +2,7 @@
 
 using Nemerle;
 using Nemerle.Collections;
+using Nemerle.Extensions;
 using Nemerle.Text;
 using Nemerle.Utility;
 
@@ -15,6 +16,7 @@ using System.Linq;
 
 namespace Tdl
 {
+  [StructuralEquality]
   public variant Expr
   {
     public static NotSetValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
