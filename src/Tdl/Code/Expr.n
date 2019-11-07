@@ -17,7 +17,7 @@ namespace Tdl
   public variant Expr
   {
     public static NotSetValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
-    
+
     | NotSet       { }
     | Error        { Location : Nitra.Location; }
     | String       { Value : string; }
@@ -74,7 +74,7 @@ namespace Tdl
         | _ => assert(false, $"Non value extression $(GetType().FullName)");
       }
     }
-    
+
     //public GetAllSymbols() : Seq[TypedDeclarationSymbol]
     //{
     //  def result = List();

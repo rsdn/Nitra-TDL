@@ -125,11 +125,11 @@ namespace Tdl2Json
       transformatorOutput : string) : TransformationContext
     {
       TdlTypingSettings.IsMethodTypingEnabled = isMethodTypingEnabled;
-      
+
       def commentBag     = if (mode == CompilerMode.Compile) null else CommentBag();
       def solution       = FsSolution();
-      def project        = FsProject(solution, 
-                                     directory, 
+      def project        = FsProject(solution,
+                                     directory,
                                      files.Map(FsFileWithId(_, TdlLang.Instance, commentBag)),
                                      StandardLibraries.Concat(refs.Select(FileLibReference)).ToArray());
       def stopwatch      = Stopwatch.StartNew();
@@ -267,10 +267,10 @@ namespace Tdl2Json
       | Platform.SetSymbol as Set => PlatformValue() <- { StringArray = Set.Platforms.Select(_.Name).ToArray(); }
       | _                         => ThrowNotSupportedSymbol(platformSymbol)
     }
-      
+
     private MakeDefs(product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
     {
-     
+
       def defs2 = CollectDefs(defs, variables);
       foreach (d when !defs2.ContainsKey(d.Name) in defaults)
         defs2.Add(d.Name, Tdl.Expr.NotSetValue);
@@ -287,9 +287,9 @@ namespace Tdl2Json
       defs2
     }
 
-    private MakeDeploymentsTree(root : DeploymentSymbol, product : ProductSymbol, defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentNode
+    private MakeDeploymentsTree(root : DeploymentSymbol, product : ProductSymbol, defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentTreeNode
     {
-      def vars = 
+      def vars =
       if (product is Product.DefSymbol as productDef)
         productDef.Defs.ToHashtable(p => p.Symbol.Name, p => p.Expr) // добавлять как при генерации кода для продуктов!
       else
@@ -307,15 +307,37 @@ namespace Tdl2Json
 
       foreach (d when !vars.ContainsKey(d.Name) in defaults)
         vars.Add(d.Name, Tdl.Expr.NotSet());
-      
+
 
       MakeDeploymentsTree(root, vars, variables)
     }
 
-    variant DeploymentNode
+    variant DeploymentTreeNode
     {
+      public variant Reson
+      {
+        | Cycled { deployment : DeploymentSymbol; }
+        | Normal { }
+        | Select { erroneousParameters : list[FormalParameterSymbol * ResultKind * object]; deployment : Deployment.SelectSymbol; }
+
+        public override ToString() : string
+        {
+          match (this)
+          {
+            | Cycled as x => $"«The $(x.deployment.Name) deployment is cycled»"
+            | Normal      => "Normal"
+            | Select as x =>
+              def argToString(p : FormalParameterSymbol, kind : ResultKind, value : object) : string
+              {
+                $"$(p.Name) with $kind ($value)"
+              }
+              def reson = if (x.erroneousParameters.IsEmpty) "no match any case" else $<#has arguments: ..$(x.erroneousParameters; ", "; argToString)#>;
+              $"«The $(x.deployment.Name) select deployment $reson»"
+          }
+        }
+      }
       | Leaf  { variables : Dictionary[string, Tdl.Expr]; deployment : DeploymentSymbol; }
-      | Nodes { nodes      : list[DeploymentNode]; }
+      | Nodes { reson : Reson; nodes : list[DeploymentTreeNode]; }
 
       public override ToString() : string
       {
@@ -331,8 +353,8 @@ namespace Tdl2Json
               {
                 def toString(defaultValue : DotNet.DefaultValue) : string
                 {
-                  | None  
-                  | Error 
+                  | None
+                  | Error
                   | Overflow             => "<error>"
                   | Null                 => "null"
                   | Number (value, _, _) => value.ToString()
@@ -355,14 +377,15 @@ namespace Tdl2Json
           | Leaf(vars, Deployment.ScriptSymbol as d) => makeString(vars, d)
           | Leaf(vars, Deployment.CodeSymbol as d)   => makeString(vars, d)
           | Leaf                                     => "Error. Unsupported type: Leaf($deployment)"
-          | Nodes(nodes)                             => $"..$nodes"
+          | Nodes(Reson.Normal, nodes)               => $"..$nodes"
+          | Nodes(reson, _)                          => reson.ToString()
         }
       }
     }
-    
-    private MakeDeploymentsTree(deployment : DeploymentSymbol, defs : Hashtable[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentNode
+
+    private MakeDeploymentsTree(deployment : DeploymentSymbol, defs : Hashtable[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentTreeNode
     {
-      def processList(deployments : ImmutableArray[DeploymentSymbol]) : DeploymentNode
+      def processList(reson : DeploymentTreeNode.Reson, deployments : ImmutableArray[DeploymentSymbol]) : DeploymentTreeNode
       {
           def nodes = List();
           foreach (d in deployments)
@@ -370,63 +393,62 @@ namespace Tdl2Json
             def res = MakeDeploymentsTree(d, defs, variables);
             match (res)
             {
-              | Leaf  as x  => nodes.Add(x);
-              | Nodes as xs => nodes.AddRange(xs.nodes);
+              | Nodes(DeploymentTreeNode.Reson.Normal, _) as xs => nodes.AddRange(xs.nodes);
+              | Nodes
+              | Leaf => nodes.Add(res);
             }
           }
           if (nodes.Count == 1)
             nodes[0]
           else
-            DeploymentNode.Nodes(nodes.ToNList())
+            DeploymentTreeNode.Nodes(reson, nodes.ToNList())
       }
       match (deployment)
       {
-        | Deployment.EmptySymbol | Deployment.ScriptSymbol | Deployment.CodeSymbol => DeploymentNode.Leaf(defs, deployment)
-        | Deployment.SetSymbol as ld => processList(ld.Deployments)
-        | Deployment.CurryingSymbol as cd =>
+        | Deployment.EmptySymbol | Deployment.ScriptSymbol | Deployment.CodeSymbol => DeploymentTreeNode.Leaf(defs, deployment)
+        | Deployment.SetSymbol as ld => processList(DeploymentTreeNode.Reson.Normal(), ld.Deployments)
+        | Deployment.CurryingSymbol as curry =>
           def overriddenDefs = Hashtable(defs);
-          foreach (overridden in cd.ParameterValues)
+          foreach (overridden in curry.ParameterValues)
             overriddenDefs[overridden.Symbol.Name] = overridden.Expr;
-          MakeDeploymentsTree(cd.BaseDeployment, overriddenDefs, variables)
+          MakeDeploymentsTree(curry.BaseDeployment, overriddenDefs, variables)
 
         | Deployment.SelectSymbol as sel =>
-          mutable isErrorFound;
           def defs = defs;
-          def getPropertyValue(obj : object, prop : Declarations.DeclarationSymbol) : object * Expressions.ObjectType
+          def getPropertyValue(obj : object, prop : Declarations.DeclarationSymbol) : object * ResultKind
           {
             | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
               def res = prod.Defs
                             .Find(d => d.Symbol.Id == field.Id)
                             .Map(d => Expressions.Calc(d.Expr, defs, variables, getPropertyValue))
-                            .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", Expressions.ObjectType.Error));
+                            .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
               res
-            
-            | _ => ("unsuported expression", Expressions.ObjectType.Error)
+
+            | _ => ("unsuported expression", ResultKind.Error)
           }
+          def erroneousParameters = List();
           def valueParts = List();
-          foreach (p in sel.Parameters)
+          foreach (p in sel.Parameters with parameterIndex)
           {
             mutable expr;
             if (defs.TryGetValue(p.Name, out expr))
             {
               match (Expressions.Calc(expr, defs, variables, getPropertyValue))
               {
-                | (value,  Expressions.ObjectType.Value)  => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));
-                | (_,      Expressions.ObjectType.NotSet) => valueParts.Add(null);
-                | (_value, Expressions.ObjectType.ExternalParameter)
-                | (_value, Expressions.ObjectType.Error)
-                | (_value, Expressions.ObjectType.GlobalParameter)
-                | (_value, Expressions.ObjectType.Product)
-                | (_value, Expressions.ObjectType.External) => isErrorFound = true; // Report error
+                | (_,     ResultKind.Missing) => assert(false)
+                | (value, ResultKind.Value)   => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));
+                | (_,     ResultKind.NotSet)  => valueParts.Add(null);
+                | (value, ResultKind.ExternalParameter) => erroneousParameters.Add((p, ResultKind.ExternalParameter, value));
+                | (value, ResultKind.Error as kind)
+                | (value, ResultKind.GlobalParameter as kind)
+                | (value, ResultKind.Product as kind)
+                | (value, ResultKind.External as kind) => erroneousParameters.Add((p, kind, value));
               }
             }
             else
-            {
-              // Report  error
-              isErrorFound = true;
-            }
+              erroneousParameters.Add((p, ResultKind.Missing, null));
           }
-          unless (isErrorFound)
+          when (erroneousParameters.Count == 0)
           {
             foreach (case in sel.Cases with caseIndex)
             {
@@ -439,11 +461,11 @@ namespace Tdl2Json
               foreach (pattern when string.Equals(pattern, valueParts[i], StringComparison.OrdinalIgnoreCase) in case with i)
                 isMatch = true;
               when (isMatch)
-                return processList(sel.Deployments[caseIndex]);
+                return processList(DeploymentTreeNode.Reson.Normal(), sel.Deployments[caseIndex]);
             }
           }
           // Report error
-          DeploymentNode.Nodes(sel.Deployments.Map(processList))
+          DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Select(erroneousParameters.ToNList(), sel), sel.Deployments.Map(processList(DeploymentTreeNode.Reson.Normal(),_)))
         | _ => assert(false)
       }
     }
@@ -494,11 +516,11 @@ namespace Tdl2Json
               else
                 platforms.OrderBy(x => x).ToArray()
             };
-          ProductValue() <- 
+          ProductValue() <-
           {
-            Product = Product() <- { 
+            Product = Product() <- {
               Name              = name;
-              BranchName        = useAsFixedParameter("ReleaseName") ?? useAsFixedParameter("BranchName"); // 
+              BranchName        = useAsFixedParameter("ReleaseName") ?? useAsFixedParameter("BranchName"); //
               Version           = useAsFixedParameter("Version");
               DumpServerProduct = useAsFixedParameter("DumpServerProduct");
               Parameters        = parameters;
@@ -549,7 +571,7 @@ namespace Tdl2Json
       else
         yield Dictionary();
     }
-    
+
     TryResolveVar[T](dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
@@ -566,7 +588,7 @@ namespace Tdl2Json
       else
         varOrSymbol :> T
     }
-    
+
     GetFixedString(g : Tdl.Scenario.GeneratorSymbol, name : string) : string
     {
       g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
@@ -624,14 +646,14 @@ namespace Tdl2Json
       def getTestMethod() : TestMethod
       {
         def (assemblyName, methodName) = GetAssemblyAndMethodName(null, method);
-        TestMethodQualifier() <- 
+        TestMethodQualifier() <-
         {
           AssemblyName = assemblyName;
           MethodName   = methodName;
         }
       }
       def testGroup =
-        TestGroup() <- 
+        TestGroup() <-
         {
           Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployment, compiler);
           Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
@@ -708,7 +730,7 @@ namespace Tdl2Json
             def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
             {
               def (assemblyName, methodName) = GetAssemblyAndMethodName(method.TypeSymbol, method.MethodSymbol);
-              TestMethodQualifier() <- 
+              TestMethodQualifier() <-
               {
                 AssemblyName               = assemblyName;
                 MethodName                 = methodName;
@@ -780,10 +802,10 @@ namespace Tdl2Json
             {
               | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
               | Method        as m => makeMethodAction(m)
-              | WaitForReboot as x =>                   
-                WaitForRebootTestStep() <- 
+              | WaitForReboot as x =>
+                WaitForRebootTestStep() <-
                 {
-                  WaitForReboot = 
+                  WaitForReboot =
                     WaitForRebootTestStep.Data() <-
                     {
                       RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
@@ -793,8 +815,8 @@ namespace Tdl2Json
                 def b = barrier.barrier;
                 WaitForBarrierTestStep() <-
                 {
-                  WaitForBarrier = 
-                    WaitForBarrierTestStep.Data() <- 
+                  WaitForBarrier =
+                    WaitForBarrierTestStep.Data() <-
                     {
                       Id      = b.Guid;
                       Timeout = TimeSpan.Parse(b.Timeout.Value);
@@ -814,9 +836,9 @@ namespace Tdl2Json
 
             def tryGetSingleElem[T]() : ValueOption[T]
             {
-              if (r.Actions.Length == 1 && r.Actions[0] is T) VSome(r.Actions[0] :> T) else VNone() 
+              if (r.Actions.Length == 1 && r.Actions[0] is T) VSome(r.Actions[0] :> T) else VNone()
             }
-                
+
             if (tryGetSingleElem() is VSome(action))
               makeConfigAction(action)
             else if (tryGetSingleElem() is VSome(action))
@@ -836,7 +858,7 @@ namespace Tdl2Json
           }
 
           def testGroup =
-            TestGroup() <- 
+            TestGroup() <-
             {
                 Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler);
                 Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
@@ -921,7 +943,7 @@ namespace Tdl2Json
     {
       null
     }
-    
+
     private GenerateScenarioFilter(expr : DotNet.ExprBase, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
     {
       def result = GenerateScenarioFilterImpl(expr, dic);
@@ -979,11 +1001,11 @@ namespace Tdl2Json
               def type = fld.Type.FullName;
               def name = fld.Name;
               $<#(($type)externals["$name"])#>
-  
+
             | _ => GenerateScenarioFilter()
           }
-  
-        | FormalParameterSymbol as p => 
+
+        | FormalParameterSymbol as p =>
           def type =
             match (p.Type)
             {
@@ -991,7 +1013,7 @@ namespace Tdl2Json
               | _ => p.Type.FullName
             };
 
-          def name = p.Name; 
+          def name = p.Name;
           def getValue =
             match (type)
             {
@@ -1006,7 +1028,7 @@ namespace Tdl2Json
           }
           else
             $<#($getValue)#>
-  
+
         | Member.MethodSymbol as m => m.Name
         | PlatformSymbol as p => $<#config.Platforms["$(p.Name)"]#>
         | ProductSymbol  as p => $<#config.Products["$(p.Name)"]#>
@@ -1020,10 +1042,10 @@ namespace Tdl2Json
       | DotNet.TopConstructedTypeSymbol as s =>
         def fullName = AstUtils.MakeFullName(s.TypeInfo.DeclaredInOpt, s.TypeInfo.Name, s.Args);
         fullName
-        
+
       | _ => GenerateScenarioFilter()
     }
-    
+
     private GenerateScenarioFilterImpl(expr : DotNet.ExprBase, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
     {
       match (expr)
@@ -1043,7 +1065,7 @@ namespace Tdl2Json
         | Expr.IndexerAccess as e =>
         def args = e.Arguments.Map(GenerateScenarioFilterImpl(_, dic));
         $<#$(GenerateScenarioFilterImpl(e.Left, dic))[..$args]#>;
-        
+
         | Expr.Parenthesized   as e => GenerateScenarioFilterImpl(e.Expression, dic)
         | Expr.PostDecrement (Expr1=e) with op = "++"
         | Expr.PostIncrement (Expr1=e) with op = "--"
@@ -1055,10 +1077,10 @@ namespace Tdl2Json
         | Expr.LogicalNegation (Expr1=e) with op = "!"
         | Expr.Negation        (Expr1=e) with op = "-"
           => $<#$op$(GenerateScenarioFilterImpl(e, dic))#>
-        
+
         | Expr.TypeOf as e => $<#typeof($(e.Type))#>
         | Expr.GreaterThanOrEqual(Expr1=e1, Expr2=e2)  with op = ">="
-        | Expr.LessThanOrEqual   (Expr1=e1, Expr2=e2)  with op = "<=" 
+        | Expr.LessThanOrEqual   (Expr1=e1, Expr2=e2)  with op = "<="
         | Expr.Less              (Expr1=e1, Expr2=e2)  with op =  "<"
         | Expr.Greater           (Expr1=e1, Expr2=e2)  with op =  ">"
         | Expr.ConditionalAnd    (Expr1=e1, Expr2=e2)  with op = "&&"
@@ -1129,7 +1151,7 @@ namespace Tdl2Json
         def entityOpt  = if (gen.EntityOpt.HasValue) (TryResolveVar(dic, gen.EntityOpt.Value)  : EntitySymbol).Name else null;
         def defs       = MakeDefs(product, gen.Defs, gen.Predefineds, gen.DefaultDefs, dic);
 
-        def suite = TestSuite() <- 
+        def suite = TestSuite() <-
         {
           Platforms                  = array[platform.Name];
           Products                   = array[product.Name];
@@ -1149,7 +1171,7 @@ namespace Tdl2Json
     {
       def defs = MakeDefs(suiteSymbol.Product, suiteSymbol.Defs, suiteSymbol.Predefineds, suiteSymbol.DefaultDefs);
       def entityOpt = suiteSymbol.EntityOpt;
-      TestSuite() <- 
+      TestSuite() <-
       {
         Platforms                  = array[suiteSymbol.Platform.Name];
         Products                   = array[suiteSymbol.Product.Name];
@@ -1168,7 +1190,7 @@ namespace Tdl2Json
         | x is FieldSymbol           => x.IsIsDashboardVisibleEvaluated && x.IsDashboardVisible
         | _ => false
       }
-      
+
       def result = List();
       foreach (d when isDashboardVisible(d.Symbol) in defs)
         result.Add(d.Symbol.Name);
