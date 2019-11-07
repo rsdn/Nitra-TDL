@@ -25,6 +25,23 @@ namespace Tdl
 {
   public module Api
   {
+    public TryResolveVar[T](variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
+      where T: DeclarationSymbol
+    {
+      mutable result;
+      if (variables.TryGetValue(varOrSymbol, out result))
+      {
+        if (result is Tdl.Expr.Reference as r)
+          r.Symbol :> T
+        else if (result is Tdl.Expr.MemberAccess as m)
+          m.Symbol :> T
+        else
+          result.GetValue() :> T
+      }
+      else
+        varOrSymbol :> T
+    }
+
     public SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedDeclarationSymbol, Tdl.Expr]]
     {
       if (index < froms.Length)
@@ -179,6 +196,15 @@ namespace Tdl
     internal TryMakeSessionInitializer(ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
     {
       TryMakeSessionAction("SessionInitializer", ast, context, product, defs, predefineds, defaults, variables)
+    }
+
+    internal ValidateSessionInitializer(this ast : IAst, context : DependentPropertyEvalContext, productOrVar : TypedDeclarationSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], froms : ImmutableArray[Code.From]) : void
+    {
+      foreach (variables in Api.SubstituteVariables(froms, 0))
+      {
+        def product    = Api.TryResolveVar(variables, productOrVar) : ProductSymbol;
+        _ = TryMakeSessionAction("SessionInitializer", ast, context, product, defs, predefineds, defaults, variables);
+      }
     }
 
     private TryMakeSessionAction(actionName : string, ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]

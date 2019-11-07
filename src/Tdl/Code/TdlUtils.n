@@ -684,7 +684,7 @@ namespace Tdl
       filteringScope
     }
 
-    public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def]) : void
+    public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def], _dependency : object = null) : void
     {
       def defSet        = fields.Select(d => d.Symbol);
       def missingFields = requiredFields.Except(defSet).MapToArray(x => x.InitialName);
