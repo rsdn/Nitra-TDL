@@ -12,65 +12,67 @@ using System.Linq;
 
 namespace Tdl2Json
 {
+  public enum ResultKind
+  {
+    | Missing
+    | NotSet
+    | Value
+    | ExternalParameter
+    | GlobalParameter
+    | External
+    | Product
+    | Error
+  }
+
   module Expressions
   {
-    public enum ObjectType
-    {
-      | NotSet
-      | Value
-      | ExternalParameter
-      | GlobalParameter
-      | External
-      | Product
-      | Error
-    }
-
     public ToObject(this expression : Tdl.Expr,
                     values    : IReadOnlyDictionary[string, object]          = null,
                     variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : object
     {
       match (Convert(expression, values, variables))
       {
-        | (value, ObjectType.NotSet)            => value
-        | (value, ObjectType.Value)             => value
-        | (value, ObjectType.ExternalParameter) => "#(" + value + ")"
-        | (value, ObjectType.GlobalParameter)   => "$(" + value + ")"
-        | (value, ObjectType.Product)           => value
-        | (value, ObjectType.Error)             => throw NotSupportedException("An error has occurred when calculating '$expression': " + value)
-        | (_,     ObjectType.External)          => throw NotSupportedException("Reference to externals root symbol is not allowed.")
+        | (_,     ResultKind.Missing)           => assert(false)
+        | (value, ResultKind.NotSet)            => value
+        | (value, ResultKind.Value)             => value
+        | (value, ResultKind.ExternalParameter) => "#(" + value + ")"
+        | (value, ResultKind.GlobalParameter)   => "$(" + value + ")"
+        | (value, ResultKind.Product)           => value
+        | (value, ResultKind.Error)             => throw NotSupportedException("An error has occurred when calculating '$expression': " + value)
+        | (_,     ResultKind.External)          => throw NotSupportedException("Reference to externals root symbol is not allowed.")
       }
     }
 
-    public Convert(expression : Tdl.Expr, values : IReadOnlyDictionary[string, object], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : object * ObjectType
+    public Convert(expression : Tdl.Expr, values : IReadOnlyDictionary[string, object], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : object * ResultKind
     {
       match (expression)
       {
-        | Error              => ("<error>",             ObjectType.Value)
-        | False              => (BooleanLiterals.False, ObjectType.Value)
-        | True               => (BooleanLiterals.True,  ObjectType.Value)
-        | Integer      as i  => (i.Value,               ObjectType.Value)
-        | Real         as r  => (r.Value,               ObjectType.Value)
-        | String       as s  => (s.Value,               ObjectType.Value)
+        | Error              => ("<error>",             ResultKind.Value)
+        | False              => (BooleanLiterals.False, ResultKind.Value)
+        | True               => (BooleanLiterals.True,  ResultKind.Value)
+        | Integer      as i  => (i.Value,               ResultKind.Value)
+        | Real         as r  => (r.Value,               ResultKind.Value)
+        | String       as s  => (s.Value,               ResultKind.Value)
         | List         as xs =>
           def elems = xs.Elems.Select(e => ToObject(e, values, variables));
-          ($<#[..$elems]#>, ObjectType.Value)
+          ($<#[..$elems]#>, ResultKind.Value)
 
         | Reference(Symbol=VarSymbol      as s)                                       => Convert(variables[s], values, variables)
-        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ObjectType.ExternalParameter)
-        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ObjectType.External)
-        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s.Name, ObjectType.Product)
+        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ResultKind.ExternalParameter)
+        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ResultKind.External)
+        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s.Name, ResultKind.Product)
         | Reference(Symbol=s) =>
           mutable referenceValue;
           if (values != null && values.TryGetValue(s.Name, out referenceValue))
-            (referenceValue, ObjectType.Value)
+            (referenceValue, ResultKind.Value)
           else
-            (s.Name, ObjectType.GlobalParameter)
+            (s.Name, ResultKind.GlobalParameter)
 
         | MemberAccess as m =>
           match (Convert(m.Expr, values, variables))
           {
-            | (value, ObjectType.Product)  => ("Product:" + value + "." + m.Symbol.Name, ObjectType.GlobalParameter)
-            | (_,     ObjectType.External) => (m.Symbol.Name,                            ObjectType.ExternalParameter)
+            | (value, ResultKind.Product)  => ("Product:" + value + "." + m.Symbol.Name, ResultKind.GlobalParameter)
+            | (_,     ResultKind.External) => (m.Symbol.Name,                            ResultKind.ExternalParameter)
             | _                            => throw NotSupportedException($"Invalid member access expression '$m'.")
           }
 
@@ -82,38 +84,38 @@ namespace Tdl2Json
       expression : Tdl.Expr,
       values     : IReadOnlyDictionary[string, Tdl.Expr],
       variables  : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
-      getPropertyValue : object * Declarations.DeclarationSymbol -> object * ObjectType
-    ) : object * ObjectType
+      getPropertyValue : object * Declarations.DeclarationSymbol -> object * ResultKind
+    ) : object * ResultKind
     {
       match (expression)
       {
-        | Error              => (expression,            ObjectType.Error)
-        | Tuple              => (expression,            ObjectType.Error)
-        | NotSet             => (null,                  ObjectType.NotSet)
-        | False              => (BooleanLiterals.False, ObjectType.Value)
-        | True               => (BooleanLiterals.True,  ObjectType.Value)
-        | Integer      as i  => (i.Value,               ObjectType.Value)
-        | Real         as r  => (r.Value,               ObjectType.Value)
-        | String       as s  => (s.Value,               ObjectType.Value)
+        | Error              => (expression,            ResultKind.Error)
+        | Tuple              => (expression,            ResultKind.Error)
+        | NotSet             => (null,                  ResultKind.NotSet)
+        | False              => (BooleanLiterals.False, ResultKind.Value)
+        | True               => (BooleanLiterals.True,  ResultKind.Value)
+        | Integer      as i  => (i.Value,               ResultKind.Value)
+        | Real         as r  => (r.Value,               ResultKind.Value)
+        | String       as s  => (s.Value,               ResultKind.Value)
         | Reference(Symbol=VarSymbol      as s)                                       => Calc(variables[s], values, variables, getPropertyValue)
-        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ObjectType.ExternalParameter)
-        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ObjectType.External)
-        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s,      ObjectType.Product)
+        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ResultKind.ExternalParameter)
+        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ResultKind.External)
+        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s,      ResultKind.Product)
         | Reference(Symbol=s) =>
           mutable referenceValue;
           if (values != null && values.TryGetValue(s.Name, out referenceValue))
             Calc(referenceValue, values, variables, getPropertyValue)
           else
-            (s.Name, ObjectType.GlobalParameter)
+            (s.Name, ResultKind.GlobalParameter)
 
         | List         as xs =>
           def elems = xs.Elems.Select(e => Calc(e, values, variables, getPropertyValue)).ToArray();
-          (elems, ObjectType.Value)
+          (elems, ResultKind.Value)
         | MemberAccess as m =>
           match (Calc(m.Expr, values, variables, getPropertyValue))
           {
-            | (value, ObjectType.Product)  => getPropertyValue(value, m.Symbol)
-            | (_,     ObjectType.External) => (m.Symbol.Name, ObjectType.ExternalParameter)
+            | (value, ResultKind.Product)  => getPropertyValue(value, m.Symbol)
+            | (_,     ResultKind.External) => (m.Symbol.Name, ResultKind.ExternalParameter)
             | _                            => throw NotSupportedException($"Invalid member access expression '$m'.")
           }
       }
@@ -126,7 +128,7 @@ namespace Tdl2Json
         dictionary.Add(k, v);
       dictionary
     }
-    
+
     public ToNullable[T](this value : ParsedValue[T]) : T?
       where T: struct
     {
