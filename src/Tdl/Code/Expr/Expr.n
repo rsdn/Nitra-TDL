@@ -5,6 +5,7 @@ using Nemerle.Collections;
 using Nemerle.Text;
 using Nemerle.Utility;
 
+using Nitra;
 using Nitra.Declarations;
 
 using System;
@@ -75,26 +76,45 @@ namespace Tdl
       }
     }
 
-    //public GetAllSymbols() : Seq[TypedDeclarationSymbol]
-    //{
-    //  def result = List();
-    //  def scan(e : Expr) : void
-    //  {
-    //    | Error              => ()
-    //    | String             => ()
-    //    | True               => ()
-    //    | False              => ()
-    //    | Real               => ()
-    //    | Integer            => ()
-    //    | Reference    as x  => result.Add(x.Symbol);
-    //    | MemberAccess as x  => scan(x.Expr)
-    //    | List         as xs => foreach (e in xs.Elems) scan(e);
-    //    | Tuple        as xs => foreach (e in xs.Elems) scan(e);
-    //  }
-    //
-    //  scan(this);
-    //  result
-    //}
+    public Calc(
+      values     : IReadOnlyDictionary[string, Tdl.Expr],
+      variables  : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
+      getPropertyValue : object * DeclarationSymbol -> object * ResultKind
+    ) : object * ResultKind
+    {
+      match (this)
+      {
+        | Error              => (this,    ResultKind.Error)
+        | Tuple              => (this,    ResultKind.Error)
+        | NotSet             => (null,    ResultKind.NotSet)
+        | False              => (false,   ResultKind.Value)
+        | True               => (true,    ResultKind.Value)
+        | Integer      as i  => (i.Value, ResultKind.Value)
+        | Real         as r  => (r.Value, ResultKind.Value)
+        | String       as s  => (s.Value, ResultKind.Value)
+        | Reference(Symbol=VarSymbol      as s)                                       => variables[s].Calc(values, variables, getPropertyValue)
+        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ResultKind.ExternalParameter)
+        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ResultKind.External)
+        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s,      ResultKind.Product)
+        | Reference(Symbol=s) =>
+          mutable referenceValue;
+          if (values != null && values.TryGetValue(s.Name, out referenceValue))
+            referenceValue.Calc(values, variables, getPropertyValue)
+          else
+            (s.Name, ResultKind.GlobalParameter)
+
+        | List         as xs =>
+          def elems = xs.Elems.Select(e => e.Calc(values, variables, getPropertyValue)).ToArray();
+          (elems, ResultKind.Value)
+        | MemberAccess as m =>
+          match (m.Expr.Calc(values, variables, getPropertyValue))
+          {
+            | (value, ResultKind.Product)  => getPropertyValue(value, m.Symbol)
+            | (_,     ResultKind.External) => (m.Symbol.Name, ResultKind.ExternalParameter)
+            | _                            => throw NotSupportedException($"Invalid member access expression '$m'.")
+          }
+      }
+    }
 
     public override ToString() : string
     {
