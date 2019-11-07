@@ -12,7 +12,7 @@ namespace Tdl
   {
     symbol
     {
-    stage 3:
+    stage 2:
       in Defs : ImmutableArray[Def];
 
       Scope          = MemberTable;
@@ -33,7 +33,7 @@ namespace Tdl
 
     DefinePredefinedFields(context, Symbol.MemberTable);
     UpdateDefaultValues(context, Symbol.Defs, Symbol.MemberTable, Scope);
-    
+
     Fields      : Field*;
     Definitions : Definition*;
   }

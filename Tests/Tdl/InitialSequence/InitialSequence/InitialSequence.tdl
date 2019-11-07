@@ -1,4 +1,4 @@
-external
+﻿external
 {
   string External1 = "defaulte for External1";
 }

@@ -354,23 +354,6 @@ namespace Tdl2Json
       (assemblyName, methodName)
     }
 
-    TryResolveVar[T](dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
-      where T: DeclarationSymbol
-    {
-      mutable result;
-      if (dic.TryGetValue(varOrSymbol, out result))
-      {
-        if (result is Tdl.Expr.Reference as r)
-          r.Symbol :> T
-        else if (result is Tdl.Expr.MemberAccess as m)
-          m.Symbol :> T
-        else
-          result.GetValue() :> T
-      }
-      else
-        varOrSymbol :> T
-    }
-
     GetFixedString(g : Tdl.Scenario.GeneratorSymbol, name : string) : string
     {
       g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
@@ -421,10 +404,10 @@ namespace Tdl2Json
           }
           g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(getValue).WithDefault(null);
       }
-      def deployment = TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
-      def method     = TryResolveVar(dic, g.Method)     : Member.MethodSymbol;
-      def platform   = TryResolveVar(dic, g.Platform)   : PlatformSymbol;
-      def product    = TryResolveVar(dic, g.Product)    : ProductSymbol;
+      def deployment = Api.TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
+      def method     = Api.TryResolveVar(dic, g.Method)     : Member.MethodSymbol;
+      def platform   = Api.TryResolveVar(dic, g.Platform)   : PlatformSymbol;
+      def product    = Api.TryResolveVar(dic, g.Product)    : ProductSymbol;
       def getTestMethod() : TestMethod
       {
         def (assemblyName, methodName) = GetAssemblyAndMethodName(null, method);
@@ -951,9 +934,9 @@ namespace Tdl2Json
         }
         def name           = $<#$nameBase-..$(dic.Values; "-"; toString)#>;
         names.Add(name);
-        def platform       = TryResolveVar(dic, gen.Platform) : PlatformSymbol;
-        def product        = TryResolveVar(dic, gen.Product)  : ProductSymbol;
-        def entityOpt      = if (gen.EntityOpt.HasValue) (TryResolveVar(dic, gen.EntityOpt.Value)  : EntitySymbol).Name else null;
+        def platform       = Api.TryResolveVar(dic, gen.Platform) : PlatformSymbol;
+        def product        = Api.TryResolveVar(dic, gen.Product)  : ProductSymbol;
+        def entityOpt      = if (gen.EntityOpt.HasValue) (Api.TryResolveVar(dic, gen.EntityOpt.Value) : EntitySymbol).Name else null;
         def defs           = MakeDefs(gen.Defs, gen.DefaultDefs, dic);
         def sessionInitOpt = TryGenerateAction("SessionInitializer", gen, product, dic, sessionActionCompiler);
 

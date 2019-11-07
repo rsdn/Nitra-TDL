@@ -121,6 +121,7 @@ namespace Tdl
           in Predefineds : ImmutableArray[Def];
           in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
           in Defs        : ImmutableArray[Def];
+        stage 4          :
           in Froms       : ImmutableArray[Code.From];
 
           Scope          = MemberTable;
@@ -172,6 +173,7 @@ namespace Tdl
         Product.   CheckExpected(context, context.GetProductTypeSymbol(),  ProductRef.Symbol.Type);
         SetUsed(Symbol.Statements);
         ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
+        Name.ValidateSessionInitializer(context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs, Symbol.Froms);
 
         decompose AllDefinitions
         {
