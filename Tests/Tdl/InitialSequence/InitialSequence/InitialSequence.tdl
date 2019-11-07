@@ -1,6 +1,26 @@
 external
 {
-  string External1;
+  string External1 = "defaulte for External1";
+}
+
+suite Suite1 : SuiteType
+{
+  platform Platform;
+  product Product1;
+  Arg1 = "qqq";
+  //Name1 = External1;
+  S1();
+}
+
+suite Suite2 : SuiteType
+{
+  platform Platform;
+  product Products;
+  SessionInitializer = Deploy5;
+  Arg1 = External1;
+  //Name1 = "Product 1";
+  Name1 = Product1.Name;
+  S1();
 }
 
 product type ProductType
@@ -15,6 +35,14 @@ product Product1 : ProductType
   Name = "Product 1";
   Version = "1.1";
 }
+
+product Product2 : ProductType
+{
+  Name = "Product 2";
+  Version = "2.1";
+}
+
+product Products : ProductType = Product1, Product2;
 
 platform Platform;
 
@@ -33,25 +61,6 @@ suite type SuiteType
   int Xxx = 42;
 }
 
-suite Suite1 : SuiteType
-{
-  platform Platform;
-  product Product1;
-  Arg1 = "qqq";
-  Name1 = External1;
-  S1();
-}
-
-suite Suite2 : SuiteType
-{
-  platform Platform;
-  product Product1;
-  SessionInitializer = Deploy5;
-  Arg1 = External1;
-  Name1 = "Product 1";
-  S1();
-}
-
 deployment Deploy6 = Deploy1, Deploy5, Deploy2;
 
 select deployment Deploy5(Name1)
@@ -67,7 +76,7 @@ deployment Deploy1(string Arg1 = "ss", int Arg2 = 42)
  script "Deploy1.ps1"
 {
 }
-deployment Deploy2(string Arg1 = "aa")
+deployment Deploy2(string Arg1 = "aa", string Name)
  script "Deploy2.ps1"
 {
 }

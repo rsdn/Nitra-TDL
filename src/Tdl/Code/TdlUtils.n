@@ -1932,38 +1932,70 @@ namespace Tdl
 
     public TryMakeSessionInitializer(ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
     {
-      def sessionInitializerOpt = predefineds.Find(p => p.Symbol.Name == "SessionInitializer");
-      if (sessionInitializerOpt is Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))))
-      {
-        def tree = MakeDeploymentsTree(d, product, defs, defaults, variables);
-        def loop(node : DeploymentTreeNode) : void
-        {
-          | Leaf                 => ()
-          | Nodes(Normal, nodes) => foreach (node in nodes) loop(node);
-          | Nodes(reson, _)      => ast.Error(context, $"Unable to use $(d.Name) in 'SessionInitializer' because $reson.");
-        }
-        loop(tree);
-        VSome(tree)
-      }
-      else
-        VNone()
+      TryMakeSessionAction("SessionInitializer", ast, context, product, defs, predefineds, defaults, variables)
     }
 
-    private MakeDeploymentsTree(root : DeploymentSymbol, product : ProductSymbol, defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentTreeNode
+    public TryMakeSessionAction(actionName : string, ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
+    {
+      try
+      {
+        def sessionActionOpt = predefineds.Find(p => p.Symbol.Name == actionName);
+        when (sessionActionOpt is Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))))
+        {
+          def reportedErrors = HashSet();
+          def reportError(msg : string) : void
+          {
+            when (reportedErrors.Add(msg))
+              ast.Error(context, msg);
+          }
+          def loop(node : DeploymentTreeNode) : void
+          {
+            | Leaf(vars, Deployment.ScriptSymbol as script) =>
+              foreach (p when !vars.ContainsKey(p.Name) in script.Parameters)
+                when (p.Default is DefaultValue.None)
+                  reportError($"'$(p.Name)' parameter of '$(d.Name)' deployment used in the $actionName is not set and does not have a default value.");
+
+            | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.Kind).");
+            | Nodes(Normal, nodes) =>
+              foreach (node in nodes)
+                loop(node);
+
+            | Nodes(reson, nodes)  =>
+              reportError($"Unable to use '$(d.Name)' in '$actionName' because $reson.");
+              foreach (node in nodes)
+                loop(node);
+          }
+          def treeOpt = MakeDeploymentsTree(d, product, defs, defaults, variables);
+          when (treeOpt is VSome(tree))
+          {
+            loop(tree);
+            return VSome(tree);
+          }
+        }
+        VNone()
+      }
+      catch VNone()
+    }
+
+    private MakeDeploymentsTree(root : DeploymentSymbol, product : ProductSymbol, defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : ValueOption[DeploymentTreeNode]
     {
       def vars =
-      if (product is Product.DefSymbol as productDef)
-        productDef.Defs.ToHashtable(p => p.Symbol.Name, p => p.Expr) // добавлять как при генерации кода для продуктов!
-      else
-        Hashtable();
+        if (product is Product.DefSymbol as productDef)
+          if (productDef.IsDefsEvaluated)
+            productDef.Defs.ToHashtable(p => p.Symbol.Name, p => p.Expr) // добавлять как при генерации кода для продуктов!
+          else
+            null
+        else
+          Hashtable();
+
+      when (vars == null)
+        return VNone();
 
       foreach (d in defs)
       {
         def name = d.Symbol.Name;
         when (vars.ContainsKey(name))
-        {
-          assert2(false, "report error");
-        }
+          return VNone();
         vars[name] = d.Expr;
       }
 
@@ -1971,7 +2003,7 @@ namespace Tdl
         vars.Add(d.Name, Tdl.Expr.NotSet());
 
 
-      MakeDeploymentsTree(ImmutableHashSet.Empty, root, vars, variables)
+      VSome(MakeDeploymentsTree(ImmutableHashSet.Empty, root, vars, variables))
     }
 
     private MakeDeploymentsTree(visited : ImmutableHashSet[DeploymentSymbol], deployment : DeploymentSymbol, defs : Hashtable[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentTreeNode

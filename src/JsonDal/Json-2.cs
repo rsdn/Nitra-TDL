@@ -1,9 +1,12 @@
-﻿namespace QuickType
-{
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
+using VariablesBag = System.Collections.Generic.Dictionary<string, object>;
+
+namespace QuickType
+{
     public interface TestMethodOrTestSequenceItem : TestMethod, TestSequenceItem
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -200,5 +203,39 @@
     {
         [JsonProperty(Required = Required.Always)]
         public List<string> Suites { get; set; }
+    }
+
+    public abstract class PreSessionActionBase { }
+
+    public sealed class PreSessionScriptAction : PreSessionActionBase
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string ScriptPath { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public VariablesBag ScriptArgs { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int? ReturnValue { get; set; }
+
+        public override string ToString()
+        {
+            var scriptArgs = ScriptArgs == null ? "" : string.Join(", ", ScriptArgs.Select(a => a.Key + ": " + a.Value));
+            return $"{ScriptPath}({scriptArgs})";
+        }
+    }
+
+    public sealed class PreSessionActionGroup : PreSessionActionBase
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string[] Scripts { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public VariablesBag Parameters { get; set; }
+
+        public override string ToString()
+        {
+            return string.Join(", ", Scripts);
+        }
     }
 }
