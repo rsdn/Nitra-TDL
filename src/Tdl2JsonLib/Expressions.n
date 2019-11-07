@@ -12,18 +12,6 @@ using System.Linq;
 
 namespace Tdl2Json
 {
-  public enum ResultKind
-  {
-    | Missing
-    | NotSet
-    | Value
-    | ExternalParameter
-    | GlobalParameter
-    | External
-    | Product
-    | Error
-  }
-
   module Expressions
   {
     public ToObject(this expression : Tdl.Expr,
@@ -77,47 +65,6 @@ namespace Tdl2Json
           }
 
         | x => throw NotSupportedException($"Invalid expression '$x'.")
-      }
-    }
-
-    public Calc(
-      expression : Tdl.Expr,
-      values     : IReadOnlyDictionary[string, Tdl.Expr],
-      variables  : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
-      getPropertyValue : object * Declarations.DeclarationSymbol -> object * ResultKind
-    ) : object * ResultKind
-    {
-      match (expression)
-      {
-        | Error              => (expression,            ResultKind.Error)
-        | Tuple              => (expression,            ResultKind.Error)
-        | NotSet             => (null,                  ResultKind.NotSet)
-        | False              => (BooleanLiterals.False, ResultKind.Value)
-        | True               => (BooleanLiterals.True,  ResultKind.Value)
-        | Integer      as i  => (i.Value,               ResultKind.Value)
-        | Real         as r  => (r.Value,               ResultKind.Value)
-        | String       as s  => (s.Value,               ResultKind.Value)
-        | Reference(Symbol=VarSymbol      as s)                                       => Calc(variables[s], values, variables, getPropertyValue)
-        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ResultKind.ExternalParameter)
-        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ResultKind.External)
-        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s,      ResultKind.Product)
-        | Reference(Symbol=s) =>
-          mutable referenceValue;
-          if (values != null && values.TryGetValue(s.Name, out referenceValue))
-            Calc(referenceValue, values, variables, getPropertyValue)
-          else
-            (s.Name, ResultKind.GlobalParameter)
-
-        | List         as xs =>
-          def elems = xs.Elems.Select(e => Calc(e, values, variables, getPropertyValue)).ToArray();
-          (elems, ResultKind.Value)
-        | MemberAccess as m =>
-          match (Calc(m.Expr, values, variables, getPropertyValue))
-          {
-            | (value, ResultKind.Product)  => getPropertyValue(value, m.Symbol)
-            | (_,     ResultKind.External) => (m.Symbol.Name, ResultKind.ExternalParameter)
-            | _                            => throw NotSupportedException($"Invalid member access expression '$m'.")
-          }
       }
     }
 

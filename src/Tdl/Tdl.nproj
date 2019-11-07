@@ -182,6 +182,15 @@
     <Compile Include="Code\Def.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\Expr\DeploymentTreeNode.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\Expr\Expr.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Code\Expr\ResultKind.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\UntypedDef.n">
       <SubType>Code</SubType>
     </Compile>
@@ -189,9 +198,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\Environment.n">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Expr.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Code\From.n">
@@ -255,6 +261,7 @@
   <ItemGroup>
     <Folder Include="Code" />
     <Folder Include="Ast" />
+    <Folder Include="Code\Expr" />
     <Folder Include="Code\Typing" />
     <Folder Include="Properties" />
   </ItemGroup>
