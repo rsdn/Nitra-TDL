@@ -1971,17 +1971,17 @@ namespace Tdl
         vars.Add(d.Name, Tdl.Expr.NotSet());
 
 
-      MakeDeploymentsTree(root, vars, variables)
+      MakeDeploymentsTree(ImmutableHashSet.Empty, root, vars, variables)
     }
 
-    private MakeDeploymentsTree(deployment : DeploymentSymbol, defs : Hashtable[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentTreeNode
+    private MakeDeploymentsTree(visited : ImmutableHashSet[DeploymentSymbol], deployment : DeploymentSymbol, defs : Hashtable[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : DeploymentTreeNode
     {
-      def processList(reson : DeploymentTreeNode.Reson, deployments : ImmutableArray[DeploymentSymbol]) : DeploymentTreeNode
+      def processList(visited : ImmutableHashSet[DeploymentSymbol], reson : DeploymentTreeNode.Reson, deployments : ImmutableArray[DeploymentSymbol]) : DeploymentTreeNode
       {
           def nodes = List();
           foreach (d in deployments)
           {
-            def res = MakeDeploymentsTree(d, defs, variables);
+            def res = MakeDeploymentsTree(visited, d, defs, variables);
             match (res)
             {
               | Nodes(DeploymentTreeNode.Reson.Normal, _) as xs => nodes.AddRange(xs.nodes);
@@ -1997,14 +1997,23 @@ namespace Tdl
       match (deployment)
       {
         | Deployment.EmptySymbol | Deployment.ScriptSymbol | Deployment.CodeSymbol => DeploymentTreeNode.Leaf(defs, deployment)
-        | Deployment.SetSymbol as ld => processList(DeploymentTreeNode.Reson.Normal(), ld.Deployments)
+        | Deployment.SetSymbol as ld =>
+          when (visited.Contains(deployment))
+            return DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Cycled(deployment), []);
+          processList(visited.Add(deployment), DeploymentTreeNode.Reson.Normal(), ld.Deployments)
+
         | Deployment.CurryingSymbol as curry =>
+          when (visited.Contains(deployment))
+            return DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Cycled(deployment), []);
           def overriddenDefs = Hashtable(defs);
           foreach (overridden in curry.ParameterValues)
             overriddenDefs[overridden.Symbol.Name] = overridden.Expr;
-          MakeDeploymentsTree(curry.BaseDeployment, overriddenDefs, variables)
+          MakeDeploymentsTree(visited.Add(curry), curry.BaseDeployment, overriddenDefs, variables)
 
         | Deployment.SelectSymbol as sel =>
+          when (visited.Contains(deployment))
+            return DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Cycled(deployment), []);
+          def visited2 = visited.Add(sel);
           def defs = defs;
           def getPropertyValue(obj : object, prop : Declarations.DeclarationSymbol) : object * ResultKind
           {
@@ -2052,11 +2061,11 @@ namespace Tdl
               foreach (pattern when string.Equals(pattern, valueParts[i], StringComparison.OrdinalIgnoreCase) in case with i)
                 isMatch = true;
               when (isMatch)
-                return processList(DeploymentTreeNode.Reson.Normal(), sel.Deployments[caseIndex]);
+                return processList(visited2, DeploymentTreeNode.Reson.Normal(), sel.Deployments[caseIndex]);
             }
           }
           // Report error
-          DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Select(erroneousParameters.ToNList(), sel), sel.Deployments.Map(processList(DeploymentTreeNode.Reson.Normal(),_)))
+          DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Select(erroneousParameters.ToNList(), sel), sel.Deployments.Map(processList(visited2, DeploymentTreeNode.Reson.Normal(),_)))
         | _ => assert(false)
       }
     }
