@@ -15,7 +15,7 @@ suite Suite1 : SuiteType
 suite Suite2 : SuiteType
 {
   platform Platform;
-  product Products;
+  product Product1;
   SessionInitializer = Deploy5;
   Arg1 = External1;
   //Name1 = "Product 1";
