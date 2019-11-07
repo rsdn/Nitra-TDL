@@ -109,7 +109,7 @@ namespace Tdl2Json
         }
       }
 
-      result
+      if (result.Count == 0) null else result
     }
 
     private TryAddLeaf(leaf : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : void
