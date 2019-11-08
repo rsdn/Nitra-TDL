@@ -119,9 +119,9 @@ namespace Tdl
           in EntityOpt   : ValueOption[TypedDeclarationSymbol];
         stage 3          :
           in Predefineds : ImmutableArray[Def];
-          in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
           in Defs        : ImmutableArray[Def];
         stage 4          :
+          in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
           in Froms       : ImmutableArray[Code.From];
 
           Scope          = MemberTable;
