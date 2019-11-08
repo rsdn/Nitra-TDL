@@ -905,11 +905,15 @@ namespace Tdl2Json
     ) : string
     {
       def sessionActionOpt = gen.Predefineds.Find(p => p.Symbol.Name == actionName);
-      when (sessionActionOpt is Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))))
+      match (sessionActionOpt)
       {
-        def resultOpt = Api.MakeDeploymentsTree(d, product, gen.Defs, gen.DefaultDefs, variables);
-        when (resultOpt is VSome(tree))
-          return sessionActionCompiler.GetSessionActionName(tree, variables)
+        | Some(Def(Expr=Tdl.Expr.Reference(Symbol=TypedDeclarationSymbol as td))) with d = Api.TryResolveVarOrNull(variables, td)
+        | Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))) when d != null =>
+          def resultOpt = Api.MakeDeploymentsTree(d, product, gen.Defs, gen.DefaultDefs, variables);
+          when (resultOpt is VSome(tree))
+            return sessionActionCompiler.GetSessionActionName(tree, variables)
+
+        | _ => ()
       }
       null
     }

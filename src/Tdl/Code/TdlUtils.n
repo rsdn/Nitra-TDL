@@ -1146,6 +1146,7 @@ namespace Tdl
           {
             | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
             | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
+            | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
             | _ => ()
           }
 
@@ -1159,6 +1160,7 @@ namespace Tdl
           {
             | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
             | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
+            | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
             | _ => ()
           }
       }

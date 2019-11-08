@@ -42,6 +42,25 @@ namespace Tdl
         varOrSymbol :> T
     }
 
+    public TryResolveVarOrNull[T](variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
+      where T: DeclarationSymbol
+    {
+      mutable result;
+      if (variables?.TryGetValue(varOrSymbol, out result))
+      {
+        if (result is Tdl.Expr.Reference as r)
+          r.Symbol :> T
+        else if (result is Tdl.Expr.MemberAccess as m)
+          m.Symbol :> T
+        else
+          result.GetValue() :> T
+      }
+      else if (varOrSymbol is T)
+        varOrSymbol :> T
+      else
+        default(T)
+    }
+
     public SubstituteVariables(froms : ImmutableArray[Code.From], index : int = 0) : Seq[Dictionary[TypedDeclarationSymbol, Tdl.Expr]]
     {
       if (index < froms.Length)
@@ -195,55 +214,60 @@ namespace Tdl
 
     internal TryMakeSessionInitializer(ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
     {
-      TryMakeSessionAction("SessionInitializer", ast, context, product, defs, predefineds, defaults, variables)
+      TryMakeSessionAction("SessionInitializer", ast, context, HashSet(), product, defs, predefineds, defaults, variables)
     }
 
     internal ValidateSessionInitializer(this ast : IAst, context : DependentPropertyEvalContext, productOrVar : TypedDeclarationSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], froms : ImmutableArray[Code.From]) : void
     {
+      def reportedErrors = HashSet();
       foreach (variables in Api.SubstituteVariables(froms, 0))
       {
         def product    = Api.TryResolveVar(variables, productOrVar) : ProductSymbol;
-        _ = TryMakeSessionAction("SessionInitializer", ast, context, product, defs, predefineds, defaults, variables);
+        _ = TryMakeSessionAction("SessionInitializer", ast, context, reportedErrors, product, defs, predefineds, defaults, variables);
       }
     }
 
-    private TryMakeSessionAction(actionName : string, ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
+    private TryMakeSessionAction(actionName : string, ast : IAst, context : DependentPropertyEvalContext, reportedErrors : HashSet[Location * string], product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
     {
       try
       {
         def sessionActionOpt = predefineds.Find(p => p.Symbol.Name == actionName);
-        when (sessionActionOpt is Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))))
+        match (sessionActionOpt)
         {
-          def reportedErrors = HashSet();
-          def reportError(msg : string) : void
-          {
-            when (reportedErrors.Add(msg))
-              ast.Error(context, msg);
-          }
-          def loop(node : DeploymentTreeNode) : void
-          {
-            | Leaf(vars, Deployment.ScriptSymbol as script) =>
-              // TODO: Add checks for unsupported features.
-              foreach (p when !vars.ContainsKey(p.Name) in script.Parameters)
-                when (p.Default is DefaultValue.None)
-                  reportError($"'$(p.Name)' parameter of '$(script.Name)' deployment used in the $actionName is not set and does not have a default value.");
+          | Some(Def(Expr=Tdl.Expr.Reference(Symbol=TypedDeclarationSymbol as td))) with d = TryResolveVarOrNull(variables, td)
+          | Some(Def(Expr=Tdl.Expr.Reference(Symbol=DeploymentSymbol as d))) when d != null =>
+            def reportError(msg : string) : void
+            {
+              when (reportedErrors.Add((ast.Location, msg)))
+                ast.Error(context, msg);
+            }
+            def loop(node : DeploymentTreeNode) : void
+            {
+              | Leaf(vars, Deployment.ScriptSymbol as script) =>
+                // TODO: Add checks for unsupported features.
+                foreach (p when !vars.ContainsKey(p.Name) in script.Parameters)
+                  when (p.Default is DefaultValue.None)
+                    reportError($"'$(p.Name)' parameter of '$(script.Name)' deployment used in the $actionName is not set and does not have a default value.");
+                when (script.IsForRebootEvaluated && script.ForReboot.HasValue)
+                  reportError($"Stetment 'expected-for-reboot' not supported in $actionName");
 
-            | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.Kind).");
-            | Nodes(Normal, nodes) =>
-              foreach (node in nodes)
-                loop(node);
+              | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.Kind).");
+              | Nodes(Normal, nodes) =>
+                foreach (node in nodes)
+                  loop(node);
 
-            | Nodes(reson, nodes)  =>
-              reportError($"Unable to use '$(d.Name)' in '$actionName' because $reson.");
-              foreach (node in nodes)
-                loop(node);
-          }
-          def treeOpt = MakeDeploymentsTree(d, product, defs, defaults, variables);
-          when (treeOpt is VSome(tree))
-          {
-            loop(tree);
-            return VSome(tree);
-          }
+              | Nodes(reson, nodes)  =>
+                reportError($"Unable to use '$(d.Name)' in '$actionName' because $reson.");
+                foreach (node in nodes)
+                  loop(node);
+            }
+            def treeOpt = MakeDeploymentsTree(d, product, defs, defaults, variables);
+            when (treeOpt is VSome(tree))
+            {
+              loop(tree);
+              return VSome(tree);
+            }
+          | _ => ()
         }
         VNone()
       }
