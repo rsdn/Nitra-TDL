@@ -4,7 +4,17 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
-  <UsingTask TaskName="TdlTask" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <PropertyGroup Condition=" '$(MSBuildRuntimeType)' != 'Core' ">
+    <TdlTaskFactory>CodeTaskFactory</TdlTaskFactory>
+    <TdlTaskFactoryAssembly>Microsoft.Build.Tasks.v4.0.dll</TdlTaskFactoryAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(MSBuildRuntimeType)' == 'Core' ">
+    <TdlTaskFactory>RoslynCodeTaskFactory</TdlTaskFactory>
+    <TdlTaskFactoryAssembly>Microsoft.Build.Tasks.Core.dll</TdlTaskFactoryAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="TdlTask" TaskFactory="$(TdlTaskFactory)" AssemblyFile="$(MSBuildToolsPath)\$(TdlTaskFactoryAssembly)">
     <ParameterGroup>
       <ToolPath                     ParameterType="System.String" Required="false" />
       <WorkingDirectory             ParameterType="System.String" Required="false" />
