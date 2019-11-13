@@ -799,11 +799,12 @@ namespace Tdl
         {
           match (prevAction)
           {
-            | ScenarioAction.Script(MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Config(MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.GTest (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Apk   (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Method(MaxRebootsCountOpt = maxReboots) =>
+            | ScenarioAction.Script  (MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.Config  (MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.GTest   (MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.Apk     (MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.Marathon(MaxRebootsCountOpt = maxReboots)
+            | ScenarioAction.Method  (MaxRebootsCountOpt = maxReboots) =>
               when (maxReboots.ValueOrDefault < 1)
               {
                 def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
