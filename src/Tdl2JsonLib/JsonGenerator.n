@@ -554,6 +554,18 @@ namespace Tdl2Json
                   MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
                 }
             }
+            def makeMarathonAction(c : ScenarioAction.Marathon) : Marathon
+            {
+                Marathon() <-
+                {
+                  AndroidTestContainer       = c.TestContainerApk.Value;
+                  AndroidTestContainer       = c.AppApk.Value;
+                  MarathonTestRunnerPath     = c.RunnerPath.Value;
+                  TestFilter                 = c.Filter.Value;
+                  LocalTestBinariesFolder    = c.BinariesFolder.Value;
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                }
+            }
             def makeConfigAction(c : ScenarioAction.Config) : TestBot
             {
               TestBot() <-
@@ -593,6 +605,7 @@ namespace Tdl2Json
               | GTest  as g        => makeGTestAction(g)
               | XCode  as x        => makeXCodeAction(x)
               | Apk    as a        => makeAndroidJavaAction(a)
+              | Marathon as m      => makeMarathonAction(m)
               | Login  as login    => LoginTestStep() <- { Login = LoginTestStep.Data() <- { User = login.User.Value; Password = login.Password.Value } }
               | Logoff             => LogoffTestStep() <- { Logoff = LogoffTestStep.Data() }
               | LockWorkstation    => LockWorkstationTestStep() <- { LockWorkstation = LockWorkstationTestStep.Data() }

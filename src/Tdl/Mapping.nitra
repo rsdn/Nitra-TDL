@@ -201,7 +201,7 @@ namespace Tdl
     VarDecl -> Vars;
     List    -> List;
   }
-  
+
   map syntax Grammar.From.VarDecl -> Var*
   {
     | Name  -> [Var { Name -> Name; }]
@@ -248,7 +248,7 @@ namespace Tdl
         } -> Definitions;
         MaxRebootsCountOpt = Script.MaxRebootsCountOpt.ToInt();
       } ]
-    | Config   -> 
+    | Config   ->
       [ Action.Config
         {
           Config.Path -> Path;
@@ -278,7 +278,16 @@ namespace Tdl
         Apk.RunnerPath -> RunnerPath;
         MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
       } ]
-    | Method   -> 
+    | Marathon -> [ Action.Marathon
+      {
+        Marathon.TestContainerApk -> TestContainerApk;
+        Marathon.AppApk           -> AppApk;
+        Marathon.RunnerPath       -> RunnerPath;
+        Marathon.Filter           -> Filter;
+        Marathon.BinariesFolder   -> BinariesFolder;
+        MaxRebootsCountOpt        = Marathon.MaxRebootsCountOpt.ToInt();
+      } ]
+    | Method   ->
       [ Action.Method
         {
           Method.QualifiedIdentifier -> Method;
@@ -293,6 +302,7 @@ namespace Tdl
       ]
     | Sequence -> SequenceActions
   }
+  map syntax Grammar.Filter -> CSharp.StringLiteral { Value }
 
   map syntax Grammar.SequenceAction -> Action
   {
@@ -345,6 +355,15 @@ namespace Tdl
         } -> FilterOpt;
         Apk.RunnerPath -> RunnerPath;
         MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
+      }
+    | Marathon -> Action.Marathon
+      {
+        Marathon.TestContainerApk -> TestContainerApk;
+        Marathon.AppApk           -> AppApk;
+        Marathon.RunnerPath       -> RunnerPath;
+        Marathon.Filter           -> Filter;
+        Marathon.BinariesFolder   -> BinariesFolder;
+        MaxRebootsCountOpt        = Marathon.MaxRebootsCountOpt.ToInt();
       }
     | Login           -> Login           { User -> User; Password -> Password; }
     | Logoff          -> Logoff          { }

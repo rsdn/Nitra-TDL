@@ -40,6 +40,15 @@ namespace Tdl
         RunnerPath         : ParsedValue[string];
         MaxRebootsCountOpt : ParsedValue[int];
       }
+    | Marathon
+      {
+        TestContainerApk   : ParsedValue[string];
+        AppApk             : ParsedValue[string];
+        RunnerPath         : ParsedValue[string];
+        Filter             : ParsedValue[string];
+        BinariesFolder     : ParsedValue[string];
+        MaxRebootsCountOpt : ParsedValue[int];
+      }
     | Login
       {
         User               : ParsedValue[string];

@@ -17,7 +17,7 @@ namespace Tdl
 
     | Script
       {
-        ScenarioActions = ScenarioAction.Script(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
+        ScenarioActions = ScenarioAction.Script(Name.Location, TdlUtils.ConvertStringLiteral(Name),
           Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef), MaxRebootsCountOpt);
 
         Name               : CSharp.StringLiteral;
@@ -36,7 +36,7 @@ namespace Tdl
 
     | GTest
       {
-        ScenarioActions = ScenarioAction.GTest(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
+        ScenarioActions = ScenarioAction.GTest(Name.Location, TdlUtils.ConvertStringLiteral(Name),
           Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), MaxRebootsCountOpt);
 
         Name               : CSharp.StringLiteral;
@@ -47,7 +47,7 @@ namespace Tdl
     | XCode
       {
         ScenarioActions = ScenarioAction.XCode(Container.Location,
-          TdlUtils.ConvertStringLiteral(Container), 
+          TdlUtils.ConvertStringLiteral(Container),
           TdlUtils.ConvertStringLiteral(XcodePath),
           MaxRebootsCountOpt);
 
@@ -58,12 +58,26 @@ namespace Tdl
 
     | Apk
       {
-        ScenarioActions = ScenarioAction.Apk(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
+        ScenarioActions = ScenarioAction.Apk(Name.Location, TdlUtils.ConvertStringLiteral(Name),
           FilterOpt.ConvertStringLiteral(), TdlUtils.ConvertStringLiteral(RunnerPath), MaxRebootsCountOpt);
 
         Name               : CSharp.StringLiteral;
         FilterOpt          : CSharp.StringLiteral?;
         RunnerPath         : CSharp.StringLiteral;
+        MaxRebootsCountOpt : ParsedValue[int];
+      }
+
+    | Marathon
+      {
+        ScenarioActions = ScenarioAction.Marathon(TestContainerApk.Location, TdlUtils.ConvertStringLiteral(TestContainerApk),
+          TdlUtils.ConvertStringLiteral(AppApk), TdlUtils.ConvertStringLiteral(RunnerPath), TdlUtils.ConvertStringLiteral(Filter),
+          TdlUtils.ConvertStringLiteral(BinariesFolder), MaxRebootsCountOpt);
+
+        TestContainerApk   : CSharp.StringLiteral;
+        AppApk             : CSharp.StringLiteral;
+        RunnerPath         : CSharp.StringLiteral;
+        Filter             : CSharp.StringLiteral;
+        BinariesFolder     : CSharp.StringLiteral;
         MaxRebootsCountOpt : ParsedValue[int];
       }
 

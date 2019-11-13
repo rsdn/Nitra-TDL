@@ -153,6 +153,27 @@ namespace QuickType
         public int? MaxRebootsCount { get; set; }
     }
 
+    public sealed class Marathon : TestMethodOrTestSequenceItemImpl
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string AndroidTestContainer { get; set; }
+
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string MarathonApkFilename { get; set; }
+
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string MarathonTestRunnerPath { get; set; }
+
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string TestFilter { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string LocalTestBinariesFolder { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
+    }
+
     public sealed class LoginTestStep : TestMethod, TestSequenceItem
     {
         [JsonProperty(Required = Required.Always)]

@@ -69,7 +69,7 @@
       | Currying          = Modifier=DeploymentModifier? "deployment" sm Name Parameters? sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
       | DeploymentSelect  = Modifier=DeploymentModifier? "select" sm "deployment" sm Name "(" (Parameter; "," sm)+ ")"
                             "{" inl
-                                Case*  
+                                Case*
                             d "}" nl outline_end_before
         {
           syntax Parameter = Name;
@@ -142,13 +142,13 @@
       }
     }
 
-    syntax SelectScenario = outline_begin_before 
+    syntax SelectScenario = outline_begin_before
                             "{" inl
                                 Filter? nl
-                                Deployment nl 
+                                Deployment nl
                                 "environments" sm "(" Platform=Reference "," sm Product=Reference ")" ";" nl
                                 Method nl
-                                DefDeclaration* 
+                                DefDeclaration*
                           d "}" nl outline_end_before
     {
       syntax Deployment   = "deployment" sm Reference ";" nl;
@@ -161,11 +161,10 @@
     syntax Config          = "config" sm Path=StringLiteral MaxRebootsCount? ";" nl;
     syntax GTest           = "gtest"  sm Name=StringLiteral Arguments=StringLiteral* MaxRebootsCount? ";" nl;
     syntax XCode           = "xcode"  sm Container=StringLiteral "path" sm XcodePath=StringLiteral MaxRebootsCount? ";" nl;
-    syntax Apk             = "apk"    sm Name=StringLiteral Filter? "runner" RunnerPath=StringLiteral MaxRebootsCount? ";" nl
-    {
-      syntax Filter = "filter" Value=StringLiteral;
-    }
-    syntax Script       = "script" sm Name=StringLiteral Arguments=StringLiteral* Environments? MaxRebootsCount? ";" nl
+    syntax Apk             = "apk"    sm Name=StringLiteral Filter? "runner" RunnerPath=StringLiteral MaxRebootsCount? ";" nl;
+    syntax Marathon        = "marathon" sm "tests" TestContainerApk=StringLiteral "app" AppApk=StringLiteral "runner" RunnerPath=StringLiteral Filter BinariesFolder MaxRebootsCount? ";" nl;
+    syntax Filter          = "filter" Value=StringLiteral;
+    syntax Script          = "script" sm Name=StringLiteral Arguments=StringLiteral* Environments? MaxRebootsCount? ";" nl
     {
       syntax Environments = "(" Defs=(DefEnv; ", ")+ ")";
     }
@@ -177,6 +176,7 @@
       | GTest
       | XCode
       | Apk
+      | Marathon
       | Sequence = "sequence" sm  "{" inl SequenceAction* d "}" nl outline_end_before
     }
     regex TimeSpan = DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit | "";
@@ -187,6 +187,7 @@
       | GTest
       | XCode
       | Apk
+      | Marathon
       | Script
       | Login           = "login" sm User=StringLiteral sm Password=StringLiteral ";" nl;
       | Logoff          = "logoff" ";" nl;
@@ -218,7 +219,7 @@
     syntax ExternalBody = outline_begin_before "{" inl Fields=Field* d "}" nl outline_end_before;
 
     syntax Field = Attributes AnyType sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
-    
+
     syntax DeploymentScriptBody = outline_begin_before "{" inl DefDeclaration* Options=DeploymentOption* d "}" nl outline_end_before;
 
     syntax DeploymentOption
