@@ -302,7 +302,7 @@ namespace Tdl
       ]
     | Sequence -> SequenceActions
   }
-  map syntax Grammar.Filter -> CSharp.StringLiteral { Value }
+  map syntax Grammar.Filter -> DefExpr { Value }
 
   map syntax Grammar.SequenceAction -> Action
   {
@@ -471,5 +471,5 @@ namespace Tdl
 
   map syntax Grammar.StringLiteral.VerbatimStringLiteral -> CSharp.StringLiteral { Lit }
 
-  map syntax Grammar.BinariesFolder -> CSharp.StringLiteral { Value }
+  map syntax Grammar.BinariesFolder -> DefExpr { Value }
 }

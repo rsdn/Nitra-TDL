@@ -158,13 +158,13 @@
     syntax Environments    = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
     syntax Environment     = "(" Platform=Reference "," sm Product=Reference ")";
     syntax Method          = "method" sm QualifiedIdentifier MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
-    syntax Config          = "config" sm Path=StringLiteral MaxRebootsCount? ";" nl;
-    syntax GTest           = "gtest"  sm Name=StringLiteral Arguments=StringLiteral* MaxRebootsCount? ";" nl;
-    syntax XCode           = "xcode"  sm Container=StringLiteral "path" sm XcodePath=StringLiteral MaxRebootsCount? ";" nl;
-    syntax Apk             = "apk"    sm Name=StringLiteral Filter? "runner" RunnerPath=StringLiteral MaxRebootsCount? ";" nl;
-    syntax Marathon        = "marathon" sm "tests" TestContainerApk=StringLiteral "app" AppApk=StringLiteral "runner" RunnerPath=StringLiteral Filter BinariesFolder MaxRebootsCount? ";" nl;
-    syntax Filter          = "filter" Value=StringLiteral;
-    syntax Script          = "script" sm Name=StringLiteral Arguments=StringLiteral* Environments? MaxRebootsCount? ";" nl
+    syntax Config          = "config" sm Path=DefExpr MaxRebootsCount? ";" nl;
+    syntax GTest           = "gtest"  sm Name=DefExpr Arguments=DefExpr* MaxRebootsCount? ";" nl;
+    syntax XCode           = "xcode"  sm Container=DefExpr "path" sm XcodePath=DefExpr MaxRebootsCount? ";" nl;
+    syntax Apk             = "apk"    sm Name=DefExpr Filter? "runner" RunnerPath=DefExpr MaxRebootsCount? ";" nl;
+    syntax Marathon        = "marathon" sm "tests" TestContainerApk=DefExpr "app" AppApk=DefExpr "runner" RunnerPath=DefExpr Filter BinariesFolder MaxRebootsCount? ";" nl;
+    syntax Filter          = "filter" Value=DefExpr;
+    syntax Script          = "script" sm Name=DefExpr Arguments=DefExpr* Environments? MaxRebootsCount? ";" nl
     {
       syntax Environments = "(" Defs=(DefEnv; ", ")+ ")";
     }
@@ -189,7 +189,7 @@
       | Apk
       | Marathon
       | Script
-      | Login           = "login" sm User=StringLiteral sm Password=StringLiteral ";" nl;
+      | Login           = "login" sm User=DefExpr sm Password=DefExpr ";" nl;
       | Logoff          = "logoff" ";" nl;
       | LockWorkstation = "lock-workstation" ";" nl;
       | Reboot          = "reboot" ";"
@@ -270,7 +270,7 @@
 
     syntax MaxRebootsCount = sm "max-reboots" sm Value=DecimalIntegerLiteral;
 
-    syntax BinariesFolder = sm "bins" sm Value=StringLiteral;
+    syntax BinariesFolder = sm "bins" sm Value=DefExpr;
 
     syntax ContinueOnError = sm "continue-on-error";
   }

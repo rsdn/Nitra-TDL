@@ -22,8 +22,10 @@ namespace Tdl.Tests
             Directory.CreateDirectory(OutputPath);
 
         [TearDown]
-        public void TearDown() =>
-            Directory.Delete(OutputPath, recursive: true);
+        public void TearDown()
+        {
+            //Directory.Delete(OutputPath, recursive: true);
+        }
 
         [TestCaseSource(nameof(GetTestCases))]
         public void Tdl(string directory)

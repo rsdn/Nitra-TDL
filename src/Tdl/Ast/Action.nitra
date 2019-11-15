@@ -17,76 +17,70 @@ namespace Tdl
 
     | Script
       {
-        ScenarioActions = ScenarioAction.Script(Name.Location, TdlUtils.ConvertStringLiteral(Name),
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef), MaxRebootsCountOpt);
+        ScenarioActions = ScenarioAction.Script(Name.Location, Name.Result, Arguments.Result,
+          TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef), MaxRebootsCountOpt.Result);
 
-        Name               : CSharp.StringLiteral;
-        Arguments          : CSharp.StringLiteral*;
+        Name               : DefExpr;
+        Arguments          : DefExpr*;
         Definitions        : Definition*;
-        MaxRebootsCountOpt : ParsedValue[int];
+        MaxRebootsCountOpt : DefExpr?;
       }
 
     | Config
       {
-        ScenarioActions = ScenarioAction.Config(Path.Location, TdlUtils.ConvertStringLiteral(Path), MaxRebootsCountOpt);
+        ScenarioActions = ScenarioAction.Config(Path.Location, Path.Result, MaxRebootsCountOpt.Result);
 
-        MaxRebootsCountOpt : ParsedValue[int];
-        Path               : CSharp.StringLiteral;
+        MaxRebootsCountOpt : DefExpr?;
+        Path               : DefExpr;
       }
 
     | GTest
       {
-        ScenarioActions = ScenarioAction.GTest(Name.Location, TdlUtils.ConvertStringLiteral(Name),
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), MaxRebootsCountOpt);
+        ScenarioActions = ScenarioAction.GTest(Name.Location, Name.Result, Arguments.Result, MaxRebootsCountOpt.Result);
 
-        Name               : CSharp.StringLiteral;
-        Arguments          : CSharp.StringLiteral*;
-        MaxRebootsCountOpt : ParsedValue[int];
+        Name               : DefExpr;
+        Arguments          : DefExpr*;
+        MaxRebootsCountOpt : DefExpr?;
       }
 
     | XCode
       {
-        ScenarioActions = ScenarioAction.XCode(Container.Location,
-          TdlUtils.ConvertStringLiteral(Container),
-          TdlUtils.ConvertStringLiteral(XcodePath),
-          MaxRebootsCountOpt);
+        ScenarioActions = ScenarioAction.XCode(Container.Location, Container.Result, XcodePath.Result, MaxRebootsCountOpt.Result);
 
-        Container          : CSharp.StringLiteral;
-        XcodePath          : CSharp.StringLiteral;
-        MaxRebootsCountOpt : ParsedValue[int];
+        Container          : DefExpr;
+        XcodePath          : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
       }
 
     | Apk
       {
-        ScenarioActions = ScenarioAction.Apk(Name.Location, TdlUtils.ConvertStringLiteral(Name),
-          FilterOpt.ConvertStringLiteral(), TdlUtils.ConvertStringLiteral(RunnerPath), MaxRebootsCountOpt);
+        ScenarioActions = ScenarioAction.Apk(Name.Location, Name.Result, FilterOpt.Result, RunnerPath.Result, MaxRebootsCountOpt.Result);
 
-        Name               : CSharp.StringLiteral;
-        FilterOpt          : CSharp.StringLiteral?;
-        RunnerPath         : CSharp.StringLiteral;
-        MaxRebootsCountOpt : ParsedValue[int];
+        Name               : DefExpr;
+        FilterOpt          : DefExpr?;
+        RunnerPath         : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
       }
 
     | Marathon
       {
-        ScenarioActions = ScenarioAction.Marathon(TestContainerApk.Location, TdlUtils.ConvertStringLiteral(TestContainerApk),
-          TdlUtils.ConvertStringLiteral(AppApk), TdlUtils.ConvertStringLiteral(RunnerPath), TdlUtils.ConvertStringLiteral(Filter),
-          TdlUtils.ConvertStringLiteral(BinariesFolder), MaxRebootsCountOpt);
+        ScenarioActions = ScenarioAction.Marathon(TestContainerApk.Location, TestContainerApk.Result, AppApk.Result, RunnerPath.Result,
+          Filter.Result, BinariesFolder.Result, MaxRebootsCountOpt.Result);
 
-        TestContainerApk   : CSharp.StringLiteral;
-        AppApk             : CSharp.StringLiteral;
-        RunnerPath         : CSharp.StringLiteral;
-        Filter             : CSharp.StringLiteral;
-        BinariesFolder     : CSharp.StringLiteral;
-        MaxRebootsCountOpt : ParsedValue[int];
+        TestContainerApk   : DefExpr;
+        AppApk             : DefExpr;
+        RunnerPath         : DefExpr;
+        Filter             : DefExpr;
+        BinariesFolder     : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
       }
 
     | Login
       {
-        ScenarioActions = TdlUtils.CreateLoginAction(context, this.Location, User, Password);
+        ScenarioActions = ScenarioAction.Login(this.Location, User.Result, Password.Result);
 
-        User               : CSharp.StringLiteral;
-        Password           : CSharp.StringLiteral;
+        User               : DefExpr;
+        Password           : DefExpr;
       }
 
     | Logoff          { ScenarioActions = ScenarioAction.Logoff(this.Location); }
@@ -99,12 +93,16 @@ namespace Tdl
         Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
         MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt, BinariesFolderOpt, ContinueOnErrorOpt);
+        ScenarioActions         = ScenarioAction.Method(Method.Location, DefExpr.Result, MaxRebootsCountOpt.Result, BinariesFolderOpt.Result,
+                                                        ContinueOnErrorOpt.Result);
+        //ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt.Result,
+        //                            BinariesFolderOpt.Result, ContinueOnErrorOpt.Result);
 
-        Method             : QualifiedReference;
-        MaxRebootsCountOpt : ParsedValue[int];
-        BinariesFolderOpt  : CSharp.StringLiteral?;
-        ContinueOnErrorOpt : ParsedValue[bool];
+        Method             : DefExpr;
+        //Method             : QualifiedReference;
+        MaxRebootsCountOpt : DefExpr?; // int
+        BinariesFolderOpt  : DefExpr?; // string
+        ContinueOnErrorOpt : DefExpr?; // bool
 
         when (!(Method is QualifiedReference.Qualified))
           Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
