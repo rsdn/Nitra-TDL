@@ -226,9 +226,9 @@ namespace QuickType
         public List<string> Suites { get; set; }
     }
 
-    public abstract class PreSessionActionBase { }
+    public abstract class SessionActionBase { }
 
-    public sealed class PreSessionScriptAction : PreSessionActionBase
+    public sealed class SessionScriptAction : SessionActionBase
     {
         [JsonProperty(Required = Required.Always)]
         public string ScriptPath { get; set; }
@@ -246,7 +246,7 @@ namespace QuickType
         }
     }
 
-    public sealed class PreSessionActionGroup : PreSessionActionBase
+    public sealed class SessionActionGroup : SessionActionBase
     {
         [JsonProperty(Required = Required.Always)]
         public string[] Scripts { get; set; }

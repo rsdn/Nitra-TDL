@@ -246,7 +246,8 @@
       | Ordinary   = !Predicate Reference sm "=" sm DefExpr ";" nl;
       | Predefined = &Predicate Reference sm "=" sm DefExpr ";" nl;
 
-      void Predicate = "SessionInitializer" s "=";
+      void Predicate = PredefinedName s "=";
+      regex PredefinedName = "SessionInitializer" | "SessionFinalizer";
     }
     syntax DefEnv         = Reference sm "=" sm DefExpr;
 

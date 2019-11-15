@@ -1,6 +1,32 @@
-﻿external
+external
 {
   string External1 = "defaulte for External1";
+}
+
+suite type SuiteType
+{
+  Deployment SessionInitializer = Deploy6;
+  Deployment SessionFinalizer   = Deploy5;
+  int Xxx = 42;
+}
+
+suite Suite1 : SuiteType
+{
+  platform Platform;
+  product Product1;
+  SessionFinalizer = Empty;
+  Arg1 = "qqq";
+  S1();
+}
+
+suite Suite2 : SuiteType
+{
+  platform Platform;
+  product Product1;
+  SessionInitializer = Deploy3;
+  Arg1 = External1;
+  Name1 = Product1.Name;
+  S1();
 }
 
 suite Suite : SuiteType =
@@ -10,29 +36,8 @@ suite Suite : SuiteType =
     platform Platform;
     product Product;
     Arg1 = "qqq";
-    //Name1 = External1;
     S1();
   };
-
-suite Suite1 : SuiteType
-{
-  platform Platform;
-  product Product1;
-  Arg1 = "qqq";
-  //Name1 = External1;
-  S1();
-}
-
-suite Suite2 : SuiteType
-{
-  platform Platform;
-  product Product1;
-  SessionInitializer = Deploy5;
-  Arg1 = External1;
-  //Name1 = "Product 1";
-  Name1 = Product1.Name;
-  S1();
-}
 
 product type ProductType
 {
@@ -64,12 +69,6 @@ scenario S1
   method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
   UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
   Timeout = "00:10";
-}
-
-suite type SuiteType
-{
-  Deployment SessionInitializer = Deploy6;
-  int Xxx = 42;
 }
 
 deployment Deploy6 = Deploy1, Deploy5, Deploy2;

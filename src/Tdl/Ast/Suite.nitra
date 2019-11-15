@@ -24,6 +24,7 @@ namespace Tdl
         stage 4                 :
           in DefaultDefs        : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
           in SessionInitializer : ValueOption[DeploymentTreeNode];
+          in SessionFinalizer   : ValueOption[DeploymentTreeNode];
 
           Kind           = "suite";
           SpanClass      = TdlLang.SuiteSpanClass;
@@ -65,6 +66,7 @@ namespace Tdl
         Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
 
         Symbol.SessionInitializer   = Api.TryMakeSessionInitializer(Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
+        Symbol.SessionFinalizer     = Api.TryMakeSessionFinalizer  (Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
 
         SetUsed(Symbol.Statements);
         ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);

@@ -13,7 +13,7 @@ namespace Tdl
     symbol
     {
       in Defs : ImmutableArray[Def];
-      
+
       Type = context.ToTdlContext().EntityType;
       SpanClass = TdlLang.EntitySpanClass;
     }
@@ -23,7 +23,7 @@ namespace Tdl
     Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef);
 
     Name.CheckRequired(context, "field", Definitions.DefinitionScope.GetAllSymbols(), Symbol.Defs);
-    
+
     Definitions : Definition*;
   } // Entity
 }

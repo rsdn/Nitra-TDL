@@ -217,6 +217,11 @@ namespace Tdl
       TryMakeSessionAction("SessionInitializer", ast, context, HashSet(), product, defs, predefineds, defaults, variables)
     }
 
+    internal TryMakeSessionFinalizer(ast : IAst, context : DependentPropertyEvalContext, product : ProductSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : ValueOption[DeploymentTreeNode]
+    {
+      TryMakeSessionAction("SessionFinalizer", ast, context, HashSet(), product, defs, predefineds, defaults, variables)
+    }
+
     internal ValidateSessionInitializer(this ast : IAst, context : DependentPropertyEvalContext, productOrVar : TypedDeclarationSymbol, defs : Seq[Def], predefineds : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], froms : ImmutableArray[Code.From]) : void
     {
       def reportedErrors = HashSet();
@@ -224,6 +229,7 @@ namespace Tdl
       {
         def product    = Api.TryResolveVar(variables, productOrVar) : ProductSymbol;
         _ = TryMakeSessionAction("SessionInitializer", ast, context, reportedErrors, product, defs, predefineds, defaults, variables);
+        _ = TryMakeSessionAction("SessionFinalizer",   ast, context, reportedErrors, product, defs, predefineds, defaults, variables);
       }
     }
 
@@ -262,6 +268,8 @@ namespace Tdl
                   loop(node);
             }
             def treeOpt = MakeDeploymentsTree(d, product, defs, defaults, variables);
+            when (treeOpt is VSome(Leaf(_, Tdl.Deployment.EmptySymbol)))
+              return VNone();
             when (treeOpt is VSome(tree))
             {
               loop(tree);

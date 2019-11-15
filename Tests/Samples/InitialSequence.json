@@ -75,7 +75,8 @@
       "TestScenarios": [
         "S1"
       ],
-      "PreSessionAction": "Deploy2-Deploy1-Deploy2-1"
+      "PreSessionAction": "Deploy2-2",
+      "PostSessionAction": "Deploy2-Deploy1-Deploy2-1"
     },
     "Suite-Product1-1-Deploy5": {
       "Parameters": {
@@ -92,7 +93,8 @@
       "TestScenarios": [
         "S1"
       ],
-      "PreSessionAction": "Deploy1-Deploy1-Deploy2-1"
+      "PreSessionAction": "Deploy1-Deploy1-Deploy2-1",
+      "PostSessionAction": "Deploy1-2"
     },
     "Suite-Product2-2-Deploy6": {
       "Parameters": {
@@ -109,7 +111,8 @@
       "TestScenarios": [
         "S1"
       ],
-      "PreSessionAction": "Deploy1-Deploy1-Deploy2-2"
+      "PreSessionAction": "Deploy1-Deploy1-Deploy2-2",
+      "PostSessionAction": "Deploy1-2"
     }
   },
   "SuiteGroups": {
@@ -170,6 +173,13 @@
     "Deploy2-2": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
+        "Arg1": "x",
+        "Name": "Product 1"
+      }
+    },
+    "Deploy2-3": {
+      "ScriptPath": "Deploy2.ps1",
+      "ScriptArgs": {
         "Arg1": "qqq",
         "Name": "Product 2"
       }
@@ -178,24 +188,26 @@
       "Scripts": [
         "Deploy1-1",
         "Deploy1-1",
-        "Deploy2-2"
+        "Deploy2-3"
       ]
-    },
-    "Deploy2-3": {
+    }
+  },
+  "PostSessionActions": {
+    "Deploy2-1": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
         "Arg1": "x",
         "Name": "Product 1"
       }
     },
-    "Deploy1-2": {
+    "Deploy1-1": {
       "ScriptPath": "Deploy1.ps1",
       "ScriptArgs": {
         "Arg1": "#(External1)",
         "Arg2": "42"
       }
     },
-    "Deploy2-4": {
+    "Deploy2-2": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
         "Arg1": "#(External1)",
@@ -204,10 +216,17 @@
     },
     "Deploy2-Deploy1-Deploy2-1": {
       "Scripts": [
-        "Deploy2-3",
-        "Deploy1-2",
-        "Deploy2-4"
+        "Deploy2-1",
+        "Deploy1-1",
+        "Deploy2-2"
       ]
+    },
+    "Deploy1-2": {
+      "ScriptPath": "Deploy1.ps1",
+      "ScriptArgs": {
+        "Arg1": "qqq",
+        "Arg2": "42"
+      }
     }
   }
 }

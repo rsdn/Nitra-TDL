@@ -86,7 +86,10 @@ namespace QuickType
         public IDictionary<string, TestEntity> TestEntities { get; set; }
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, PreSessionActionBase> PreSessionActions { get; set; }
+        public Dictionary<string, SessionActionBase> PreSessionActions { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, SessionActionBase> PostSessionActions { get; set; }
     }
 
     /// <summary>
@@ -213,6 +216,9 @@ namespace QuickType
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string PreSessionAction { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string PostSessionAction { get; set; }
     }
 
     public partial class TestGroup
