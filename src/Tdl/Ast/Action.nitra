@@ -15,6 +15,30 @@ namespace Tdl
   stage 2:
     out ScenarioActions : ScenarioAction;
 
+    | Method
+      {
+      stage 1:
+        out MethodRef : Ref[Member.MethodSymbol];
+        in Fake : Ref[Member.MethodSymbol];
+
+        Method.NameScopeFactory = context.GetMethodScopeFactory();
+        Method.Scope            = Scope;
+        //MethodRef               = Method.Ref.Resolve();
+        MethodRef = Fake;
+        ScenarioActions         = ScenarioAction.Method(Method.Location, Method.Result, MaxRebootsCountOpt.Result, BinariesFolderOpt.Result,
+                                                        ContinueOnErrorOpt);
+        //ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt.Result,
+        //                            BinariesFolderOpt.Result, ContinueOnErrorOpt.Result);
+
+        Method             : DefExpr;
+        //Method             : QualifiedReference;
+        MaxRebootsCountOpt : DefExpr?; // int
+        BinariesFolderOpt  : DefExpr?; // string
+        ContinueOnErrorOpt : ParsedValue[bool];
+
+        when (!(Method is DefExpr.MemberAccess))
+          Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
+      }
     | Script
       {
         ScenarioActions = ScenarioAction.Script(Name.Location, Name.Result, Arguments.Result,
@@ -85,28 +109,6 @@ namespace Tdl
 
     | Logoff          { ScenarioActions = ScenarioAction.Logoff(this.Location); }
     | LockWorkstation { ScenarioActions = ScenarioAction.LockWorkstation(this.Location); }
-    | Method
-      {
-      stage 1:
-        out MethodRef : Ref[Member.MethodSymbol];
-
-        Method.NameScopeFactory = context.GetMethodScopeFactory();
-        Method.Scope            = Scope;
-        MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = ScenarioAction.Method(Method.Location, DefExpr.Result, MaxRebootsCountOpt.Result, BinariesFolderOpt.Result,
-                                                        ContinueOnErrorOpt.Result);
-        //ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt.Result,
-        //                            BinariesFolderOpt.Result, ContinueOnErrorOpt.Result);
-
-        Method             : DefExpr;
-        //Method             : QualifiedReference;
-        MaxRebootsCountOpt : DefExpr?; // int
-        BinariesFolderOpt  : DefExpr?; // string
-        ContinueOnErrorOpt : DefExpr?; // bool
-
-        when (!(Method is QualifiedReference.Qualified))
-          Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
-      }
     | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot
       {

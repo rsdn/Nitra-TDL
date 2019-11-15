@@ -147,7 +147,7 @@
                                 Filter? nl
                                 Deployment nl
                                 "environments" sm "(" Platform=Reference "," sm Product=Reference ")" ";" nl
-                                Method nl
+                                Action nl
                                 DefDeclaration*
                           d "}" nl outline_end_before
     {
@@ -157,7 +157,7 @@
 
     syntax Environments    = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
     syntax Environment     = "(" Platform=Reference "," sm Product=Reference ")";
-    syntax Method          = "method" sm QualifiedIdentifier MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
+    syntax Method          = "method" sm Method=DefExpr MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
     syntax Config          = "config" sm Path=DefExpr MaxRebootsCount? ";" nl;
     syntax GTest           = "gtest"  sm Name=DefExpr Arguments=DefExpr* MaxRebootsCount? ";" nl;
     syntax XCode           = "xcode"  sm Container=DefExpr "path" sm XcodePath=DefExpr MaxRebootsCount? ";" nl;
@@ -268,7 +268,7 @@
       | MemberAccess = Expr=DefExpr "." Member=Reference
     }
 
-    syntax MaxRebootsCount = sm "max-reboots" sm Value=DecimalIntegerLiteral;
+    syntax MaxRebootsCount = sm "max-reboots" sm Value=DefExpr;
 
     syntax BinariesFolder = sm "bins" sm Value=DefExpr;
 

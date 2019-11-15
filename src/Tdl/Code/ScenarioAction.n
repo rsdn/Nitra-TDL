@@ -17,10 +17,10 @@ namespace Tdl
       {
         //TypeSymbol         : DeclarationSymbol;
         //MethodSymbol       : Member.MethodSymbol;
-        Method             : Expr;
+        Expr               : Expr;
         MaxRebootsCountOpt : ValueOption[Expr];
         BinariesFolderOpt  : ValueOption[Expr];
-        ContinueOnErrorOpt : ValueOption[Expr];
+        ContinueOnErrorOpt : ParsedValue[bool];
       }
     | Script
       {

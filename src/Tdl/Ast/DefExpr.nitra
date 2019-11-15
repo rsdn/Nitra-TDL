@@ -10,6 +10,8 @@ namespace Tdl
 {
   abstract ast DefExpr : BindableAst
   {
+  stage 1:
+    in  NameScopeFactory : ScopeFactory = ScopeFactories.Default;
   stage 2:
     in  ExpectedType : TypeSymbol;
     out Type         : TypeSymbol;
@@ -18,6 +20,29 @@ namespace Tdl
     unless (Type.SubtypeUnifyOf(ExpectedType))
       Error(context, $"Expected $(TdlUtils.Esc(self.ExpectedType)), got $(TdlUtils.Esc(self.Type))");
 
+    | Reference
+      {
+        Reference.Scope = NameScopeFactory(Scope);
+        Result          = Expr.Reference(Reference.Ref.Symbol);
+        Type            = await context.MakeType(Reference.Ref.Symbol);
+
+        SetUsed(Reference.Ref.Symbol, true);
+
+        Reference : Declarations.Reference;
+      }
+    | MemberAccess
+      {
+        Expr.NameScopeFactory = NameScopeFactory;
+        Type                  = await context.MakeType(Member.Ref.Symbol);
+        Expr.Scope            = Scope;
+        Member.Scope          = NameScopeFactory(Expr.Type.Scope);
+        Result                = Expr.MemberAccess(Expr.Result, Member.Ref.Symbol, Type);
+
+        SetUsed(Member.Ref.Symbol, true);
+
+        Expr   : DefExpr;
+        Member : Declarations.Reference;
+      }
     | ListLiteral
       {
       stage 2:
@@ -56,27 +81,5 @@ namespace Tdl
     | RealLiteral               { Type = context.GetDoubleType();  Result = Expr.Real(double.Parse(Location.GetText())); }
     | DecimalIntegerLiteral     { Type = context.GetInt32Type();   Result = Expr.Integer(int.Parse(Location.GetText())); }
     | HexadecimalIntegerLiteral { Type = context.GetInt32Type();   Result = Expr.Integer(int.Parse(Location.GetText().Substring(2), NumberStyles.HexNumber)); }
-    | Reference
-      {
-        Result          = Expr.Reference(Reference.Ref.Symbol);
-        Type            = await context.MakeType(Reference.Ref.Symbol);
-        Reference.Scope = Scope;
-
-        SetUsed(Reference.Ref.Symbol, true);
-
-        Reference : Declarations.Reference;
-      }
-    | MemberAccess
-      {
-        Type         = await context.MakeType(Member.Ref.Symbol);
-        Expr.Scope   = Scope;
-        Member.Scope = Expr.Type.Scope;
-        Result       = Expr.MemberAccess(Expr.Result, Member.Ref.Symbol, Type);
-
-        SetUsed(Member.Ref.Symbol, true);
-
-        Expr   : DefExpr;
-        Member : Declarations.Reference;
-      }
   }
 }
