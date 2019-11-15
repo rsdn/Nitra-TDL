@@ -23,6 +23,7 @@ using System.Text;
 
 namespace Tdl
 {
+
   module TdlUtils
   {
     static RequiredProductTypeFields : list[string] = ["Name", "Version"];
@@ -1066,28 +1067,32 @@ namespace Tdl
 
     public CheckSelectDeployment(this ast : IAst, context : DependentPropertyEvalContext, cases : Case.IAstList, parameterCount : int) : void
     {
-      def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-
-      foreach (case in cases)
+      try
       {
-        when (case.Values.Count != parameterCount)
+        def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+
+        foreach (case in cases)
         {
-          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
-          break;
+          when (case.Values.Count != parameterCount)
+          {
+            msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
+            break;
+          }
+        }
+
+        foreach (case in cases with k)
+        foreach (value when value.Text == "" in case.Values)
+          msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value can't be empty.", 0);
+
+        def set = HashSet();
+        foreach (case in cases with k)
+        {
+          def values = case.Values.Map(_.Text);
+          unless (set.Add(values))
+            msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Duplicate entry.", 0);
         }
       }
-
-      foreach (case in cases with k)
-      foreach (value when value.Text == "" in case.Values)
-        msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value can't be empty.", 0);
-
-      def set = HashSet();
-      foreach (case in cases with k)
-      {
-        def values = case.Values.Map(_.Text);
-        unless (set.Add(values))
-          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Duplicate entry.", 0);
-      }
+      catch { | e => Ice(ast, context, e); }
     }
 
     public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol) : ValueOption[ImmutableArray[FormalParameterSymbol]]
@@ -1124,116 +1129,124 @@ namespace Tdl
         | _ => assert(false);
       }
 
-      try MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
-      catch VNone()
+      MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
     }
 
     MakeDefaultDefs(ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, getAllProducts : TypedDeclarationSymbol -> Seq[Product.DefSymbol]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
-      def filteringScope    = definitionScope :> FilteringScope;
-      def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
-                                                    .OfType.[FormalParameterSymbol]()
-                                                    .Where(p => p.IsDeclaredInEvaluated && p.DeclaredIn is Deployment.SelectSymbol));
-
-      when (selectParams.Count == 0)
-        return VSome(ImmutableArray.Empty);
-
-      def selectDeployments = HashSet(selectParams.Select(p => p.DeclaredIn :> Deployment.SelectSymbol));
-      def paramMap          = Dictionary(ParameterComparer.Instance);
-
-      // We fill the values explicitly specified.
-      foreach (d in defs)
-          match (d.Expr)
-          {
-            | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
-            | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
-            | _ => ()
-          }
-
-      foreach (ds in getAllProducts(product)) // TODO: вычислить продукты сразу, так как они на первом проходе не вычисленны и остальные вычисления делать бессмысленно.
+      try
       {
-        unless (ds.IsDefsEvaluated)
-          return VNone();
+        def filteringScope    = definitionScope :> FilteringScope;
+        def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
+                                                      .OfType.[FormalParameterSymbol]()
+                                                      .Where(p => p.IsDeclaredInEvaluated && p.DeclaredIn is Deployment.SelectSymbol));
 
-        foreach (d in ds.Defs)
-          match (d.Expr)
-          {
-            | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
-            | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
-            | _ => ()
-          }
-      }
-
-      foreach (selectDeployment in selectDeployments)
-      {
-        unless (selectDeployment.IsParametersEvaluated)
-          return VNone();
-
-        def len        = selectDeployment.Parameters.Length;
-        def names      = array(len);
-        def isUsedVars = array(len);
-        def values     = array(len);
-        foreach (p in selectDeployment.Parameters with k)
-        {
-          names[k] = p.Name;
-          mutable value;
-          when (paramMap.TryGetValue(p, out value))
-          {
-            if (value == null)
-              isUsedVars[k] = true;
-            else
-              values[k] = value;
-          }
-        }
-
-        unless (selectDeployment.IsCasesEvaluated)
-          return VNone();
-
-        mutable isEntryPresent;
-        foreach (entry in selectDeployment.Cases)
-        {
-          when (entry.Length != values.Length)
-            return VSome(ImmutableArray.Empty); // An error message has already been reported.
-
-          mutable isEntryMatch = true;
-          for (mutable i = 0; i < values.Length; i++)
-          {
-            isEntryMatch &= entry[i] == values[i];
-            unless (isEntryMatch)
-              break;
-          }
-          isEntryPresent |= isEntryMatch;
-        }
-        when (!isEntryPresent && isUsedVars.All(x => !x))
-        {
-          def notSetVar = List();
-          for (mutable i = 0; i < names.Length; i++)
-          {
-            def name  = names[i];
-            def value = values[i];
-            when (value == null)
-              notSetVar.Add("\"" + name + "\"");
-          }
-
-          def entryStr      = values.Select(v => if (v == null) "_" else "\"" + v + "\"");
-          def msgs          = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-          def suffix        = if (notSetVar.Count > 1) "s" else "";
-          def notSetVarText = if (notSetVar.Count > 0) $"Valiable$suffix: ..$notSetVar not set. And the" else "The";
-          using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"$notSetVarText \"$(selectDeployment.Name)\" select deployment has no ..$entryStr entry.", 0))
-            root.ReportMessage(CompilerMessageType.Hint, selectDeployment.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
+        when (selectParams.Count == 0)
           return VSome(ImmutableArray.Empty);
+
+        def selectDeployments = HashSet(selectParams.Select(p => p.DeclaredIn :> Deployment.SelectSymbol));
+        def paramMap          = Dictionary(ParameterComparer.Instance);
+
+        // We fill the values explicitly specified.
+        foreach (d in defs)
+            match (d.Expr)
+            {
+              | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
+              | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
+              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
+              | _ => ()
+            }
+
+        foreach (ds in getAllProducts(product)) // TODO: вычислить продукты сразу, так как они на первом проходе не вычисленны и остальные вычисления делать бессмысленно.
+        {
+          unless (ds.IsDefsEvaluated)
+            return VNone();
+
+          foreach (d in ds.Defs)
+            match (d.Expr)
+            {
+              | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
+              | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
+              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
+              | _ => ()
+            }
         }
+
+        foreach (selectDeployment in selectDeployments)
+        {
+          unless (selectDeployment.IsParametersEvaluated)
+            return VNone();
+
+          def len        = selectDeployment.Parameters.Length;
+          def names      = array(len);
+          def isUsedVars = array(len);
+          def values     = array(len);
+          foreach (p in selectDeployment.Parameters with k)
+          {
+            names[k] = p.Name;
+            mutable value;
+            when (paramMap.TryGetValue(p, out value))
+            {
+              if (value == null)
+                isUsedVars[k] = true;
+              else
+                values[k] = value;
+            }
+          }
+
+          unless (selectDeployment.IsCasesEvaluated)
+            return VNone();
+
+          mutable isEntryPresent;
+          foreach (entry in selectDeployment.Cases)
+          {
+            when (entry.Length != values.Length)
+              return VSome(ImmutableArray.Empty); // An error message has already been reported.
+
+            mutable isEntryMatch = true;
+            for (mutable i = 0; i < values.Length; i++)
+            {
+              isEntryMatch &= entry[i] == values[i];
+              unless (isEntryMatch)
+                break;
+            }
+            isEntryPresent |= isEntryMatch;
+          }
+          when (!isEntryPresent && isUsedVars.All(x => !x))
+          {
+            def notSetVar = List();
+            for (mutable i = 0; i < names.Length; i++)
+            {
+              def name  = names[i];
+              def value = values[i];
+              when (value == null)
+                notSetVar.Add("\"" + name + "\"");
+            }
+
+            def entryStr      = values.Select(v => if (v == null) "_" else "\"" + v + "\"");
+            def msgs          = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+            def suffix        = if (notSetVar.Count > 1) "s" else "";
+            def notSetVarText = if (notSetVar.Count > 0) $"Valiable$suffix: ..$notSetVar not set. And the" else "The";
+            using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"$notSetVarText \"$(selectDeployment.Name)\" select deployment has no ..$entryStr entry.", 0))
+              root.ReportMessage(CompilerMessageType.Hint, selectDeployment.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
+            return VSome(ImmutableArray.Empty);
+          }
+        }
+
+        def distinctSelectParams = HashSet(selectParams, ParameterComparer.Instance);
+
+        def builder = ImmutableArray.CreateBuilder(distinctSelectParams.Count);
+        foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
+          builder.Add(p);
+
+        VSome(builder.ToImmutable())
       }
+      catch { | e => Ice(ast, context, e); VNone() }
+    }
 
-      def distinctSelectParams = HashSet(selectParams, ParameterComparer.Instance);
-
-      def builder = ImmutableArray.CreateBuilder(distinctSelectParams.Count);
-      foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
-        builder.Add(p);
-
-      VSome(builder.ToImmutable())
+    Ice(ast : IAst, context : DependentPropertyEvalContext, e : Exception) : void
+    {
+      ast.Error(context, "Internal compiler error. Notify TDL developers about it: " + e);
     }
 
     public AsName(text : string) : string

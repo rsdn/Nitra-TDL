@@ -23,7 +23,7 @@ namespace Tdl2Json
   internal class SessionActionCompiler
   {
     _actionSequenceMap : Hashtable[list[DeploymentTreeNode.Leaf], string] = Hashtable();
-    _actionScriptMap   : Hashtable[DeploymentTreeNode.Leaf, PreSessionScriptAction] = Hashtable();
+    _actionScriptMap   : Hashtable[DeploymentTreeNode.Leaf, SessionScriptAction] = Hashtable();
     _actionNameMap     : Hashtable[string, int] = Hashtable();
 
     public GetSessionActionName(action : DeploymentTreeNode, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
@@ -90,7 +90,7 @@ namespace Tdl2Json
       }
     }
 
-    public Compile() : Dictionary[string, PreSessionActionBase]
+    public Compile() : Dictionary[string, SessionActionBase]
     {
       def result = Dictionary();
 
@@ -122,16 +122,16 @@ namespace Tdl2Json
       _ = GetOrMakeName([leaf]);
     }
 
-    private MakeGroup(script : list[DeploymentTreeNode.Leaf]) : PreSessionActionBase
+    private MakeGroup(script : list[DeploymentTreeNode.Leaf]) : SessionActionBase
     {
       def names = script.MapToArray(x => GetOrMakeName([x]));
-      PreSessionActionGroup() <-
+      SessionActionGroup() <-
       {
         Scripts = names;
       }
     }
 
-    private MakePreSessionScriptAction(scriptNode : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : PreSessionScriptAction
+    private MakePreSessionScriptAction(scriptNode : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : SessionScriptAction
     {
       assert(scriptNode.deployment is Deployment.ScriptSymbol);
       def script = scriptNode.deployment :> Deployment.ScriptSymbol;
@@ -142,7 +142,7 @@ namespace Tdl2Json
         args.Add(p.Name, MakeArgValue(p, scriptNode.variables, variables));
 
       def result =
-        PreSessionScriptAction() <-
+        SessionScriptAction() <-
         {
           ScriptPath = path;
           ScriptArgs = args;
