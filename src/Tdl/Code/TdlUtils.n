@@ -791,8 +791,30 @@ namespace Tdl
       }
     }
 
-    public CheckMaxReboots(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
+    public CheckMaxReboots(
+      this ast       : IAst,
+           context   : DependentPropertyEvalContext,
+           actions   : ImmutableArray[ScenarioAction],
+           variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null
+    ) : void
     {
+      def values = Dictionary();
+      def getPropertyValue(obj : object, prop : Declarations.DeclarationSymbol) : object * ResultKind
+      {
+        | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
+          def res = prod.Defs
+                        .Find(d => d.Symbol.Id == field.Id)
+                        .Map(d => d.Expr.Calc(values, variables, getPropertyValue))
+                        .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
+          res
+
+        | _ => ("unsuported expression", ResultKind.Error)
+      }
+      def error(loc : Location, msg : string) : void
+      {
+        def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+        msgs.Error(loc, msg);
+      }
       mutable prevAction = null;
       for (mutable i = 0; i < actions.Length; ++i)
       {
@@ -800,16 +822,27 @@ namespace Tdl
         {
           match (prevAction)
           {
-            | ScenarioAction.Script  (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Config  (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.GTest   (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Apk     (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Marathon(MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Method  (MaxRebootsCountOpt = maxReboots) =>
-              when (maxReboots.ValueOrDefault < 1)
+            | ScenarioAction.Script  (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Config  (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.GTest   (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Apk     (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Marathon(MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Method  (MaxRebootsCountOpt = VSome(maxReboots)) =>
+              match (maxReboots.Calc(values, variables, getPropertyValue))
               {
-                def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-                msgs.Error(prevAction.Location, "Directive 'max-reboots' with non-zero value is required by following 'wait-for-reboot' scenario action.");
+                | (_,     ResultKind.Missing)           => assert(false)
+                | (_,     ResultKind.NotSet)            => assert(false)
+                | (_value, ResultKind.ExternalParameter)
+                | (_value, ResultKind.GlobalParameter)
+                | (_value, ResultKind.Product)
+                | (_value, ResultKind.Error)
+                | (_,     ResultKind.External) => error(prevAction.Location, "This kind of expression is not allowed in max-reboots.");
+                | (value : object, ResultKind.Value)             =>
+                  if (value is int as intVal)
+                    when (intVal < 1)
+                      error(prevAction.Location, "Directive 'max-reboots' with non-zero value is required by following 'wait-for-reboot' scenario action.");
+                  else
+                    error(prevAction.Location, "The max-reboots should have int type.");
               }
 
             | _ =>
@@ -1537,16 +1570,16 @@ namespace Tdl
       ast.Accept(AstVisitor(onName, onReference));
     }
 
-    public CreateLoginAction(context : DependentPropertyEvalContext, location : Location, user : CSharp.StringLiteral, password : CSharp.StringLiteral) : ScenarioAction.Login
-    {
-      def userValue     = ConvertStringLiteral(user);
-      def passwordValue = ConvertStringLiteral(password);
-
-      when (string.IsNullOrEmpty(userValue.Value))
-        user.Error(context, "User name must be non empty string.");
-
-      ScenarioAction.Login(location, userValue, passwordValue)
-    }
+    //public CreateLoginAction(context : DependentPropertyEvalContext, location : Location, user : Tdl.Expr, password : Tdl.Expr) : ScenarioAction.Login
+    //{
+    //  def userValue     = ConvertStringLiteral(user);
+    //  def passwordValue = ConvertStringLiteral(password);
+    //
+    //  when (string.IsNullOrEmpty(userValue.Value))
+    //    user.Error(context, "User name must be non empty string.");
+    //
+    //  ScenarioAction.Login(location, userValue, passwordValue)
+    //}
 
     public ValidateCommandParameters(this ast : CommandCall, command : DeclaredTypeSymbol, context : DependentPropertyEvalContext) : void
     {
@@ -1788,21 +1821,21 @@ namespace Tdl
       }
     }
 
-    public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ParsedValue[int],
-      binariesFolderOpt : CSharp.StringLiteral.IAstOption, continueOnErrorOpt : ParsedValue[bool]) : ValueOption[ScenarioAction.Method]
-    {
-      match (methodAst)
-      {
-        | Qualified as q when q.Qualifier.IsRefEvaluated && q.Qualifier.Ref.IsSymbolEvaluated =>
-          VSome(ScenarioAction.Method(methodAst.Location,
-                                      q.Qualifier.Ref.Symbol,
-                                      methodSymbol,
-                                      maxRebootsCountOpt,
-                                      binariesFolderOpt.ConvertStringLiteral(),
-                                      continueOnErrorOpt))
-        | _ => VNone()
-      }
-    }
+    //public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ValueOption[Tdl.Expr],
+    //  binariesFolderOpt : ValueOption[Tdl.Expr], continueOnErrorOpt : ValueOption[Tdl.Expr]) : ValueOption[ScenarioAction.Method]
+    //{
+    //  match (methodAst)
+    //  {
+    //    | Qualified as q when q.Qualifier.IsRefEvaluated && q.Qualifier.Ref.IsSymbolEvaluated =>
+    //      VSome(ScenarioAction.Method(methodAst.Location,
+    //                                  q.Qualifier.Ref.Symbol,
+    //                                  methodSymbol,
+    //                                  maxRebootsCountOpt,
+    //                                  binariesFolderOpt.ConvertStringLiteral(),
+    //                                  continueOnErrorOpt))
+    //    | _ => VNone()
+    //  }
+    //}
 
     private AddSpecialDeploymentsAggregateParameterScope(builder : ref UnionScopeBuilder, context : DependentPropertyEvalContext) : void
     {

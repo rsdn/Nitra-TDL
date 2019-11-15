@@ -13,57 +13,58 @@ namespace Tdl
   {
     public Location : Location { get; }
 
+    | Method
+      {
+        //TypeSymbol         : DeclarationSymbol;
+        //MethodSymbol       : Member.MethodSymbol;
+        Method             : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
+        BinariesFolderOpt  : ValueOption[Expr];
+        ContinueOnErrorOpt : ValueOption[Expr];
+      }
     | Script
       {
-        Name               : ParsedValue[string];
-        Arguments          : ImmutableArray[ParsedValue[string]];
+        Name               : Expr;
+        Arguments          : ImmutableArray[Expr];
         Defs               : ImmutableArray[Def];
-        MaxRebootsCountOpt : ParsedValue[int];
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
-    | Config        { path   : ParsedValue[string]; MaxRebootsCountOpt : ParsedValue[int]; }
+    | Config        { path   : Expr; MaxRebootsCountOpt : ValueOption[Expr]; }
     | GTest
       {
-        Name               : ParsedValue[string];
-        Arguments          : ImmutableArray[ParsedValue[string]];
-        MaxRebootsCountOpt : ParsedValue[int];
+        Name               : Expr;
+        Arguments          : ImmutableArray[Expr];
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
     | XCode
       {
-        Container          : ParsedValue[string];
-        XcodePath          : ParsedValue[string];
-        MaxRebootsCountOpt : ParsedValue[int];
+        Container          : Expr;
+        XcodePath          : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
     | Apk
       {
-        Name               : ParsedValue[string];
-        FilterOpt          : ParsedValue[string];
-        RunnerPath         : ParsedValue[string];
-        MaxRebootsCountOpt : ParsedValue[int];
+        Name               : Expr;
+        FilterOpt          : ValueOption[Expr];
+        RunnerPath         : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
     | Marathon
       {
-        TestContainerApk   : ParsedValue[string];
-        AppApk             : ParsedValue[string];
-        RunnerPath         : ParsedValue[string];
-        Filter             : ParsedValue[string];
-        BinariesFolder     : ParsedValue[string];
-        MaxRebootsCountOpt : ParsedValue[int];
+        TestContainerApk   : Expr;
+        AppApk             : Expr;
+        RunnerPath         : Expr;
+        Filter             : Expr;
+        BinariesFolder     : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
     | Login
       {
-        User               : ParsedValue[string];
-        Password           : ParsedValue[string];
+        User               : Expr;
+        Password           : Expr;
       }
     | Logoff          { }
     | LockWorkstation { }
-    | Method
-      {
-        TypeSymbol         : DeclarationSymbol;
-        MethodSymbol       : Member.MethodSymbol;
-        MaxRebootsCountOpt : ParsedValue[int];
-        BinariesFolderOpt  : ParsedValue[string];
-        ContinueOnErrorOpt : ParsedValue[bool];
-      }
     | Reboot          { }
     | WaitForReboot   { TimeSpan : string; }
     | Barrier         { barrier : BarrierSymbol; }

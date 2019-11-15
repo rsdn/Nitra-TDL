@@ -61,7 +61,7 @@ namespace Tdl
         mutable result;
         when (_methodScopeFactoryCache.TryGetValue(symbol.Id, out result))
           return result;
-        
+
         def isTestMethod(m : Member.MethodSymbol) : bool
         {
           foreach (a in m.CustomAttributes)
@@ -77,7 +77,6 @@ namespace Tdl
           | method is Member.MethodSymbol => isTestMethod(method)
           | _                             => false
         }
-
         def isTestClass(c : TopClassSymbol) : bool
         {
           foreach (a in c.CustomAttributes)
@@ -88,7 +87,6 @@ namespace Tdl
           }
           false
         }
-
         def isNamespaceContainsTestClasses(ns : NamespaceSymbol) : bool
         {
           foreach (m when filter(m) in ns.MemberTable.GetAllSymbols())
@@ -106,7 +104,7 @@ namespace Tdl
           };
 
         _methodScopeFactoryCache[symbol.Id] = result;
-        
+
         result
       }
 
