@@ -95,7 +95,7 @@ namespace Tdl
         } -> Parameters;
         Froms                                     -> Froms;
         SelectScenario.Deployment.Reference       -> Deployment;
-        SelectScenario.Method.QualifiedIdentifier -> Method;
+        SelectScenario.Action                     -> Actions;
         SelectScenario.Platform                   -> Platform;
         SelectScenario.Product                    -> Product;
         SelectScenario.DefDeclarations            -> Definitions;
@@ -246,26 +246,26 @@ namespace Tdl
           | None    -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
-        MaxRebootsCountOpt = Script.MaxRebootsCountOpt.ToInt();
+        Script.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | Config   ->
       [ Action.Config
         {
           Config.Path -> Path;
-          MaxRebootsCountOpt = Config.MaxRebootsCountOpt.ToInt();
+          Config.MaxRebootsCountOpt -> MaxRebootsCountOpt;
         }
       ]
     | GTest    -> [ Action.GTest
       {
         GTest.Name      -> Name;
         GTest.Arguments -> Arguments;
-        MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
+        GTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | XCode    -> [ Action.XCode
       {
         XCode.Container -> Container;
         XCode.XcodePath -> XcodePath;
-        MaxRebootsCountOpt = XCode.MaxRebootsCountOpt.ToInt();
+        XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | Apk      -> [ Action.Apk
       {
@@ -276,45 +276,48 @@ namespace Tdl
           | None()  -> None()
         } -> FilterOpt;
         Apk.RunnerPath -> RunnerPath;
-        MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
+        Apk.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | Marathon -> [ Action.Marathon
       {
-        Marathon.TestContainerApk -> TestContainerApk;
-        Marathon.AppApk           -> AppApk;
-        Marathon.RunnerPath       -> RunnerPath;
-        Marathon.Filter           -> Filter;
-        Marathon.BinariesFolder   -> BinariesFolder;
-        MaxRebootsCountOpt        = Marathon.MaxRebootsCountOpt.ToInt();
+        Marathon.TestContainerApk   -> TestContainerApk;
+        Marathon.AppApk             -> AppApk;
+        Marathon.RunnerPath         -> RunnerPath;
+        Marathon.Filter             -> Filter;
+        Marathon.BinariesFolder     -> BinariesFolder;
+        Marathon.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | Method   ->
       [ Action.Method
         {
-          Method.QualifiedIdentifier -> Method;
+          Method.Method -> Method;
           match (Method.BinariesFolderOpt)
           {
             | None    -> None()
             | Some(x) -> Some(x)
           } -> BinariesFolderOpt;
-          MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
+          Method.MaxRebootsCountOpt -> MaxRebootsCountOpt;
           ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
         }
       ]
     | Sequence -> SequenceActions
   }
+
+  map syntax Grammar.MaxRebootsCount -> DefExpr { Value }
+
   map syntax Grammar.Filter -> DefExpr { Value }
 
   map syntax Grammar.SequenceAction -> Action
   {
     | Method  -> Method
       {
-        Method.QualifiedIdentifier -> Method;
+        Method.Method -> Method;
         match (Method.BinariesFolderOpt)
         {
           | None    -> None()
           | Some(x) -> Some(x)
         } -> BinariesFolderOpt;
-        MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
+        Method.MaxRebootsCountOpt -> MaxRebootsCountOpt;
         ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
       }
     | Script ->  Action.Script
@@ -326,24 +329,24 @@ namespace Tdl
           | None -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
-        MaxRebootsCountOpt = Script.MaxRebootsCountOpt.ToInt();
+        Script.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Config -> Action.Config
         {
           Config.Path -> Path;
-          MaxRebootsCountOpt = Config.MaxRebootsCountOpt.ToInt();
+          Config.MaxRebootsCountOpt -> MaxRebootsCountOpt;
         }
     | GTest -> Action.GTest
       {
         GTest.Name      -> Name;
         GTest.Arguments -> Arguments;
-        MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
+        GTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | XCode    -> Action.XCode
       {
-        XCode.Container -> Container;
-        XCode.XcodePath -> XcodePath;
-        MaxRebootsCountOpt = XCode.MaxRebootsCountOpt.ToInt();
+        XCode.Container          -> Container;
+        XCode.XcodePath          -> XcodePath;
+        XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Apk -> Action.Apk
       {
@@ -354,16 +357,16 @@ namespace Tdl
           | None()  -> None()
         } -> FilterOpt;
         Apk.RunnerPath -> RunnerPath;
-        MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
+        Apk.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Marathon -> Action.Marathon
       {
-        Marathon.TestContainerApk -> TestContainerApk;
-        Marathon.AppApk           -> AppApk;
-        Marathon.RunnerPath       -> RunnerPath;
-        Marathon.Filter           -> Filter;
-        Marathon.BinariesFolder   -> BinariesFolder;
-        MaxRebootsCountOpt        = Marathon.MaxRebootsCountOpt.ToInt();
+        Marathon.TestContainerApk   -> TestContainerApk;
+        Marathon.AppApk             -> AppApk;
+        Marathon.RunnerPath         -> RunnerPath;
+        Marathon.Filter             -> Filter;
+        Marathon.BinariesFolder     -> BinariesFolder;
+        Marathon.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Login           -> Login           { User -> User; Password -> Password; }
     | Logoff          -> Logoff          { }
