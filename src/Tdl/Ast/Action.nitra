@@ -23,21 +23,18 @@ namespace Tdl
 
         Method.NameScopeFactory = context.GetMethodScopeFactory();
         Method.Scope            = Scope;
-        //MethodRef               = Method.Ref.Resolve();
         MethodRef = Fake;
         ScenarioActions         = ScenarioAction.Method(Method.Location, Method.Result, MaxRebootsCountOpt.Result, BinariesFolderOpt.Result,
                                                         ContinueOnErrorOpt);
-        //ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt.Result,
-        //                            BinariesFolderOpt.Result, ContinueOnErrorOpt.Result);
+        Method.ExpectedType = context.ToTdlContext().MethodType;
 
         Method             : DefExpr;
-        //Method             : QualifiedReference;
         MaxRebootsCountOpt : DefExpr?; // int
         BinariesFolderOpt  : DefExpr?; // string
         ContinueOnErrorOpt : ParsedValue[bool];
 
-        when (!(Method is DefExpr.MemberAccess))
-          Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
+        //when (!(Method is DefExpr.MemberAccess))
+        //  Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
       }
     | Script
       {
@@ -90,6 +87,13 @@ namespace Tdl
       {
         ScenarioActions = ScenarioAction.Marathon(TestContainerApk.Location, TestContainerApk.Result, AppApk.Result, RunnerPath.Result,
           Filter.Result, BinariesFolder.Result, MaxRebootsCountOpt.Result);
+
+        TestContainerApk  .Scope = Scope;
+        AppApk            .Scope = Scope;
+        RunnerPath        .Scope = Scope;
+        Filter            .Scope = Scope;
+        BinariesFolder    .Scope = Scope;
+        MaxRebootsCountOpt.Scope = Scope;     
 
         TestContainerApk   : DefExpr;
         AppApk             : DefExpr;
