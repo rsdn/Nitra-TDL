@@ -94,6 +94,9 @@ namespace Tdl
           false
         }
 
+        when (symbol is VarSymbol)
+          return true;
+
         result =
           match (symbol)
           {
