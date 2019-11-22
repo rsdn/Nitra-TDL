@@ -1,5 +1,4 @@
-scenario SbSFuncScenarios1 =
-    from (Str1, Int1) in [("a", 1), ("b", 2)]
+﻿scenario SbSFuncScenarios1 =
     from Platform in [win7]
     from Deployment in [DeployMultiProductWithDeployerAndPreparingKsm60,
          DeployMultiProductWithDeployerAndPreparingKsm65,
@@ -11,21 +10,11 @@ scenario SbSFuncScenarios1 =
     {
         deployment Deployment;
         environments (Platform, Product);
-        sequence
-        {
-          method Method;
-          method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
-          marathon tests  @"artifacts\App\apk\androidTest\App-safekids-prod-internal-debug-androidTest.apk" 
-           app    @"artifacts\App\apk\safekids-prod-internal-debug-$(SafeKids-VersionName)-$(VersionCode).apk"
-           runner Str1
-           filter @"^.*$"
-           bins   @"\\asgard-storage\temp_drop\builds2\KSK_Android\test"
-           max-reboots Int1;
-       }
+        method Method;
     
         UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
         Timeout = "02:30:00";
-        ProductGroupName = Str1;
+        ProductGroupName = "SbSFuncProductGroup";
     };
 
 platform win7-x86;

@@ -33,8 +33,8 @@ namespace Tdl
 
     public TestMode : bool { get; }
     mutable _backEnd : CciBackEnd;
-    
-    public this()    
+
+    public this()
     {
       //assert2(false);
       def makeDefaultParameters(ast : ExprBase) : ValueOption[DefaultValue]
@@ -66,7 +66,7 @@ namespace Tdl
       self
     }
 
-    
+
     public this(testMode : bool)
     {
       this();
@@ -82,7 +82,7 @@ namespace Tdl
       }
       project.Data = null;
     }
-    
+
     public RefreshReferences(cancellationToken : CancellationToken, project : Project) : object
     {
       TdlTypeUnifier.InitInstance();
@@ -127,10 +127,11 @@ namespace Tdl
       def backEnd = CciBackEnd();
       _backEnd = backEnd;
       backEnd.CancellationToken = cancellationToken;
+      def typeType              = TdlType.TypeSymbol();
       def entityType            = TdlType.EntitySymbol();
       def methodType            = FunctionTypeSymbol();
       def scenarioType          = TdlType.ScenarioSymbol();
-      def context               = TdlDependentPropertyEvalContext(project, entityType, methodType, scenarioType);
+      def context               = TdlDependentPropertyEvalContext(project, entityType, methodType, scenarioType, typeType);
       def rootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
       def systemNsRef   = bindNs(rootNamespace.Scope, "System");
       when (systemNsRef.IsSymbolEvaluated)
@@ -221,7 +222,7 @@ namespace Tdl
       {
         when (cancellationToken.IsCancellationRequested)
           return;
-        
+
         tableScope.Undefine(x => { cancellationToken.ThrowIfCancellationRequested(); x.IsParsed });
         foreach (symbols in tableScope.Symbols)
         foreach (symbol is NamespaceSymbol in symbols)
@@ -247,7 +248,7 @@ namespace Tdl
     {
       def scenarios = root.AllSymbols.OfType.[ScenarioSymbol]().ToArray();
       CheckParallelScenarios(context, scenarios);
-      
+
       def uniqueIds = scenarios.OfType.[Scenario.DefSymbol]()
         .Where(sd => sd.IsDefsEvaluated && sd.Defs.Any(d => d.Symbol.Name == "UniqueId"))
         .Select(sd => (sd, sd.Defs.Single(d => d.Symbol.Name == "UniqueId")));
@@ -258,7 +259,7 @@ namespace Tdl
           guid
       }
       def groupedByDef = uniqueIds.GroupBy((_, d) => toGuid(d.Expr.GetValue().ToString()));
-      
+
       foreach (group when group.Key != Guid.Empty && group.Count() > 1 in groupedByDef)
       {
         def names = string.Join(", ", group.Select((sd, _) => sd.Name));
@@ -309,7 +310,7 @@ namespace Tdl
           }
         }
       }
-      
+
       foreach (set in scenarioSets)
       {
         def scenarios        = TdlUtils.GetSetScenarios(set);
@@ -332,7 +333,7 @@ namespace Tdl
         set.BarriersCount = barriersCountMap.Map(x => (x.Key, x.Value));
       }
     }
-    
+
     public GetSymbolById(data : object, symbolId : int) : ValueOption[DeclarationSymbol]
     {
       def projectData = DecomposeData(data);
@@ -422,7 +423,7 @@ namespace Tdl
       symbol.EvalProperties(context);
       symbol
     }
-    
+
     public MakeExternalSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : ExternalSymbol
     {
       def decl   = PredefinedDeclaration(Name(NoLocation, "external"), fun() { ExternalSymbol() });
@@ -430,13 +431,13 @@ namespace Tdl
       symbol.EvalProperties(context);
       symbol
     }
-    
+
     public MakeScenarioParametersScope(backEnd : IDotNetBackEnd, context : TdlDependentPropertyEvalContext, scenarioParameterScope : TableScope) : ImmutableArray[FormalParameterSymbol]
     {
       def requiredScenarioParametersBuilder = ImmutableArray.CreateBuilder();
-      
+
       mutable index;
-      
+
       def defineParameter(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
         def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
@@ -451,7 +452,7 @@ namespace Tdl
       }
 
       def platformType = backEnd.PlatformType;
-      
+
       defineParameter(context, "Area",                            platformType.String,  required=false);
       defineParameter(context, "ArtifactsCollectionTimeout",      platformType.String,  required=false);
       defineParameter(context, "EnforceBinariesFolderUniqueness", platformType.Boolean, required=false);
@@ -472,11 +473,11 @@ namespace Tdl
 
       requiredScenarioParametersBuilder.ToImmutable();
     }
-    
+
     public MakeEntityFieldsScope(backEnd : IDotNetBackEnd, context : TdlDependentPropertyEvalContext, entityFieldsScope : TableScope) : TableScope
     {
       mutable index;
-      
+
       def defineField(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
         _ = required;
@@ -490,12 +491,12 @@ namespace Tdl
       }
 
       def platformType = backEnd.PlatformType;
-      
+
       defineField(context, "Name",       platformType.String, required=true);
       defineField(context, "BranchName", platformType.String, required=true);
       defineField(context, "Version",    platformType.String, required=true);
       defineField(context, "Type",       platformType.String, required=true);
-      
+
       //requiredScenarioParametersBuilder.ToImmutable();
       entityFieldsScope
     }

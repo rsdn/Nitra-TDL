@@ -11,6 +11,7 @@ namespace Tdl
 {
   abstract declaration TdlType : Type
   {
+    | Type       { symbol { ToString = "Type"; } }
     | Scenario   { symbol { ToString = "Scenario"; } }
     | Method     { symbol { ToString = "Method"; } }
     | Entity     { symbol { ToString = "Entity"; } }

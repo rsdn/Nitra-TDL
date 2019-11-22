@@ -35,7 +35,7 @@ namespace Tdl
         Expr.NameScopeFactory = NameScopeFactory;
         Type                  = await context.MakeType(Member.Ref.Symbol);
         Expr.Scope            = Scope;
-        Member.Scope          = NameScopeFactory(Expr.Type.Scope);
+        Member.Scope          = NameScopeFactory(TdlUtils.GetMembers(Expr.Result));
         Result                = Expr.MemberAccess(Expr.Result, Member.Ref.Symbol, Type);
 
         SetUsed(Member.Ref.Symbol, true);

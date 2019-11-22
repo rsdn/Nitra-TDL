@@ -21,12 +21,18 @@ namespace Tdl
         out MethodRef : Ref[Member.MethodSymbol];
         in Fake : Ref[Member.MethodSymbol];
 
-        Method.NameScopeFactory = context.GetMethodScopeFactory();
-        Method.Scope            = Scope;
         MethodRef = Fake;
-        ScenarioActions         = ScenarioAction.Method(Method.Location, Method.Result, MaxRebootsCountOpt.Result, BinariesFolderOpt.Result,
-                                                        ContinueOnErrorOpt);
-        Method.ExpectedType = context.ToTdlContext().MethodType;
+        ScenarioActions         = ScenarioAction.Method(Method.Location, Method.Result, MaxRebootsCountOpt.Result, BinariesFolderOpt.Result, ContinueOnErrorOpt);
+
+        Method            .Scope            = Scope;
+        MaxRebootsCountOpt.Scope            = Scope;
+        BinariesFolderOpt .Scope            = Scope;
+
+        Method            .NameScopeFactory = context.GetMethodScopeFactory();
+
+        Method            .ExpectedType     = context.ToTdlContext().MethodType;
+        MaxRebootsCountOpt.ExpectedType     = context.GetType("int");
+        BinariesFolderOpt .ExpectedType     = context.GetType("string");
 
         Method             : DefExpr;
         MaxRebootsCountOpt : DefExpr?; // int
@@ -41,6 +47,14 @@ namespace Tdl
         ScenarioActions = ScenarioAction.Script(Name.Location, Name.Result, Arguments.Result,
           TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef), MaxRebootsCountOpt.Result);
 
+        Name              .Scope        = Scope;
+        Arguments         .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Name              .ExpectedType = context.GetType("string");
+        Arguments         .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
         Name               : DefExpr;
         Arguments          : DefExpr*;
         Definitions        : Definition*;
@@ -51,13 +65,27 @@ namespace Tdl
       {
         ScenarioActions = ScenarioAction.Config(Path.Location, Path.Result, MaxRebootsCountOpt.Result);
 
-        MaxRebootsCountOpt : DefExpr?;
+        Path              .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Path              .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
         Path               : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
       }
 
     | GTest
       {
         ScenarioActions = ScenarioAction.GTest(Name.Location, Name.Result, Arguments.Result, MaxRebootsCountOpt.Result);
+
+        Name              .Scope        = Scope;
+        Arguments         .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Name              .ExpectedType = context.GetType("string");
+        Arguments         .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
 
         Name               : DefExpr;
         Arguments          : DefExpr*;
@@ -68,6 +96,14 @@ namespace Tdl
       {
         ScenarioActions = ScenarioAction.XCode(Container.Location, Container.Result, XcodePath.Result, MaxRebootsCountOpt.Result);
 
+        Container         .Scope        = Scope;
+        XcodePath         .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Container         .ExpectedType = context.GetType("string");
+        XcodePath         .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
         Container          : DefExpr;
         XcodePath          : DefExpr;
         MaxRebootsCountOpt : DefExpr?;
@@ -76,6 +112,16 @@ namespace Tdl
     | Apk
       {
         ScenarioActions = ScenarioAction.Apk(Name.Location, Name.Result, FilterOpt.Result, RunnerPath.Result, MaxRebootsCountOpt.Result);
+
+        Name              .Scope        = Scope;
+        FilterOpt         .Scope        = Scope;
+        RunnerPath        .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Name              .ExpectedType = context.GetType("string");
+        FilterOpt         .ExpectedType = context.GetType("string");
+        RunnerPath        .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
 
         Name               : DefExpr;
         FilterOpt          : DefExpr?;
@@ -93,7 +139,14 @@ namespace Tdl
         RunnerPath        .Scope = Scope;
         Filter            .Scope = Scope;
         BinariesFolder    .Scope = Scope;
-        MaxRebootsCountOpt.Scope = Scope;     
+        MaxRebootsCountOpt.Scope = Scope;
+
+        TestContainerApk.ExpectedType = context.GetType("string");
+        AppApk.ExpectedType = context.GetType("string");
+        RunnerPath.ExpectedType = context.GetType("string");
+        Filter.ExpectedType = context.GetType("string");
+        BinariesFolder.ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
 
         TestContainerApk   : DefExpr;
         AppApk             : DefExpr;
@@ -107,13 +160,16 @@ namespace Tdl
       {
         ScenarioActions = ScenarioAction.Login(this.Location, User.Result, Password.Result);
 
+        User.ExpectedType = context.GetType("string");
+        Password.ExpectedType = context.GetType("string");
+
         User               : DefExpr;
         Password           : DefExpr;
       }
 
     | Logoff          { ScenarioActions = ScenarioAction.Logoff(this.Location); }
     | LockWorkstation { ScenarioActions = ScenarioAction.LockWorkstation(this.Location); }
-    | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location); }
+    | Reboot          { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot
       {
         ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value);

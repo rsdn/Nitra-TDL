@@ -1,4 +1,6 @@
-﻿using Nemerle;
+﻿using DotNet;
+
+using Nemerle;
 using Nemerle.Collections;
 using Nemerle.Imperative;
 using Nemerle.Text;
@@ -89,6 +91,27 @@ namespace Tdl2Json
       where TCmp: IComparable[TCmp]
     {
       list.Sort((x, y) => selector(x).CompareTo(selector(y)))
+    }
+
+    public ExprToInt(this exprOpt : ValueOption[Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : int?
+    {
+      if (exprOpt is VSome(expr))
+        expr.ToObject(values=null, variables=variables) :> int
+      else
+        null
+    }
+
+    public ExprToString(this exprOpt : ValueOption[Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
+    {
+      if (exprOpt is VSome(expr))
+        ExprToString(expr, variables)
+      else
+        null
+    }
+
+    public ExprToString(this expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
+    {
+      expr.ToObject(values=null, variables=variables) :> string
     }
   }
 }

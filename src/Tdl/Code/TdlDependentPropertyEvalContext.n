@@ -26,5 +26,6 @@ namespace Tdl
     public EntityType            : TdlType.EntitySymbol;
     public MethodType            : FunctionTypeSymbol;
     public ScenarioType          : TdlType.ScenarioSymbol;
+    public TypeType              : TdlType.TypeSymbol;
   }
 }

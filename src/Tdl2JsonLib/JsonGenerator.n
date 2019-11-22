@@ -342,8 +342,20 @@ namespace Tdl2Json
       }
     }
 
-    private GetAssemblyAndMethodName(typeSymbolOpt : DeclarationSymbol, [NotNull] methodSymbol : Member.MethodSymbol) : string * string
+    private GetAssemblyAndMethodName(expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string * string
     {
+      when (expr is Reference(Symbol=VarSymbol as v))
+        return GetAssemblyAndMethodName(variables[v], variables);
+
+      def (typeSymbolOpt, methodSymbol) =
+        match (expr)
+        {
+          | Reference(Symbol=Member.MethodSymbol as m) => (null, m)
+          | MemberAccess(Expr=MemberAccess(Symbol=GenericTypeSymbol as t), Symbol=Member.MethodSymbol as m)
+          | MemberAccess(Expr=Reference   (Symbol=GenericTypeSymbol as t), Symbol=Member.MethodSymbol as m) => (t, m)
+          | _ => assert(false, $"Unsupported method reference format '$expr' ($(expr.GetType().FullName))");
+        };
+
       def decl         = methodSymbol.GetDeclarationsOfType.[ExternalMethodDeclaration]();
       def method       = decl.First().Method;
       def typeSymbol   = typeSymbolOpt :> SymbolBase;
@@ -364,6 +376,8 @@ namespace Tdl2Json
     private GenerateTestGroup(g : Tdl.Scenario.GeneratorSymbol, uniqueId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
       initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler) : TestGroup
     {
+      //def parallelSetOpt = if (g.IsParallelSetOptEvaluated) g.ParallelSetOpt else null;
+      //def barriersCount  = parallelSetOpt?.BarriersCount?.ToDictionary() ?? Dictionary();
       def getString(name : string) : string
       {
         def getValue(expr : Tdl.Expr) : string
@@ -407,18 +421,163 @@ namespace Tdl2Json
           g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(getValue).WithDefault(null);
       }
       def deployment = Api.TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
-      def method     = Api.TryResolveVar(dic, g.Method)     : Member.MethodSymbol;
       def platform   = Api.TryResolveVar(dic, g.Platform)   : PlatformSymbol;
       def product    = Api.TryResolveVar(dic, g.Product)    : ProductSymbol;
+      def artifactsCollectionTimeout = getString("ArtifactsCollectionTimeout");
       def getTestMethod() : TestMethod
       {
-        def (assemblyName, methodName) = GetAssemblyAndMethodName(null, method);
-        TestMethodQualifier() <-
+        def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
         {
-          AssemblyName = assemblyName;
-          MethodName   = methodName;
+          _ = method.Expr;
+          def (assemblyName, methodName) = GetAssemblyAndMethodName(method.Expr, dic);
+          TestMethodQualifier() <-
+          {
+            AssemblyName               = assemblyName;
+            MethodName                 = methodName;
+            MaxRebootsCount            = method.MaxRebootsCountOpt.ExprToInt(dic);
+            ContinueOnError            = method.ContinueOnErrorOpt.ToNullable();
+            ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+            LocalTestBinariesFolder    = method.BinariesFolderOpt.ExprToString(dic);
+          }
         }
+
+        when (g.Actions.Length == 1)
+        when (g.Actions[0] is ScenarioAction.Method as method)
+          return makeMethodAction(method);
+
+        def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
+        {
+            def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.ExprToString(dic)));
+            def env = c.Defs.Select(d => (d.Symbol.Name, d.Expr.ToObject(values=null, variables=dic))).ToDictionary();
+            UnixScriptRunner() <-
+            {
+              TestScriptName             = c.Name.ExprToString(dic);
+              TestScriptArgs             = testScriptArgs;
+              Environment                = env;
+              MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+              ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+            }
+        }
+        def makeGTestAction(c : ScenarioAction.GTest) : GTestProgram
+        {
+            def testScriptArgs = c.Arguments.MapToArray(a => a.ExprToString(dic));
+            GTestProgram() <-
+            {
+              ProgramName                = c.Name.ExprToString(dic);
+              Arguments                  = testScriptArgs;
+              MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+              ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+            }
+        }
+        def makeXCodeAction(c : ScenarioAction.XCode) : XCode
+        {
+            XCode() <-
+            {
+              XCodeTestContainer         = c.Container.ExprToString(dic);
+              XcodePath                  = c.XcodePath.ExprToString(dic);
+              MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+              ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+            }
+        }
+        def makeAndroidJavaAction(c : ScenarioAction.Apk) : AndroidJava
+        {
+            AndroidJava() <-
+            {
+              AndroidTestContainer       = c.Name.ExprToString(dic);
+              TestFilter                 = c.FilterOpt.ExprToString(dic);
+              TestRunnerPath             = c.RunnerPath.ExprToString(dic);
+              MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+            }
+        }
+        def makeMarathonAction(c : ScenarioAction.Marathon) : Marathon
+        {
+            Marathon() <-
+            {
+              AndroidTestContainer       = c.TestContainerApk.ExprToString(dic);
+              AndroidTestContainer       = c.AppApk.ExprToString(dic);
+              MarathonTestRunnerPath     = c.RunnerPath.ExprToString(dic);
+              TestFilter                 = c.Filter.ExprToString(dic);
+              LocalTestBinariesFolder    = c.BinariesFolder.ExprToString(dic);
+              MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+            }
+        }
+        def makeConfigAction(c : ScenarioAction.Config) : TestBot
+        {
+          TestBot() <-
+          {
+            TestConfigName             = c.path.ExprToString(dic);
+            MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+            ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+          }
+        }
+        def makeAction(action : ScenarioAction) : TestSequenceItem
+        {
+          | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
+          | Method        as m => makeMethodAction(m)
+          | WaitForReboot as x =>
+            WaitForRebootTestStep() <-
+            {
+              WaitForReboot =
+                WaitForRebootTestStep.Data() <-
+                {
+                  RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
+                };
+            }
+          | Barrier as barrier =>
+            assert(false, "Barriers unsupported in generators");
+            def b = barrier.barrier;
+            WaitForBarrierTestStep() <-
+            {
+              WaitForBarrier =
+                WaitForBarrierTestStep.Data() <-
+                {
+                  Id      = b.Guid;
+                  Timeout = TimeSpan.Parse(b.Timeout.Value);
+                  Count   = 0;//barriersCount.GetValue(b);
+                }
+            }
+          | Script as s        => makeScriptAction(s)
+          | Config as c        => makeConfigAction(c)
+          | GTest  as g        => makeGTestAction(g)
+          | XCode  as x        => makeXCodeAction(x)
+          | Apk    as a        => makeAndroidJavaAction(a)
+          | Marathon as m      => makeMarathonAction(m)
+          | Login  as login    => LoginTestStep() <-
+            {
+              Login = LoginTestStep.Data() <-
+              {
+                User = login.User.ExprToString(dic);
+                Password = login.Password.ExprToString(dic);
+              }
+            }
+
+          | Logoff             => LogoffTestStep() <- { Logoff = LogoffTestStep.Data() }
+          | LockWorkstation    => LockWorkstationTestStep() <- { LockWorkstation = LockWorkstationTestStep.Data() }
+          | _                  => assert(false, "Unsupported ScenarioAction: " + action)
+        }
+        def tryGetSingleElem[T]() : ValueOption[T]
+        {
+          if (g.Actions.Length == 1 && g.Actions[0] is T) VSome(g.Actions[0] :> T) else VNone()
+        }
+
+        if (tryGetSingleElem() is VSome(action))
+          makeConfigAction(action)
+        else if (tryGetSingleElem() is VSome(action))
+          makeScriptAction(action)
+        else if (tryGetSingleElem() is VSome(action))
+          makeGTestAction(action)
+        else if (tryGetSingleElem() is VSome(action))
+          makeXCodeAction(action)
+        else if (tryGetSingleElem() is VSome(action))
+          makeAndroidJavaAction(action)
+        else
+          TestMethodSequence() <-
+          {
+            TestSequence               = g.Actions.Select(makeAction).ToArray();
+            ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+          }
       }
+
       def testGroup =
         TestGroup() <-
         {
@@ -496,15 +655,16 @@ namespace Tdl2Json
           {
             def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
             {
-              def (assemblyName, methodName) = GetAssemblyAndMethodName(method.TypeSymbol, method.MethodSymbol);
+              _ = method.Expr;
+              def (assemblyName, methodName) = GetAssemblyAndMethodName(method.Expr);
               TestMethodQualifier() <-
               {
                 AssemblyName               = assemblyName;
                 MethodName                 = methodName;
-                MaxRebootsCount            = method.MaxRebootsCountOpt.ToNullable();
+                MaxRebootsCount            = method.MaxRebootsCountOpt.ExprToInt();
                 ContinueOnError            = method.ContinueOnErrorOpt.ToNullable();
                 ArtifactsCollectionTimeout = artifactsCollectionTimeout;
-                LocalTestBinariesFolder    = if (method.BinariesFolderOpt.HasValue) method.BinariesFolderOpt.Value else null;
+                LocalTestBinariesFolder    = method.BinariesFolderOpt.ExprToString();
               }
             }
 
@@ -514,25 +674,25 @@ namespace Tdl2Json
 
             def makeScriptAction(c : ScenarioAction.Script) : UnixScriptRunner
             {
-                def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.Value.ToLiteral()));
+                def testScriptArgs = string.Join(" ", c.Arguments.Select(a => a.ExprToString().ToLiteral()));
                 def env = c.Defs.Select(d => (d.Symbol.Name, d.Expr.ToObject())).ToDictionary();
                 UnixScriptRunner() <-
                 {
-                  TestScriptName             = c.Name.Value;
+                  TestScriptName             = c.Name.ExprToString();
                   TestScriptArgs             = testScriptArgs;
                   Environment                = env;
-                  MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
             }
             def makeGTestAction(c : ScenarioAction.GTest) : GTestProgram
             {
-                def testScriptArgs = c.Arguments.MapToArray(a => a.Value);
+                def testScriptArgs = c.Arguments.MapToArray(a => a.ExprToString());
                 GTestProgram() <-
                 {
-                  ProgramName                = c.Name.Value;
+                  ProgramName                = c.Name.ExprToString();
                   Arguments                  = testScriptArgs;
-                  MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
             }
@@ -540,9 +700,9 @@ namespace Tdl2Json
             {
                 XCode() <-
                 {
-                  XCodeTestContainer         = c.Container.Value;
-                  XcodePath                  = c.XcodePath .Value;
-                  MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                  XCodeTestContainer         = c.Container.ExprToString();
+                  XcodePath                  = c.XcodePath.ExprToString();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
             }
@@ -550,30 +710,30 @@ namespace Tdl2Json
             {
                 AndroidJava() <-
                 {
-                  AndroidTestContainer       = c.Name.Value;
-                  TestFilter                 = c.FilterOpt.ValueOrDefault;
-                  TestRunnerPath             = c.RunnerPath.ValueOrDefault;
-                  MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                  AndroidTestContainer       = c.Name.ExprToString();
+                  TestFilter                 = c.FilterOpt.ExprToString();
+                  TestRunnerPath             = c.RunnerPath.ExprToString();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                 }
             }
             def makeMarathonAction(c : ScenarioAction.Marathon) : Marathon
             {
                 Marathon() <-
                 {
-                  AndroidTestContainer       = c.TestContainerApk.Value;
-                  AndroidTestContainer       = c.AppApk.Value;
-                  MarathonTestRunnerPath     = c.RunnerPath.Value;
-                  TestFilter                 = c.Filter.Value;
-                  LocalTestBinariesFolder    = c.BinariesFolder.Value;
-                  MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                  AndroidTestContainer       = c.TestContainerApk.ExprToString();
+                  AndroidTestContainer       = c.AppApk.ExprToString();
+                  MarathonTestRunnerPath     = c.RunnerPath.ExprToString();
+                  TestFilter                 = c.Filter.ExprToString();
+                  LocalTestBinariesFolder    = c.BinariesFolder.ExprToString();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                 }
             }
             def makeConfigAction(c : ScenarioAction.Config) : TestBot
             {
               TestBot() <-
               {
-                TestConfigName             = c.path.Value;
-                MaxRebootsCount            = c.MaxRebootsCountOpt.ToNullable();
+                TestConfigName             = c.path.ExprToString();
+                MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                 ArtifactsCollectionTimeout = artifactsCollectionTimeout;
               }
             }
@@ -608,7 +768,15 @@ namespace Tdl2Json
               | XCode  as x        => makeXCodeAction(x)
               | Apk    as a        => makeAndroidJavaAction(a)
               | Marathon as m      => makeMarathonAction(m)
-              | Login  as login    => LoginTestStep() <- { Login = LoginTestStep.Data() <- { User = login.User.Value; Password = login.Password.Value } }
+              | Login  as login    => LoginTestStep() <-
+                {
+                  Login = LoginTestStep.Data() <-
+                  {
+                    User = login.User.ExprToString();
+                    Password = login.Password.ExprToString()
+                  }
+                }
+
               | Logoff             => LogoffTestStep() <- { Logoff = LogoffTestStep.Data() }
               | LockWorkstation    => LockWorkstationTestStep() <- { LockWorkstation = LockWorkstationTestStep.Data() }
               | _                  => assert(false, "Unsupported ScenarioAction: " + action)
