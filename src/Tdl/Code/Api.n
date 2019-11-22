@@ -281,5 +281,19 @@ namespace Tdl
       }
       catch VNone()
     }
+
+    public GetAssemblyAndMethod(expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : GenericTypeSymbol * Member.MethodSymbol
+    {
+      when (expr is Reference(Symbol=VarSymbol as v))
+        return GetAssemblyAndMethod(variables[v], variables);
+
+      match (expr)
+      {
+        | Reference(Symbol=Member.MethodSymbol as m) => (null, m)
+        | MemberAccess(Expr=MemberAccess(Symbol=GenericTypeSymbol as t), Symbol=Member.MethodSymbol as m)
+        | MemberAccess(Expr=Reference   (Symbol=GenericTypeSymbol as t), Symbol=Member.MethodSymbol as m) => (t, m)
+        | _ => assert(false, $"Unsupported method reference format '$expr' ($(expr.GetType().FullName))");
+      }
+    }
   } // module
 } // namespace

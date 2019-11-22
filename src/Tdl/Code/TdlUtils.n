@@ -352,10 +352,10 @@ namespace Tdl
       if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value.Value) else ParsedValue(valueOpt.Span.StartPos)
     }
 
-    public ConvertStringLiteral(this valueOpt : CSharp.StringLiteral.IAstOption) : ParsedValue[string]
-    {
-      if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value) else ParsedValue(valueOpt.Span.StartPos)
-    }
+    //public ConvertStringLiteral(this valueOpt : CSharp.StringLiteral.IAstOption) : ParsedValue[string]
+    //{
+    //  if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value) else ParsedValue(valueOpt.Span.StartPos)
+    //}
 
     public ConvertStringLiteralOrNull(str : CSharp.StringLiteral) : string
     {
@@ -631,13 +631,13 @@ namespace Tdl
       deployments
     }
 
-    public FilterDeploymentDefs(defs : ImmutableArray[Def]) : List[TypedDeclarationSymbol * DeploymentSymbol]
-    {
-      def deployments = List();
-      foreach (Def(Symbol=s, Expr=Expr.Reference(Symbol=DeploymentSymbol as d)) in defs)
-        deployments.Add(s, d);
-      deployments
-    }
+    //public FilterDeploymentDefs(defs : ImmutableArray[Def]) : List[TypedDeclarationSymbol * DeploymentSymbol]
+    //{
+    //  def deployments = List();
+    //  foreach (Def(Symbol=s, Expr=Expr.Reference(Symbol=DeploymentSymbol as d)) in defs)
+    //    deployments.Add(s, d);
+    //  deployments
+    //}
 
     public MakeParameterScope(scope : Scope, predefineds : ImmutableArray[Def]) : ValueOption[Scope]
     {
@@ -1477,18 +1477,18 @@ namespace Tdl
       MakeAggregateParametersScope(deployments, parametersScope)
     }
 
-    public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
-    {
-      unless (maxRebootsCountOpt.HasValue)
-        return ParsedValue(maxRebootsCountOpt.Span.StartPos);
-
-      def lit = maxRebootsCountOpt.Value.Value;
-
-      when (lit.IsMissing || lit.IsAmbiguous)
-        return ParsedValue(lit.Span.StartPos);
-
-      ParsedValue(lit.Span, int.Parse(lit.GetText()))
-    }
+    //public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
+    //{
+    //  unless (maxRebootsCountOpt.HasValue)
+    //    return ParsedValue(maxRebootsCountOpt.Span.StartPos);
+    //
+    //  def lit = maxRebootsCountOpt.Value.Value;
+    //
+    //  when (lit.IsMissing || lit.IsAmbiguous)
+    //    return ParsedValue(lit.Span.StartPos);
+    //
+    //  ParsedValue(lit.Span, int.Parse(lit.GetText()))
+    //}
 
     public ToBool(this continueOnErrorOpt : OptionParseTree[GrammarParseTree.ContinueOnError]) : ParsedValue[bool]
     {
@@ -1802,13 +1802,18 @@ namespace Tdl
       HintML.XmlEscape(self.ToString())
     }
 
+    public GetType(this context : DependentPropertyEvalContext, fullName : string) : TypeSymbol
+    {
+      context.BindType(fullName, 0)
+    }
+
     public MakeType(this context : DependentPropertyEvalContext, symbol : DeclarationSymbol) : ValueOption[TypeSymbol]
     {
       match (symbol)
       {
         | TypedDeclarationSymbol as t  when !t.IsTypeEvaluated => VNone()
         | TypedDeclarationSymbol as t => VSome(t.Type)
-        | TypeSymbol as t => VSome(t)
+        | TypeSymbol => VSome(context.ToTdlContext().TypeType)
         | NamespaceSymbol as ns when !ns.IsScopeEvaluated => VNone()
         | NamespaceSymbol as ns =>
           def type = SelfTypeBaseSymbol();
@@ -1977,6 +1982,25 @@ namespace Tdl
           result.Add(keySelector(v), elementSelector(v));
 
       result
+    }
+
+    public GetMembers(expr : Tdl.Expr) : Scope
+    {
+      | Reference   (Symbol=Product.DefSymbol as p)     => p.Type.Scope
+      | Reference   (Symbol=FormalParameterSymbol as p) => p.Type.Scope
+      | Reference   (Symbol=ContainerSymbol as cont)
+      | MemberAccess(Symbol=ContainerSymbol as cont) => cont.Scope
+      | Reference
+      | MemberAccess
+      | NotSet
+      | Error
+      | String
+      | True
+      | False
+      | Real
+      | Integer
+      | List
+      | Tuple => EmptyScope.Instance
     }
   } // module
 } // namespace

@@ -17,21 +17,21 @@ using Tdl2Json;
 namespace Tdl
 {
     public static class Program
-    { 
+    {
         // ReSharper disable once UnusedMember.Global
         public static void Main([NotNull] TransformationContext context)
         {
 #if DEBUG
             Console.WriteLine("Waiting for debug connection");
             Console.Read();
-#endif 
+#endif
             var symbolConverter = new SymbolConverter();
-            var modelContainer = symbolConverter.ParseSymbols(context); 
+            var modelContainer = symbolConverter.ParseSymbols(context);
 
             Console.WriteLine("input command..");
 
             var clo = new Tdl.Transformator.CommandLineOptions();
-            
+
             while (clo.NeedExit == false)
             {
                 Console.WriteLine();
@@ -100,7 +100,7 @@ namespace Tdl
                         }
 
                         break;
-                    case ArgumentCommand.Undefined: 
+                    case ArgumentCommand.Undefined:
                         break;
                     default:
                         clo.PrintHelp(Console.Out);
