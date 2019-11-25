@@ -1,0 +1,9 @@
+﻿using Tdl;
+
+namespace Tdl2Json
+{
+  interface IScenarioTrigger
+  {
+    IsTriggered(symbol : ScenarioSymbol) : bool
+  }
+}
