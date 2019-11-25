@@ -696,49 +696,53 @@ namespace Tdl
 
     public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope) : void
     {
-      def definedParameters = HashSet();
-      foreach (s in productScope.AllSymbols)
-        _ = definedParameters.Add(s.NameId);
-      foreach (d in suiteDefs)
-        _ = definedParameters.Add(d.Symbol.NameId);
-
-      mutable hasUnconditionalScenario;
-      def undefinedParameters = HashSet();
-      foreach (statement in suiteStatements)
+      try
       {
-        | CallScenario(scenaro) =>
-          when (scenaro.IsUnconditional)
-            hasUnconditionalScenario = true;
+        def definedParameters = HashSet();
+        foreach (s in productScope.AllSymbols)
+          _ = definedParameters.Add(s.NameId);
+        foreach (d in suiteDefs)
+          _ = definedParameters.Add(d.Symbol.NameId);
 
-          when (scenaro.IsAggregateParametersScopeEvaluated)
-          {
-            def scenarioScope = scenaro.AggregateParametersScope;
-            foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
+        mutable hasUnconditionalScenario;
+        def undefinedParameters = HashSet();
+        foreach (statement in suiteStatements)
+        {
+          | CallScenario(scenaro) =>
+            when (scenaro.IsIsUnconditionalEvaluated && scenaro.IsUnconditional)
+              hasUnconditionalScenario = true;
+
+            when (scenaro.IsAggregateParametersScopeEvaluated)
             {
-              when (definedParameters.Contains(parameter.NameId)
-                 || parameter.HasDefault()
-                 || parameter.DeclaredIn is Deployment.SelectSymbol
-                 || parameter.Type is SuiteTypeSymbol)
-                continue; // OK
-
-              when (undefinedParameters.Add(parameter.NameId))
+              def scenarioScope = scenaro.AggregateParametersScope;
+              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
               {
-                def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
-                using (root = msgs.RootError(ast.Name, $"Value is not specified for parameter '$(parameter)' declared in '$(parameter.DeclaredIn)'."))
+                when (definedParameters.Contains(parameter.NameId)
+                   || parameter.HasDefault()
+                   || parameter.DeclaredIn is Deployment.SelectSymbol
+                   || parameter.Type is SuiteTypeSymbol)
+                  continue; // OK
+
+                when (undefinedParameters.Add(parameter.NameId))
                 {
-                  def parameterDefinition = parameter.FirstParsedDeclarationOrDefault;
-                  when (parameterDefinition != null)
-                    root.Hint(parameterDefinition.Name.Location, "Parameter definition.");
+                  def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
+                  using (root = msgs.RootError(ast.Name, $"Value is not specified for parameter '$(parameter)' declared in '$(parameter.DeclaredIn)'."))
+                  {
+                    def parameterDefinition = parameter.FirstParsedDeclarationOrDefault;
+                    when (parameterDefinition != null)
+                      root.Hint(parameterDefinition.Name.Location, "Parameter definition.");
+                  }
                 }
               }
             }
-          }
 
-        | _ => ()
+          | _ => ()
+        }
+
+        when (!hasUnconditionalScenario && suiteStatements.Length > 0)
+          ast.Name.Error(context, "Suite must contain at least one scenario without TriggerPath attribute.", 0);
       }
-
-      when (!hasUnconditionalScenario && suiteStatements.Length > 0)
-        ast.Name.Error(context, "Suite must contain at least one scenario without TriggerPath attribute.", 0);
+      catch { | e => ast.Name.Error(context, $"Internal Compiler Error: Exception: $e.", 0); }
     }
 
     public ResolveSuiteTypeSymbol(this context : DependentPropertyEvalContext, typeRef : Ref[DeclarationSymbol]) : SuiteTypeSymbol
