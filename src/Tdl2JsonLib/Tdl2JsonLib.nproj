@@ -144,6 +144,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.n" />
+    <Compile Include="ScenarioTriggers\DefaultScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScenarioTriggers\DiffFileScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScenarioTriggers\ExcludeTriggerPathScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScenarioTriggers\IScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Separators.n">
       <SubType>Code</SubType>
     </Compile>
@@ -162,14 +174,12 @@
     <Compile Include="TransformationContext.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ScenarioTriggerProcessor.n">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Utils.n">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ScenarioTriggers" />
     <Folder Include="Tests" />
     <Folder Include="Properties\" />
   </ItemGroup>

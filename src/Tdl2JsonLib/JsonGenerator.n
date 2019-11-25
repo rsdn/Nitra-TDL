@@ -58,21 +58,22 @@ namespace Tdl2Json
     public event OnMessage : MessageHandler;
 
     public Generate(
-      [NotNullOrEmpty] workingDirectory         : string,
-      [NotNull]        sourceFiles              : array[string],
-      [NotNull]        references               : array[string],
-                       deploymentScriptHeader   : string,
-               mutable deploymentToolPath       : string,
-                       isMethodTypingEnabled    : bool,
-                       output                   : Lazy[TextWriter],
-                       transformatorOutput      : string,
-                       transformatorOpt         : TransfomationFunc,
-                       isTestMode               : bool,
-                       booleanMarshalMode       : BooleanMarshalMode,
-                       jsonSchemaType           : string,
-                       diffFile                 : string,
-                       repositoryRoot           : string,
-                       isSampleGeneration       : bool
+      [NotNullOrEmpty] workingDirectory            : string,
+      [NotNull]        sourceFiles                 : array[string],
+      [NotNull]        references                  : array[string],
+                       deploymentScriptHeader      : string,
+               mutable deploymentToolPath          : string,
+                       isMethodTypingEnabled       : bool,
+                       output                      : Lazy[TextWriter],
+                       transformatorOutput         : string,
+                       transformatorOpt            : TransfomationFunc,
+                       isTestMode                  : bool,
+                       booleanMarshalMode          : BooleanMarshalMode,
+                       jsonSchemaType              : string,
+                       diffFile                    : string,
+                       repositoryRoot              : string,
+                       excludeTriggerPathScenarios : bool,
+                       isSampleGeneration          : bool
       ) : TransformationContext
     {
       BooleanLiterals.Setup(booleanMarshalMode);
@@ -108,7 +109,8 @@ namespace Tdl2Json
           when (string.IsNullOrEmpty(deploymentToolPath))
             deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
 
-          GenerateJson(context, output, deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot, isSampleGeneration);
+          GenerateJson(context, output, deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot,
+            excludeTriggerPathScenarios, isSampleGeneration);
         }
       }
 
@@ -173,7 +175,7 @@ namespace Tdl2Json
     }
 
     private GenerateJson(context : TransformationContext, output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string,
-      mutable jsonSchemaType : string, diffFile : string, repositoryRoot : string, isSampleGeneration : bool) : void
+      mutable jsonSchemaType : string, diffFile : string, repositoryRoot : string, excludeTriggerPathScenarios : bool, isSampleGeneration : bool) : void
     {
       def stopwatch = Stopwatch.StartNew();
       JsonGenerator.ReportMessage("Generating JSON...");
@@ -186,16 +188,21 @@ namespace Tdl2Json
       def compiler                  = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
       def symbols                   = context.RootNamespace.MemberTable.GetAllSymbols().ToList();
 
-      mutable scenarioTrigger;
-      when (!string.IsNullOrEmpty(diffFile) && !string.IsNullOrEmpty(repositoryRoot))
-      {
-        scenarioTrigger = ScenarioTriggerProcessor(repositoryRoot);
-        foreach (scenario is ScenarioSymbol in symbols)
-          scenarioTrigger.AddScenario(scenario);
-        using (reader = StreamReader(diffFile))
-          scenarioTrigger.LoadDiff(reader, diffFile);
-        _ = context.Messages.AddRange(scenarioTrigger.Messages);
-      }
+      def scenarioTrigger =
+        if (excludeTriggerPathScenarios)
+          ExcludeTriggerPathScenarioTrigger.Instance
+        else if (!string.IsNullOrEmpty(diffFile) && !string.IsNullOrEmpty(repositoryRoot))
+        {
+          def diffFileTrigger = DiffFileScenarioTrigger(repositoryRoot);
+          foreach (scenario is ScenarioSymbol in symbols)
+            diffFileTrigger.AddScenario(scenario);
+          using (reader = StreamReader(diffFile))
+            diffFileTrigger.LoadDiff(reader, diffFile);
+          _ = context.Messages.AddRange(diffFileTrigger.Messages);
+          diffFileTrigger
+        }
+        else
+          DefaultScenarioTrigger.Instance;
 
       def platforms   = SortedDictionary();
       def products    = SortedDictionary();
@@ -216,7 +223,7 @@ namespace Tdl2Json
         | Suite.DefSymbol       as s => suites   .Add(s.Name, GenerateSuite(s, scenarioTrigger,                      preSessionActionCompiler, postSessionActionCompiler))
         | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
         | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
-        | ScenarioSymbol        as s when IsScenarioTriggered(s, scenarioTrigger) =>
+        | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
           GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, compiler, scenarioTrigger, scenarios)
 
         | _ => ()
@@ -605,7 +612,7 @@ namespace Tdl2Json
     }
 
     private GenerateScenario(scenarioSymbol : ScenarioSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol,
-      compiler : DeploymentCompiler, scenarioTrigger : ScenarioTriggerProcessor, scenarios : IDictionary[string, TestCase]) : void
+      compiler : DeploymentCompiler, scenarioTrigger : IScenarioTrigger, scenarios : IDictionary[string, TestCase]) : void
     {
       def addTestCase(name, testGroup)
       {
@@ -1105,7 +1112,7 @@ namespace Tdl2Json
       gen                       : Suite.GeneratorSymbol,
       suites                    : IDictionary[string, TestSuite],
       suiteGroups               : IDictionary[string, SuiteGroup],
-      scenarioTrigger           : ScenarioTriggerProcessor,
+      scenarioTrigger           : IScenarioTrigger,
       preSessionActionCompiler  : SessionActionCompiler,
       postSessionActionCompiler : SessionActionCompiler
     ) : void
@@ -1147,7 +1154,7 @@ namespace Tdl2Json
       suiteGroups.Add(nameBase, SuiteGroup() <- { Suites = names; });
     }
 
-    private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : ScenarioTriggerProcessor, preSessionActionCompiler : SessionActionCompiler, postSessionActionCompiler : SessionActionCompiler) : TestSuite
+    private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : IScenarioTrigger, preSessionActionCompiler : SessionActionCompiler, postSessionActionCompiler : SessionActionCompiler) : TestSuite
     {
       def defs                  = MakeDefs(suiteSymbol.Defs, suiteSymbol.DefaultDefs);
       def sessionInitializerOpt = if (suiteSymbol.SessionInitializer is VSome(init)) preSessionActionCompiler .GetSessionActionName(init, variables=null) else null;
@@ -1182,25 +1189,20 @@ namespace Tdl2Json
       if (result.Count == 0) null else result
     }
 
-    private GetSuiteScenarioList(statements : ImmutableArray[SuiteStatement], scenarioTrigger : ScenarioTriggerProcessor) : array[string]
+    private GetSuiteScenarioList(statements : ImmutableArray[SuiteStatement], scenarioTrigger : IScenarioTrigger) : array[string]
     {
       GetScenarioList(statements.OfType.[Tdl.SuiteStatement.CallScenario]().Select(c => c.Reference), scenarioTrigger)
     }
 
-    private GetScenarioList(scenarios : Seq[ScenarioSymbol], scenarioTrigger : ScenarioTriggerProcessor) : array[string]
+    private GetScenarioList(scenarios : Seq[ScenarioSymbol], scenarioTrigger : IScenarioTrigger) : array[string]
     {
       def names = List();
       foreach (scenario in scenarios)
       {
-        when (IsScenarioTriggered(scenario, scenarioTrigger))
+        when (scenarioTrigger.IsTriggered(scenario))
           names.Add(scenario.Name);
       }
       names.ToArray()
-    }
-
-    private IsScenarioTriggered(scenario : ScenarioSymbol, scenarioTrigger : ScenarioTriggerProcessor) : bool
-    {
-      scenarioTrigger == null || scenarioTrigger.IsTriggered(scenario)
     }
   } // module
 } // namespace

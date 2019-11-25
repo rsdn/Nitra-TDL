@@ -78,6 +78,12 @@ public class TdlTask : ToolTask
         set;
     }
 
+    public bool ExcludeTriggerPathScenarios
+    {
+        get;
+        set;
+    }
+
     protected override string GenerateFullPathToTool()
     {
         return null;
@@ -119,6 +125,10 @@ public class TdlTask : ToolTask
         if (!string.IsNullOrEmpty(RepositoryPath))
         {
             buffer.Add("-repo-directory:" + EscapeFilePath(RepositoryPath));
+        }
+        if (ExcludeTriggerPathScenarios)
+        {
+            buffer.Add("-exclude-triggerpath-scenarios");
         }
         buffer.Add("-out:" + EscapeFilePath(OutputFile));
         return string.Join(Environment.NewLine, buffer);

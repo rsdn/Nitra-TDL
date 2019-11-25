@@ -23,6 +23,7 @@
       <BooleanMarshalMode           ParameterType="System.String" Required="false" />
       <DiffFile                     ParameterType="System.String" Required="false" />
       <RepositoryPath               ParameterType="System.String" Required="false" />
+      <ExcludeTriggerPathScenarios  ParameterType="System.Boolean" Required="false" />
       <Sources                      ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <References                   ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <OutputFile                   ParameterType="System.String" Required="true" Output="true" />
@@ -69,7 +70,7 @@
 
     <ItemGroup>
       <FileWrites Include="$(TdlDiffFile)" />
-    </ItemGroup>  
+    </ItemGroup>
   </Target>
 
   <Target Name="CoreCompile"
@@ -84,6 +85,7 @@
             DeploymentToolPath           = "$(TdlDeploymentToolPath)"
             BooleanMarshalMode           = "$(TdlBooleanMarshalMode)"
             RepositoryPath               = "$(TdlRepositoryPath)"
+            ExcludeTriggerPathScenarios  = "$(TdlExcludeTriggerPathScenarios)"
             DiffFile                     = "$(TdlDiffFile)"
             References                   = "@(ReferencePath)"
             Sources                      = "@(TdlCompile)"

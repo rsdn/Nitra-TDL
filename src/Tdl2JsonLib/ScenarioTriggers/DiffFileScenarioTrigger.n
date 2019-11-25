@@ -15,11 +15,11 @@ using Tdl;
 
 namespace Tdl2Json
 {
-  class ScenarioTriggerProcessor
+  class DiffFileScenarioTrigger : IScenarioTrigger
   {
-    private _scenarioTable      : Dictionary[string, List[ScenarioSymbol]] = Dictionary();
-    private _triggeredScenarios : HashSet[ScenarioSymbol]                  = HashSet();
-    private _repositoryRoot     : string;
+    private _scenarioTable               : Dictionary[string, List[ScenarioSymbol]] = Dictionary();
+    private _triggeredScenarios          : HashSet[ScenarioSymbol]                  = HashSet();
+    private _repositoryRoot              : string;
 
     public this(repositoryRoot : string)
     {

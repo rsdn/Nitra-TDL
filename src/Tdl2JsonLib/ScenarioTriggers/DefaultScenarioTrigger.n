@@ -1,0 +1,11 @@
+﻿using Tdl;
+
+namespace Tdl2Json
+{
+  class DefaultScenarioTrigger : IScenarioTrigger
+  {
+    public static Instance : this = DefaultScenarioTrigger();
+
+    public IsTriggered(_ : ScenarioSymbol) : bool { true }
+  }
+}
