@@ -47,7 +47,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="PrepareDiffTesting" Condition=" '$(TARGETBRANCH)' != '' AND '$(SOURCEVERSION)' != '' " DependsOnTargets="PrepareTdlCompile">
+  <Target Name="PrepareDiffTesting" Condition=" '$(TARGETBRANCH)' != '' AND '$(SOURCEVERSION)' != '' AND 'TdlDisableDiffTesting' != 'true' " DependsOnTargets="PrepareTdlCompile">
     <Exec Command="git show -s --format=%%P" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlMergeParents" />
     </Exec>
