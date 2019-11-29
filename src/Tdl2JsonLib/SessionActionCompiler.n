@@ -135,7 +135,8 @@ namespace Tdl2Json
     {
       assert(scriptNode.deployment is Deployment.ScriptSymbol);
       def script = scriptNode.deployment :> Deployment.ScriptSymbol;
-      assert(script.ScriptReference is ScriptReference.FilePath);
+      def sr = script.ScriptReference;
+      assert(sr is ScriptReference.FilePath, $"Currently, the $(sr.GetType().Name) deployer is not supported because it is not supported in Wrden and Hive restrictions.");
       def path = (script.ScriptReference :> ScriptReference.FilePath).Path.Value;
       def args = Hashtable();
       foreach (p in script.Parameters)
