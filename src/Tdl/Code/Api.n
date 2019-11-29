@@ -251,9 +251,14 @@ namespace Tdl
             {
               | Leaf(vars, Deployment.ScriptSymbol as script) =>
                 // TODO: Add checks for unsupported features.
+                def sr = script.ScriptReference;
+                unless (sr is ScriptReference.FilePath)
+                  reportError($"Currently, the $(sr.GetType().Name) deployer is not supported because it is not supported in Wrden and Hive restrictions.");
+
                 foreach (p when !vars.ContainsKey(p.Name) in script.Parameters)
                   when (p.Default is DefaultValue.None)
                     reportError($"'$(p.Name)' parameter of '$(script.Name)' deployment used in the $actionName is not set and does not have a default value.");
+
                 when (script.IsForRebootEvaluated && script.ForReboot.HasValue)
                   reportError($"Stetment 'expected-for-reboot' not supported in $actionName");
 
