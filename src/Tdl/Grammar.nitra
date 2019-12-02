@@ -161,7 +161,7 @@
     syntax Config          = "config" sm Path=DefExpr MaxRebootsCount? ";" nl;
     syntax GTest           = "gtest"  sm Name=DefExpr Arguments=DefExpr* MaxRebootsCount? ";" nl;
     syntax XCode           = "xcode"  sm Container=DefExpr "path" sm XcodePath=DefExpr MaxRebootsCount? ";" nl;
-    syntax VsTest          = "vstest" sm Container=DefExpr "vstest_cmdline" sm VsTestRunCmdLine=DefExpr "filter" sm TestCaseFilter=DefExpr "platform" sm Platform=DefExpr "framework" sm Framework=DefExpr "additional_options" sm AdditionalOptions=DefExpr MaxRebootsCount? ";" nl;
+    syntax VsTest          = "vstest" sm Container=DefExpr sm "vstest_cmdline" sm VsTestRunCmdLine=DefExpr sm "filter" sm TestCaseFilter=DefExpr sm "platform" sm Platform=DefExpr sm "framework" sm Framework=DefExpr sm "additional_options" sm AdditionalOptions=DefExpr sm MaxRebootsCount? ";" nl;
     syntax Apk             = "apk"    sm Name=DefExpr Filter? "runner" RunnerPath=DefExpr MaxRebootsCount? ";" nl;
     syntax Marathon        = "marathon" sm "tests" TestContainerApk=DefExpr "app" AppApk=DefExpr "runner" RunnerPath=DefExpr Filter BinariesFolder MaxRebootsCount? ";" nl;
     syntax Filter          = "filter" Value=DefExpr;
