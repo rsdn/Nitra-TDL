@@ -495,7 +495,7 @@ namespace Tdl2Json
               TestCaseFilter             = c.TestCaseFilter.ExprToString(dic);
               Platform                   = c.Platform.ExprToString(dic);
               Framework                  = c.Framework.ExprToString(dic);
-              AdditionalOptions          = c.AdditionalOptions.ExprToString(dic); 
+              AdditionalOptions          = c.AdditionalOptions.ExprToString(dic);
               MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
               ArtifactsCollectionTimeout = artifactsCollectionTimeout;
             }
@@ -724,9 +724,9 @@ namespace Tdl2Json
             {
                 XCode() <-
                 {
-                  XCodeTestContainer         = c.Container.ExprToString(dic);
-                  XcodePath                  = c.XcodePath.ExprToString(dic);
-                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+                  XCodeTestContainer         = c.Container.ExprToString();
+                  XcodePath                  = c.XcodePath.ExprToString();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
             }
@@ -734,13 +734,13 @@ namespace Tdl2Json
             {
                 VsTest() <-
                 {
-                  VsTestAssemblyName         = c.Container.ExprToString(dic);
-                  VsTestRunCmdLine           = c.VsTestRunCmdLine.ExprToString(dic);
-                  TestCaseFilter             = c.TestCaseFilter.ExprToString(dic);
-                  Platform                   = c.Platform.ExprToString(dic);
-                  Framework                  = c.Framework.ExprToString(dic);
-                  AdditionalOptions          = c.AdditionalOptions.ExprToString(dic); 
-                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+                  VsTestAssemblyName         = c.Container.ExprToString();
+                  VsTestRunCmdLine           = c.VsTestRunCmdLine.ExprToString();
+                  TestCaseFilter             = c.TestCaseFilter.ExprToString();
+                  Platform                   = c.Platform.ExprToString();
+                  Framework                  = c.Framework.ExprToString();
+                  AdditionalOptions          = c.AdditionalOptions.ExprToString();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
             }
