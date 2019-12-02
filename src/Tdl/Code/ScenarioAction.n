@@ -45,11 +45,11 @@ namespace Tdl
     | VsTest
       {
         Container          : Expr;
-        VsTestRunCmdLine   : ValueOption[Expr];
-        TestCaseFilter     : ValueOption[Expr];
-        Platform           : ValueOption[Expr];
-        Framework          : ValueOption[Expr];
-        AdditionalOptions  : ValueOption[Expr];
+        VsTestRunCmdLine   : Expr;
+        TestCaseFilter     : Expr;
+        Platform           : Expr;
+        Framework          : Expr;
+        AdditionalOptions  : Expr;
         MaxRebootsCountOpt : ValueOption[Expr];
       }
     | Apk
