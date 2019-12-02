@@ -80,7 +80,7 @@
       ],
       "RevertAgentAfter": true,
       "TestMethod": {
-        "VsTestAssemblyName": "bin/test.dll"
+        "VsTestAssemblyName": "bin\\test.dll"
       },
       "Timeout": "00:10",
       "UniqueId": "a790cb69-36d2-4b0d-abcf-4a8ed236acac"
