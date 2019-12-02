@@ -267,6 +267,16 @@ namespace Tdl
         XCode.XcodePath -> XcodePath;
         XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
+    | VsTest    -> [ Action.VsTest
+      {
+        VsTest.Container -> Container;
+        VsTest.VsTestRunCmdLine -> VsTestRunCmdLine;
+        VsTest.TestCaseFilter -> TestCaseFilter;
+        VsTest.Platform -> Platform;
+        VsTest.Framework -> Framework;
+        VsTest.AdditionalOptions -> AdditionalOptions;
+        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      } ]
     | Apk      -> [ Action.Apk
       {
         Apk.Name      -> Name;
@@ -348,6 +358,16 @@ namespace Tdl
         XCode.XcodePath          -> XcodePath;
         XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
+    | VsTest    -> [ Action.VsTest
+      {
+        VsTest.Container -> Container;
+        VsTest.VsTestRunCmdLine -> VsTestRunCmdLine;
+        VsTest.TestCaseFilter -> TestCaseFilter;
+        VsTest.Platform -> Platform;
+        VsTest.Framework -> Framework;
+        VsTest.AdditionalOptions -> AdditionalOptions;
+        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      } ]
     | Apk -> Action.Apk
       {
         Apk.Name      -> Name;

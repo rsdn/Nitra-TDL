@@ -42,6 +42,16 @@ namespace Tdl
         XcodePath          : Expr;
         MaxRebootsCountOpt : ValueOption[Expr];
       }
+    | VsTest
+      {
+        Container          : Expr;
+        VsTestRunCmdLine   : ValueOption[Expr];
+        TestCaseFilter     : ValueOption[Expr];
+        Platform           : ValueOption[Expr];
+        Framework          : ValueOption[Expr];
+        AdditionalOptions  : ValueOption[Expr];
+        MaxRebootsCountOpt : ValueOption[Expr];
+      }
     | Apk
       {
         Name               : Expr;
