@@ -33,6 +33,7 @@
       ],
       "TestScenarios": [
         "AllParameters",
+        "SomeParameters",
         "RequiredParameters"
       ]
     }
@@ -64,7 +65,7 @@
       "Timeout": "00:10",
       "UniqueId": "59398bb2-1dcc-4842-8e3f-bb8a651353ec"
     },
-    "AllParameters": {
+    "SomeParameters": {
       "Deployments": [
         "Deploy"
       ],
@@ -84,7 +85,7 @@
         "TestCaseFilter": "Name~abc"
       },
       "Timeout": "00:10",
-      "UniqueId": "59398bb2-1dcc-4842-8e3f-bb8a651353ec"
+      "UniqueId": "e5ff1d95-5bd3-4dae-acda-abfcfcf1dfea"
     },
     "RequiredParameters": {
       "Deployments": [
