@@ -129,7 +129,7 @@ namespace Tdl
         VsTestAdditionalOptionsOpt.ExpectedType = context.GetType("string");
         MaxRebootsCountOpt        .ExpectedType = context.GetType("int");
 
-        Container                  : DefExpr?;
+        Container                  : DefExpr;
         VsTestRunCmdLineOpt        : DefExpr?;
         FilterOpt                  : DefExpr?;
         VsTestPlatformOpt          : DefExpr?;
