@@ -2,7 +2,7 @@ scenario S1
 {
   deployment Deploy;
   environments (Platform, Product);
-  vstest @"bin/test.dll" vstest_cmdline @"dotnet.exe vstest" filter @"Name~abc" framework @"netcore21" platform @"x64" additional_options @"/parallel --";
+  vstest @"bin/test.dll" vstest_cmdline @"dotnet.exe vstest" filter @"Name~abc" platform @"x64" framework @"netcore21" additional_options @"/parallel --";
   UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
   Timeout = "00:10";
 }
