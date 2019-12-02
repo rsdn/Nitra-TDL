@@ -130,11 +130,11 @@ namespace Tdl
         MaxRebootsCountOpt.ExpectedType = context.GetType("int");
 
         Container          : DefExpr;
-        VsTestRunCmdLine   : DefExpr?;
-        TestCaseFilter     : DefExpr?;
-        Platform           : DefExpr?;
-        Framework          : DefExpr?;
-        AdditionalOptions  : DefExpr?;
+        VsTestRunCmdLine   : DefExpr;
+        TestCaseFilter     : DefExpr;
+        Platform           : DefExpr;
+        Framework          : DefExpr;
+        AdditionalOptions  : DefExpr;
         MaxRebootsCountOpt : DefExpr?;
       }
 
