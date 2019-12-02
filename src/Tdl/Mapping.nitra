@@ -358,7 +358,7 @@ namespace Tdl
         XCode.XcodePath          -> XcodePath;
         XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
-    | VsTest    -> [ Action.VsTest
+    | VsTest    -> Action.VsTest
       {
         VsTest.Container -> Container;
         VsTest.VsTestRunCmdLine -> VsTestRunCmdLine;
@@ -367,7 +367,7 @@ namespace Tdl
         VsTest.Framework -> Framework;
         VsTest.AdditionalOptions -> AdditionalOptions;
         VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      } ]
+      }
     | Apk -> Action.Apk
       {
         Apk.Name      -> Name;
