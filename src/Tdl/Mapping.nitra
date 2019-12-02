@@ -270,11 +270,31 @@ namespace Tdl
     | VsTest    -> [ Action.VsTest
       {
         VsTest.Container -> Container;
-        VsTest.VsTestRunCmdLine -> VsTestRunCmdLine;
-        VsTest.TestCaseFilter -> TestCaseFilter;
-        VsTest.Platform -> Platform;
-        VsTest.Framework -> Framework;
-        VsTest.AdditionalOptions -> AdditionalOptions;
+        match (VsTest.VsTestRunCmdLineOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestRunCmdLineOpt;
+        match (VsTest.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        match (VsTest.VsTestPlatformOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestPlatformOpt;
+        match (VsTest.VsTestFrameworkOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestFrameworkOpt;
+        match (VsTest.VsTestAdditionalOptionsOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestAdditionalOptionsOpt;
         VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | Apk      -> [ Action.Apk
@@ -361,11 +381,31 @@ namespace Tdl
     | VsTest    -> Action.VsTest
       {
         VsTest.Container -> Container;
-        VsTest.VsTestRunCmdLine -> VsTestRunCmdLine;
-        VsTest.TestCaseFilter -> TestCaseFilter;
-        VsTest.Platform -> Platform;
-        VsTest.Framework -> Framework;
-        VsTest.AdditionalOptions -> AdditionalOptions;
+        match (VsTest.VsTestRunCmdLineOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestRunCmdLineOpt;
+        match (VsTest.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        match (VsTest.VsTestPlatformOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestPlatformOpt;
+        match (VsTest.VsTestFrameworkOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestFrameworkOpt;
+        match (VsTest.VsTestAdditionalOptionsOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestAdditionalOptionsOpt;
         VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Apk -> Action.Apk

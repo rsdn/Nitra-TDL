@@ -111,31 +111,31 @@ namespace Tdl
       
     | VsTest
       {
-        ScenarioActions = ScenarioAction.VsTest(Container.Location, Container.Result, VsTestRunCmdLine.Result, TestCaseFilter.Result, Platform.Result, Framework.Result, AdditionalOptions.Result, MaxRebootsCountOpt.Result);
+        ScenarioActions = ScenarioAction.VsTest(Container.Location, Container.Result, VsTestRunCmdLineOpt.Result, FilterOpt.Result, VsTestPlatformOpt.Result, VsTestFrameworkOpt.Result, VsTestAdditionalOptionsOpt.Result, MaxRebootsCountOpt.Result);
 
-        Container         .Scope        = Scope;
-        VsTestRunCmdLine  .Scope        = Scope;
-        TestCaseFilter    .Scope        = Scope;
-        Platform          .Scope        = Scope;
-        Framework         .Scope        = Scope;
-        AdditionalOptions .Scope        = Scope;
-        MaxRebootsCountOpt.Scope        = Scope;
+        Container                 .Scope        = Scope;
+        VsTestRunCmdLineOpt       .Scope        = Scope;
+        FilterOpt                 .Scope        = Scope;
+        VsTestPlatformOpt         .Scope        = Scope;
+        VsTestFrameworkOpt        .Scope        = Scope;
+        VsTestAdditionalOptionsOpt.Scope        = Scope;
+        MaxRebootsCountOpt        .Scope        = Scope;
 
-        Container         .ExpectedType = context.GetType("string");
-        VsTestRunCmdLine  .ExpectedType = context.GetType("string");
-        TestCaseFilter    .ExpectedType = context.GetType("string");
-        Platform          .ExpectedType = context.GetType("string");
-        Framework         .ExpectedType = context.GetType("string");
-        AdditionalOptions .ExpectedType = context.GetType("string");
-        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+        Container                 .ExpectedType = context.GetType("string");
+        VsTestRunCmdLineOpt       .ExpectedType = context.GetType("string");
+        FilterOpt                 .ExpectedType = context.GetType("string");
+        VsTestPlatformOpt         .ExpectedType = context.GetType("string");
+        VsTestFrameworkOpt        .ExpectedType = context.GetType("string");
+        VsTestAdditionalOptionsOpt.ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt        .ExpectedType = context.GetType("int");
 
-        Container          : DefExpr;
-        VsTestRunCmdLine   : DefExpr;
-        TestCaseFilter     : DefExpr;
-        Platform           : DefExpr;
-        Framework          : DefExpr;
-        AdditionalOptions  : DefExpr;
-        MaxRebootsCountOpt : DefExpr?;
+        Container                  : DefExpr?;
+        VsTestRunCmdLineOpt        : DefExpr?;
+        FilterOpt                  : DefExpr?;
+        VsTestPlatformOpt          : DefExpr?;
+        VsTestFrameworkOpt         : DefExpr?;
+        VsTestAdditionalOptionsOpt : DefExpr?;
+        MaxRebootsCountOpt         : DefExpr?;
       }
 
     | Apk

@@ -7,6 +7,15 @@ scenario AllParameters
   Timeout = "00:10";
 }
 
+scenario SomeParameters
+{
+  deployment Deploy;
+  environments (Platform, Product);
+  vstest @"bin\test.dll" filter @"Name~abc";
+  UniqueId = "59398BB2-1DCC-4842-8E3F-BB8A651353EC";
+  Timeout = "00:10";
+}
+
 scenario RequiredParameters
 {
   deployment Deploy;
@@ -33,6 +42,7 @@ suite Suite
   platform Platform;
   product Product;
   AllParameters();
+  SomeParameters();
   RequiredParameters();
 }
 

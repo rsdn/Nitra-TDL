@@ -64,6 +64,28 @@
       "Timeout": "00:10",
       "UniqueId": "59398bb2-1dcc-4842-8e3f-bb8a651353ec"
     },
+    "AllParameters": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll",
+        "TestCaseFilter": "Name~abc"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "59398bb2-1dcc-4842-8e3f-bb8a651353ec"
+    },
     "RequiredParameters": {
       "Deployments": [
         "Deploy"

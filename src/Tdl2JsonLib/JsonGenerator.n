@@ -491,11 +491,11 @@ namespace Tdl2Json
             VsTest() <-
             {
               VsTestAssemblyName         = c.Container.ExprToString(dic);
-              VsTestRunCmdLine           = c.VsTestRunCmdLine.ExprToString(dic);
-              TestCaseFilter             = c.TestCaseFilter.ExprToString(dic);
-              Platform                   = c.Platform.ExprToString(dic);
-              Framework                  = c.Framework.ExprToString(dic);
-              AdditionalOptions          = c.AdditionalOptions.ExprToString(dic);
+              VsTestRunCmdLine           = c.VsTestRunCmdLineOpt.ExprToString(dic);
+              TestCaseFilter             = c.FilterOpt.ExprToString(dic);
+              Platform                   = c.VsTestPlatformOpt.ExprToString(dic);
+              Framework                  = c.VsTestFrameworkOpt.ExprToString(dic);
+              AdditionalOptions          = c.VsTestAdditionalOptionsOpt.ExprToString(dic);
               MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
               ArtifactsCollectionTimeout = artifactsCollectionTimeout;
             }
@@ -735,11 +735,11 @@ namespace Tdl2Json
                 VsTest() <-
                 {
                   VsTestAssemblyName         = c.Container.ExprToString();
-                  VsTestRunCmdLine           = c.VsTestRunCmdLine.ExprToString();
-                  TestCaseFilter             = c.TestCaseFilter.ExprToString();
-                  Platform                   = c.Platform.ExprToString();
-                  Framework                  = c.Framework.ExprToString();
-                  AdditionalOptions          = c.AdditionalOptions.ExprToString();
+                  VsTestRunCmdLine           = c.VsTestRunCmdLineOpt.ExprToString();
+                  TestCaseFilter             = c.FilterOpt.ExprToString();
+                  Platform                   = c.VsTestPlatformOpt.ExprToString();
+                  Framework                  = c.VsTestFrameworkOpt.ExprToString();
+                  AdditionalOptions          = c.VsTestAdditionalOptionsOpt.ExprToString();
                   MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
