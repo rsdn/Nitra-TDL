@@ -32,12 +32,13 @@
         "Product"
       ],
       "TestScenarios": [
-        "S1"
+        "AllParameters",
+        "RequiredParameters"
       ]
     }
   },
   "TestScenarios": {
-    "S1": {
+    "AllParameters": {
       "Deployments": [
         "Deploy"
       ],
@@ -53,15 +54,36 @@
       ],
       "RevertAgentAfter": true,
       "TestMethod": {
-        "VsTestAssemblyName": "bin/test.dll",
+        "VsTestAssemblyName": "bin\\test.dll",
         "VsTestRunCmdLine": "dotnet.exe vstest",
         "TestCaseFilter": "Name~abc",
-        "Framework": "netcore21",
         "Platform": "x64",
+        "Framework": "netcore21",
         "AdditionalOptions": "/parallel --"
       },
       "Timeout": "00:10",
-      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e71"
+      "UniqueId": "59398bb2-1dcc-4842-8e3f-bb8a651353ec"
+    },
+    "RequiredParameters": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin/test.dll"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "a790cb69-36d2-4b0d-abcf-4a8ed236acac"
     }
   },
   "TestEntities": {}

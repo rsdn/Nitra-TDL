@@ -1,9 +1,18 @@
-scenario S1
+scenario AllParameters
 {
   deployment Deploy;
   environments (Platform, Product);
-  vstest @"bin/test.dll" vstest_cmdline @"dotnet.exe vstest" filter @"Name~abc" platform @"x64" framework @"netcore21" additional_options @"/parallel --";
-  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  vstest @"bin\test.dll" vstest_cmdline @"dotnet.exe vstest" filter @"Name~abc" platform @"x64" framework @"netcore21" additional_options @"/parallel --";
+  UniqueId = "59398BB2-1DCC-4842-8E3F-BB8A651353EC";
+  Timeout = "00:10";
+}
+
+scenario RequiredParameters
+{
+  deployment Deploy;
+  environments (Platform, Product);
+  vstest @"bin\test.dll";
+  UniqueId = "A790CB69-36D2-4B0D-ABCF-4A8ED236ACAC";
   Timeout = "00:10";
 }
 
@@ -23,7 +32,8 @@ suite Suite
 {
   platform Platform;
   product Product;
-  S1();
+  AllParameters();
+  RequiredParameters();
 }
 
 deployment Deploy()
