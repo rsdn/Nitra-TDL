@@ -486,6 +486,20 @@ namespace Tdl2Json
               ArtifactsCollectionTimeout = artifactsCollectionTimeout;
             }
         }
+        def makeVsTestAction(c : ScenarioAction.VsTest) : VsTest
+        {
+            VsTest() <-
+            {
+              VsTestAssemblyName         = c.Container.ExprToString(dic);
+              VsTestRunCmdLine           = c.VsTestRunCmdLineOpt.ExprToString(dic);
+              TestCaseFilter             = c.FilterOpt.ExprToString(dic);
+              Platform                   = c.VsTestPlatformOpt.ExprToString(dic);
+              Framework                  = c.VsTestFrameworkOpt.ExprToString(dic);
+              AdditionalOptions          = c.VsTestAdditionalOptionsOpt.ExprToString(dic);
+              MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt(dic);
+              ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+            }
+        }
         def makeAndroidJavaAction(c : ScenarioAction.Apk) : AndroidJava
         {
             AndroidJava() <-
@@ -547,6 +561,7 @@ namespace Tdl2Json
           | Config as c        => makeConfigAction(c)
           | GTest  as g        => makeGTestAction(g)
           | XCode  as x        => makeXCodeAction(x)
+          | VsTest as x        => makeVsTestAction(x)
           | Apk    as a        => makeAndroidJavaAction(a)
           | Marathon as m      => makeMarathonAction(m)
           | Login  as login    => LoginTestStep() <-
@@ -575,6 +590,8 @@ namespace Tdl2Json
           makeGTestAction(action)
         else if (tryGetSingleElem() is VSome(action))
           makeXCodeAction(action)
+        else if (tryGetSingleElem() is VSome(action))
+          makeVsTestAction(action)
         else if (tryGetSingleElem() is VSome(action))
           makeAndroidJavaAction(action)
         else
@@ -713,6 +730,20 @@ namespace Tdl2Json
                   ArtifactsCollectionTimeout = artifactsCollectionTimeout;
                 }
             }
+            def makeVsTestAction(c : ScenarioAction.VsTest) : VsTest
+            {
+                VsTest() <-
+                {
+                  VsTestAssemblyName         = c.Container.ExprToString();
+                  VsTestRunCmdLine           = c.VsTestRunCmdLineOpt.ExprToString();
+                  TestCaseFilter             = c.FilterOpt.ExprToString();
+                  Platform                   = c.VsTestPlatformOpt.ExprToString();
+                  Framework                  = c.VsTestFrameworkOpt.ExprToString();
+                  AdditionalOptions          = c.VsTestAdditionalOptionsOpt.ExprToString();
+                  MaxRebootsCount            = c.MaxRebootsCountOpt.ExprToInt();
+                  ArtifactsCollectionTimeout = artifactsCollectionTimeout;
+                }
+            }
             def makeAndroidJavaAction(c : ScenarioAction.Apk) : AndroidJava
             {
                 AndroidJava() <-
@@ -773,6 +804,7 @@ namespace Tdl2Json
               | Config as c        => makeConfigAction(c)
               | GTest  as g        => makeGTestAction(g)
               | XCode  as x        => makeXCodeAction(x)
+              | VsTest as x        => makeVsTestAction(x)
               | Apk    as a        => makeAndroidJavaAction(a)
               | Marathon as m      => makeMarathonAction(m)
               | Login  as login    => LoginTestStep() <-
@@ -802,6 +834,8 @@ namespace Tdl2Json
               makeGTestAction(action)
             else if (tryGetSingleElem() is VSome(action))
               makeXCodeAction(action)
+            else if (tryGetSingleElem() is VSome(action))
+              makeVsTestAction(action)
             else if (tryGetSingleElem() is VSome(action))
               makeAndroidJavaAction(action)
             else

@@ -108,6 +108,35 @@ namespace Tdl
         XcodePath          : DefExpr;
         MaxRebootsCountOpt : DefExpr?;
       }
+      
+    | VsTest
+      {
+        ScenarioActions = ScenarioAction.VsTest(Container.Location, Container.Result, VsTestRunCmdLineOpt.Result, FilterOpt.Result, VsTestPlatformOpt.Result, VsTestFrameworkOpt.Result, VsTestAdditionalOptionsOpt.Result, MaxRebootsCountOpt.Result);
+
+        Container                 .Scope        = Scope;
+        VsTestRunCmdLineOpt       .Scope        = Scope;
+        FilterOpt                 .Scope        = Scope;
+        VsTestPlatformOpt         .Scope        = Scope;
+        VsTestFrameworkOpt        .Scope        = Scope;
+        VsTestAdditionalOptionsOpt.Scope        = Scope;
+        MaxRebootsCountOpt        .Scope        = Scope;
+
+        Container                 .ExpectedType = context.GetType("string");
+        VsTestRunCmdLineOpt       .ExpectedType = context.GetType("string");
+        FilterOpt                 .ExpectedType = context.GetType("string");
+        VsTestPlatformOpt         .ExpectedType = context.GetType("string");
+        VsTestFrameworkOpt        .ExpectedType = context.GetType("string");
+        VsTestAdditionalOptionsOpt.ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt        .ExpectedType = context.GetType("int");
+
+        Container                  : DefExpr;
+        VsTestRunCmdLineOpt        : DefExpr?;
+        FilterOpt                  : DefExpr?;
+        VsTestPlatformOpt          : DefExpr?;
+        VsTestFrameworkOpt         : DefExpr?;
+        VsTestAdditionalOptionsOpt : DefExpr?;
+        MaxRebootsCountOpt         : DefExpr?;
+      }
 
     | Apk
       {

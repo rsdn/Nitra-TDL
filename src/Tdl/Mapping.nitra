@@ -267,6 +267,36 @@ namespace Tdl
         XCode.XcodePath -> XcodePath;
         XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
+    | VsTest    -> [ Action.VsTest
+      {
+        VsTest.Container -> Container;
+        match (VsTest.VsTestRunCmdLineOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestRunCmdLineOpt;
+        match (VsTest.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        match (VsTest.VsTestPlatformOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestPlatformOpt;
+        match (VsTest.VsTestFrameworkOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestFrameworkOpt;
+        match (VsTest.VsTestAdditionalOptionsOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestAdditionalOptionsOpt;
+        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      } ]
     | Apk      -> [ Action.Apk
       {
         Apk.Name      -> Name;
@@ -347,6 +377,36 @@ namespace Tdl
         XCode.Container          -> Container;
         XCode.XcodePath          -> XcodePath;
         XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      }
+    | VsTest    -> Action.VsTest
+      {
+        VsTest.Container -> Container;
+        match (VsTest.VsTestRunCmdLineOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestRunCmdLineOpt;
+        match (VsTest.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        match (VsTest.VsTestPlatformOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestPlatformOpt;
+        match (VsTest.VsTestFrameworkOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestFrameworkOpt;
+        match (VsTest.VsTestAdditionalOptionsOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestAdditionalOptionsOpt;
+        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Apk -> Action.Apk
       {
