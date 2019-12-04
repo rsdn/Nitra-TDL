@@ -155,16 +155,21 @@
       syntax Filter = "filter" Condition=Expression ";" nl;
     }
 
-    syntax Environments    = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
-    syntax Environment     = "(" Platform=Reference "," sm Product=Reference ")";
-    syntax Method          = "method" sm Method=DefExpr MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
-    syntax Config          = "config" sm Path=DefExpr MaxRebootsCount? ";" nl;
-    syntax GTest           = "gtest"  sm Name=DefExpr Arguments=DefExpr* MaxRebootsCount? ";" nl;
-    syntax XCode           = "xcode"  sm Container=DefExpr "path" sm XcodePath=DefExpr MaxRebootsCount? ";" nl;
-    syntax Apk             = "apk"    sm Name=DefExpr Filter? "runner" RunnerPath=DefExpr MaxRebootsCount? ";" nl;
-    syntax Marathon        = "marathon" sm "tests" TestContainerApk=DefExpr "app" AppApk=DefExpr "runner" RunnerPath=DefExpr Filter BinariesFolder MaxRebootsCount? ";" nl;
-    syntax Filter          = "filter" Value=DefExpr;
-    syntax Script          = "script" sm Name=DefExpr Arguments=DefExpr* Environments? MaxRebootsCount? ";" nl
+    syntax Environments            = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
+    syntax Environment             = "(" Platform=Reference "," sm Product=Reference ")";
+    syntax Method                  = "method" sm Method=DefExpr MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
+    syntax Config                  = "config" sm Path=DefExpr MaxRebootsCount? ";" nl;
+    syntax GTest                   = "gtest"  sm Name=DefExpr Arguments=DefExpr* MaxRebootsCount? ";" nl;
+    syntax XCode                   = "xcode"  sm Container=DefExpr "path" sm XcodePath=DefExpr MaxRebootsCount? ";" nl;
+    syntax VsTest                  = "vstest" sm Container=DefExpr VsTestRunCmdLine? Filter? VsTestPlatform? VsTestFramework? VsTestAdditionalOptions? MaxRebootsCount? ";" nl;
+    syntax Apk                     = "apk"    sm Name=DefExpr Filter? "runner" RunnerPath=DefExpr MaxRebootsCount? ";" nl;
+    syntax Marathon                = "marathon" sm "tests" TestContainerApk=DefExpr "app" AppApk=DefExpr "runner" RunnerPath=DefExpr Filter BinariesFolder MaxRebootsCount? ";" nl;
+    syntax Filter                  = "filter" Value=DefExpr;
+    syntax VsTestRunCmdLine        = "vstest_cmdline" sm Value=DefExpr;
+    syntax VsTestPlatform          = "platform" sm Value=DefExpr;
+    syntax VsTestFramework         = "framework" sm Value=DefExpr;
+    syntax VsTestAdditionalOptions = "additional_options" sm Value=DefExpr;
+    syntax Script                  = "script" sm Name=DefExpr Arguments=DefExpr* Environments? MaxRebootsCount? ";" nl
     {
       syntax Environments = "(" Defs=(DefEnv; ", ")+ ")";
     }
@@ -175,6 +180,7 @@
       | Script
       | GTest
       | XCode
+      | VsTest
       | Apk
       | Marathon
       | Sequence = "sequence" sm  "{" inl SequenceAction* d "}" nl outline_end_before
@@ -186,6 +192,7 @@
       | Config
       | GTest
       | XCode
+      | VsTest
       | Apk
       | Marathon
       | Script

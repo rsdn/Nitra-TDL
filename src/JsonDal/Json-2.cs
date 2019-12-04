@@ -138,6 +138,31 @@ namespace QuickType
         public int? MaxRebootsCount { get; set; }
     }
 
+    public sealed class VsTest : TestMethodOrTestSequenceItemImpl
+    {
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string VsTestAssemblyName { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string VsTestRunCmdLine { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string TestCaseFilter { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Platform { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Framework { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string AdditionalOptions { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
+    }
+
+
     public sealed class AndroidJava : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty(Required = Required.Always)]

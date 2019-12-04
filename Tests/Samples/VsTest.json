@@ -1,0 +1,113 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deploy": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "Deploy.ps1"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "AllParameters",
+        "SomeParameters",
+        "RequiredParameters"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "AllParameters": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll",
+        "VsTestRunCmdLine": "dotnet.exe vstest",
+        "TestCaseFilter": "Name~abc",
+        "Platform": "x64",
+        "Framework": "netcore21",
+        "AdditionalOptions": "/parallel --"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "59398bb2-1dcc-4842-8e3f-bb8a651353ec"
+    },
+    "SomeParameters": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll",
+        "TestCaseFilter": "Name~abc"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "e5ff1d95-5bd3-4dae-acda-abfcfcf1dfea"
+    },
+    "RequiredParameters": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "a790cb69-36d2-4b0d-abcf-4a8ed236acac"
+    }
+  },
+  "TestEntities": {}
+}
