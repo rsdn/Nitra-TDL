@@ -7,6 +7,7 @@ using Nemerle.Utility;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Nitra;
@@ -17,8 +18,8 @@ namespace Tdl2Json
 {
   class DiffFileScenarioTrigger : IScenarioTrigger
   {
-    private _scenarioTable               : Dictionary[string, List[ScenarioSymbol]] = Dictionary();
-    private _triggeredScenarios          : HashSet[ScenarioSymbol]                  = HashSet();
+    private _scenarioTable               : Dictionary[string, List[ScenarioSymbol * ISet[string]]] = Dictionary();
+    private _triggeredScenarios          : HashSet[ScenarioSymbol]                                 = HashSet();
     private _repositoryRoot              : string;
 
     public this(repositoryRoot : string)
@@ -33,15 +34,20 @@ namespace Tdl2Json
     {
       unless (symbol.IsUnconditional)
       {
-        foreach (path in symbol.TriggerPaths)
+        foreach (trigger in symbol.TriggerPaths)
         {
           mutable list;
-          unless (_scenarioTable.TryGetValue(path, out list))
+          unless (_scenarioTable.TryGetValue(trigger.Path, out list))
           {
             list = List();
-            _scenarioTable.Add(path, list);
+            _scenarioTable.Add(trigger.Path, list);
           }
-          list.Add(symbol);
+          def excludes : ISet[string] =
+            if (trigger.Excludes.IsEmpty)
+              ImmutableHashSet.Empty
+            else
+              HashSet(trigger.Excludes);
+          list.Add((symbol, excludes));
         }
       }
     }
@@ -94,18 +100,41 @@ namespace Tdl2Json
 
           def fullPath = Path.GetFullPath(Path.Combine(_repositoryRoot, relativePath));
 
-          def walkUpward(path)
+          def walkUpward(head, tail)
           {
             mutable list;
-            when (_scenarioTable.TryGetValue(path, out list))
-              foreach (s in list)
-                _ = _triggeredScenarios.Add(s);
+            when (_scenarioTable.TryGetValue(head, out list))
+            {
+              foreach ((s, excludes) in list)
+              {
+                def isExcluded(p)
+                {
+                  if (excludes.Contains(p))
+                    true
+                  else
+                  {
+                    def directory = Path.GetDirectoryName(p);
+                    if (string.IsNullOrEmpty(directory))
+                      false
+                    else
+                      isExcluded(directory)
+                  }
+                }
 
-            def directory = Path.GetDirectoryName(path);
+                when (excludes.Count == 0 || !isExcluded(tail))
+                  _ = _triggeredScenarios.Add(s);
+              }
+            }
+
+            def directory = Path.GetDirectoryName(head);
             when (directory != _repositoryRoot)
-              walkUpward(directory);
+            {
+              def name = Path.GetFileName(head);
+              def tail = if (string.IsNullOrEmpty(tail)) name else Path.Combine(name, tail);
+              walkUpward(directory, tail);
+            }
           }
-          walkUpward(fullPath);
+          walkUpward(fullPath, "");
 
           when (nextTabPos > 0)
             processPath(nextTabPos + 1);

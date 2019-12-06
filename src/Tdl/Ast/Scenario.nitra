@@ -14,7 +14,7 @@ namespace Tdl
     symbol
     {
     stage 2:
-      in TriggerPaths             : ImmutableArray[string];
+      in TriggerPaths             : ImmutableArray[TriggerPath];
       in IsUnconditional          : bool;
     stage 3:
       in AggregateParametersScope : Scope;
@@ -106,7 +106,7 @@ namespace Tdl
         }
 
       stage 2:
-        out ThisTriggerPaths : ImmutableHashSet[string];
+        out ThisTriggerPaths : ImmutableHashSet[TriggerPath];
 
         Scenarios.Scope                 = Scope;
         Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
