@@ -29,7 +29,7 @@ namespace Tdl2Json
       result
     }
 
-    public GetValue[K, V](this dic : Dictionary[K, V], key : K, dicName : string = null) : V
+    public GetValue[K, V](this dic : IDictionary[K, V], key : K, dicName : string = null) : V
     {
       mutable value;
       if (dic.TryGetValue(key, out value))
@@ -112,6 +112,17 @@ namespace Tdl2Json
     public ExprToString(this expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
     {
       expr.ToObject(values=null, variables=variables) :> string
+    }
+
+    public AddEx[K, V](this dictionary : IDictionary[K, V], key : K, value : V, dictionaryName : string) : void
+    {
+      try dictionary.Add(key, value);
+      catch
+      {
+        | e is KeyNotFoundException =>
+          throw KeyNotFoundException(
+            $"The '$key' key was not present in the '$dictionaryName' dictionary. New value: '$value'. Old value: '$(dictionary[key])'.", e)
+      }
     }
   }
 }

@@ -212,15 +212,15 @@ namespace Tdl2Json
       def scenarios   = SortedDictionary();
 
       foreach (s is PlatformSymbol in symbols)
-        platforms.Add(s.Name, GeneratePlatform(s));
+        platforms.AddEx(s.Name, GeneratePlatform(s), "platforms");
 
       def platformNameSet = HashSet(platforms.Select(p => p.Key), StringComparer.InvariantCultureIgnoreCase);
 
       foreach (symbol in symbols)
       {
-        | ProductSymbol         as s => products .Add(s.Name, GenerateProduct(s, platformNameSet))
-        | EntitySymbol          as s => entities .Add(s.Name, GenerateEntity(s))
-        | Suite.DefSymbol       as s => suites   .Add(s.Name, GenerateSuite(s, scenarioTrigger,                      preSessionActionCompiler, postSessionActionCompiler))
+        | ProductSymbol         as s => products .AddEx(s.Name, GenerateProduct(s, platformNameSet), "products")
+        | EntitySymbol          as s => entities .AddEx(s.Name, GenerateEntity(s), "entities")
+        | Suite.DefSymbol       as s => suites   .AddEx(s.Name, GenerateSuite(s, scenarioTrigger,                      preSessionActionCompiler, postSessionActionCompiler), "suites")
         | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
         | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
         | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
@@ -235,7 +235,7 @@ namespace Tdl2Json
         when (f.Value is VSome(v))
         {
           def value = v.ToObject();
-          defaultValues.Add(f.Name, value);
+          defaultValues.AddEx(f.Name, value, "defaultValues");
         }
       }
 
@@ -243,9 +243,9 @@ namespace Tdl2Json
       {
         def version             = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         def versionPropertyName = "$TDL Compiler Version$";
-        defaultValues.Add(versionPropertyName, version.ToString());
+        defaultValues.AddEx(versionPropertyName, version.ToString(), "defaultValues");
         def versionPropertyName = "$TDL Compilation Local Time$";
-        defaultValues.Add(versionPropertyName, DateTime.Now);
+        defaultValues.AddEx(versionPropertyName, DateTime.Now, "defaultValues");
       }
 
       def config = Root() <-
@@ -283,7 +283,7 @@ namespace Tdl2Json
     {
       def defs2 = CollectDefs(defs, variables);
       foreach (d when !defs2.ContainsKey(d.Name) in defaults)
-        defs2.Add(d.Name, Tdl.Expr.NotSetValue);
+        defs2.AddEx(d.Name, Tdl.Expr.NotSetValue, "defs2");
       defs2
     }
 
@@ -293,7 +293,7 @@ namespace Tdl2Json
       foreach(@def in defs)
       {
         def name = @def.Symbol.Name;
-        result.Add(name, @def.Expr.ToObject(variables=variables));
+        result.AddEx(name, @def.Expr.ToObject(variables=variables), "result");
       }
       result
     }
@@ -320,7 +320,7 @@ namespace Tdl2Json
               null
           }
           def name = useAsFixedParameter("Name");
-          parameters.Add("Name", name);
+          parameters.AddEx("Name", name, "parameters");
           def expr = Def.Defs.FirstOrDefault(isPlatforms);
           def platforms =
             if (expr : object == null)
@@ -633,7 +633,7 @@ namespace Tdl2Json
     {
       def addTestCase(name, testGroup)
       {
-        scenarios.Add(name, TestCase() <- { TestGroup = testGroup; });
+        scenarios.AddEx(name, TestCase() <- { TestGroup = testGroup; }, "scenarios");
       }
 
       match (scenarioSymbol)
@@ -1113,11 +1113,11 @@ namespace Tdl2Json
       foreach (symbol in suiteSymbol.AllSuites)
       {
         | s is Suite.DefSymbol       => suites.Add(s.Name)
-        | s is Suite.GeneratorSymbol => suites.AddRange(suiteGroups[s.Name].Suites)
+        | s is Suite.GeneratorSymbol => suites.AddRange(suiteGroups.GetValue(s.Name, "suiteGroups").Suites)
         | _ => assert2(false, $"Invalid symbol $(symbol) in AllSymbols")
       }
 
-      suiteGroups.Add(suiteSymbol.Name, SuiteGroup() <- { Suites = suites })
+      suiteGroups.AddEx(suiteSymbol.Name, SuiteGroup() <- { Suites = suites }, "suiteGroups")
     }
 
     private TryGenerateAction(
@@ -1182,10 +1182,10 @@ namespace Tdl2Json
           PostSessionAction          = sessionFinalizer;
         };
 
-        suites.Add(name, suite);
+        suites.AddEx(name, suite, "suites");
       }
 
-      suiteGroups.Add(nameBase, SuiteGroup() <- { Suites = names; });
+      suiteGroups.AddEx(nameBase, SuiteGroup() <- { Suites = names; }, "suiteGroups");
     }
 
     private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : IScenarioTrigger, preSessionActionCompiler : SessionActionCompiler, postSessionActionCompiler : SessionActionCompiler) : TestSuite
