@@ -1910,12 +1910,22 @@ namespace Tdl
       builder.ToString()
     }
 
-    public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableHashSet[string]
+    public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableHashSet[TriggerPath]
     {
       def builder = ImmutableHashSet.CreateBuilder();
-      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttribites.TriggerPathSymbol in ast)
+
+      def isValidPath(path)
       {
-        foreach (x in r.Arguments)
+        Directory.Exists(path) || File.Exists(path)
+      }
+
+      def processExcludes(path, args) : list[string]
+      {
+        when (args == null || args.Count == 0)
+          return [];
+
+        def excludes = SortedSet();
+        foreach (x in args)
         {
           | DotNet.Expr.Argument(Expr = DotNet.Expr.String as text) =>
             def rawValue = ConvertStringLiteral(text.Value);
@@ -1923,25 +1933,61 @@ namespace Tdl
               x.Error(context, "Non empty string required.");
             else
             {
-              try
-              {
-                def path = ExpandPathRelativeToAst(text, rawValue.Value);
-                when (builder.Add(path) && !Directory.Exists(path) && !File.Exists(path))
-                  x.Error(context, $"Trigger path '$(path)' not found.");
-              }
-              catch
-              {
-                | e is Exception => x.Error(context, $"Failed to process trigger path ($(e.GetType())): $(e.Message)")
-              }
+              def fullPath = Path.Combine(path, rawValue.Value);
+              unless (isValidPath(fullPath))
+                x.Error(context, $"Excluded trigger path '$(fullPath)' not found.");
+              _ = excludes.Add(rawValue.Value);
             }
 
-          | _ => x.Error(context, "String literal expected.", 0)
+          | _ => x.Error(context, "String literal expected.", 0);
         }
+        NList.ToList(excludes)
       }
+
+      def processArguments(args) : void
+      {
+        | [] => ()
+        | DotNet.Expr.Argument(Expr = DotNet.Expr.String as text) as x ::
+          DotNet.Expr.Argument(Expr = DotNet.Expr.Invocation(Left = DotNet.Expr.SimpleName as name, Arguments = excludes)) :: other
+          when (name.Reference.Text == "Exclude")
+        | DotNet.Expr.Argument(Expr = DotNet.Expr.String as text) as x :: other with excludes = null =>
+          def rawValue = ConvertStringLiteral(text.Value);
+          if (!rawValue.HasValue || string.IsNullOrEmpty(rawValue.Value))
+            x.Error(context, "Non empty string required.");
+          else
+          {
+            try
+            {
+              def path     = ExpandPathRelativeToAst(text, rawValue.Value);
+              def excludes =
+                if (isValidPath(path))
+                  processExcludes(path, excludes)
+                else
+                {
+                  x.Error(context, $"Trigger path '$(path)' not found.");
+                  []
+                };
+              _ = builder.Add(TriggerPath(path, excludes));
+            }
+            catch
+            {
+              | e is Exception => x.Error(context, $"Failed to process trigger path ($(e.GetType())): $(e.Message)")
+            }
+          }
+          processArguments(other);
+
+        | x :: other =>
+          x.Error(context, "String literal expected.", 0);
+          processArguments(other);
+      }
+
+      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttribites.TriggerPathSymbol in ast)
+        processArguments(NList.ToList(r.Arguments));
+
       builder.ToImmutable()
     }
 
-    public GetTriggerPaths(mutable triggerPaths : ImmutableHashSet[string], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[ImmutableArray[string]]
+    public GetTriggerPaths(mutable triggerPaths : ImmutableHashSet[TriggerPath], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[ImmutableArray[TriggerPath]]
     {
       foreach (s in scenarios)
       {
@@ -1953,7 +1999,7 @@ namespace Tdl
       VSome(triggerPaths.ToImmutableArray())
     }
 
-    public GetIsUnconditional(triggerPaths : ImmutableHashSet[string], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[bool]
+    public GetIsUnconditional(triggerPaths : ImmutableHashSet[TriggerPath], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[bool]
     {
       when (triggerPaths.IsEmpty)
       {
