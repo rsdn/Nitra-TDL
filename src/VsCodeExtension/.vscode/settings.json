@@ -1,0 +1,7 @@
+{
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "tslint.enable": true,
+  "typescript.tsc.autoDetect": "on",
+  "typescript.preferences.quoteStyle": "single"
+}
