@@ -29,8 +29,6 @@ namespace Tdl.Transformator.Models.Expressions
             }
             builder.Append("];");
 
-
-
             return builder.ToString();
         }
 
