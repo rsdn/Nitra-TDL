@@ -1,8 +1,8 @@
-
+﻿
 scenario AndroidJavaTestGroupKavsdk
 {
     deployment AndroidInstall;
-    environments (w19-droid, MobileSdk);
+    environme nts (w19-droid, MobileSdk);
     apk "KavSdk-full-debug-androidTest.apk"
         filter "-e pPdkDeliveryTest true -e pPullRequestTest true"
         runner "com.kavsdk.test/com.kavsdk.test.TestRunner";

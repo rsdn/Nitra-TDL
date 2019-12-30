@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tdl2Json</RootNamespace>
     <AssemblyName>Tdl2JsonLib</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFramework>netstandard20</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <NemerleVersion>Net-4.0</NemerleVersion>
     <NemerleBinPathRoot Condition=" '$(NemerleBinPathRoot)' == '' ">$(ProgramFiles)\Nemerle</NemerleBinPathRoot>
@@ -35,6 +35,12 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
+  <Import Project="$(Nemerle)\Nemerle.Sdk.props" />
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="JsonDiffPatch.Net" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc3*" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="CSharp.Grammar">
       <SpecificVersion>False</SpecificVersion>
@@ -51,11 +57,6 @@
       <Private>True</Private>
       <HintPath>$(NitraPath)\DotNetLang.dll</HintPath>
     </Reference>
-    <Reference Include="JsonDiffPatchDotNet, Version=2.1.0.0, Culture=neutral, PublicKeyToken=a407b9994a6d66d5">
-      <Name>JsonDiffPatchDotNet</Name>
-      <AssemblyName>JsonDiffPatchDotNet.dll</AssemblyName>
-      <HintPath>..\packages\JsonDiffPatch.Net.2.1.0\lib\net45\JsonDiffPatchDotNet.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Cci.MetadataHelper">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -66,24 +67,6 @@
       <Private>True</Private>
       <HintPath>$(NitraPath)\Microsoft.Cci.PeReader.dll</HintPath>
     </Reference>
-    <Reference Include="mscorlib" />
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <Name>Newtonsoft.Json</Name>
-      <AssemblyName>Newtonsoft.Json.dll</AssemblyName>
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="Nemerle">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -204,9 +187,6 @@
     <EmbeddedResource Include="DeploymentScriptTemplate.ps1">
       <SubType>Content</SubType>
     </EmbeddedResource>
-    <Content Include="packages.config">
-      <SubType>Content</SubType>
-    </Content>
   </ItemGroup>
-  <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" />
+  <Import Project="$(Nemerle)\Nemerle.Sdk.targets" />
 </Project>

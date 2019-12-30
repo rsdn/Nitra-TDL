@@ -2,8 +2,6 @@
 
 using JsonDal;
 
-using Microsoft.Cci.MetadataReader.ObjectModelImplementation;
-
 using Nemerle;
 using Nemerle.Assertions;
 using Nemerle.Collections;

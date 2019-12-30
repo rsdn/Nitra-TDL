@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tdl</RootNamespace>
     <AssemblyName>Tdl</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFramework>netstandard20</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <NemerleVersion>Net-4.0</NemerleVersion>
     <NemerleBinPathRoot Condition=" '$(NemerleBinPathRoot)' == '' ">$(ProgramFiles)\Nemerle</NemerleBinPathRoot>
@@ -36,10 +36,11 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
+  <Import Project="$(Nemerle)\Nemerle.Sdk.props" />
   <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
+    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc3*" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="CSharp.Grammar">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -278,5 +279,5 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" />
+  <Import Project="$(Nemerle)\Nemerle.Sdk.targets" />
 </Project>

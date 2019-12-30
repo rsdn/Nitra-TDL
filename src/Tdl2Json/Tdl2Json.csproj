@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
@@ -14,9 +14,9 @@
     <IntermediateOutputPath>..\..\obj\$(Configuration)\</IntermediateOutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
-	  <SignAssembly>false</SignAssembly>
-	  <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
-	  <LangVersion>7.3</LangVersion>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -44,6 +44,9 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.ValueTuple" Version="4.3.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc3*">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
