@@ -33,10 +33,17 @@ function tryCreateTasks() : void
 
 function getTdl2JsonPath() : string
 {
-  const ext = vscode.extensions.getExtension('VladislavChistyakov.tdl')!;
-  const extensionPath = ext.extensionPath!;
-  const tdl2JsonPath = path.join(extensionPath, 'Tdl2Json.exe');
-  return tdl2JsonPath;
+  //const ext = vscode.extensions.getExtension('VladislavChistyakov.tdl')!;
+  //const extensionPath = ext.extensionPath!;
+  //const tdl2JsonPath = path.join(extensionPath, 'Tdl2Json.exe');
+  //return tdl2JsonPath;
+  return '${env:TDL}Tdl2Json.exe';
+}
+
+function showMessage(text : string) : void
+{
+  console.log(text);
+  vscode.window.showInformationMessage(text);
 }
 
 function tryCreateTask(workspaceFolder : vscode.WorkspaceFolder) : void
@@ -104,9 +111,8 @@ function tryCreateTask(workspaceFolder : vscode.WorkspaceFolder) : void
 `.replace(/\\/g, '\\\\');
   try {
     fs.writeFileSync(tasksJsonPath, content);
-    const msg = "TDL build task was created!!!";
-    console.log(msg);
-    vscode.window.showInformationMessage(msg);
+    showMessage("TDL build task was created.");
+    showMessage("Set path to Tdl2Json.exe into 'TDL' environment variable!");
   } catch (error) {
     console.error(error);
     vscode.window.showErrorMessage("Failed to create TDL build task!");
