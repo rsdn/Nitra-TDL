@@ -73,7 +73,7 @@ function tryCreateTask(workspaceFolder : vscode.WorkspaceFolder) : void
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
+      "label": "TDL: build",
       "type": "shell",
       "windows": {
         "command": "${tdl2JsonPath}",
