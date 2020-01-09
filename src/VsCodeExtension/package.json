@@ -1,10 +1,10 @@
 {
-    "name": "tdl",
-    "displayName": "TDL VS Code Extension",
-    "description": "Test Definition Language (TDL) VS Code Extension.",
-    "version": "1.0.1",
-    "publisher": "VladislavChistyakov",
-    "baseUri" : "https://github.com/rsdn/nitra-tdl",
+	"name": "tdl",
+	"displayName": "TDL VS Code Extension",
+	"description": "Test Definition Language (TDL) VS Code Extension.",
+	"version": "1.0.1",
+	"publisher": "VladislavChistyakov",
+	"baseUri": "https://github.com/rsdn/nitra-tdl",
 	"enableProposedApi": "true",
 	"engines": {
 		"vscode": "^1.39.0"
@@ -21,40 +21,97 @@
 	],
 	"main": "./out/extension",
 	"contributes": {
-		"languages": [{
-            "id": "tdl",
-            "aliases": ["TDL", "tdl"],
-            "extensions": ["tdl"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "tdl",
-            "scopeName": "source.tdl",
-            "path": "./syntaxes/tdl.tmLanguage.json"
-		}],
-		"problemMatchers": [{
-			  "name": "tdl",
-			  "source": "tdl",
-			  "owner": "tdl",
-			  "fileLocation": "absolute",
-			  "pattern": {
-				  "regexp": "^(.*)\\((\\d+),(\\d+),(\\d+),(\\d+)\\):\\s*(warning|error|hint):\\s*(.*)$",
-				  "file": 1,
-				  "line": 2,
-				  "column": 3,
-				  "endLine": 4,
-				  "endColumn": 5,
-				  "severity": 6,
-				  "message": 7
-			  }
+		"configuration": {
+			"type": "object",
+			"title": "TDL configuration",
+			"properties": {
+				"tdl.maxNumberOfProblems": {
+					"scope": "resource",
+					"type": "number",
+					"default": 100,
+					"description": "Controls the maximum number of problems produced by the server."
+				},
+				"tdl.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "verbose",
+					"description": "Traces the communication between VS Code and the language server."
+				}
+			}
+		},
+		"languages": [
+			{
+				"id": "tdl",
+				"aliases": [
+					"TDL",
+					"tdl"
+				],
+				"extensions": [
+					"tdl"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "tdl",
+				"scopeName": "source.tdl",
+				"path": "./syntaxes/tdl.tmLanguage.json"
+			}
+		],
+		"problemMatchers": [
+			{
+				"name": "tdl",
+				"source": "tdl",
+				"owner": "tdl",
+				"fileLocation": "absolute",
+				"pattern": {
+					"regexp": "^(.*)\\((\\d+),(\\d+),(\\d+),(\\d+)\\):\\s*(warning|error|hint):\\s*(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"endLine": 4,
+					"endColumn": 5,
+					"severity": 6,
+					"message": 7
+				}
 			}
 		]
 	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"update-vscode": "vscode-install"
+	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.7",
 		"@types/node": "^8.10.59",
-		"@types/vscode": "^1.39.0",
+		"@types/vscode": "^1.41.0",
 		"tslint": "^5.16.0",
 		"typescript": "^3.5.1"
+	},
+	"dependencies": {
+		"ajv": "^6.10.2",
+		"append-buffer": "^1.0.2",
+		"argparse": "^1.0.10",
+		"arr-diff": "^4.0.0",
+		"arr-flatten": "^1.1.0",
+		"arr-union": "^3.1.0",
+		"array-differ": "^3.0.0",
+		"array-slice": "^1.1.0",
+		"array-union": "^2.1.0",
+		"array-uniq": "^2.1.0",
+		"arrify": "^2.0.1",
+		"vscode-languageclient": "^4.4.2",
+		"vscode-languageserver-protocol": "^3.14.1",
+		"vscode-languageserver-types": "^3.14.0",
+		"vscode-test": "^1.3.0"
 	}
 }

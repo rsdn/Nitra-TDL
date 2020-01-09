@@ -9,8 +9,8 @@
 			"problemMatcher": "$tsc-watch",
 			"isBackground": true,
 			"presentation": {
-				"reveal": "never",
-				"panel": "dedicated"
+				"panel": "dedicated",
+				"reveal": "never"
 			},
 			"group": {
 				"kind": "build",
@@ -22,9 +22,10 @@
 			"script": "compile",
 			"problemMatcher": "$tsc",
 			"presentation": {
-				"reveal": "never",
-				"panel": "dedicated"
-			}
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"group": "build"
 		},
 		{
 			"type": "npm",
