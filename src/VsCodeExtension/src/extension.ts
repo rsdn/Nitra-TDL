@@ -2,27 +2,59 @@
 import { TdlTaskProvider } from './tdlTaskProvider';
 import { workspace, ExtensionContext, Position } from 'vscode';
 import { LanguageClient, LanguageClientOptions,	ServerOptions } from 'vscode-languageclient';
+import * as fs from 'fs';
+import * as path from 'path';
+import { showMessage, showError, ExtentionName } from './utils';
+import { platform } from 'os';
 
-let tdlTaskProvider: vscode.Disposable | undefined;
-let client: LanguageClient;
+const langDllName = "Tdl.dll";
+const lspServerName = "Nitra.ClientServer.Server.exe";
 
-export function activate(_context: vscode.ExtensionContext): void
- {
+let tdlTaskProvider : vscode.Disposable | undefined;
+let client          : LanguageClient;
+
+export function activate(context : vscode.ExtensionContext): void
+{
   tdlTaskProvider = vscode.tasks.registerTaskProvider(TdlTaskProvider.TdlType, new TdlTaskProvider());
+  activateLspServer(context);
+}
 
-  let serverOptions: ServerOptions = {
-    command: "D:\\!\\RSDN\\nitra\\bin\\Debug\\Stage1\\Nitra.ClientServer.Server.exe",
-    args: ["-lsp"],
-    options: {
-      stdio: "pipe"
-    }
-  };
+export function deactivate(): Thenable<void> | undefined
+{
+  if (tdlTaskProvider)
+    tdlTaskProvider.dispose();
+
+  if (client)
+    return client.stop();
+  else
+    return undefined;
+}
+
+function activateLspServer(context : vscode.ExtensionContext) : void
+{
+  const nitraPath = getNitraPath();
+
+  if (!nitraPath)
+    return;
+
+  const tdlPath = getTdlPath();
+
+  if (!tdlPath)
+    return;
+
+  const lspServerPath = path.join(nitraPath, lspServerName);
+  const tdlDllPath = path.join(tdlPath, langDllName);
+
+  let serverOptions : ServerOptions = platform() === 'win32'
+      ? { command: lspServerPath, args: ["-lsp"],                options: { stdio: "pipe" } }
+      : { command: "mono",        args: [lspServerPath, "-lsp"], options: { stdio: "pipe" } };
 
   // Options to control the language client
-  let clientOptions: LanguageClientOptions = {
+  let clientOptions : LanguageClientOptions = {
     // Register the server for plain text documents
-    documentSelector: [{ scheme: 'file', language: 'tdl' }],
-    synchronize: {
+    documentSelector : [{ scheme: 'file', language: 'tdl' }],
+    synchronize :
+    {
       // Notify the server about file changes to '.clientrc files contained in the workspace
       fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
     },
@@ -32,11 +64,11 @@ export function activate(_context: vscode.ExtensionContext): void
         ProjectSupport: {
           Caption: "TdlLang",
           TypeFullName: "Tdl.ProjectSupport",
-          Path: "D:\\!\\RSDN\\TDL\\bin\\Debug\\Tdl.dll"
+          Path: tdlDllPath
         },
         Languages: [{
           Name: "TdlLang",
-          Path: "D:\\!\\RSDN\\TDL\\bin\\Debug\\Tdl.dll",
+          Path: tdlDllPath,
           DynamicExtensions: []
         }],
         References: []
@@ -58,14 +90,68 @@ export function activate(_context: vscode.ExtensionContext): void
   client.start();
 }
 
+let _nitraPath : string | undefined;
 
-export function deactivate(): Thenable<void> | undefined
+function getNitraPath() : string | undefined
 {
-  if (tdlTaskProvider)
-    tdlTaskProvider.dispose();
+  if (_nitraPath)
+    return  _nitraPath;
 
-  if (client)
-    return client.stop();
-  else
+  let nitraBinPath : string | undefined = process.env.NitraBinPath;
+
+  if (!nitraBinPath || !fs.existsSync(nitraBinPath))
+  {
+    const ext     = vscode.extensions.getExtension('VladislavChistyakov.tdl')!;
+    const binPath = path.join(ext.extensionPath!, "bin");
+    if (!fs.existsSync(binPath))
+    {
+      showError(`The TDL extension cannot find a path to Nitra. Reinstall ${ExtentionName} or specify path to Nitra in NitraBinPath environment variable. NitraBinPath="${nitraBinPath}".`);
+      return undefined;
+    }
+
+    nitraBinPath = binPath;
+  }
+
+  const lspServerPath = path.join(nitraBinPath, lspServerName);
+
+  if (!fs.existsSync(nitraBinPath))
+  {
+    showError(`The "${nitraBinPath}" directory does not contain ${lspServerName} LSP Server. Reinstall the ${ExtentionName} or place the Nitra binary in the specified directory.`);
     return undefined;
+  }
+
+  return _nitraPath = nitraBinPath;
+}
+
+let _tdlPath : string | undefined;
+
+function getTdlPath() : string | undefined
+{
+  if (_tdlPath)
+    return _tdlPath;
+
+  const nitraPath = getNitraPath();
+
+  if (nitraPath)
+  {
+    const langDllPath = path.join(nitraPath, langDllName);
+
+    if (fs.existsSync(langDllPath))
+      return _tdlPath = langDllPath;
+  }
+
+  const langPath : string | undefined = process.env.TDL;
+
+  if (langPath && fs.existsSync(langPath))
+  {
+    const langDllPath = path.join(langPath, langDllName);
+    if (fs.existsSync(langDllPath))
+      return _tdlPath = langPath;
+
+    showError(`The ${langDllName} not found in "${langPath}". Reinstall the ${ExtentionName} or place ${langDllName} into the specified path.`);
+    return undefined;
+  }
+
+  showError(`The ${langDllName} not found. Reinstall the ${ExtentionName} or set "TDL" environment variable to ${langDllName} location.`);
+  return undefined;
 }

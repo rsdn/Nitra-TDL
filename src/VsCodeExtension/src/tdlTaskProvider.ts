@@ -1,6 +1,7 @@
 ﻿import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
+import { showMessage } from './utils';
 
 export class TdlTaskProvider implements vscode.TaskProvider {
   static TdlType: string = 'tdl';
@@ -38,12 +39,6 @@ function getTdl2JsonPath() : string
   //const tdl2JsonPath = path.join(extensionPath, 'Tdl2Json.exe');
   //return tdl2JsonPath;
   return '${env:TDL}Tdl2Json.exe';
-}
-
-function showMessage(text : string) : void
-{
-  console.log(text);
-  vscode.window.showInformationMessage(text);
 }
 
 function tryCreateTask(workspaceFolder : vscode.WorkspaceFolder) : void
