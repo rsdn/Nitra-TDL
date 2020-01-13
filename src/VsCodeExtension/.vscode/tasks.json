@@ -4,17 +4,14 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "npm",
-			"script": "watch",
-			"problemMatcher": "$tsc-watch",
-			"isBackground": true,
-			"presentation": {
-				"reveal": "never",
-				"panel": "dedicated"
-			},
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
+			"problemMatcher": [
+					"$tsc"
+			],
 			"group": {
-				"kind": "build",
-				"isDefault": true
+					"kind": "build",
+					"isDefault": true
 			}
 		},
 		{
@@ -30,6 +27,5 @@
 			"type": "npm",
 			"script": "install",
 			"problemMatcher": []
-		}
-	]
+		}	]
 }
