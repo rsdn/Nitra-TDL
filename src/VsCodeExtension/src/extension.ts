@@ -34,14 +34,14 @@ function activateLspServer(context : vscode.ExtensionContext) : void
 {
   const nitraPath = getNitraPath();
 
-  showError(`nitraPath=${nitraPath}`);
+  showMessage(`nitraPath=${nitraPath}`);
 
   if (!nitraPath)
     return;
 
   const tdlPath = getTdlPath();
 
-  showError(`tdlPath=${tdlPath}`);
+  showMessage(`tdlPath=${tdlPath}`);
 
   if (!tdlPath)
     return;
@@ -49,8 +49,8 @@ function activateLspServer(context : vscode.ExtensionContext) : void
   const lspServerPath = path.join(nitraPath, lspServerName);
   const tdlDllPath = path.join(tdlPath, langDllName);
 
-  showError(`lspServerPath=${lspServerPath}`);
-  showError(`tdlDllPath=${tdlDllPath}`);
+  showMessage(`lspServerPath=${lspServerPath}`);
+  showMessage(`tdlDllPath=${tdlDllPath}`);
 
   let serverOptions : ServerOptions = platform() === 'win32'
       ? { command: lspServerPath, args: ["-lsp"],                options: { stdio: "pipe" } }
