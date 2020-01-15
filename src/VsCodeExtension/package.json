@@ -84,7 +84,6 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "tsc -b",
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
 		"update-vscode": "vscode-install"
