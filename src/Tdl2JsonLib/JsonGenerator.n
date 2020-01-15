@@ -53,6 +53,7 @@ namespace Tdl2Json
   public module JsonGenerator
   {
     static JsonVersion : int = 7;
+    public static DefaulteTimeout : TimeSpan = TimeSpan.FromMinutes(15);
     public IsExperimental = ThisAssembly.BranchName != "master";
 
     public event OnMessage : MessageHandler;
