@@ -46,8 +46,7 @@ namespace Tdl2Json
     private         _closedParameters : Dictionary[FormalParameterSymbol * int, ClosedParameterInfo] = Dictionary();
     private         _exitCode         : ParsedValue[int];
     private mutable _rebootExitCode   : ParsedValue[int];
-    private mutable _timeout          : ParsedValue[string];
-    private mutable _timeoutValue     : TimeSpan?; // null means invalid text in _timeout
+    private mutable _timeout     : TimeSpan;
 
     public Name : string { get; private set; }
 
@@ -58,8 +57,7 @@ namespace Tdl2Json
       Name            = symbol.Name;
       _exitCode       = symbol.Expected;
       _rebootExitCode = symbol.ForReboot;
-      _timeout        = symbol.Timeout;
-      _timeoutValue   = ParseTimeout(_timeout);
+      _timeout        = ParseTimeout(symbol.Timeout);
       _initialStack   = callStack;
       AddSymbol(symbol, values, callStack);
     }
@@ -73,8 +71,6 @@ namespace Tdl2Json
         return false;
 
       def otherTimeout = ParseTimeout(symbol.Timeout);
-      when (!_timeoutValue.HasValue || !otherTimeout.HasValue)
-        return false;
 
       foreach (parameter when !values.ContainsKey(parameter.Name) in symbol.Parameters)
       {
@@ -89,15 +85,8 @@ namespace Tdl2Json
 
       AddSymbol(symbol, values, callStack);
 
-      Name = Name + Separators.DeploymentCodeSeparator + symbol.Name;
-
-      def newTimeoutValue = _timeoutValue.GetValueOrDefault() + otherTimeout.GetValueOrDefault();
-      when (newTimeoutValue != TimeSpan.Zero)
-      {
-        _timeout      = ParsedValue(_timeout.Span, newTimeoutValue.ToString());
-        _timeoutValue = newTimeoutValue;
-      }
-
+      Name            = Name + Separators.DeploymentCodeSeparator + symbol.Name;
+      _timeout        = _timeout + otherTimeout;
       _rebootExitCode = symbol.ForReboot;
 
       true
@@ -258,7 +247,7 @@ namespace Tdl2Json
           ScriptDataExtension = ".ps1";
           ReturnValue         = if (_exitCode.HasValue)       _exitCode.Value       else null;
           RebootExitCode      = if (_rebootExitCode.HasValue) _rebootExitCode.Value else null;
-          Timeout             = if (_timeout.HasValue)        _timeout.Value        else null;
+          Timeout             = _timeout.ToString();
           ScriptArgs          = scriptArgs;
           DefaultValues       = defaults;
       }, closedArgs)
@@ -288,16 +277,12 @@ namespace Tdl2Json
       }
     }
 
-    private static ParseTimeout(t : ParsedValue[string]) : TimeSpan?
+    private static ParseTimeout(t : ParsedValue[string]) : TimeSpan
     {
-      mutable timeoutValue;
       if (t.HasValue)
-        if (TimeSpan.TryParse(t.ValueOrDefault, out timeoutValue))
-          timeoutValue
-        else
-          null
+        TimeSpan.Parse(t.ValueOrDefault)
       else
-        TimeSpan.Zero
+        JsonGenerator.DefaulteTimeout
     }
 
     private static ReadStringResource(name : string) : string
