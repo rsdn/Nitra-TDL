@@ -34,10 +34,14 @@ function activateLspServer(context : vscode.ExtensionContext) : void
 {
   const nitraPath = getNitraPath();
 
+  showError(`nitraPath=${nitraPath}`);
+
   if (!nitraPath)
     return;
 
   const tdlPath = getTdlPath();
+
+  showError(`nitraPath=${tdlPath}`);
 
   if (!tdlPath)
     return;
