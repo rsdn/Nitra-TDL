@@ -2,8 +2,6 @@
 
 using JsonDal;
 
-using Microsoft.Cci.MetadataReader.ObjectModelImplementation;
-
 using Nemerle;
 using Nemerle.Assertions;
 using Nemerle.Collections;
@@ -16,11 +14,11 @@ using Nemerle.Utility.Pair;
 using Newtonsoft.Json;
 
 using Nitra;
-using Nitra.BackEnd.Cci;
+using Nitra.BackEnd.Dnlib;
 using Nitra.Declarations;
 using Nitra.ProjectSystem;
 
-using Microsoft.Cci;
+using dnlib.DotNet;
 
 using QuickType;
 using Utils;
@@ -366,11 +364,10 @@ namespace Tdl2Json
       def decl         = methodSymbol.GetDeclarationsOfType.[ExternalMethodDeclaration]();
       def method       = decl.First().Method;
       def typeSymbol   = typeSymbolOpt :> SymbolBase;
-      def type         = if (typeSymbol == null) method.ContainingType :> ITypeDefinition
-                         else typeSymbol.GetDeclarationsOfType.[ExternalTopTypeDeclaration.[TopClassSymbol]]().First().Type;
-      def unit         = TypeHelper.GetDefiningUnit(type);
-      def assemblyName = unit.Name.Value + ".dll";
-      def methodName   = type + "." + method.Name.Value;
+      def type         = if (typeSymbol == null) method.DeclaringType
+                         else typeSymbol.GetDeclarationsOfType.[ExternalTopTypeDeclaration.[TopClassSymbol]]().First().TypeDef;
+      def assemblyName = type.DefinitionAssembly.Name + ".dll";
+      def methodName   = type.FullName + "." + method.Name;
 
       (assemblyName, methodName)
     }
