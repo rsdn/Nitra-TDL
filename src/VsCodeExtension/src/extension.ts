@@ -4,7 +4,7 @@ import { workspace, ExtensionContext, Position } from 'vscode';
 import { LanguageClient, LanguageClientOptions,	ServerOptions } from 'vscode-languageclient';
 import * as fs from 'fs';
 import * as path from 'path';
-import { showMessage, showError, ExtentionName } from './utils';
+import { showMessage, showError, ExtentionName, log, error } from './utils';
 import { platform } from 'os';
 
 const langDllName = "Tdl.dll";
@@ -15,6 +15,7 @@ let client          : LanguageClient;
 
 export function activate(context : vscode.ExtensionContext): void
 {
+  log(`activate`);
   tdlTaskProvider = vscode.tasks.registerTaskProvider(TdlTaskProvider.TdlType, new TdlTaskProvider());
   activateLspServer(context);
 }
@@ -32,6 +33,7 @@ export function deactivate(): Thenable<void> | undefined
 
 function activateLspServer(context : vscode.ExtensionContext) : void
 {
+  log(`activateLspServer`);
   const nitraPath = getNitraPath();
 
   showMessage(`nitraPath=${nitraPath}`);
@@ -78,12 +80,12 @@ function activateLspServer(context : vscode.ExtensionContext) : void
           Path: tdlDllPath,
           DynamicExtensions: []
         }],
-        References: []
+        References: [
+          "FullName:mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+          "FullName:System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+        ]
       },
-      References: [
-        "FullName:mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-        "FullName:System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-      ]
+      References: [ ]
     }
   };
 
@@ -94,7 +96,9 @@ function activateLspServer(context : vscode.ExtensionContext) : void
     clientOptions
   );
 
+  log(`--> client.start();`);
   client.start();
+  log(`<-- client.start();`);
 }
 
 let _nitraPath : string | undefined;
