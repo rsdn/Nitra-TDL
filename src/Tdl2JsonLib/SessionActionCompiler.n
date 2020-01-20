@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 
 using System.Text;
+using System.Text.Encoding;
 using Tdl;
 
 namespace Tdl2Json
@@ -195,9 +196,9 @@ namespace Tdl2Json
         };
       match (script.ScriptReference)
       {
-        | ScriptReference.FilePath as fp   => result.ScriptPath = fp.Path.ValueOrDefault
-        | ScriptReference.SourceCode as sc => result.ScriptData          = Encoding.UTF8.GetBytes(sc.Text.ValueOrDefault ?? ""); //result.ScriptDataExtension = sc.Extension.ValueOrDefault;
-        | ScriptReference.EmbedFile as ef  =>
+        | ScriptReference.FilePath   as fp => result.ScriptPath = fp.Path.ValueOrDefault
+        | ScriptReference.SourceCode as sc => result.ScriptData = UTF8.GetBytes(sc.Text.ValueOrDefault ?? ""); //result.ScriptDataExtension = sc.Extension.ValueOrDefault;
+        | ScriptReference.EmbedFile  as ef =>
           def path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(script.FirstParsedDeclarationOrDefault.Location.Source.File.FullName), ef.Path.Value));
           result.ScriptData          = File.ReadAllBytes(path);
           //result.ScriptDataExtension = Path.GetExtension(path);
