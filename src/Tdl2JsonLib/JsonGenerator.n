@@ -115,12 +115,6 @@ namespace Tdl2Json
       context
     }
 
-    private static StandardLibraries : array[LibReference] = array[
-      FullNameLibReference("mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"),
-      FullNameLibReference("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"),
-      FullNameLibReference("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")
-    ];
-
     private Compile(directory : string, files : array[string], refs : array[string], isMethodTypingEnabled : bool, mode : CompilerMode,
       transformatorOutput : string) : TransformationContext
     {
@@ -131,7 +125,7 @@ namespace Tdl2Json
       def project        = FsProject(solution,
                                      directory,
                                      files.Map(FsFileWithId(_, TdlLang.Instance, commentBag)),
-                                     StandardLibraries.Concat(refs.Select(FileLibReference)).ToArray());
+                                     refs.Select(FileLibReference).ToArray());
       def stopwatch      = Stopwatch.StartNew();
       def projectSupport = ProjectSupport(testMode=true);
       ReportMessage("Loading types from referenced assemblies...");
