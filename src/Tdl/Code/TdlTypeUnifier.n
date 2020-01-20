@@ -44,10 +44,10 @@ namespace Tdl
           when (typeSymbol1 : object is ConstructedTypeSymbol(TypeInfo=ti1, Args=args1))
           when (ti1 : object is SupportsInheritanceTypeSymbol(IsBaseTypeSetEvaluated=true, BaseTypeSet=baseTypeSet))
           {
-            when (baseTypeSet.AncestorTypes.Contains(typeSymbol2))
+            when (baseTypeSet.ContainsAncestor(typeSymbol2))
               return true;
             when (typeSymbol2 is TypeVarSymbol(IsBaseTypeConstraintEvaluated=true, BaseTypeConstraint=ConstructedTypeSymbol(TypeInfo=ti2, Args=args2)) as tv2)
-            when (baseTypeSet.AncestorTypes.Contains(ti2))
+            when (baseTypeSet.ContainsAncestor(ti2))
             {
               unless(UnifyAll(args1, args2, ref updatedVariables))
               {
@@ -74,24 +74,58 @@ namespace Tdl
     
     protected override SubtypeUnifyUnwraped(subtype : TypeSymbol, supertype : TypeSymbol, updatedVariables : ref LightList[TypeVarSymbol]) : bool
     {
-      match(subtype, supertype)
+      when (subtype is TypeVarSymbol(IsTypeEvaluated=false, IsDerivedTypeConstraintEvaluated=true) as sub)
       {
-        | (sub is TopConstructedTypeSymbol, super is TopConstructedTypeSymbol) =>
-          SubtypeUnifyUnwraped(sub.TypeInfo, super.TypeInfo, ref updatedVariables)
-          && UnifyAll(sub.Args, super.Args, ref updatedVariables)
+        unless (SubtypeUnifyUnwraped(sub.DerivedTypeConstraint, supertype, ref updatedVariables))
+          return false;
 
-        | (TypeVarSymbol(IsTypeEvaluated=false, IsDerivedTypeConstraintEvaluated=true) as sub, _) =>
-          unless (SubtypeUnifyUnwraped(sub.DerivedTypeConstraint, supertype, ref updatedVariables))
-            return false;
-
+        return 
           if (sub.IsBaseTypeConstraintEvaluated)
             SubtypeUnifyUnwraped(supertype, sub.BaseTypeConstraint, ref updatedVariables)
           else
           {
             sub.BaseTypeConstraint = supertype;
             true
-          }
-          
+          };
+      }
+
+      when (subtype.Equals(supertype))
+        return true;
+
+      when (supertype is TopConstructedTypeSymbol(IsTypeInfoEvaluated=true, IsArgsEvaluated=true, TypeInfo=supertypeInfo, Args=supertypeArgs))
+      {
+        match (subtype)
+        {
+          | SupportsInheritanceTypeSymbol(IsBaseTypeSetEvaluated=true, BaseTypeSet=baseTypeSet) =>
+            foreach (TopConstructedTypeSymbol(TypeInfo=ancestorInfo, Args=ancestorArgs) in baseTypeSet.AncestorTypes)
+            {
+              when (supertypeInfo.Equals(ancestorInfo) && TryUnifyAll(supertypeArgs, ancestorArgs))
+                return UnifyAll(supertypeArgs, ancestorArgs, ref updatedVariables);
+            }
+
+          | TopConstructedTypeSymbol(IsTypeInfoEvaluated=true, IsArgsEvaluated=true, TypeInfo=subtypeInfo, Args=typeParameterValues) =>
+            when ((subtypeInfo : object) is SupportsInheritanceTypeSymbol(IsBaseTypeSetEvaluated=true, BaseTypeSet=baseTypeSet))
+            {
+              foreach (TopConstructedTypeSymbol(TypeInfo=ancestorInfo, Args=ancestorArgs) in baseTypeSet.AncestorTypes)
+              {
+                when (supertypeInfo.Equals(ancestorInfo))
+                {
+                  mutable substitutedValues;
+                  _ = SymbolUtils.TrySubstituteTypeParameters(ancestorArgs, typeParameterValues, out substitutedValues);
+
+                  when (TryUnifyAll(supertypeArgs, substitutedValues))
+                    return UnifyAll(supertypeArgs, substitutedValues, ref updatedVariables);
+                }
+              }
+            }
+
+          | _ => ()
+        }
+      }
+
+      match (subtype)
+      {
+        | TopConstructedTypeSymbol(IsTypeInfoEvaluated=true, TypeInfo=subtypeInfo) => SubtypeUnifyUnwraped(subtypeInfo, supertype, ref updatedVariables)
         | _ when TryUnify(subtype, supertype) => UnifyUnwraped(subtype, supertype, ref updatedVariables)
         | _ => base.SubtypeUnifyUnwraped(subtype, supertype, ref updatedVariables)
       }

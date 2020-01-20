@@ -46,6 +46,7 @@ namespace Tdl.Tests
                 arguments.Add(Utils.EscapeCommandLineArgument(Path.Combine(subDirectory, "*.tdl")));
 
             arguments.Add(Utils.EscapeCommandLineArgument(Path.Combine(ReferencesPath, "*.dll")));
+            arguments.Add(typeof(System.Linq.Enumerable).Assembly.Location);
 
             var outputFilePath = Path.Combine(OutputPath, name + ".json");
             arguments.Add($"-out:{Utils.EscapeCommandLineArgument(outputFilePath)}");

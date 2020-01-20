@@ -1,7 +1,7 @@
 ﻿using DotNet;
 
 using Nitra;
-using Nitra.BackEnd.Cci;
+using Nitra.BackEnd.Dnlib;
 using Nitra.Declarations;
 using Nitra.Internal;
 using Nitra.ProjectSystem;
@@ -32,7 +32,7 @@ namespace Tdl
     static NoSpan     : NSpan              = NSpan(0);
 
     public TestMode : bool { get; }
-    mutable _backEnd : CciBackEnd;
+    mutable _backEnd : DnlibBackEnd;
 
     public this()
     {
@@ -90,7 +90,7 @@ namespace Tdl
       def bindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
       {
         //assert2(false);
-        def res = Reference(Location.Default, name).Bind.[NamespaceSymbol](scope);
+        def res = Reference(NoLocation, name).Bind.[NamespaceSymbol](scope);
         assert2(!res.IsUnresolved);
         assert2(!res.IsAmbiguous);
         assert2(res.Symbols.Length == 1);
@@ -99,7 +99,7 @@ namespace Tdl
       def bindType(scope : Scope, name : string) : Ref[TopGenericTypeSymbol]
       {
         //assert2(false);
-        def res = Reference(Location.Default, name).Bind.[TopGenericTypeSymbol](scope);
+        def res = Reference(NoLocation, name).Bind.[TopGenericTypeSymbol](scope);
         assert2(!res.IsUnresolved);
         assert2(!res.IsAmbiguous);
         assert2(res.Symbols.Length == 1);
@@ -112,8 +112,8 @@ namespace Tdl
           return;
 
         def symbol     = symbolRef.Symbol;
-        def decl       = symbol.FirstDeclarationOrDefault :> IExternalTopTypeDeclaration;
-        def aliasDecl  = ExternalTopTypeDeclaration.[TypeAliasSymbol](ND.Name(Location.Default, aliasName), decl.Type);
+        def decl       = symbol.FirstDeclarationOrDefault :> IExternalTypeDeclaration;
+        def aliasDecl  = ExternalTopTypeDeclaration.[TypeAliasSymbol](ND.Name(NoLocation, aliasName), decl.TypeDef);
         def alias      = aliasDecl.DefineSymbol(declaredIn.MemberTable);
         alias.Replacement = symbolRef;
         alias.TypeParametersCount = 0;
@@ -124,7 +124,7 @@ namespace Tdl
 
       when (_backEnd != null)
         _backEnd.Dispose();
-      def backEnd = CciBackEnd();
+      def backEnd = DnlibBackEnd();
       _backEnd = backEnd;
       backEnd.CancellationToken = cancellationToken;
       def typeType              = TdlType.TypeSymbol();
@@ -180,7 +180,7 @@ namespace Tdl
       def data                       = TdlProjectData(backEnd, context, rootNamespace, scenarioParameterScope, entityFieldsScope, requiredScenarioParameters, externalSymbol, TestMode, baseProductType, platformType, deploymentType);
       context.TdlProjectData         = data;
 
-      def emptyDeployment = ExternalDeclaration.[Tdl.Deployment.EmptySymbol](Location.Default, EmptyDeploymentName, ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def emptyDeployment = ExternalDeclaration.[Tdl.Deployment.EmptySymbol](NoLocation, EmptyDeploymentName, ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       // TODO: эти свойства должны вычисляться в EvalProperties
       emptyDeployment.Type                     = deploymentType;
       emptyDeployment.Scope                    = EmptyScope.Instance;
@@ -189,10 +189,10 @@ namespace Tdl
       emptyDeployment.EvalProperties(context);
       initTypeSymbol(emptyDeployment);
 
-      def dashboardVisible = ExternalDeclaration.[Tdl.PredefinedAttribites.DashboardVisibleSymbol](Location.Default, "DashboardVisible", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def dashboardVisible = ExternalDeclaration.[Tdl.PredefinedAttribites.DashboardVisibleSymbol](NoLocation, "DashboardVisible", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(dashboardVisible);
 
-      def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttribites.TriggerPathSymbol](Location.Default, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttribites.TriggerPathSymbol](NoLocation, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(triggerPath);
       data
     }
@@ -402,7 +402,7 @@ namespace Tdl
 
     public MakePlatformTypeSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : PlatformTypeSymbol
     {
-      def symbol = ExternalDeclaration.[PlatformTypeSymbol](Name(NoLocation, "PlatformType")).DefineSymbol(rootNamespace.MemberTable);
+      def symbol = ExternalDeclaration.[PlatformTypeSymbol](NoLocation, "PlatformType").DefineSymbol(rootNamespace.MemberTable);
       symbol.BaseTypeSet = BaseTypeReferenceSet(null);
       symbol.EvalProperties(context);
       symbol
@@ -410,7 +410,7 @@ namespace Tdl
 
     public MakeDeploymentTypeSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : DeploymentTypeSymbol
     {
-      def symbol = ExternalDeclaration.[DeploymentTypeSymbol](Name(NoLocation, "Deployment")).DefineSymbol(rootNamespace.MemberTable);
+      def symbol = ExternalDeclaration.[DeploymentTypeSymbol](NoLocation, "Deployment").DefineSymbol(rootNamespace.MemberTable);
       symbol.BaseTypeSet = BaseTypeReferenceSet(null);
       symbol.EvalProperties(context);
       symbol
@@ -418,7 +418,7 @@ namespace Tdl
 
     public MakeBaseProductTypeSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : ProductTypeSymbol
     {
-      def symbol = ExternalDeclaration.[ProductTypeSymbol](Name(NoLocation, "BaseProductType")).DefineSymbol(rootNamespace.MemberTable);
+      def symbol = ExternalDeclaration.[ProductTypeSymbol](NoLocation, "BaseProductType").DefineSymbol(rootNamespace.MemberTable);
       symbol.BaseTypeSet = BaseTypeReferenceSet(null);
       symbol.EvalProperties(context);
       symbol
@@ -440,8 +440,7 @@ namespace Tdl
 
       def defineParameter(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
-        def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
-        def parameter      = ExternalDeclaration.[FormalParameterSymbol](parameterName).DefineSymbol(scenarioParameterScope);
+        def parameter      = ExternalDeclaration.[FormalParameterSymbol](NoLocation, name).DefineSymbol(scenarioParameterScope);
         when (required)
           _                = requiredScenarioParametersBuilder.Add(parameter);
         parameter.Type     = type;
@@ -481,8 +480,7 @@ namespace Tdl
       def defineField(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
         _ = required;
-        def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
-        def parameter      = ExternalDeclaration.[FormalParameterSymbol](parameterName).DefineSymbol(entityFieldsScope);
+        def parameter      = ExternalDeclaration.[FormalParameterSymbol](NoLocation, name).DefineSymbol(entityFieldsScope);
         parameter.Type     = type;
         parameter.Modifier = ParameterModifier.None;
         parameter.Index    = index;

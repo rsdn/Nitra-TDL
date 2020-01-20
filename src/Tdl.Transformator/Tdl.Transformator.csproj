@@ -41,10 +41,10 @@
       <Private>True</Private>
       <HintPath>$(NitraGrammarsPath)\CSharp.Grammar.dll</HintPath>
     </Reference>
-    <Reference Include="DotNet.BackEnd.CCI">
+    <Reference Include="DotNet.BackEnd.Dnlib">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
-      <HintPath>$(NitraPath)\DotNet.BackEnd.CCI.dll</HintPath>
+      <HintPath>$(NitraPath)\DotNet.BackEnd.Dnlib.dll</HintPath>
     </Reference>
     <Reference Include="DotNetLang">
       <SpecificVersion>False</SpecificVersion>

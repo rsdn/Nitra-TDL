@@ -39,7 +39,6 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="JsonDiffPatch.Net" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc3*" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CSharp.Grammar">
@@ -47,25 +46,20 @@
       <Private>True</Private>
       <HintPath>$(NitraGrammarsPath)\CSharp.Grammar.dll</HintPath>
     </Reference>
-    <Reference Include="DotNet.BackEnd.CCI">
+    <Reference Include="DotNet.BackEnd.Dnlib">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
-      <HintPath>$(NitraPath)\DotNet.BackEnd.CCI.dll</HintPath>
+      <HintPath>$(NitraPath)\DotNet.BackEnd.Dnlib.dll</HintPath>
     </Reference>
     <Reference Include="DotNetLang">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
       <HintPath>$(NitraPath)\DotNetLang.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Cci.MetadataHelper">
+    <Reference Include="dnlib">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
-      <HintPath>$(NitraPath)\Microsoft.Cci.MetadataHelper.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Cci.PeReader">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>True</Private>
-      <HintPath>$(NitraPath)\Microsoft.Cci.PeReader.dll</HintPath>
+      <HintPath>$(NitraPath)\dnlib.dll</HintPath>
     </Reference>
     <Reference Include="Nemerle">
       <SpecificVersion>False</SpecificVersion>

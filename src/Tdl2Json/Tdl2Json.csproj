@@ -2,10 +2,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <IsTool>true</IsTool>
+    <PackAsTool>true</PackAsTool>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -46,16 +46,17 @@
     <PackageReference Include="System.ValueTuple" Version="4.3.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc3*">
+    <PackageReference Include="System.Security.Permissions" Version="4.6.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tdl.VersionInfo\Tdl.VersionInfo.csproj">
-      <Private>false</Private>
+      <Private>True</Private>
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
     <ProjectReference Include="..\Tdl2JsonLib\Tdl2JsonLib.nproj">
+      <Private>True</Private>
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
     <Reference Include="Nitra.Runtime">

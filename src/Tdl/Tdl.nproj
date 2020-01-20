@@ -38,23 +38,25 @@
   </PropertyGroup>
   <Import Project="$(Nemerle)\Nemerle.Sdk.props" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc3*" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="CSharp.Grammar">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
       <HintPath>$(NitraGrammarsPath)\CSharp.Grammar.dll</HintPath>
     </Reference>
-    <Reference Include="DotNet.BackEnd.CCI">
+    <Reference Include="DotNet.BackEnd.Dnlib">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
-      <HintPath>$(NitraPath)\DotNet.BackEnd.CCI.dll</HintPath>
+      <HintPath>$(NitraPath)\DotNet.BackEnd.Dnlib.dll</HintPath>
     </Reference>
     <Reference Include="DotNetLang">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
       <HintPath>$(NitraPath)\DotNetLang.dll</HintPath>
+    </Reference>
+    <Reference Include="dnlib">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\dnlib.dll</HintPath>
     </Reference>
     <Reference Include="Nemerle">
       <SpecificVersion>False</SpecificVersion>
