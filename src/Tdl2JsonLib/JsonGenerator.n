@@ -184,8 +184,8 @@ namespace Tdl2Json
       when (string.IsNullOrEmpty(jsonSchemaType))
         jsonSchemaType = if (IsExperimental) "dev" else "prod";
 
-      def preSessionActionCompiler  = SessionActionCompiler();
-      def postSessionActionCompiler = SessionActionCompiler();
+      def preSessionActionCompiler  = SessionActionCompiler(deploymentScriptHeader, deploymentToolPath);
+      def postSessionActionCompiler = SessionActionCompiler(deploymentScriptHeader, deploymentToolPath);
       def compiler                  = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
       def symbols                   = context.RootNamespace.MemberTable.GetAllSymbols().ToList();
 

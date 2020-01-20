@@ -107,10 +107,10 @@ namespace QuickType
         public TypeEnum Type { get; set; }
 
         [JsonProperty("RebootExitCode", NullValueHandling = NullValueHandling.Ignore)]
-        public long? RebootExitCode { get; set; }
+        public int? RebootExitCode { get; set; }
 
         [JsonProperty("ReturnValue", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ReturnValue { get; set; }
+        public int? ReturnValue { get; set; }
 
         [JsonProperty("ScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
         public IDictionary<string, object> ScriptArgs { get; set; }

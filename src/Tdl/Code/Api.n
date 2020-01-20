@@ -247,22 +247,31 @@ namespace Tdl
               when (reportedErrors.Add((ast.Location, msg)))
                 ast.Error(context, msg);
             }
+
+            def validateDeployment(name : string, vars : Dictionary[string, Expr], parameters : ImmutableArray[FormalParameterSymbol], options : DeploymentOptionsHostSymbol)
+            {
+              foreach (p when !vars.ContainsKey(p.Name) in parameters)
+                when (p.Default is DefaultValue.None)
+                  reportError($"'$(p.Name)' parameter of '$(name)' deployment used in the $actionName is not set and does not have a default value.");
+
+              when (options.IsForRebootEvaluated && options.ForReboot.HasValue)
+                reportError($"Stetment 'expected-for-reboot' not supported in $actionName");
+            }
+
             def loop(node : DeploymentTreeNode) : void
             {
+              | Leaf(vars, Deployment.CodeSymbol as script) =>
+                validateDeployment(script.Name, vars, script.Parameters, script);
+
               | Leaf(vars, Deployment.ScriptSymbol as script) =>
                 // TODO: Add checks for unsupported features.
                 def sr = script.ScriptReference;
                 unless (sr is ScriptReference.FilePath)
                   reportError($"Currently, the $(sr.GetType().Name) deployer is not supported because it is not supported in Wrden and Hive restrictions.");
 
-                foreach (p when !vars.ContainsKey(p.Name) in script.Parameters)
-                  when (p.Default is DefaultValue.None)
-                    reportError($"'$(p.Name)' parameter of '$(script.Name)' deployment used in the $actionName is not set and does not have a default value.");
+                validateDeployment(script.Name, vars, script.Parameters, script);
 
-                when (script.IsForRebootEvaluated && script.ForReboot.HasValue)
-                  reportError($"Stetment 'expected-for-reboot' not supported in $actionName");
-
-              | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.Kind).");
+              | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.GetType().Name).");
               | Nodes(Normal, nodes) =>
                 foreach (node in nodes)
                   loop(node);
