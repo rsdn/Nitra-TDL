@@ -45,8 +45,8 @@ namespace Tdl2Json
     private         _freeParameters   : Dictionary[string, FreeParameterInfo]                        = Dictionary(StringComparer.OrdinalIgnoreCase);
     private         _closedParameters : Dictionary[FormalParameterSymbol * int, ClosedParameterInfo] = Dictionary();
     private         _exitCode         : ParsedValue[int];
-    private mutable _rebootExitCode   : ParsedValue[int];
-    private mutable _timeout     : TimeSpan;
+    private         _rebootExitCode   : ParsedValue[int];
+    private mutable _timeout          : TimeSpan;
 
     public Name : string { get; private set; }
 
@@ -64,7 +64,7 @@ namespace Tdl2Json
 
     public TryAdd(symbol : Deployment.CodeSymbol, values : IReadOnlyDictionary[string, object], callStack : list[DeploymentSymbol]) : bool
     {
-      when (_rebootExitCode.HasValue)
+      when (_rebootExitCode.HasValue || symbol.ForReboot.HasValue)
         return false;
 
       when (_exitCode.ValueOrDefault != symbol.Expected.ValueOrDefault)
@@ -87,7 +87,6 @@ namespace Tdl2Json
 
       Name            = Name + Separators.DeploymentCodeSeparator + symbol.Name;
       _timeout        = _timeout + otherTimeout;
-      _rebootExitCode = symbol.ForReboot;
 
       true
     }
