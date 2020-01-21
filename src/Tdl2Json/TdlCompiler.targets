@@ -14,7 +14,7 @@
     <TdlTaskFactoryAssembly>Microsoft.Build.Tasks.Core.dll</TdlTaskFactoryAssembly>
   </PropertyGroup>
 
-  <UsingTask TaskName="TdlTask" TaskFactory="$(TdlTaskFactory)" AssemblyFile="$(MSBuildToolsPath)\$(TdlTaskFactoryAssembly)">
+  <UsingTask TaskName="TdlCompiler" TaskFactory="$(TdlTaskFactory)" AssemblyFile="$(MSBuildToolsPath)\$(TdlTaskFactoryAssembly)">
     <ParameterGroup>
       <ToolPath                     ParameterType="System.String" Required="false" />
       <WorkingDirectory             ParameterType="System.String" Required="false" />
@@ -29,7 +29,7 @@
       <OutputFile                   ParameterType="System.String" Required="true" Output="true" />
     </ParameterGroup>
     <Task>
-      <Code Language="cs" Source="$(MSBuildThisFileDirectory)TdlTask.cs" />
+      <Code Language="cs" Source="$(MSBuildThisFileDirectory)TdlCompilerTask.cs" />
     </Task>
   </UsingTask>
 
@@ -78,7 +78,7 @@
           Outputs="$(TdlOutputPath)"
           DependsOnTargets="$(CoreCompileDependsOn);PrepareTdlCompile;PrepareDiffTesting">
 
-    <TdlTask Condition=" '$(BuildingProject)' != 'false' "
+    <TdlCompiler Condition=" '$(BuildingProject)' != 'false' "
             ToolPath                     = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
             WorkingDirectory             = "$(MSBuildProjectDirectory)"
             DeploymentScriptHeader       = "$(TdlDeploymentScriptHeader)"

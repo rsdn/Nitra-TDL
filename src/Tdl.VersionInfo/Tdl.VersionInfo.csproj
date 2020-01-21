@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -17,7 +18,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <TransformOnBuild>true</TransformOnBuild>
     <OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
-    <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
+    <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
     <BuildRevision Condition=" '$(BuildRevision)' == '' ">0</BuildRevision>
     <BranchName    Condition=" '$(BranchName)' != '' ">"$(BranchName)"</BranchName>
     <BranchName    Condition=" '$(BranchName)' == '' ">ThisAssembly.Git.Branch</BranchName>
@@ -38,7 +39,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GitInfo" Version="2.0.20" />
+    <PackageReference Include="GitInfo" Version="2.0.26" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyVersion.cs">
@@ -66,7 +67,6 @@
     </None>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" />
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="BuildRevision = $(BuildRevision)" />
     <Message Importance="High" Text="BranchName = $(BranchName)" />
@@ -80,4 +80,6 @@
     </PropertyGroup>
     <Message Text="##vso[task.setvariable variable=TdlVersion]$(TdlVersion)" Importance="High" />
   </Target>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" />
 </Project>

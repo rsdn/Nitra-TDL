@@ -126,11 +126,11 @@ namespace Tdl2Json
                 throw new OptionException("Both diff file and repository root paths must be specified.", "");
         }
 
-        public void PrintHelp(TextWriter writer)
+        public void PrintHelp(TextWriter writer, string toolName)
         {
-            writer.WriteLine("Usage: Tdl2Json [OPTIONS] file1.tdl[[+file2.tdl]...][[+file3.dll][+file4.dll]...]");
+            writer.WriteLine($"Usage: {toolName} [OPTIONS] file1.tdl[[+file2.tdl]...][[+file3.dll][+file4.dll]...]");
             optionSet.WriteOptionDescriptions(writer);
-            writer.WriteLine(@"Example: Tdl2Json /out:c:\temp\stage_tdl.json c:\TDLs\*.tdl c:\DLLs\Autotest.*.Suites.dll");
+            writer.WriteLine($@"Example: {toolName} /out:c:\temp\stage_tdl.json c:\TDLs\*.tdl c:\DLLs\Autotest.*.Suites.dll");
         }
 
         private void SetLogLevel(string value)

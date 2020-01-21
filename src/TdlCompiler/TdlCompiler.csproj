@@ -2,10 +2,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IsTool>true</IsTool>
-    <EnableDefaultItems>false</EnableDefaultItems>
+    <PackAsTool>true</PackAsTool>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -17,8 +17,6 @@
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
     <LangVersion>7.3</LangVersion>
-    <AssemblyName>TdlCompiler</AssemblyName>
-    <PackageId>Tdl2Json</PackageId>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -31,25 +29,15 @@
 
   <ItemGroup>
     <Compile Include="..\AssemblyVersion.cs" Link="Properties\AssemblyVersion.cs" />
-    <Compile Include="..\TdlCompiler\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="3.2.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Mono.Options" Version="5.3.0.1">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="System.ValueTuple" Version="4.3.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="Mono.Options" Version="5.3.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+    <PackageReference Include="System.Security.Permissions" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tdl.VersionInfo\Tdl.VersionInfo.csproj">
-      <Private>false</Private>
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
     <ProjectReference Include="..\Tdl2JsonLib\Tdl2JsonLib.nproj">
@@ -70,16 +58,6 @@
       <Private>True</Private>
       <HintPath>$(NitraPath)\System.Collections.Immutable.Light.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TdlCompiler.targets">
-      <Pack>true</Pack>
-      <PackagePath>build</PackagePath>
-    </Content>
-    <Content Include="TdlCompiler.cs">
-      <Pack>true</Pack>
-      <PackagePath>build</PackagePath>
-    </Content>
   </ItemGroup>
 
   <Target Name="ReadPackageVersionFromOutputAssembly" DependsOnTargets="Build">

@@ -5,16 +5,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Tdl.Tests
 {
     [TestFixture]
-    public class Tdl2JsonTests
+    public class TdlCompilerTests
     {
         private static readonly string BasePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        private static readonly string ToolPath = Path.Combine(BasePath, "Tdl2Json.exe");
+        private static readonly string NetFrameworkToolPath = Path.Combine(BasePath, "net461", "TdlCompiler.exe");
+        private static readonly string NetCoreToolPath = Path.Combine(BasePath, "netcoreapp2.1", "TdlCompiler.dll");
         private static readonly string ReferencesPath = Path.Combine(BasePath, "Tests");
-        private static readonly string OutputPath = Path.Combine(Path.GetTempPath(), "Tdl2Json-" + Guid.NewGuid());
+        private static readonly string OutputPath = Path.Combine(Path.GetTempPath(), "TdlCompiler-" + Guid.NewGuid());
         private static readonly string SamplesPath = Path.Combine(Utils.TestsRootDirectory, "Samples");
 
         [SetUp]
@@ -28,13 +30,22 @@ namespace Tdl.Tests
         }
 
         [TestCaseSource(nameof(GetTestCases))]
-        public void Tdl(string directory)
+        public void NetFramework(string directory) =>
+            RunTest(directory, NetFrameworkToolPath);
+
+        [TestCaseSource(nameof(GetTestCases))]
+        public void NetCore(string directory) =>
+            RunTest(directory, "dotnet", Utils.EscapeCommandLineArgument(NetCoreToolPath));
+
+        private void RunTest(string directory, string executable, string firstArgument = null, [CallerMemberName] string scope = null)
         {
             directory = Path.Combine(Utils.TestsRootDirectory, directory);
 
-            var name = Path.GetFileNameWithoutExtension(directory);
+            var name = scope + "-" + Path.GetFileNameWithoutExtension(directory);
 
             var arguments = new List<string>();
+            if (!string.IsNullOrEmpty(firstArgument))
+                arguments.Add(firstArgument);
 
             var sampleFilePath = Path.Combine(SamplesPath, name + ".json");
             if (File.Exists(sampleFilePath))
@@ -57,7 +68,7 @@ namespace Tdl.Tests
             if (Debugger.IsAttached)
                 arguments.Add("-debug");
 
-            var result = Utils.RunProcess(directory, ToolPath, string.Join(" ", arguments));
+            var result = Utils.RunProcess(directory, executable, string.Join(" ", arguments));
 
             if (File.Exists(outputFilePath))
             {

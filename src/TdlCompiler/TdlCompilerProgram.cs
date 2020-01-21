@@ -48,7 +48,7 @@ namespace Tdl2Json
 
                 if (options.NeedHelp)
                 {
-                    options.PrintHelp(Console.Out);
+                    options.PrintHelp(Console.Out, toolName.Name);
                     return 0;
                 }
 

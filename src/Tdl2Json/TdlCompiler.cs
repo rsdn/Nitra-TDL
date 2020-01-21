@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-public class TdlTask : ToolTask
+public class TdlCompiler : ToolTask
 {
     protected override string ToolName
     {
-        get { return "Tdl2Json.exe"; }
+        get { return "TdlCompiler.exe"; }
     }
 
     protected override MessageImportance StandardErrorLoggingImportance
