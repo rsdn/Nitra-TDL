@@ -14,17 +14,24 @@ using QuickType;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
+using System.Text;
+using System.Text.Encoding;
 using Tdl;
 
 namespace Tdl2Json
 {
+  [Record]
   internal class SessionActionCompiler
   {
-    _actionSequenceMap : Hashtable[list[DeploymentTreeNode.Leaf], string] = Hashtable();
-    _actionScriptMap   : Hashtable[DeploymentTreeNode.Leaf, SessionScriptAction] = Hashtable();
-    _actionNameMap     : Hashtable[string, int] = Hashtable();
+    _deploymentScriptHeader  : string;
+    _deploymentToolPath      : string;
+
+    [RecordIgnore] _leafsToNameMap       : Hashtable[list[DeploymentTreeNode.Leaf], string]            = Hashtable();
+    [RecordIgnore] _leafsToActionMap     : Hashtable[list[DeploymentTreeNode.Leaf], SessionActionBase] = Hashtable();
+    [RecordIgnore] _duplicateNameCounter : Hashtable[string, int]                                      = Hashtable();
 
     public GetSessionActionName(action : DeploymentTreeNode, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : string
     {
@@ -33,11 +40,84 @@ namespace Tdl2Json
       when (leafs.IsEmpty)
         return null;
 
-      foreach (leaf in leafs)
-        TryAddLeaf(leaf, variables);
+      mutable name;
+      when (_leafsToNameMap.TryGetValue(leafs, out name))
+        return name;
 
-      def name = GetOrMakeName(leafs);
+      def names = List();
+      mutable compiler : DeploymentCodeCompiler;
+      mutable accumulatedLeafs : List[_];
+
+      def finalizeCodeCompiler()
+      {
+        def accumulated = accumulatedLeafs.ToNList();
+        when (_leafsToNameMap.TryGetValue(accumulated, out name))
+        {
+          names.Add(name);
+          compiler = null;
+          return;
+        }
+
+        def (deployment, values) = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
+        def action =
+          SessionScriptAction() <-
+          {
+            ScriptData  = deployment.ScriptData;
+            ScriptArgs  = values;
+            ReturnValue = deployment.ReturnValue;
+          };
+
+        _leafsToActionMap.Add(accumulated, action);
+        names.Add(GetOrMakeName(accumulated));
+        compiler = null;
+      }
+
+      foreach (leaf in leafs)
+      {
+        match (leaf)
+        {
+          | Leaf(_, Deployment.ScriptSymbol) =>
+            when (compiler != null)
+              finalizeCodeCompiler();
+            def key = [leaf];
+            names.Add(GetOrMakeName(key));
+            TryAddLeaf(leaf, variables);
+
+          | Leaf(vars, Deployment.CodeSymbol as deployment) =>
+            def args = Hashtable();
+            foreach (p in deployment.Parameters)
+              args.Add(p.Name, MakeArgValue(p, vars, variables));
+
+            when (accumulatedLeafs : object == null)
+              accumulatedLeafs = List();
+            accumulatedLeafs.Add(leaf);
+
+            if (compiler : object == null)
+              compiler = DeploymentCodeCompiler(deployment, args, callStack=[]);
+            else unless (compiler.TryAdd(deployment, args, callStack=[]))
+              finalizeCodeCompiler();
+        }
+      }
+
+      when (compiler != null)
+        finalizeCodeCompiler();
+
+      unless (leafs is [_])
+        _leafsToActionMap.Add(leafs, SessionActionGroup() <- { Scripts = names.ToArray(); });
+      name = GetOrMakeName(leafs);
       name
+    }
+
+    private TryAddLeaf(leaf : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : void
+    {
+      def leafs = [leaf];
+      mutable actions;
+      when (_leafsToActionMap.TryGetValue(leafs, out actions))
+        return;
+
+      def action = MakePreSessionScriptAction(leaf, variables);
+      _leafsToActionMap.Add(leafs, action);
+      _ = GetOrMakeName(leafs);
     }
 
     private MakeArgValue(p : FormalParameterSymbol, values : Dictionary[string, Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : object
@@ -94,50 +174,16 @@ namespace Tdl2Json
     {
       def result = Dictionary();
 
-      // Load leafs to _actionSequenceMap. Some leafs can be allredy added.
-      foreach (leafs in _actionSequenceMap.Keys)
-        foreach (leaf in leafs)
-          _ = GetOrMakeName([leaf]);
-
-      foreach (kw in _actionSequenceMap)
-      {
-        match (kw.Key)
-        {
-          | [] | null         => assert(false);
-          | [one]             => result.Add(kw.Value, _actionScriptMap[one]);
-          | (_ :: _) as nodes => result.Add(kw.Value, MakeGroup(nodes));
-        }
-      }
+      foreach ((leafs, action) in _leafsToActionMap.KeyValuePairs)
+          result.Add(GetOrMakeName(leafs), action);
 
       if (result.Count == 0) null else result
-    }
-
-    private TryAddLeaf(leaf : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : void
-    {
-      when (_actionScriptMap.ContainsKey(leaf))
-        return;
-
-      def action = MakePreSessionScriptAction(leaf, variables);
-      _actionScriptMap.Add(leaf, action);
-      _ = GetOrMakeName([leaf]);
-    }
-
-    private MakeGroup(script : list[DeploymentTreeNode.Leaf]) : SessionActionBase
-    {
-      def names = script.MapToArray(x => GetOrMakeName([x]));
-      SessionActionGroup() <-
-      {
-        Scripts = names;
-      }
     }
 
     private MakePreSessionScriptAction(scriptNode : DeploymentTreeNode.Leaf, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : SessionScriptAction
     {
       assert(scriptNode.deployment is Deployment.ScriptSymbol);
       def script = scriptNode.deployment :> Deployment.ScriptSymbol;
-      def sr = script.ScriptReference;
-      assert(sr is ScriptReference.FilePath, $"Currently, the $(sr.GetType().Name) deployer is not supported because it is not supported in Wrden and Hive restrictions.");
-      def path = (script.ScriptReference :> ScriptReference.FilePath).Path.Value;
       def args = Hashtable();
       foreach (p in script.Parameters)
         args.Add(p.Name, MakeArgValue(p, scriptNode.variables, variables));
@@ -145,34 +191,40 @@ namespace Tdl2Json
       def result =
         SessionScriptAction() <-
         {
-          ScriptPath = path;
           ScriptArgs = args;
           ReturnValue = script.Expected.ToNullable();
         };
+      match (script.ScriptReference)
+      {
+        | ScriptReference.FilePath   as fp => result.ScriptPath = fp.Path.ValueOrDefault
+        | ScriptReference.SourceCode as sc => result.ScriptData = UTF8.GetBytes(sc.Text.ValueOrDefault ?? ""); //result.ScriptDataExtension = sc.Extension.ValueOrDefault;
+        | ScriptReference.EmbedFile  as ef =>
+          def path = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(script.FirstParsedDeclarationOrDefault.Location.Source.File.FullName), ef.Path.Value));
+          result.ScriptData          = File.ReadAllBytes(path);
+          //result.ScriptDataExtension = Path.GetExtension(path);
+      }
       result
     }
 
     private ToList(action : DeploymentTreeNode) : list[DeploymentTreeNode.Leaf]
     {
       | DeploymentTreeNode.Leaf as leaf => [leaf]
-      | DeploymentTreeNode.Nodes(Normal, nodes) when nodes.All(_ is DeploymentTreeNode.Leaf) =>
-        nodes.OfType().Filter(n => n.deployment is Deployment.ScriptSymbol
-                               && (n.deployment :> Deployment.ScriptSymbol).ScriptReference is ScriptReference.FilePath)
+      | DeploymentTreeNode.Nodes(Normal, nodes) when nodes.All(_ is DeploymentTreeNode.Leaf) => nodes.OfType()
       | DeploymentTreeNode.Nodes => []
     }
 
     private GetOrMakeName(seq : list[DeploymentTreeNode.Leaf]) : string
     {
       mutable name;
-      unless (_actionSequenceMap.TryGetValue(seq, out name))
+      unless (_leafsToNameMap.TryGetValue(seq, out name))
       {
         def baseName = $<#..$(seq; "-"; x => x.deployment.Name)#>;
         mutable counter;
-        _ = _actionNameMap.TryGetValue(baseName, out counter);
+        _ = _duplicateNameCounter.TryGetValue(baseName, out counter);
         counter++;
         name = $"$baseName-$counter";
-        _actionSequenceMap.Add(seq, name);
-        _actionNameMap[baseName] = counter;
+        _leafsToNameMap.Add(seq, name);
+        _duplicateNameCounter[baseName] = counter;
       }
       name
     }

@@ -1,0 +1,57 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "TDL",
+	"scopeName": "source.tdl",
+	"patterns": [
+		{ "include": "#keywords" },
+		{ "include": "#comments" },
+		{ "include": "#strings" },
+		{ "include": "#constants" },
+		{ "include": "#identifier" }
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+				"name": "keyword.tdl",
+				"match": "\\b(apk|app|barrier|bins|config|deployment|entity|environments|expected|extension|external|false|file|filter|final|for|framework|from|gtest|in|initial|login|logoff|marathon|method|out|parallel|path|platform|product|reboot|runner|scenario|script|select|sequence|source|suite|tests|timeout|true|type|using|var|vstest|wait|xcode)\\b"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+				"name": "comment.line.tdl",
+				"begin": "//",
+				"end": "\n"
+				},
+				{
+				"name":"comment.block.tdl",
+				"begin": "\/[*]",
+				"end": "[*](\/)"
+				}
+			]
+		},
+		"strings":{
+			"patterns": [
+				{
+				"name":"string.quoted.double.tdl",
+				"begin": "\"",
+				"end": "\""
+				}
+			]
+		},
+		"identifier": {
+			"name": "variable.other.readwrite.tdl",
+			"match": "@?[_[:alpha:]][_[:alnum:]-]*"
+		},
+		"constants": {
+			"patterns": [
+				{
+				"name": "constant.numeric",
+				"match": "[0-9]"
+				}
+			]
+		}
+	}
+}

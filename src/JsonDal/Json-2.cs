@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using VariablesBag = System.Collections.Generic.Dictionary<string, object>;
+using VariablesBag = System.Collections.Generic.IDictionary<string, object>;
 
 namespace QuickType
 {
@@ -255,8 +255,11 @@ namespace QuickType
 
     public sealed class SessionScriptAction : SessionActionBase
     {
-        [JsonProperty(Required = Required.Always)]
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string ScriptPath { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public byte[] ScriptData { get; set; }
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public VariablesBag ScriptArgs { get; set; }

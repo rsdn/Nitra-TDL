@@ -1,0 +1,58 @@
+﻿external
+{
+  string DeployerPath = @"C:\AutotestBinaries\Autotests.Deployer.exe";
+}
+
+deployment "Install Windows Language Pack"(
+    string LanguagePacksRootPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Windows Langpacks\ru-RU",
+    string DeployerPath = DeployerPath )
+{
+    KL.Autotests.Commands.LogMessage(Message: "Message 1");
+    timeout "00:45:00";
+    expected 42;
+}
+
+deployment "Save session parameters to deploy context"(
+     string SessionType = "Debug",
+     string DeployerPath = DeployerPath)
+{
+    KL.Autotests.Commands.LogMessage(Message: "Message 2");
+    expected 42;
+}
+
+deployment "Install product after langpack" = 
+    "Install Windows Language Pack",
+    "Save session parameters to deploy context";
+
+platform win7-x86;
+
+product type ProductType
+{
+  string Name;
+  string Version;
+  string BranchName;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0.0.0";
+  BranchName = "master";
+}
+
+scenario Scenario1
+{
+  deployment "Install product after langpack";
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
+  Timeout = "00:30";
+}
+
+
+suite Suite
+{
+  platform win7-x86;
+  product Product;
+  Scenario1();
+}

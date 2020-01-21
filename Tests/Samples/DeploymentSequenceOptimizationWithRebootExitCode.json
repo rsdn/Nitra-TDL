@@ -1,0 +1,112 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "DefaultValues": {
+    "DeployerPath": "C:\\AutotestBinaries\\Autotests.Deployer.exe"
+  },
+  "Deployments": {
+    "Deploy": {
+      "Type": "Sequence",
+      "Deployments": [
+        "First //// 0",
+        "Unmergable deployment //// 1",
+        "Last //// 2"
+      ]
+    },
+    "First //// 0": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "DeployerPath": "$(DeployerPath)"
+      },
+      "DefaultValues": {
+        " TDL Name ": "First",
+        "DeployerPath": "#(DeployerPath)"
+      },
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICREZXBsb3llclBhdGgNCikNCg0KJFRkbERlcGxveW1lbnROYW1lID0gQCcNCkZpcnN0DQonQA0KDQpmdW5jdGlvbiBUZGxNYWtlTGluZURpcmVjdGl2ZSB7IA0KICAgICIjbGluZSAkKCRNeUludm9jYXRpb24uU2NyaXB0TGluZU51bWJlciArIDEpICIiJCgkTXlJbnZvY2F0aW9uLlNjcmlwdE5hbWUpIiIiDQp9DQoNCg0KJF9jc2hhcnBfRGVwbG95ZXJQYXRoID0gKCdAIicgKyAkRGVwbG95ZXJQYXRoLlJlcGxhY2UoJyInLCAnIiInKSArICciJykNCg0KDQpXcml0ZS1PdXRwdXQgJFRkbERlcGxveW1lbnROYW1lDQoNCiRUZGxEZXBsb3ltZW50U291cmNlID0gQCINCiQoVGRsTWFrZUxpbmVEaXJlY3RpdmUpDQp7IC8vIEZpcnN0DQp2YXIgY29tbWFuZDAgPSBfX3J1bnRpbWVfXy5DcmVhdGVDb21tYW5kPEtMLkF1dG90ZXN0cy5Db21tYW5kcy5Mb2dNZXNzYWdlPigpOw0KY29tbWFuZDAuTWVzc2FnZSA9ICIxIjsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCn0NCg0KI2xpbmUgZGVmYXVsdA0KIkANCg0KJFRkbFRlbXBGaWxlID0gW1N5c3RlbS5JTy5QYXRoXTo6R2V0VGVtcEZpbGVOYW1lKCkNCg0KU2V0LUNvbnRlbnQgLVBhdGggJFRkbFRlbXBGaWxlIC1FbmNvZGluZyBVVEY4IC1WYWx1ZSAkVGRsRGVwbG95bWVudFNvdXJjZQ0KDQouXEtMLkF1dG90ZXN0cy5EZXBsb3llci5leGUgJFRkbERlcGxveW1lbnROYW1lICRUZGxUZW1wRmlsZQ0KDQokVGRsRXhpdENvZGUgPSAkTGFzdEV4aXRDb2RlDQoNClJlbW92ZS1JdGVtIC1QYXRoICRUZGxUZW1wRmlsZQ0KDQpleGl0ICRUZGxFeGl0Q29kZQ0K",
+      "ScriptDataExtension": ".ps1",
+      "Timeout": "00:15:00"
+    },
+    "Last //// 2": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "DeployerPath": "$(DeployerPath)"
+      },
+      "DefaultValues": {
+        " TDL Name ": "Last",
+        "DeployerPath": "#(DeployerPath)"
+      },
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICREZXBsb3llclBhdGgNCikNCg0KJFRkbERlcGxveW1lbnROYW1lID0gQCcNCkxhc3QNCidADQoNCmZ1bmN0aW9uIFRkbE1ha2VMaW5lRGlyZWN0aXZlIHsgDQogICAgIiNsaW5lICQoJE15SW52b2NhdGlvbi5TY3JpcHRMaW5lTnVtYmVyICsgMSkgIiIkKCRNeUludm9jYXRpb24uU2NyaXB0TmFtZSkiIiINCn0NCg0KDQokX2NzaGFycF9EZXBsb3llclBhdGggPSAoJ0AiJyArICREZXBsb3llclBhdGguUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KDQoNCldyaXRlLU91dHB1dCAkVGRsRGVwbG95bWVudE5hbWUNCg0KJFRkbERlcGxveW1lbnRTb3VyY2UgPSBAIg0KJChUZGxNYWtlTGluZURpcmVjdGl2ZSkNCnsgLy8gTGFzdA0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAiMyI7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
+      "ScriptDataExtension": ".ps1",
+      "Timeout": "00:15:00"
+    },
+    "Unmergable deployment //// 1": {
+      "Type": "Script",
+      "RebootExitCode": 101,
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "DeployerPath": "$(DeployerPath)"
+      },
+      "DefaultValues": {
+        " TDL Name ": "Unmergable deployment",
+        "DeployerPath": "#(DeployerPath)"
+      },
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICREZXBsb3llclBhdGgNCikNCg0KJFRkbERlcGxveW1lbnROYW1lID0gQCcNClVubWVyZ2FibGUgZGVwbG95bWVudA0KJ0ANCg0KZnVuY3Rpb24gVGRsTWFrZUxpbmVEaXJlY3RpdmUgeyANCiAgICAiI2xpbmUgJCgkTXlJbnZvY2F0aW9uLlNjcmlwdExpbmVOdW1iZXIgKyAxKSAiIiQoJE15SW52b2NhdGlvbi5TY3JpcHROYW1lKSIiIg0KfQ0KDQoNCiRfY3NoYXJwX0RlcGxveWVyUGF0aCA9ICgnQCInICsgJERlcGxveWVyUGF0aC5SZXBsYWNlKCciJywgJyIiJykgKyAnIicpDQoNCg0KV3JpdGUtT3V0cHV0ICRUZGxEZXBsb3ltZW50TmFtZQ0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0KeyAvLyBVbm1lcmdhYmxlIGRlcGxveW1lbnQNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gIjIiOw0KX19ydW50aW1lX18uRXhlY3V0ZUNvbW1hbmQoY29tbWFuZDApOw0KfQ0KDQojbGluZSBkZWZhdWx0DQoiQA0KDQokVGRsVGVtcEZpbGUgPSBbU3lzdGVtLklPLlBhdGhdOjpHZXRUZW1wRmlsZU5hbWUoKQ0KDQpTZXQtQ29udGVudCAtUGF0aCAkVGRsVGVtcEZpbGUgLUVuY29kaW5nIFVURjggLVZhbHVlICRUZGxEZXBsb3ltZW50U291cmNlDQoNCi5cS0wuQXV0b3Rlc3RzLkRlcGxveWVyLmV4ZSAkVGRsRGVwbG95bWVudE5hbWUgJFRkbFRlbXBGaWxlDQoNCiRUZGxFeGl0Q29kZSA9ICRMYXN0RXhpdENvZGUNCg0KUmVtb3ZlLUl0ZW0gLVBhdGggJFRkbFRlbXBGaWxlDQoNCmV4aXQgJFRkbEV4aXRDb2RlDQo=",
+      "ScriptDataExtension": ".ps1",
+      "Timeout": "00:15:00"
+    }
+  },
+  "Platforms": {
+    "win7-x86": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product"
+      },
+      "BranchName": "master",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "win7-x86"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f8287"
+    }
+  },
+  "TestEntities": {}
+}

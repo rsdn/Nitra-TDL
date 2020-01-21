@@ -1,0 +1,58 @@
+external
+{
+  string DeployerPath = @"C:\AutotestBinaries\Autotests.Deployer.exe";
+}
+
+deployment First(string DeployerPath = DeployerPath)
+{
+    KL.Autotests.Commands.LogMessage(Message: "1");
+    expected 42;
+}
+
+deployment "Unmergable deployment"(string DeployerPath = DeployerPath)
+{
+    KL.Autotests.Commands.LogMessage(Message: "2");
+    expected for reboot 101;
+    expected 42;
+}
+
+deployment Last(string DeployerPath = DeployerPath)
+{
+    KL.Autotests.Commands.LogMessage(Message: "3");
+    expected 42;
+}
+
+deployment Deploy = First, "Unmergable deployment", Last;
+
+platform win7-x86;
+
+product type ProductType
+{
+  string Name;
+  string Version;
+  string BranchName;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0.0.0";
+  BranchName = "master";
+}
+
+scenario Scenario1
+{
+  deployment Deploy;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
+  Timeout = "00:30";
+}
+
+
+suite Suite
+{
+  platform win7-x86;
+  product Product;
+  Scenario1();
+}

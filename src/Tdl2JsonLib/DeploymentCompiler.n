@@ -288,9 +288,7 @@ namespace Tdl2Json
 
       match (script.ScriptReference)
       {
-        | FilePath   as x =>
-          deploymentModel.ScriptPath          = x.Path.ValueOrDefault;
-
+        | FilePath   as x => deploymentModel.ScriptPath          = x.Path.ValueOrDefault;
         | SourceCode as x =>
           deploymentModel.ScriptData          = Encoding.UTF8.GetBytes(x.Text.ValueOrDefault ?? "");
           deploymentModel.ScriptDataExtension = x.Extension.ValueOrDefault;

@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using Tdl;
 
 namespace Tdl.Transformator.Models.Expressions
@@ -24,6 +25,8 @@ namespace Tdl.Transformator.Models.Expressions
                     return new Reference(reference.Symbol.Name); // FIXME: Не хорошая идея ссылаться по имени. Нужно ссылаться на объект.
                 case Expr.String s:
                     return new String(s.Value);
+                case Expr.List l:
+                    return new List(l.Elems);
                 default: return null;
             }
         }
