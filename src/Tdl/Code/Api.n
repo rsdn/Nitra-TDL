@@ -265,10 +265,6 @@ namespace Tdl
 
               | Leaf(vars, Deployment.ScriptSymbol as script) =>
                 // TODO: Add checks for unsupported features.
-                def sr = script.ScriptReference;
-                unless (sr is ScriptReference.FilePath)
-                  reportError($"Currently, the $(sr.GetType().Name) deployer is not supported because it is not supported in Wrden and Hive restrictions.");
-
                 validateDeployment(script.Name, vars, script.Parameters, script);
 
               | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.GetType().Name).");
