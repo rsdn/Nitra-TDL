@@ -72,7 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TdlCompiler.targets">
+    <Content Include="Tdl2Json.targets">
       <Pack>true</Pack>
       <PackagePath>build</PackagePath>
     </Content>

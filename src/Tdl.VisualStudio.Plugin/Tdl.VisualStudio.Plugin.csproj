@@ -90,7 +90,7 @@
     <RemoveDir Directories="$(VsPackagePath)" />
     <Exec Command="$(NitraLanguageCompilerPath)\Nitra.LanguageCompiler.exe /proj:&quot;$(ProjectSupport)&quot; /ver:&quot;$(VsPackageVersion)&quot; /lang:$(LanguageName) /ns:$(Namespace) /projectBinPath:..\..\bin\%24(Configuration)\ide-package /projectObjPath:..\..\obj\%24(Configuration)\ide-package /out:$(MSBuildThisFileDirectory).. .\$(Assembly)" WorkingDirectory="$(TargetDir)" />
     <Copy SourceFiles="@(Languages)" DestinationFolder="$(VsPackagePath)\Languages" />
-    <Exec Command="&quot;$(NugetExePath)&quot; restore &quot;$(VsPackagePath)\packages.config&quot; -PackagesDirectory &quot;$(VsPackagePath)\..\packages&quot; "/>
+    <Exec Command="..\..\.nuget\NuGet.exe restore &quot;$(VsPackagePath)\packages.config&quot; -PackagesDirectory &quot;$(VsPackagePath)\..\packages&quot; "/>
     <MSBuild Projects="$(VsPackageProjectPath)" Targets="Build" Properties="Platform=x86; Configuration=$(Configuration); UseNitraFrom=ProjectReferences" />
   </Target>
 </Project>

@@ -67,6 +67,8 @@
     </None>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" />
   <Target Name="BeforeBuild">
     <Message Importance="High" Text="BuildRevision = $(BuildRevision)" />
     <Message Importance="High" Text="BranchName = $(BranchName)" />
@@ -80,6 +82,4 @@
     </PropertyGroup>
     <Message Text="##vso[task.setvariable variable=TdlVersion]$(TdlVersion)" Importance="High" />
   </Target>
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" />
 </Project>
