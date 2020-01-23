@@ -17,6 +17,7 @@
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
     <LangVersion>7.3</LangVersion>
+    <PackageDescription>Contains .NET Core command-line compiler for .tdl - TdlCompiler.</PackageDescription>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

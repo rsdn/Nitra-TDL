@@ -19,6 +19,7 @@
     <LangVersion>7.3</LangVersion>
     <AssemblyName>TdlCompiler</AssemblyName>
     <PackageId>Tdl2Json</PackageId>
+    <PackageDescription>Contains MSBuild task that compiles .tdl files on project build.</PackageDescription>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

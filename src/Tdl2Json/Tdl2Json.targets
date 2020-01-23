@@ -29,7 +29,7 @@
       <OutputFile                   ParameterType="System.String" Required="true" Output="true" />
     </ParameterGroup>
     <Task>
-      <Code Language="cs" Source="$(MSBuildThisFileDirectory)TdlCompilerTask.cs" />
+      <Code Language="cs" Source="$(MSBuildThisFileDirectory)TdlCompiler.cs" />
     </Task>
   </UsingTask>
 
