@@ -60,12 +60,18 @@ function activateLspServer(context : vscode.ExtensionContext) : void
 
   // Options to control the language client
   let clientOptions : LanguageClientOptions = {
-    // Register the server for plain text documents
-    documentSelector : [{ scheme: 'file', language: 'tdl' }],
+    documentSelector : [
+        { scheme: 'file',     language: 'tdl' },
+        { scheme: 'untitled', language: 'tdl' }
+    ],
     synchronize :
     {
+
       // Notify the server about file changes to '.clientrc files contained in the workspace
-      fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
+      fileEvents: [
+        workspace.createFileSystemWatcher('**/*.tdl'),
+        workspace.createFileSystemWatcher('**/.clientrc')
+     ]
     },
     initializationOptions: {
       FileExtension: ".tdl",
