@@ -17,9 +17,9 @@
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
     <LangVersion>7.3</LangVersion>
-    <AssemblyName>TdlCompiler</AssemblyName>
+    <AssemblyName>tdlc</AssemblyName>
     <PackageId>Tdl2Json</PackageId>
-    <PackageDescription>Contains MSBuild task that compiles .tdl files on project build.</PackageDescription>
+    <PackageDescription>MSBuild task that compiles .tdl files on project build.</PackageDescription>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

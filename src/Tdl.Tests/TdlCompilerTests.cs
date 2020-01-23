@@ -13,10 +13,10 @@ namespace Tdl.Tests
     public class TdlCompilerTests
     {
         private static readonly string BasePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        private static readonly string NetFrameworkToolPath = Path.Combine(BasePath, "net461", "TdlCompiler.exe");
-        private static readonly string NetCoreToolPath = Path.Combine(BasePath, "netcoreapp2.1", "TdlCompiler.dll");
+        private static readonly string NetFrameworkToolPath = Path.Combine(BasePath, "net461", "tdlc.exe");
+        private static readonly string NetCoreToolPath = Path.Combine(BasePath, "netcoreapp2.1", "tdlc.dll");
         private static readonly string ReferencesPath = Path.Combine(BasePath, "Tests");
-        private static readonly string OutputPath = Path.Combine(Path.GetTempPath(), "TdlCompiler-" + Guid.NewGuid());
+        private static readonly string OutputPath = Path.Combine(Path.GetTempPath(), "tdlc-" + Guid.NewGuid());
         private static readonly string SamplesPath = Path.Combine(Utils.TestsRootDirectory, "Samples");
 
         [SetUp]

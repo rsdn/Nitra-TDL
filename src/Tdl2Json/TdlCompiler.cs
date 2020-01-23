@@ -8,7 +8,7 @@ public class TdlCompiler : ToolTask
 {
     protected override string ToolName
     {
-        get { return "TdlCompiler.exe"; }
+        get { return "tdlc.exe"; }
     }
 
     protected override MessageImportance StandardErrorLoggingImportance
