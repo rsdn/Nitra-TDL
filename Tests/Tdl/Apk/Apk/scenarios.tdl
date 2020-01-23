@@ -1,4 +1,4 @@
-
+﻿
 scenario AndroidJavaTestGroupKavsdk
 {
     deployment AndroidInstall;

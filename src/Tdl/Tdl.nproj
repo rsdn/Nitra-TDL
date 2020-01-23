@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tdl</RootNamespace>
     <AssemblyName>Tdl</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFramework>netstandard20</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <NemerleVersion>Net-4.0</NemerleVersion>
     <NemerleBinPathRoot Condition=" '$(NemerleBinPathRoot)' == '' ">$(ProgramFiles)\Nemerle</NemerleBinPathRoot>
@@ -36,24 +36,27 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
+  <Import Project="$(Nemerle)\Nemerle.Sdk.props" />
   <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="CSharp.Grammar">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
       <HintPath>$(NitraGrammarsPath)\CSharp.Grammar.dll</HintPath>
     </Reference>
-    <Reference Include="DotNet.BackEnd.CCI">
+    <Reference Include="DotNet.BackEnd.Dnlib">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
-      <HintPath>$(NitraPath)\DotNet.BackEnd.CCI.dll</HintPath>
+      <HintPath>$(NitraPath)\DotNet.BackEnd.Dnlib.dll</HintPath>
     </Reference>
     <Reference Include="DotNetLang">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
       <HintPath>$(NitraPath)\DotNetLang.dll</HintPath>
+    </Reference>
+    <Reference Include="dnlib">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\dnlib.dll</HintPath>
     </Reference>
     <Reference Include="Nemerle">
       <SpecificVersion>False</SpecificVersion>
@@ -278,5 +281,5 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" />
+  <Import Project="$(Nemerle)\Nemerle.Sdk.targets" />
 </Project>

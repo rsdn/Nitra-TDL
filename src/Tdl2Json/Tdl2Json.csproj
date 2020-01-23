@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <IsTool>true</IsTool>
+    <EnableDefaultItems>false</EnableDefaultItems>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -14,9 +14,11 @@
     <IntermediateOutputPath>..\..\obj\$(Configuration)\</IntermediateOutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
-	  <SignAssembly>false</SignAssembly>
-	  <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
-	  <LangVersion>7.3</LangVersion>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\!\RSDN\TDL\src\key.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>TdlCompiler</AssemblyName>
+    <PackageId>Tdl2Json</PackageId>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,10 +30,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TdlTask.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\AssemblyVersion.cs" Link="Properties\AssemblyVersion.cs" />
+    <Compile Include="..\TdlCompiler\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="3.2.0">
@@ -72,11 +72,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="tdl2json.targets">
+    <Content Include="Tdl2Json.targets">
       <Pack>true</Pack>
       <PackagePath>build</PackagePath>
     </Content>
-    <Content Include="TdlTask.cs">
+    <Content Include="TdlCompiler.cs">
       <Pack>true</Pack>
       <PackagePath>build</PackagePath>
     </Content>
