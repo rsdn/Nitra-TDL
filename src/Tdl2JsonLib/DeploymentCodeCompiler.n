@@ -47,6 +47,7 @@ namespace Tdl2Json
     private         _exitCode         : ParsedValue[int];
     private         _rebootExitCode   : ParsedValue[int];
     private mutable _timeout          : TimeSpan;
+    private mutable _maxTimeout       : TimeSpan = TimeSpan.FromMinutes(59);
 
     public Name : string { get; private set; }
 
@@ -59,6 +60,8 @@ namespace Tdl2Json
       _rebootExitCode = symbol.ForReboot;
       _timeout        = ParseTimeout(symbol.Timeout);
       _initialStack   = callStack;
+      when (_timeout > _maxTimeout)
+        _maxTimeout = _timeout;
       AddSymbol(symbol, values, callStack);
     }
 
@@ -71,6 +74,8 @@ namespace Tdl2Json
         return false;
 
       def otherTimeout = ParseTimeout(symbol.Timeout);
+      when (otherTimeout > _maxTimeout)
+        _maxTimeout = otherTimeout;
 
       foreach (parameter when !values.ContainsKey(parameter.Name) in symbol.Parameters)
       {
@@ -88,8 +93,7 @@ namespace Tdl2Json
       Name            = Name + Separators.DeploymentCodeSeparator + symbol.Name;
       def timeout     = _timeout + otherTimeout;
       // HACK!
-      def maxTimeout  = TimeSpan.FromSeconds(59);
-      _timeout        = if (timeout > maxTimeout) maxTimeout else timeout;
+      _timeout        = if (timeout > _maxTimeout) _maxTimeout else timeout;
 
       true
     }
