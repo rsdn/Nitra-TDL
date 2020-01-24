@@ -86,7 +86,10 @@ namespace Tdl2Json
       AddSymbol(symbol, values, callStack);
 
       Name            = Name + Separators.DeploymentCodeSeparator + symbol.Name;
-      _timeout        = _timeout + otherTimeout;
+      def timeout     = _timeout + otherTimeout;
+      // HACK!
+      def maxTimeout  = TimeSpan.FromSeconds(59);
+      _timeout        = if (timeout > maxTimeout) maxTimeout else timeout;
 
       true
     }
