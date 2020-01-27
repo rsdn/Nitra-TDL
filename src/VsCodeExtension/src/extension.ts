@@ -7,7 +7,6 @@ import * as path from 'path';
 import { showMessage, showError, ExtentionName, log, error } from './utils';
 import { platform } from 'os';
 
-const runtime = "dotnet"; // "mono"
 const langDllName = "Tdl.dll";
 const lspServerName = "Nitra.ClientServer.Server.exe";
 
@@ -55,8 +54,9 @@ function activateLspServer(context : vscode.ExtensionContext) : void
   showMessage(`lspServerPath=${lspServerPath}`);
   showMessage(`tdlDllPath=${tdlDllPath}`);
 
-  let serverOptions : ServerOptions =
-    { command: runtime, args: [lspServerPath, "-lsp"], options: { stdio: "pipe" } };
+  let serverOptions : ServerOptions = platform() === 'win32'
+      ? { command: lspServerPath, args: ["-lsp"],                options: { stdio: "pipe" } }
+      : { command: "mono",        args: [lspServerPath, "-lsp"], options: { stdio: "pipe" } };
 
   // Options to control the language client
   let clientOptions : LanguageClientOptions = {
