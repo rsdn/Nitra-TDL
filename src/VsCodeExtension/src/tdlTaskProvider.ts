@@ -70,29 +70,11 @@ function tryCreateTask(workspaceFolder : vscode.WorkspaceFolder) : void
     {
       "label": "TDL: build",
       "type": "shell",
-      "windows": {
-        "command": "${tdl2JsonPath}",
-        "args": [
-          "*.tdl",
-          "-out:\${workspaceFolder}.json"
-        ],
-      },
-      "linux": {
-        "command": "mono",
-        "args": [
-          "${tdl2JsonPath}",
-          "*.tdl",
-          "-out:\${workspaceFolder}.json"
-        ],
-      },
-      "osx": {
-        "command": "mono",
-        "args": [
-          "${tdl2JsonPath}",
-          "*.tdl",
-          "-out:\${workspaceFolder}.json"
-        ],
-      },
+      "command": "tdlc",
+      "args": [
+        "*.tdl",
+        "-out:\${workspaceFolder}.json"
+      ],
       "group": "build",
       "presentation": {
         // Reveal the output only if unrecognized errors occur.
