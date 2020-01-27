@@ -4,14 +4,17 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "typescript",
-			"tsconfig": "tsconfig.json",
-			"problemMatcher": [
-					"$tsc"
-			],
+			"type": "npm",
+			"script": "watch",
+			"problemMatcher": "$tsc-watch",
+			"isBackground": true,
+			"presentation": {
+				"panel": "dedicated",
+				"reveal": "never"
+			},
 			"group": {
-					"kind": "build",
-					"isDefault": true
+				"kind": "build",
+				"isDefault": true
 			}
 		},
 		{
@@ -19,13 +22,15 @@
 			"script": "compile",
 			"problemMatcher": "$tsc",
 			"presentation": {
-				"reveal": "never",
-				"panel": "dedicated"
-			}
+				"panel": "dedicated",
+				"reveal": "never"
+			},
+			"group": "build"
 		},
 		{
 			"type": "npm",
 			"script": "install",
 			"problemMatcher": []
-		}	]
+		}
+	]
 }

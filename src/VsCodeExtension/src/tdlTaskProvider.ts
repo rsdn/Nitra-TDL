@@ -1,6 +1,7 @@
 ﻿import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
+import { showMessage } from './utils';
 
 export class TdlTaskProvider implements vscode.TaskProvider {
   static TdlType: string = 'tdl';
@@ -40,12 +41,6 @@ function getTdl2JsonPath() : string
   return '${env:TDL}Tdl2Json.exe';
 }
 
-function showMessage(text : string) : void
-{
-  console.log(text);
-  vscode.window.showInformationMessage(text);
-}
-
 function tryCreateTask(workspaceFolder : vscode.WorkspaceFolder) : void
 {
   const workFolderRoot = workspaceFolder.uri.fsPath;
@@ -75,29 +70,11 @@ function tryCreateTask(workspaceFolder : vscode.WorkspaceFolder) : void
     {
       "label": "TDL: build",
       "type": "shell",
-      "windows": {
-        "command": "${tdl2JsonPath}",
-        "args": [
-          "*.tdl",
-          "-out:\${workspaceFolder}.json"
-        ],
-      },
-      "linux": {
-        "command": "mono",
-        "args": [
-          "${tdl2JsonPath}",
-          "*.tdl",
-          "-out:\${workspaceFolder}.json"
-        ],
-      },
-      "osx": {
-        "command": "mono",
-        "args": [
-          "${tdl2JsonPath}",
-          "*.tdl",
-          "-out:\${workspaceFolder}.json"
-        ],
-      },
+      "command": "tdlc",
+      "args": [
+        "*.tdl",
+        "-out:\${workspaceFolder}.json"
+      ],
       "group": "build",
       "presentation": {
         // Reveal the output only if unrecognized errors occur.
