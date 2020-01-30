@@ -47,7 +47,7 @@ namespace Tdl2Json
     private         _exitCode         : ParsedValue[int];
     private         _rebootExitCode   : ParsedValue[int];
     private mutable _timeout          : TimeSpan;
-    private mutable _maxTimeout       : TimeSpan = TimeSpan.FromMinutes(59);
+    private mutable _maxTimeout       : TimeSpan = TimeSpan.FromMinutes(19);
 
     public Name : string { get; private set; }
 
