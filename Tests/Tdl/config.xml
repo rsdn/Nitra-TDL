@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-16"?>
 <Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <ProjectSupport Caption="TdlLang" TypeFullName="Tdl.ProjectSupport" Path="..\..\bin\Debug\Tdl.dll" />
+  <ProjectSupport Caption="TdlLang" TypeFullName="Tdl.ProjectSupport" Path="c:\work\Nitra-TDL\bin\Debug\Tdl.dll" />
   <Languages>
-    <Language Name="TdlLang" Path="..\..\bin\Debug\Tdl.dll">
+    <Language Name="TdlLang" Path="c:\work\Nitra-TDL\bin\Debug\Tdl.dll">
       <DynamicExtensions />
     </Language>
   </Languages>
@@ -10,6 +10,6 @@
     <Reference>FullName:mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Reference>
     <Reference>FullName:System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Reference>
     <Reference>FullName:System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</Reference>
-    <Reference>File:..\..\bin\Debug\Tests\TestDll.dll</Reference>
+    <Reference>File:c:\work\Nitra-TDL\bin\Debug\Tdl.dll</Reference>
   </References>
 </Config>

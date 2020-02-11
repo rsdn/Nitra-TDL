@@ -1,174 +1,243 @@
 ﻿import * as vscode from 'vscode';
 import { TdlTaskProvider } from './tdlTaskProvider';
-import { workspace, ExtensionContext, Position } from 'vscode';
-import { LanguageClient, LanguageClientOptions,	ServerOptions } from 'vscode-languageclient';
+import { workspace, ExtensionContext, Position, Range } from 'vscode';
+import { LanguageClient, LanguageClientOptions, ServerOptions, NotificationType } from 'vscode-languageclient';
 import * as fs from 'fs';
 import * as path from 'path';
 import { showMessage, showError, ExtentionName, log, error } from './utils';
 import { platform } from 'os';
+import { KeywordsHighlightingCreated_AsyncServerMessage, SymbolsHighlightingCreated_AsyncServerMessage, LanguageLoaded_AsyncServerMessage, SpanInfo } from './NitraMessages';
 
 const langDllName = "Tdl.dll";
 const lspServerName = "Nitra.ClientServer.Server.exe";
 
-let tdlTaskProvider : vscode.Disposable | undefined;
-let client          : LanguageClient;
+let tdlTaskProvider: vscode.Disposable | undefined;
+let client: LanguageClient;
 
-export function activate(context : vscode.ExtensionContext): void
-{
-  log(`activate`);
-  tdlTaskProvider = vscode.tasks.registerTaskProvider(TdlTaskProvider.TdlType, new TdlTaskProvider());
-  activateLspServer(context);
+
+const KeywordHightightNotificationType = new NotificationType<KeywordsHighlightingCreated_AsyncServerMessage, void>('notification/keywordHighlight');
+const SymbolHightightNotificationType = new NotificationType<SymbolsHighlightingCreated_AsyncServerMessage, void>('notification/symbolHighlight');
+const LanguageLoadedNotificationType = new NotificationType<LanguageLoaded_AsyncServerMessage, void>('notification/languageLoaded');
+
+var SpanClassInfos = new Map<number, { decor: vscode.TextEditorDecorationType, color: string }>();
+
+export function activate(context: vscode.ExtensionContext): void {
+	log(`activate`);
+	tdlTaskProvider = vscode.tasks.registerTaskProvider(TdlTaskProvider.TdlType, new TdlTaskProvider());
+	activateLspServer(context);
 }
 
-export function deactivate(): Thenable<void> | undefined
-{
-  if (tdlTaskProvider)
-    tdlTaskProvider.dispose();
+export function deactivate(): Thenable<void> | undefined {
+	if (tdlTaskProvider)
+		tdlTaskProvider.dispose();
 
-  if (client)
-    return client.stop();
-  else
-    return undefined;
+	if (client)
+		return client.stop();
+	else
+		return undefined;
 }
 
-function activateLspServer(context : vscode.ExtensionContext) : void
-{
-  log(`activateLspServer`);
-  const nitraPath = getNitraPath();
 
-  showMessage(`nitraPath=${nitraPath}`);
+function ApplySpanInfos(spanInfos: SpanInfo[]) : void {
+	
+	let editor = vscode.window.activeTextEditor!;
+	let doc = editor.document;
+	if(!doc) return;
 
-  if (!nitraPath)
-    return;
+	let ranges = new Map<number, Range[]>();
 
-  const tdlPath = getTdlPath();
+	spanInfos.forEach((v, i) => {
+		let start = doc!.positionAt(v.Span.StartPos);
+		let end = doc!.positionAt(v.Span.EndPos);
+		var range = new Range(start, end);
 
-  showMessage(`tdlPath=${tdlPath}`);
+		if (ranges.has(v.SpanClassId)) {
+			ranges.get(v.SpanClassId)!.push(range);
+		}
+		else {
+			ranges.set(v.SpanClassId, [range]);
+		}
+	});
 
-  if (!tdlPath)
-    return;
+	// for (const key of ranges.keys()) {
+	// 	let rng = ranges.get(key).map(a => `[${a.start.line} ${a.start.character} - ${a.end.line} ${a.end.character}]`).join(", ");
+	// 	let spi = SpanClassInfos.get(key);
+	// 	console.log(`${rng}`, `color:${spi.color};`);
+	// }
 
-  const lspServerPath = path.join(nitraPath, lspServerName);
-  const tdlDllPath = path.join(tdlPath, langDllName);
-
-  showMessage(`lspServerPath=${lspServerPath}`);
-  showMessage(`tdlDllPath=${tdlDllPath}`);
-
-  let serverOptions : ServerOptions = platform() === 'win32'
-      ? { command: lspServerPath, args: ["-lsp"],                options: { stdio: "pipe" } }
-      : { command: "mono",        args: [lspServerPath, "-lsp"], options: { stdio: "pipe" } };
-
-  // Options to control the language client
-  let clientOptions : LanguageClientOptions = {
-    documentSelector : [
-        { scheme: 'file',     language: 'tdl' },
-        { scheme: 'untitled', language: 'tdl' }
-    ],
-    synchronize :
-    {
-
-      // Notify the server about file changes to '.clientrc files contained in the workspace
-      fileEvents: [
-        workspace.createFileSystemWatcher('**/*.tdl'),
-        workspace.createFileSystemWatcher('**/.clientrc')
-     ]
-    },
-    initializationOptions: {
-      FileExtension: ".tdl",
-      Config: {
-        ProjectSupport: {
-          Caption: "TdlLang",
-          TypeFullName: "Tdl.ProjectSupport",
-          Path: tdlDllPath
-        },
-        Languages: [{
-          Name: "TdlLang",
-          Path: tdlDllPath,
-          DynamicExtensions: []
-        }],
-        References: [
-          "FullName:mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-          "FullName:System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-        ]
-      },
-      References: [ ]
-    }
-  };
-
-  client = new LanguageClient(
-    'tdl',
-    'TDL Extension',
-    serverOptions,
-    clientOptions
-  );
-
-  log(`--> client.start();`);
-  client.start();
-  log(`<-- client.start();`);
+	for (let key of ranges) {
+		let decor = SpanClassInfos.get(key[0])!;
+		if (!decor) {
+			let a = 0; a;
+		}
+		editor.setDecorations(decor.decor, []);
+		editor.setDecorations(decor.decor, key[1]);
+	}
 }
 
-let _nitraPath : string | undefined;
+function activateLspServer(context: vscode.ExtensionContext): void {
+	log(`activateLspServer`);
+	const nitraPath = getNitraPath();
 
-function getNitraPath() : string | undefined
-{
-  if (_nitraPath)
-    return  _nitraPath;
+	showMessage(`nitraPath=${nitraPath}`);
 
-  let nitraBinPath : string | undefined = process.env.NitraBinPath;
+	if (!nitraPath)
+		return;
 
-  if (!nitraBinPath || !fs.existsSync(nitraBinPath))
-  {
-    const ext     = vscode.extensions.getExtension('VladislavChistyakov.tdl')!;
-    const binPath = path.join(ext.extensionPath!, "bin");
-    if (!fs.existsSync(binPath))
-    {
-      showError(`The TDL extension cannot find a path to Nitra. Reinstall ${ExtentionName} or specify path to Nitra in NitraBinPath environment variable. NitraBinPath="${nitraBinPath}".`);
-      return undefined;
-    }
+	const tdlPath = getTdlPath();
 
-    nitraBinPath = binPath;
-  }
+	showMessage(`tdlPath=${tdlPath}`);
 
-  const lspServerPath = path.join(nitraBinPath, lspServerName);
+	if (!tdlPath)
+		return;
 
-  if (!fs.existsSync(nitraBinPath))
-  {
-    showError(`The "${nitraBinPath}" directory does not contain ${lspServerName} LSP Server. Reinstall the ${ExtentionName} or place the Nitra binary in the specified directory.`);
-    return undefined;
-  }
+	const lspServerPath = path.join(nitraPath, lspServerName);
+	const tdlDllPath = path.join(tdlPath, langDllName);
 
-  return _nitraPath = nitraBinPath;
+	showMessage(`lspServerPath=${lspServerPath}`);
+	showMessage(`tdlDllPath=${tdlDllPath}`);
+
+	let serverOptions: ServerOptions = platform() === 'win32'
+		? { command: lspServerPath, args: ["-lsp"], options: { stdio: "pipe" } }
+		: { command: "mono", args: [lspServerPath, "-lsp"], options: { stdio: "pipe" } };
+
+	// Options to control the language client
+	let clientOptions: LanguageClientOptions = {
+		documentSelector: [
+			{ scheme: 'file', language: 'tdl' },
+			{ scheme: 'untitled', language: 'tdl' }
+		],
+		synchronize:
+		{
+
+			// Notify the server about file changes to '.clientrc files contained in the workspace
+			fileEvents: [
+				workspace.createFileSystemWatcher('**/*.tdl'),
+				workspace.createFileSystemWatcher('**/.clientrc')
+			]
+		},
+		initializationOptions: {
+			FileExtension: ".tdl",
+			Config: {
+				ProjectSupport: {
+					Caption: "TdlLang",
+					TypeFullName: "Tdl.ProjectSupport",
+					Path: tdlDllPath
+				},
+				Languages: [{
+					Name: "TdlLang",
+					Path: tdlDllPath,
+					DynamicExtensions: []
+				}],
+				References: [
+					"FullName:mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+					"FullName:System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+				]
+			},
+			References: []
+		}
+	};
+
+	client = new LanguageClient(
+		'tdl',
+		'TDL Extension',
+		serverOptions,
+		clientOptions
+	);
+
+	client.onReady().then(() => {
+		client.onNotification(KeywordHightightNotificationType, x => {
+			showMessage("KeywordHightightNotificationType");
+
+			ApplySpanInfos(x.spanInfos);
+
+		});
+		client.onNotification(SymbolHightightNotificationType, x => {
+			showMessage("SymbolHightightNotificationType");
+			ApplySpanInfos(x.spanInfos);
+		});
+
+		client.onNotification(LanguageLoadedNotificationType, x => {
+			showMessage("LanguageLoadedNotificationType");
+
+			x.spanClassInfos.reduce((k, v) => {
+				let col = v.ForegroundColor + 16777216;
+				let forecolor = '#' + ('00000' + (col | 0).toString(16)).substr(-6);
+				let decor = vscode.window.createTextEditorDecorationType({
+					isWholeLine: false
+					, color: forecolor
+					//, backgroundColor: '#eeeeee'
+				});
+				SpanClassInfos.set(v.Id, { decor: decor, color: forecolor });
+				//l.push(`spanclass ${v.Id}, color ${forecolor}, decor: ${decor.key}`);
+				return k;
+			});
+
+		});
+	});
+
+
+	log(`--> client.start();`);
+	client.start();
+
+	log(`<-- client.start();`);
 }
 
-let _tdlPath : string | undefined;
+let _nitraPath: string | undefined;
 
-function getTdlPath() : string | undefined
-{
-  if (_tdlPath)
-    return _tdlPath;
+function getNitraPath(): string | undefined {
+	if (_nitraPath)
+		return _nitraPath;
 
-  const nitraPath = getNitraPath();
+	let nitraBinPath: string | undefined = process.env.NitraBinPath;
 
-  if (nitraPath)
-  {
-    const langDllPath = path.join(nitraPath, langDllName);
+	if (!nitraBinPath || !fs.existsSync(nitraBinPath)) {
+		const ext = vscode.extensions.getExtension('VladislavChistyakov.tdl')!;
+		const binPath = path.join(ext.extensionPath!, "bin");
+		if (!fs.existsSync(binPath)) {
+			showError(`The TDL extension cannot find a path to Nitra. Reinstall ${ExtentionName} or specify path to Nitra in NitraBinPath environment variable. NitraBinPath="${nitraBinPath}".`);
+			return undefined;
+		}
 
-    if (fs.existsSync(langDllPath))
-      return _tdlPath = nitraPath;
-  }
+		nitraBinPath = binPath;
+	}
 
-  const langPath : string | undefined = process.env.TDL;
+	const lspServerPath = path.join(nitraBinPath, lspServerName);
 
-  if (langPath && fs.existsSync(langPath))
-  {
-    const langDllPath = path.join(langPath, langDllName);
-    if (fs.existsSync(langDllPath))
-      return _tdlPath = langPath;
+	if (!fs.existsSync(nitraBinPath)) {
+		showError(`The "${nitraBinPath}" directory does not contain ${lspServerName} LSP Server. Reinstall the ${ExtentionName} or place the Nitra binary in the specified directory.`);
+		return undefined;
+	}
 
-    showError(`The ${langDllName} not found in "${langPath}". Reinstall the ${ExtentionName} or place ${langDllName} into the specified path.`);
-    return undefined;
-  }
+	return _nitraPath = nitraBinPath;
+}
 
-  showError(`The ${langDllName} not found. Reinstall the ${ExtentionName} or set "TDL" environment variable to ${langDllName} location.`);
-  return undefined;
+let _tdlPath: string | undefined;
+
+function getTdlPath(): string | undefined {
+	if (_tdlPath)
+		return _tdlPath;
+
+	const nitraPath = getNitraPath();
+
+	if (nitraPath) {
+		const langDllPath = path.join(nitraPath, langDllName);
+
+		if (fs.existsSync(langDllPath))
+			return _tdlPath = nitraPath;
+	}
+
+	const langPath: string | undefined = process.env.TDL;
+
+	if (langPath && fs.existsSync(langPath)) {
+		const langDllPath = path.join(langPath, langDllName);
+		if (fs.existsSync(langDllPath))
+			return _tdlPath = langPath;
+
+		showError(`The ${langDllName} not found in "${langPath}". Reinstall the ${ExtentionName} or place ${langDllName} into the specified path.`);
+		return undefined;
+	}
+
+	showError(`The ${langDllName} not found. Reinstall the ${ExtentionName} or set "TDL" environment variable to ${langDllName} location.`);
+	return undefined;
 }
