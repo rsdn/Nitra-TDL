@@ -4,9 +4,9 @@ import { workspace, ExtensionContext, Position, Range } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, NotificationType } from 'vscode-languageclient';
 import * as fs from 'fs';
 import * as path from 'path';
-import { showMessage, showError, ExtentionName, log, error } from './utils';
+import { showMessage, showError, ExtentionName, log, error, HighlightingNotification, SpanClassInfoNotification } from './utils';
 import { platform } from 'os';
-import { KeywordsHighlightingCreated_AsyncServerMessage, SymbolsHighlightingCreated_AsyncServerMessage, LanguageLoaded_AsyncServerMessage, SpanInfo } from './NitraMessages';
+import { SpanInfo } from './NitraMessages';
 
 const langDllName = "Tdl.dll";
 const lspServerName = "Nitra.ClientServer.Server.exe";
@@ -15,9 +15,9 @@ let tdlTaskProvider: vscode.Disposable | undefined;
 let client: LanguageClient;
 
 
-const KeywordHightightNotificationType = new NotificationType<KeywordsHighlightingCreated_AsyncServerMessage, void>('notification/keywordHighlight');
-const SymbolHightightNotificationType = new NotificationType<SymbolsHighlightingCreated_AsyncServerMessage, void>('notification/symbolHighlight');
-const LanguageLoadedNotificationType = new NotificationType<LanguageLoaded_AsyncServerMessage, void>('notification/languageLoaded');
+const KeywordHightightNotificationType = new NotificationType<HighlightingNotification, void>('$/keywordHighlight');
+const SymbolHightightNotificationType = new NotificationType<HighlightingNotification, void>('$/symbolHighlight');
+const LanguageLoadedNotificationType = new NotificationType<SpanClassInfoNotification, void>('$/languageLoaded');
 
 var SpanClassInfos = new Map<number, { decor: vscode.TextEditorDecorationType, color: string }>();
 
