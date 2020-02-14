@@ -37,40 +37,44 @@
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CSharp.Grammar, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e080a9c724e2bfcd">
-      <Name>CSharp.Grammar</Name>
-      <AssemblyName>CSharp.Grammar.dll</AssemblyName>
-      <HintPath>..\..\..\nitra2\Grammars\Bin\Debug\CSharp.Grammar.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNet.BackEnd.CCI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e080a9c724e2bfcd">
-      <Name>DotNet.BackEnd.CCI</Name>
-      <AssemblyName>DotNet.BackEnd.CCI.dll</AssemblyName>
-      <HintPath>..\..\..\nitra2\bin\Debug\Stage1\DotNet.BackEnd.CCI.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetLang, Version=1.9.189.0, Culture=neutral, PublicKeyToken=e080a9c724e2bfcd">
-      <Name>DotNetLang</Name>
-      <AssemblyName>DotNetLang.dll</AssemblyName>
-      <HintPath>..\..\..\nitra2\bin\Debug\Stage1\DotNetLang.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Nitra.Runtime, Version=1.9.189.0, Culture=neutral, PublicKeyToken=e080a9c724e2bfcd">
-      <Name>Nitra.Runtime</Name>
-      <AssemblyName>Nitra.Runtime.dll</AssemblyName>
-      <HintPath>..\..\..\nitra2\bin\Debug\Stage1\Nitra.Runtime.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="CSharp.Grammar">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraGrammarsPath)\CSharp.Grammar.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNet.BackEnd.CCI">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\DotNet.BackEnd.CCI.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetLang">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\DotNetLang.dll</HintPath>
+    </Reference>
     <Reference Include="Nemerle">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
       <HintPath>$(Nemerle)\Nemerle.dll</HintPath>
+    </Reference>
+    <Reference Include="Nitra.Runtime">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+      <HintPath>$(NitraPath)\Nitra.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="System.Collections.Immutable.Light">
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
       <HintPath>$(NitraPath)\System.Collections.Immutable.Light.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <MacroReference Include="Nitra.Compiler">
+      <HintPath>$(NitraPath)\Nitra.Compiler.dll</HintPath>
+    </MacroReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyVersion.n">
@@ -273,14 +277,6 @@
       <Project>{ed94b486-ebb3-49b3-aa7d-3d9ac3d0a2ef}</Project>
       <Private>False</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <MacroReference Include="Nitra.Compiler, Version=1.9.189.0, Culture=neutral, PublicKeyToken=e080a9c724e2bfcd">
-      <Name>Nitra.Compiler</Name>
-      <AssemblyName>Nitra.Compiler.dll</AssemblyName>
-      <HintPath>..\..\..\nitra2\bin\Debug\Stage1\Nitra.Compiler.dll</HintPath>
-      <Private>False</Private>
-    </MacroReference>
   </ItemGroup>
   <Import Project="$(Nemerle)\Nemerle.MSBuild.targets" />
 </Project>
