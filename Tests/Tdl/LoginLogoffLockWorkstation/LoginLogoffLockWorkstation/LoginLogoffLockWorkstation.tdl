@@ -20,6 +20,7 @@ scenario S
       logoff;
       login "admin" "asdf";
       lock-workstation;
+      gtest "cmd" "/C exit 0";
     }
     UniqueId = "BA3F8DAF-012B-4E51-89D9-07724B9AF038";
     NeedUnsignedAgent = true;

@@ -62,7 +62,10 @@
       ],
       "RevertAgentAfter": true,
       "TestMethod": {
-        "TestSequence": []
+        "ProgramName": "cmd",
+        "Arguments": [
+          "/C exit 0"
+        ]
       },
       "TfsId": 1075083,
       "Timeout": "00:30:00",

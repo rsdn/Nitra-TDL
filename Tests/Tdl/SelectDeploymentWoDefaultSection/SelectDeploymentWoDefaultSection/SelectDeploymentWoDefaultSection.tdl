@@ -1,4 +1,4 @@
-scenario UpgradeProductWithSaveSettingsAndDownloaderIni
+scenario UpgradeProductWithSaveSettingsAndDownloaderIni // E: Scenario must have at least one test method
 {
     deployment "Install base product and copy target distributive";
     environments (all_pc_and_servers, KAV-KIS-PURE-KSOS-KSOSFS);

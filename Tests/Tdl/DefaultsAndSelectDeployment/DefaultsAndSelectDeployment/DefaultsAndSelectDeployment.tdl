@@ -33,6 +33,7 @@ scenario CheckDntDefaultSettings
     environments (all_pc, KIS);
     sequence
     {
+      gtest "cmd" "/C exit 0";
     }
     UniqueId = "ef1f3579-2d04-4de6-a0b8-fa50d2602433";
     RevertAgentAfter = true;

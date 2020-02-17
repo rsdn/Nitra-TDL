@@ -784,6 +784,14 @@ namespace Tdl
         field.FirstDeclarationOrDefault.Name.Warning(context, $"Field $(field.Name) is obsolete and will be replaced with $replacedWith field.");
     }
 
+    public CheckTestMethods(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
+    {
+      foreach (x when x.IsTest in actions)
+        return;
+
+      ast.Error(context, "Scenario must have at least one test method.");
+    }
+
     public ReportDuplicateBarrier(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
     {
       def set = HashSet();
