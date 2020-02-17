@@ -6,7 +6,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { showMessage, showError, ExtentionName, log, error, HighlightingNotification, SpanClassInfoNotification } from './utils';
 import { platform } from 'os';
-import { SpanInfo } from './NitraMessages';
 
 const langDllName = "Tdl.dll";
 const lspServerName = "Nitra.ClientServer.Server.exe";
@@ -37,16 +36,17 @@ export function deactivate(): Thenable<void> | undefined {
 		return undefined;
 }
 
-
-function ApplySpanInfos(spanInfos: SpanInfo[]) : void {
+function ApplySpanInfos(note: HighlightingNotification) : void {
 	
 	let editor = vscode.window.activeTextEditor!;
 	let doc = editor.document;
 	if(!doc) return;
 
+	if(doc.fileName !== note.uri) return;
+
 	let ranges = new Map<number, Range[]>();
 
-	spanInfos.forEach((v, i) => {
+	note.spanInfos.forEach((v, i) => {
 		let start = doc!.positionAt(v.Span.StartPos);
 		let end = doc!.positionAt(v.Span.EndPos);
 		var range = new Range(start, end);
@@ -58,12 +58,6 @@ function ApplySpanInfos(spanInfos: SpanInfo[]) : void {
 			ranges.set(v.SpanClassId, [range]);
 		}
 	});
-
-	// for (const key of ranges.keys()) {
-	// 	let rng = ranges.get(key).map(a => `[${a.start.line} ${a.start.character} - ${a.end.line} ${a.end.character}]`).join(", ");
-	// 	let spi = SpanClassInfos.get(key);
-	// 	console.log(`${rng}`, `color:${spi.color};`);
-	// }
 
 	for (let key of ranges) {
 		let decor = SpanClassInfos.get(key[0])!;
@@ -147,29 +141,27 @@ function activateLspServer(context: vscode.ExtensionContext): void {
 
 	client.onReady().then(() => {
 		client.onNotification(KeywordHightightNotificationType, x => {
-			showMessage("KeywordHightightNotificationType");
+			//showMessage("KeywordHightightNotificationType");
 
-			ApplySpanInfos(x.spanInfos);
+			ApplySpanInfos(x);
 
 		});
 		client.onNotification(SymbolHightightNotificationType, x => {
-			showMessage("SymbolHightightNotificationType");
-			ApplySpanInfos(x.spanInfos);
+			//showMessage("SymbolHightightNotificationType");
+			ApplySpanInfos(x);
 		});
 
 		client.onNotification(LanguageLoadedNotificationType, x => {
-			showMessage("LanguageLoadedNotificationType");
+			//showMessage("LanguageLoadedNotificationType");
 
-			x.spanClassInfos.reduce((k, v) => {
+			x.SpanClassInfo.reduce((k, v) => {
 				let col = v.ForegroundColor + 16777216;
 				let forecolor = '#' + ('00000' + (col | 0).toString(16)).substr(-6);
 				let decor = vscode.window.createTextEditorDecorationType({
 					isWholeLine: false
 					, color: forecolor
-					//, backgroundColor: '#eeeeee'
 				});
 				SpanClassInfos.set(v.Id, { decor: decor, color: forecolor });
-				//l.push(`spanclass ${v.Id}, color ${forecolor}, decor: ${decor.key}`);
 				return k;
 			});
 

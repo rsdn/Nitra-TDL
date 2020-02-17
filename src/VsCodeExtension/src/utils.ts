@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { SpanInfo } from './NitraMessages';
 
 export const ExtentionName = "TDL extension";
 
@@ -23,6 +22,8 @@ export function error(text: string): void {
 
 const date = new Date();
 
+export interface NSpan { StartPos: number; EndPos: number; }
+export interface SpanInfo { Span: NSpan; SpanClassId: number; }
 export interface SpanClassInfoNotification { SpanClassInfo: SpanClassInfo[]; }
-export interface SpanClassInfo { Name: string; SpanClassId: number; ForegroundColor: number; }
-export interface HighlightingNotification { uri: vscode.Uri; spanInfos: SpanInfo[]; }
+export interface SpanClassInfo { Name: string; Id: number; ForegroundColor: number; }
+export interface HighlightingNotification { uri: string; spanInfos: SpanInfo[]; }
