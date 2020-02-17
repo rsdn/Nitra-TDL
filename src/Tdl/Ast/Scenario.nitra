@@ -77,6 +77,7 @@ namespace Tdl
         Symbol.TriggerPaths             = TdlUtils.GetTriggerPaths(Attributes, context).ToImmutableArray();
         Symbol.IsUnconditional          = Symbol.TriggerPaths.IsEmpty;
 
+        CheckTestMethods(context, Symbol.Actions);
         ReportDuplicateBarrier(context, Symbol.Actions);
         CheckMaxReboots(context, Symbol.Actions);
 

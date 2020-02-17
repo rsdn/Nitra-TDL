@@ -78,5 +78,29 @@ namespace Tdl
     | Reboot          { }
     | WaitForReboot   { TimeSpan : string; }
     | Barrier         { barrier : BarrierSymbol; }
+
+    public IsTest : bool
+    {
+      get
+      {
+        match (this)
+        {
+          | Method
+          | Script
+          | Config
+          | GTest
+          | XCode
+          | VsTest
+          | Apk
+          | Marathon => true
+          | Login
+          | Logoff
+          | LockWorkstation
+          | Reboot
+          | WaitForReboot
+          | Barrier => false
+        }
+      }
+    }
   }
 }
