@@ -18,7 +18,8 @@ using System.Collections.Immutable;
 using System.Linq;
 
 using System.Threading;
-using ND = Nitra.Declarations;
+
+using ND  = Nitra.Declarations;
 
 [assembly: ProjectSupport("TdlLang", typeof(Tdl.ProjectSupport))]
 
@@ -66,7 +67,6 @@ namespace Tdl
       self
     }
 
-
     public this(testMode : bool)
     {
       this();
@@ -83,31 +83,33 @@ namespace Tdl
       project.Data = null;
     }
 
+    BindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
+    {
+      //assert2(false);
+      def res = Reference(Location.Default, name).Bind.[NamespaceSymbol](scope);
+      assert2(!res.IsUnresolved);
+      assert2(!res.IsAmbiguous);
+      assert2(res.Symbols.Length == 1);
+      res
+    }
+
+    BindType(scope : Scope, name : string) : Ref[TopGenericTypeSymbol]
+    {
+      //assert2(false);
+      def res = Reference(Location.Default, name).Bind.[TopGenericTypeSymbol](scope);
+      assert2(!res.IsUnresolved);
+      assert2(!res.IsAmbiguous);
+      assert2(res.Symbols.Length == 1);
+      res
+    }
+
     public RefreshReferences(cancellationToken : CancellationToken, project : Project) : object
     {
       TdlTypeUnifier.InitInstance();
 
-      def bindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
-      {
-        //assert2(false);
-        def res = Reference(Location.Default, name).Bind.[NamespaceSymbol](scope);
-        assert2(!res.IsUnresolved);
-        assert2(!res.IsAmbiguous);
-        assert2(res.Symbols.Length == 1);
-        res
-      }
-      def bindType(scope : Scope, name : string) : Ref[TopGenericTypeSymbol]
-      {
-        //assert2(false);
-        def res = Reference(Location.Default, name).Bind.[TopGenericTypeSymbol](scope);
-        assert2(!res.IsUnresolved);
-        assert2(!res.IsAmbiguous);
-        assert2(res.Symbols.Length == 1);
-        res
-      }
       def defineAlias(context : DependentPropertyEvalContext, systemNs : NamespaceSymbol, declaredIn : NamespaceSymbol, name : string, aliasName : string) : void
       {
-        def symbolRef  = bindType(systemNs.Scope, name);
+        def symbolRef  = BindType(systemNs.Scope, name);
         unless (symbolRef.IsSymbolEvaluated)
           return;
 
@@ -129,11 +131,12 @@ namespace Tdl
       backEnd.CancellationToken = cancellationToken;
       def typeType              = TdlType.TypeSymbol();
       def entityType            = TdlType.EntitySymbol();
+      def barrierType           = TdlType.BarrierSymbol();
       def methodType            = FunctionTypeSymbol();
       def scenarioType          = TdlType.ScenarioSymbol();
-      def context               = TdlDependentPropertyEvalContext(project, entityType, methodType, scenarioType, typeType);
-      def rootNamespace = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
-      def systemNsRef   = bindNs(rootNamespace.Scope, "System");
+      def context               = TdlDependentPropertyEvalContext(project, entityType, barrierType, methodType, scenarioType, typeType);
+      def rootNamespace         = backEnd.LoadExternalSymbols(project.Libs, project.ProjectDir, project.CompilerMessages, context);
+      def systemNsRef           = BindNs(rootNamespace.Scope, "System");
       when (systemNsRef.IsSymbolEvaluated)
       {
         def systemNs = systemNsRef.Symbol;
@@ -156,10 +159,12 @@ namespace Tdl
         defineAlias(context, systemNs, rootNamespace, "Char",    "char");
 
         methodType.Parameters = ImmutableArray.Empty;
-        def symbolRef  = bindType(systemNsRef.Scope, "Void");
+        def symbolRef  = BindType(systemNsRef.Scope, "Void");
         when (symbolRef.IsSymbolEvaluated)
           methodType.Return = symbolRef.Symbol;
       }
+
+      MakePredefinedSymbols(rootNamespace, context);
 
       def initTypeSymbol(type : DeclarationSymbol) : void
       {
@@ -195,6 +200,52 @@ namespace Tdl
       def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttribites.TriggerPathSymbol](Location.Default, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(triggerPath);
       data
+    }
+
+    private MakePredefinedSymbols(rootNamespace : NamespaceSymbol, context : TdlDependentPropertyEvalContext) : void
+    {
+      def stringType = BindType(BindNs(rootNamespace.Scope, "System").Scope, "String").Symbol;
+
+      def internalNs = ExternalDeclaration.[NamespaceSymbol](ND.Name(NoLocation, "TdlInternals")).DefineSymbol(rootNamespace.MemberTable);
+      internalNs.DeclaredInOpt = VSome(rootNamespace);
+      internalNs.Scope = internalNs.MemberTable;
+      internalNs.EvalProperties(context);
+
+      def predefinedType = ExternalDeclaration.[TopClassSymbol](ND.Name(NoLocation, "Predefined")).DefineSymbol(internalNs.MemberTable);
+      def flags = ModifierSet(context);
+      flags.Add(Modifiers.Public | Modifiers.Static);
+      predefinedType.Flags               = flags;
+      predefinedType.DeclaredInOpt       = VSome(internalNs);
+      predefinedType.DeclaredIn          = internalNs;
+      predefinedType.Scope               = predefinedType.MemberTable;
+      predefinedType.TypeParameters      = ImmutableArray.Empty;
+      predefinedType.TypeParametersCount = 0;
+      predefinedType.NestedTypes         = ImmutableArray.Empty;
+      predefinedType.CustomAttributes    = ImmutableArray.Empty;
+      predefinedType.BaseTypeSet         = BaseTypeReferenceSet(null);
+      predefinedType.HasExtensionMethod  = false;
+      predefinedType.FullName            = "TdlInternals.Predefined";
+      predefinedType.EvalProperties(context);
+
+      def getOrCreateBarrierMethod = ExternalDeclaration.[DotNet.Member.MethodSymbol](ND.Name(NoLocation, "GetOrCreateBarrier")).DefineSymbol(predefinedType.MemberTable);
+      getOrCreateBarrierMethod.DeclaredInOpt = VSome(getOrCreateBarrierMethod);
+      getOrCreateBarrierMethod.Scope = getOrCreateBarrierMethod.MemberTable;
+
+      def param1 = ExternalDeclaration.[FormalParameterSymbol](ND.Name(NoLocation, "name")).DefineSymbol(getOrCreateBarrierMethod.MemberTable);
+      param1.Type = stringType;
+      param1.DeclaredInOpt = VSome(getOrCreateBarrierMethod);
+      //param1.DeclaredIn = getOrCreateBarrierMethod;
+      param1.EvalProperties(context);
+
+      def param2 = ExternalDeclaration.[FormalParameterSymbol](ND.Name(NoLocation, "timeout")).DefineSymbol(getOrCreateBarrierMethod.MemberTable);
+      param2.Type = stringType;
+      param2.DeclaredInOpt = VSome(getOrCreateBarrierMethod);
+      //param2.DeclaredIn = getOrCreateBarrierMethod;
+      param2.EvalProperties(context);
+
+      getOrCreateBarrierMethod.Parameters = ImmutableArray.Create(param1, param2);
+      getOrCreateBarrierMethod.ReturnType = stringType;
+      getOrCreateBarrierMethod.EvalProperties(context);
     }
 
     public TryIncrementalRefreshProject(cancellationToken : CancellationToken, before : IAst, after : IAst, data : object) : bool
@@ -244,7 +295,7 @@ namespace Tdl
       CheckScenarios(context, rootNamespace.MemberTable);
     }
 
-    public CheckScenarios(context : DependentPropertyEvalContext, root : TableScope) : void
+    CheckScenarios(context : DependentPropertyEvalContext, root : TableScope) : void
     {
       def scenarios = root.AllSymbols.OfType.[ScenarioSymbol]().ToArray();
       CheckParallelScenarios(context, scenarios);
@@ -277,7 +328,7 @@ namespace Tdl
       }
     }
 
-    public CheckParallelScenarios(context : DependentPropertyEvalContext, scenarios : array[ScenarioSymbol]) : void
+    CheckParallelScenarios(context : DependentPropertyEvalContext, scenarios : array[ScenarioSymbol]) : void
     {
       def scenarioSets = scenarios.OfType.[Scenario.SetSymbol]().Where(s => s.IsIsMultiMachineEvaluated && s.IsMultiMachine);
       def groups       = scenarioSets.Where(s => s.IsScenariosEvaluated)
@@ -440,8 +491,7 @@ namespace Tdl
 
       def defineParameter(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
-        def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
-        def parameter      = ExternalDeclaration.[FormalParameterSymbol](parameterName).DefineSymbol(scenarioParameterScope);
+        def parameter      = ExternalDeclaration.[FormalParameterSymbol](NoLocation, name).DefineSymbol(scenarioParameterScope);
         when (required)
           _                = requiredScenarioParametersBuilder.Add(parameter);
         parameter.Type     = type;
@@ -481,8 +531,7 @@ namespace Tdl
       def defineField(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
       {
         _ = required;
-        def parameterName  = Name(NoLocation, name); // TODO: type.Name.UniqueKey
-        def parameter      = ExternalDeclaration.[FormalParameterSymbol](parameterName).DefineSymbol(entityFieldsScope);
+        def parameter      = ExternalDeclaration.[FormalParameterSymbol](NoLocation, name).DefineSymbol(entityFieldsScope);
         parameter.Type     = type;
         parameter.Modifier = ParameterModifier.None;
         parameter.Index    = index;

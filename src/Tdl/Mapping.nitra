@@ -434,7 +434,7 @@ namespace Tdl
     | Reboot          -> Reboot          { }
     | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; }
     | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; }
-    | Barrier         -> Barrier         { Reference -> Reference; }
+    | Barrier         -> Barrier         { Expression -> BarrierExpr; }
   }
 
   map syntax Grammar.DeploymentOption -> DeploymentOption

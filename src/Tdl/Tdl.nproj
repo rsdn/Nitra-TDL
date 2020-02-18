@@ -86,6 +86,9 @@
     <Compile Include="Ast\Barrier.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\BarrierNamePart.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ast\Case.nitra">
       <SubType>Code</SubType>
     </Compile>

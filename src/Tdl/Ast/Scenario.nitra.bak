@@ -55,7 +55,6 @@ namespace Tdl
         Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context);
 
         Actions.Scope                   = MethodConditionalScope.Value;
-        Actions.InGenerator             = false;
         Symbol.Actions                  = Actions.ScenarioActions;
 
         Deployment.Scope                = Scope;
@@ -163,7 +162,6 @@ namespace Tdl
         Product.Scope                   = TdlUtils.ProductScopeFilter(Deployment.Scope);
 
         Actions.Scope                   = Scope.UnionWith(Deployment.Scope);
-        Actions.InGenerator             = true;
         Symbol.Actions                  = Actions.ScenarioActions;
 
         Definitions.DefinitionScope     = context.GetScenarioParameterScope();
