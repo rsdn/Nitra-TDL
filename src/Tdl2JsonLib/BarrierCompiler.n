@@ -1,0 +1,95 @@
+﻿using Tdl.ScenarioAction;
+using DotNet;
+using Tdl;
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl2Json
+{
+  class BarrierCompiler
+  {
+    static _baseStableGuid : Guid = Guid.Parse("{BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB}");
+
+    _barrierMap : Hashtable[string, int * Guid] = Hashtable();
+    mutable _counter : uint;
+
+    public ScanBarriers(scenarios : Seq[ScenarioSymbol]) : void
+    {
+        foreach (scenario in scenarios)
+        {
+          | Tdl.Scenario.DefSymbol       as s => FillBarrierMap(s);
+          | Tdl.Scenario.GeneratorSymbol as s => FillBarrierMap(s);
+          | _ =>()
+        }
+    }
+
+    FillBarrierMap(scenario : Tdl.Scenario.GeneratorSymbol) : void
+    {
+      foreach (action in scenario.Actions)
+      {
+        | Barrier          as b  => AddOrUpdateBarrierInfo(b.barrier.Name);
+        | BarrierGenerator as bg =>
+          foreach (dic in Api.SubstituteVariables(scenario.Froms, 0))
+            AddOrUpdateBarrierInfo(MakeName(dic, bg));
+        | _ => ()
+      }
+    }
+
+    public GetBarrierInfo(name : string) : int * Guid
+    {
+      mutable result;
+      def ok = _barrierMap.TryGetValue(name, out result);
+      assert2(ok);
+      result
+    }
+
+    public GetBarrierInfo(dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], bg : BarrierGenerator) : int * Guid
+    {
+      GetBarrierInfo(MakeName(dic, bg))
+    }
+
+    public MakeName(dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], bg : BarrierGenerator) : string
+    {
+      def builder = Text.StringBuilder();
+      foreach (part in bg.BarrierName)
+      {
+        | BarrierNamePart.String as s => _ = builder.Append(s.text);
+        | BarrierNamePart.Reference as r =>
+          if (r.symbol is TypedDeclarationSymbol as tds)
+            _ = builder.Append(Api.TryResolveVar(dic, tds).Name);
+          else
+            _ = builder.Append(r.symbol.Name);
+        | _ => ()
+      }
+      builder.ToString()
+    }
+
+    FillBarrierMap(scenario : Tdl.Scenario.DefSymbol) : void
+    {
+      foreach (action in scenario.Actions)
+      {
+        | Barrier          as b  => AddOrUpdateBarrierInfo(b.barrier.Name);
+        | BarrierGenerator as bg => AddOrUpdateBarrierInfo(string.Concat(bg.BarrierName.Select(b => b.ToString())));
+        | _ => ()
+      }
+    }
+
+    AddOrUpdateBarrierInfo(barrierName : string) : void
+    {
+      mutable info;
+      if (_barrierMap.TryGetValue(barrierName, out info))
+        _barrierMap[barrierName] = (info[0] + 1, info[1]);
+      else
+      {
+        _counter++;
+        _barrierMap[barrierName] = (1, Api.IncrementGuid(_baseStableGuid, _counter));
+      }
+    }
+  } // class
+} // namespace

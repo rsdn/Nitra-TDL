@@ -305,5 +305,10 @@ namespace Tdl
         | _ => assert(false, $"Unsupported method reference format '$expr' ($(expr.GetType().FullName))");
       }
     }
+
+    public IncrementGuid(guid : Guid, value : uint) : Guid
+    {
+      TdlUtils.IncrementGuid(guid, value)
+    }
   } // module
 } // namespace

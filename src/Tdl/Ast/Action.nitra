@@ -208,7 +208,7 @@ namespace Tdl
       }
     | Barrier
       {
-        BarrierExpr.ScopeIn = Scope.HideWith(context.GetBarrierScope(InGenerator));
+        BarrierExpr.ScopeIn = Scope.HideWith(context.GetBarrierScope());
         ScenarioActions     = await TdlUtils.MakeScenarioActions(context, BarrierExpr);
 
         BarrierExpr : DotNet.Expr;

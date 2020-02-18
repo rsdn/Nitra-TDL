@@ -52,9 +52,9 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.EntityFieldsScope
     }
 
-    public GetBarrierScope(this context : DependentPropertyEvalContext, inGenerator : bool) : Scope
+    public GetBarrierScope(this context : DependentPropertyEvalContext) : Scope
     {
-      if (inGenerator) context.BindType("TdlInternals.Predefined", 0).Scope else EmptyScope.Instance
+      context.BindType("TdlInternals.Predefined", 0).Scope
     }
 
     public GetExternalSymbolTable(this context : DependentPropertyEvalContext) : TableScope

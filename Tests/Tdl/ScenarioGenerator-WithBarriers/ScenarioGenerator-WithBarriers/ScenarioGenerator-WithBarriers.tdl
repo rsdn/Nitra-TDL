@@ -1,6 +1,6 @@
 barrier CreateUcpAccountBarrier timeout "00:10:00";
 
-parallel scenario ParallelScenarios = ParallelScenarioGenerator1;
+parallel scenario ParallelScenarios = ParallelScenarioGenerator1, ParallelScenarioGenerator2;
 
 scenario ParallelScenarioGenerator1 =
     from Platform in [win7-x86, win7-x64]
@@ -16,8 +16,26 @@ scenario ParallelScenarioGenerator1 =
             method Method;
             barrier GetOrCreateBarrier("Sbs-barrier-" + Platform, "00:40:00");
             method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount;
-            barrier CreateUcpAccountBarrier;
-            method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice;
+        }    
+        UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
+        Timeout = "02:30:00";
+        ProductGroupName = "SbSFuncProductGroup";
+    };
+
+scenario ParallelScenarioGenerator2 =
+    from Platform in [win7-x86, win7-x64]
+    from Method in [Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart,
+                    Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan]
+    from Product in Sbs2019Func
+    select
+    {
+        deployment DeployMultiProductWithDeployerAndPreparingKsm60;
+        environments (Platform, Product);
+        sequence
+        {
+            method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice;
+            barrier GetOrCreateBarrier("Sbs-barrier-" + Platform, "00:40:00");
+            method Method;
         }    
         UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
         Timeout = "02:30:00";
@@ -75,15 +93,6 @@ script @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Hive\Apply
 {
     DplScript =  @"\\sdfs\autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\KfpAutotestModeEnable.dpl";
     OverrideTestSettings = @"\\sdfs\autotests\Components\TestSettings\KSM6.0";
-    expected 0;
-}
-
-deployment ApplyDplScriptKsm65(
-)
-script @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Hive\ApplyDpl.ps1"
-{
-    DplScript =  @"\\sdfs\autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\KfpAutotestModeEnable.dpl";
-    OverrideTestSettings = @"\\sdfs\autotests\Components\TestSettings\KSM6.5";
     expected 0;
 }
 
@@ -169,106 +178,6 @@ product Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests : MultiProductWithPrepare
     OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
 }
 
-product Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests : MultiProductWithPrepare
-{
-    Name = "Kfp6.0+App62019+App3MR3+Kpm9.0+Ksu2.0";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\8.Kfp6.0+App62019+App3MR3+Kpm9.0+Ksu2.0.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product Kfp6_App106_App92_Ksu2_Kpm9_FuncTests : MultiProductWithPrepare
-{
-    Name = "Kfp6.0+App106.0+App92.0+Ksu2.0+Kpm9.0";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\9.Kfp6.0+App106.0+App92.0+Ksu2.0+Kpm9.0.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product App92_Kfp6_Kpm9_App112019_FuncTests : MultiProductWithPrepare
-{
-    Name = "App92.0+Kfp6.0+Kpm9.0+App112019";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\10.App92.0+Kfp6.0+Kpm9.0+App112019.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product Kpm9_App92_Kfp65_App2_2019_FuncTests : MultiProductWithPrepare
-{
-    Name = "Kpm9.0+App92.0+Kfp6.5+App2_2019";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\11.Kpm9.0+App92.0+Kfp6.5+App2_2019.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests : MultiProductWithPrepare
-{
-    Name = "App3MR4+Kpm9.0+App1_2019+Kfp6.0+App92.0";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\12.App3MR4+Kpm9.0+App1_2019+Kfp6.0+App92.0.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product App3MR3_App112019_FuncTests : MultiProductWithPrepare
-{
-    Name = "App3MR3+App112019";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\13.App3MR3+App112019.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests : MultiProductWithPrepare
-{
-    Name = "App93.0+Kpm9.0+App2_2019+App3MR3+Kfp6.0";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\14.App93.0+Kpm9.0+App2_2019+App3MR3+Kfp6.0.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests : MultiProductWithPrepare
-{
-    Name = "Ksu2.0+Kfp6.0+App93.0+Ks2.0+App3MR4";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\15.Ksu2.0+Kfp6.0+App93.0+Ks2.0+App3MR4.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product App93_App3MR3_App1_2019_FuncTests : MultiProductWithPrepare
-{
-    Name = "App93.0+App3MR3+App1_2019";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\16.App93.0+App3MR3+App1_2019.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
-product Kpm9_App62019_App92_FuncTests : MultiProductWithPrepare
-{
-    Name = "Kpm9.0+App62019+App92.0";
-    BranchName = "-";
-    Version = "-";
-    MultiProductConfig = @"\\sdfs\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\17.Kpm9.0+App62019+App92.0.txt";
-    PrepareForTestScript = @"\\sdfs\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
-    OverrideTestSettingsDirectory = @"\\sdfs\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
-}
-
 product Sbs2019Func : MultiProductWithPrepare =
     App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests, 
     Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests, 
@@ -276,17 +185,7 @@ product Sbs2019Func : MultiProductWithPrepare =
     Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests, 
     Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests,
     App93_Kpm9_App106_Kfp65_FuncTests,
-    Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests,
-    Kfp6_App62019_App3MR3_Kpm9_Ksu2_FuncTests,
-    Kfp6_App106_App92_Ksu2_Kpm9_FuncTests,
-    App92_Kfp6_Kpm9_App112019_FuncTests,
-    Kpm9_App92_Kfp65_App2_2019_FuncTests,
-    App3MR4_Kpm9_App1_2019_Kfp6_App92_FuncTests,
-    App3MR3_App112019_FuncTests,
-    App93_Kpm9_App2_2019_App3MR3_Kfp6_FuncTests,
-    Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests,
-    App93_App3MR3_App1_2019_FuncTests,
-    Kpm9_App62019_App92_FuncTests;
+    Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests;
 
 suite type Ext
 {
