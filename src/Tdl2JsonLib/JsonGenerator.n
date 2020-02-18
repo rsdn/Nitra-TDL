@@ -178,7 +178,7 @@ namespace Tdl2Json
 
       def preSessionActionCompiler  = SessionActionCompiler(deploymentScriptHeader, deploymentToolPath);
       def postSessionActionCompiler = SessionActionCompiler(deploymentScriptHeader, deploymentToolPath);
-      def compiler                  = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
+      def deploymentCompiler        = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
       def symbols                   = context.RootNamespace.MemberTable.GetAllSymbols().ToList();
 
       def scenarioTrigger =
@@ -209,6 +209,19 @@ namespace Tdl2Json
 
       def platformNameSet = HashSet(platforms.Select(p => p.Key), StringComparer.InvariantCultureIgnoreCase);
 
+
+      def barrierCompilerMap = Hashtable();
+
+      foreach (Tdl.Scenario.SetSymbol(IsIsMultiMachineEvaluated=true, IsMultiMachine=true) as set in symbols)
+      {
+        def barrierCompiler = BarrierCompiler();
+        def selfId          = set.Id;
+        def scenarios       = set.AllScenarios.Where(x => x.Id != selfId).ToArray();
+        barrierCompiler.ScanBarriers(scenarios);
+        foreach (scenario in scenarios)
+          barrierCompilerMap[scenario] = barrierCompiler;
+      }
+
       foreach (symbol in symbols)
       {
         | ProductSymbol         as s => products .AddEx(s.Name, GenerateProduct(s, platformNameSet), "products")
@@ -217,7 +230,7 @@ namespace Tdl2Json
         | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
         | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
         | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
-          GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, compiler, scenarioTrigger, scenarios)
+          GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s))
 
         | _ => ()
       }
@@ -245,7 +258,7 @@ namespace Tdl2Json
       {
         Version            = JsonVersion;
         Schema             = $<#http://auto-reports.avp.ru/starter-schema/v$JsonVersion/$jsonSchemaType/schema.json#>;
-        Deployments        = compiler.GetResult();
+        Deployments        = deploymentCompiler.GetResult();
         Products           = products;
         Platforms          = platforms;
         Suites             = suites;
@@ -373,7 +386,8 @@ namespace Tdl2Json
     }
 
     private GenerateTestGroup(g : Tdl.Scenario.GeneratorSymbol, uniqueId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
-      initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler) : TestGroup
+      initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler,
+      barrierCompilerOpt : option[BarrierCompiler]) : TestGroup
     {
       //def parallelSetOpt = if (g.IsParallelSetOptEvaluated) g.ParallelSetOpt else null;
       //def barriersCount  = parallelSetOpt?.BarriersCount?.ToDictionary() ?? Dictionary();
@@ -536,19 +550,8 @@ namespace Tdl2Json
                   RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
                 };
             }
-          | Barrier as barrier =>
-            assert(false, "Barriers unsupported in generators");
-            def b = barrier.barrier;
-            WaitForBarrierTestStep() <-
-            {
-              WaitForBarrier =
-                WaitForBarrierTestStep.Data() <-
-                {
-                  Id      = b.Guid;
-                  Timeout = TimeSpan.Parse(b.Timeout.Value);
-                  Count   = 0;//barriersCount.GetValue(b);
-                }
-            }
+          | BarrierGenerator as bg => MakeBarrier(dic, barrierCompilerOpt, bg)
+          | Barrier as barrier => MakeBarrier(barrierCompilerOpt, barrier)
           | Script as s        => makeScriptAction(s)
           | Config as c        => makeConfigAction(c)
           | GTest  as g        => makeGTestAction(g)
@@ -620,8 +623,41 @@ namespace Tdl2Json
       testGroup
     }
 
+    private MakeBarrier(barrierCompilerOpt : option[BarrierCompiler], b : ScenarioAction.Barrier) : WaitForBarrierTestStep
+    {
+      def barrierCompiler = barrierCompilerOpt.UnSome();
+      def (count, guid)   = barrierCompiler.GetBarrierInfo(b.barrier.Name);
+      WaitForBarrierTestStep() <-
+      {
+        WaitForBarrier =
+          WaitForBarrierTestStep.Data() <-
+          {
+            Id      = guid;
+            Timeout = TimeSpan.Parse(b.barrier.Timeout.Value);
+            Count   = count;
+          }
+      }
+    }
+
+    private MakeBarrier(dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], barrierCompilerOpt : option[BarrierCompiler], bg : ScenarioAction.BarrierGenerator) : WaitForBarrierTestStep
+    {
+      def barrierCompiler = barrierCompilerOpt.UnSome();
+      def (count, guid)   = barrierCompiler.GetBarrierInfo(dic, bg);
+      WaitForBarrierTestStep() <-
+      {
+        WaitForBarrier =
+          WaitForBarrierTestStep.Data() <-
+          {
+            Id      = guid;
+            Timeout = bg.Timeout;
+            Count   = count;
+          }
+      }
+    }
+
     private GenerateScenario(scenarioSymbol : ScenarioSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol,
-      compiler : DeploymentCompiler, scenarioTrigger : IScenarioTrigger, scenarios : IDictionary[string, TestCase]) : void
+      compiler : DeploymentCompiler, scenarioTrigger : IScenarioTrigger, scenarios : IDictionary[string, TestCase],
+      barrierCompilerOpt : option[BarrierCompiler]) : void
     {
       def addTestCase(name, testGroup)
       {
@@ -780,18 +816,8 @@ namespace Tdl2Json
                       RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
                     };
                 }
-              | Barrier as barrier =>
-                def b = barrier.barrier;
-                WaitForBarrierTestStep() <-
-                {
-                  WaitForBarrier =
-                    WaitForBarrierTestStep.Data() <-
-                    {
-                      Id      = b.Guid;
-                      Timeout = TimeSpan.Parse(b.Timeout.Value);
-                      Count   = barriersCount.GetValue(b);
-                    }
-                }
+              | BarrierGenerator as bg => MakeBarrier(Dictionary(), barrierCompilerOpt, bg)
+              | Barrier as barrier => MakeBarrier(barrierCompilerOpt, barrier)
               | Script as s        => makeScriptAction(s)
               | Config as c        => makeConfigAction(c)
               | GTest  as g        => makeGTestAction(g)
@@ -883,7 +909,7 @@ namespace Tdl2Json
             counter++;
             def name = scenarioSymbol.Name + "-" + counter;
             names.Add(name);
-            addTestCase(name, GenerateTestGroup(g, uniqueId, dic, initialDeployment, finalDeployment, compiler));
+            addTestCase(name, GenerateTestGroup(g, uniqueId, dic, initialDeployment, finalDeployment, compiler, barrierCompilerOpt));
             uniqueId = incGuid(uniqueId);
           }
           def testGroup = TestGroup() <- { TestScenarios = names.ToArray() };

@@ -23,7 +23,6 @@ using System.Text;
 
 namespace Tdl
 {
-
   module TdlUtils
   {
     static RequiredProductTypeFields : list[string] = ["Name", "Version"];
@@ -51,6 +50,11 @@ namespace Tdl
     public GetEntityFieldsScope(this context : DependentPropertyEvalContext) : TableScope
     {
       ToTdlContext(context).TdlProjectData.EntityFieldsScope
+    }
+
+    public GetBarrierScope(this context : DependentPropertyEvalContext) : Scope
+    {
+      context.BindType("TdlInternals.Predefined", 0).Scope
     }
 
     public GetExternalSymbolTable(this context : DependentPropertyEvalContext) : TableScope
@@ -2059,6 +2063,82 @@ namespace Tdl
       | Integer
       | List
       | Tuple => EmptyScope.Instance
+    }
+
+    public ParseInt(context : DependentPropertyEvalContext, text : string) : int
+    {
+      mutable result;
+      unless (int.TryParse(text, out result))
+      {
+        //str.Error(context, $"Failed to process deployment file path ($(e.GetType())): $(e.Message)");
+      }
+      result
+    }
+
+    public MakeScenarioActions(context : DependentPropertyEvalContext, barrierExpr : DotNet.Expr) : ValueOption[ScenarioAction]
+    {
+      match (barrierExpr)
+      {
+        | Expr.SimpleName as n when !n.IsRefEvaluated => VNone()
+        | Expr.SimpleName(Ref=Ref(IsSymbolEvaluated =true, Symbol=symbol)) =>
+          if (symbol is BarrierSymbol as b)
+            VSome(ScenarioAction.Barrier(barrierExpr.Location, b))
+          else
+          {
+            barrierExpr.Error(context, "Expected barrier.");
+            VSome(ScenarioAction.Error(barrierExpr.Location))
+          }
+
+        | Expr.Invocation as inv when !inv.IsMethodEvaluated => VNone()
+        | Expr.Invocation as inv when inv.Method.Name != "GetOrCreateBarrier" =>
+          barrierExpr.Error(context, "Expected call of GetOrCreateBarrier() method or barrier.");
+          VSome(ScenarioAction.Error(barrierExpr.Location))
+        | Expr.Invocation as inv when inv.Arguments.Count == 2 =>
+          def arg2 = inv.Arguments[1] :> Expr.Argument;
+          when (!(arg2.Expr is DotNet.Expr.String))
+          {
+            barrierExpr.Error(context, "Expected string with timeout.");
+            return VSome(ScenarioAction.Error(arg2.Location));
+          }
+          def timeoutStr = ConvertStringLiteralOrNull((arg2.Expr :> DotNet.Expr.String).Value);
+          mutable timeout;
+          when (timeoutStr == null || !TimeSpan.TryParse(timeoutStr, out timeout))
+          {
+            barrierExpr.Error(context, "Expected string with timeout. Format: ЧЧ:ММ:СС");
+            return VSome(ScenarioAction.Error(arg2.Location));
+          }
+          def arg1 = inv.Arguments[0] :> Expr.Argument;
+          if (arg1.Expr is Expr.Sum as sum)
+          {
+            mutable hasUnculculated;
+            {
+              def result = ImmutableArray.CreateBuilder();
+              def loop(expr : DotNet.Expr) : void
+              {
+                | Expr.Sum           as sum => loop(sum.Expr1); loop(sum.Expr2);
+                | DotNet.Expr.String as s   => result.Add(BarrierNamePart.String(ConvertStringLiteralOrNull(s.Value)));
+                | Expr.SimpleName    as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => hasUnculculated = true;
+                | Expr.SimpleName    as n   => result.Add(BarrierNamePart.Reference(n.Ref.Symbol));
+              }
+              loop(sum);
+              def result = result;
+              if (hasUnculculated)
+                VNone()
+              else
+                VSome(ScenarioAction.BarrierGenerator(barrierExpr.Location, result.ToImmutable(), timeout))
+            }
+          }
+          else
+          {
+            _ = arg2;
+            arg1.Error(context, "Expected concatination of barrier name.");
+            VSome(ScenarioAction.Error(arg1.Location))
+          }
+
+        | _ => assert2(false); VNone()
+      }
+
+      //ScenarioAction.Barrier(BarrierExpr.Location, null)
     }
   } // module
 } // namespace

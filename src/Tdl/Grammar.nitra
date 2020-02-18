@@ -202,7 +202,7 @@
       | Reboot          = "reboot" ";"
       | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan ";"
       | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan ";"
-      | Barrier         = "barrier" sm Reference ";"
+      | Barrier         = "barrier" sm Expression ";"
     }
 
     syntax DeploymentExpr
