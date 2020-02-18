@@ -576,6 +576,7 @@ namespace Tdl2Json
 
           | Logoff             => LogoffTestStep() <- { Logoff = LogoffTestStep.Data() }
           | LockWorkstation    => LockWorkstationTestStep() <- { LockWorkstation = LockWorkstationTestStep.Data() }
+          | BarrierGenerator   => assert(false, "Unsupported ScenarioAction: " + action)
           | _                  => assert(false, "Unsupported ScenarioAction: " + action)
         }
         def tryGetSingleElem[T]() : ValueOption[T]

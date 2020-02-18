@@ -1,4 +1,4 @@
-﻿suite BuildAcceptance
+suite BuildAcceptance
 {
     platform platform_group_1;
     product App6;
