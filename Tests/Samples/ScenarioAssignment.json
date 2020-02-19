@@ -1,0 +1,85 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "TheDeployment": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "Area": "$(Area)",
+        "CustomParameter": "$(CustomParameter)"
+      },
+      "DefaultValues": {
+        "Area": ""
+      },
+      "ScriptPath": "foo.cmd"
+    },
+    "TheDeployment-1": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "TheDeployment": {
+            "Area": "Dnt",
+            "CustomParameter": "test"
+          }
+        }
+      ]
+    }
+  },
+  "Platforms": {
+    "all_pc": {}
+  },
+  "Products": {
+    "TheProduct": {
+      "Name": "TheProduct",
+      "Parameters": {
+        "Name": "TheProduct"
+      },
+      "BranchName": "Main",
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "TheSuite": {
+      "Parameters": {},
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "TheProduct"
+      ],
+      "TestScenarios": [
+        "TheScenario"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "TheScenario": {
+      "Area": "Dnt",
+      "Deployments": [
+        "TheDeployment-1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "ProgramName": "cmd",
+        "Arguments": [
+          "/C exit 0"
+        ]
+      },
+      "TfsId": 1075083,
+      "Timeout": "00:30:00",
+      "UniqueId": "ef1f3579-2d04-4de6-a0b8-fa50d2602433"
+    }
+  },
+  "TestEntities": {}
+}

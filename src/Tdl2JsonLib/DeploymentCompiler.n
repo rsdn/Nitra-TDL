@@ -73,9 +73,13 @@ namespace Tdl2Json
     }
 
     [Memoize]
-    public Compile(seq : list[DeploymentSymbol]) : array[QuickType.TestGroupDeployment]
+    public Compile(seq : list[DeploymentSymbol], defs : array[Def]) : array[QuickType.TestGroupDeployment]
     {
-      CompileSequence(seq, Dictionary(StringComparer.OrdinalIgnoreCase))
+      def dic = Dictionary(StringComparer.OrdinalIgnoreCase);
+      when (defs != null)
+        foreach (d in defs)
+          dic.Add(d.Symbol.Name, d.Expr.ToObject());
+      CompileSequence(seq, dic)
     }
 
     public GetEmptyDeployment() : QuickType.TestGroupDeployment
