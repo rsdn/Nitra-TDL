@@ -938,7 +938,8 @@ namespace Tdl2Json
       when (initialDeployment != null && !NList.Contains(deployments, initialDeployment))
         deployments ::= initialDeployment;
 
-      def result = compiler.Compile(deployments, assignedParams);
+      def sortedAssignedParams = assignedParams.Select(x => (x.Symbol.Name, x.Expr.ToObject())).OrderBy((n, _) => n).NToList();
+      def result               = compiler.Compile(deployments, sortedAssignedParams);
       compiler.GetCompositeDeployment(scenarioDeployment.Name, result)
     }
 
