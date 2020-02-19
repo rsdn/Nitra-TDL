@@ -96,6 +96,7 @@ namespace Tdl2Json
               compiler = DeploymentCodeCompiler(deployment, args, callStack=[]);
             else unless (compiler.TryAdd(deployment, args, callStack=[]))
               finalizeCodeCompiler();
+          | Leaf(_, d) => assert(false, "Unsupported deployment type" + d.GetType().Name);
         }
       }
 

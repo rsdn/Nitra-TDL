@@ -1,4 +1,4 @@
-scenario Scenario1
+﻿scenario Scenario1
 {
     deployment Deployment1;
     environments (all_pc, TheProduct);
@@ -10,9 +10,26 @@ scenario Scenario1
     RevertAgentAfter = true;
     Timeout = "00:30:00";
     Area = "Dnt";
-    CustomParameter = "test";
+    CustomParameter = "";
     TfsId = 1075083;
 }
+
+scenario Scenario2 =
+    from Platform in [w10rs4-x86, w10rs4-x64]
+    from Deployment in [Deployment1, Deployment2]
+    from Str in ["test2", "test3"]
+    select
+    {
+        deployment Deployment;
+        environments (Platform, TheProduct);
+        method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
+    
+        Area = Str;
+        CustomParameter = Str;
+        UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
+        Timeout = "02:30:00";
+        ProductGroupName = "SbSFuncProductGroup";
+    };
 
 deployment Deployment1(string Area = "", string CustomParameter)
   script @"foo.cmd"
@@ -20,18 +37,19 @@ deployment Deployment1(string Area = "", string CustomParameter)
     expected 42;
 }
 
-deployment Deployment2() // W: Unused deployment.
+deployment Deployment2()
   script @"bar.cmd"
 {
     expected 42;
 }
 
-scenario Scenarios = Scenario1;
+scenario Scenarios = Scenario1, Scenario2;
 
 suite "TheSuite"
 {
     platform all_pc;
     product TheProduct;
+    //CustomParameter = "";
     Scenarios();
 }
 
@@ -49,4 +67,6 @@ product type ProductType
     string Version;
 }
 
-platform all_pc;
+platform all_pc = w10rs4-x86, w10rs4-x64;
+platform w10rs4-x86;
+platform w10rs4-x64;

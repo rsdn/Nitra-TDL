@@ -607,7 +607,7 @@ namespace Tdl2Json
       def testGroup =
         TestGroup() <-
         {
-          Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployment, compiler, assignedParams);
+          Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployment, compiler, assignedParams, dic);
           Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
           TestMethod              = getTestMethod();
           Area                    = getString("Area");
@@ -875,7 +875,7 @@ namespace Tdl2Json
           def testGroup =
             TestGroup() <-
             {
-                Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler, assignedParams);
+                Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler, assignedParams, null);
                 Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
                 TestMethod              = getTestMethod();
                 Area                    = getString("Area");
@@ -927,8 +927,12 @@ namespace Tdl2Json
       }
     }
 
-    private GetTestGroupDeployments(initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, scenarioDeployment : DeploymentSymbol,
-                                    compiler : DeploymentCompiler, assignedParams : array[Def]) : array[TestGroupDeployment]
+    private GetTestGroupDeployments(initialDeployment  : DeploymentSymbol,
+                                    finalDeployment    : DeploymentSymbol,
+                                    scenarioDeployment : DeploymentSymbol,
+                                    compiler           : DeploymentCompiler,
+                                    assignedParams     : array[Def],
+                                    dic                : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : array[TestGroupDeployment]
     {
       mutable deployments = if (finalDeployment == null) [] else [finalDeployment];
 
@@ -938,7 +942,8 @@ namespace Tdl2Json
       when (initialDeployment != null && !NList.Contains(deployments, initialDeployment))
         deployments ::= initialDeployment;
 
-      def sortedAssignedParams = assignedParams.Select(x => (x.Symbol.Name, x.Expr.ToObject())).OrderBy((n, _) => n).NToList();
+      def scope                = HashSet(scenarioDeployment.AggregateParametersScope.GetAllSymbols().Select(s => s.Name), StringComparer.OrdinalIgnoreCase);
+      def sortedAssignedParams = assignedParams.Where(x => scope.Contains(x.Symbol.Name)).Select(x => (x.Symbol.Name, x.Expr.ToObject(null, dic))).OrderBy((n, _) => n).NToList();
       def result               = compiler.Compile(deployments, sortedAssignedParams);
       compiler.GetCompositeDeployment(scenarioDeployment.Name, result)
     }
