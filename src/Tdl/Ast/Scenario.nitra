@@ -66,7 +66,7 @@ namespace Tdl
         Environments.Scope              = Scope;
         Symbol.Environments             = Environments.Environment;
 
-        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope);
+        Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope));
         Definitions.DefinitionScope     = context.GetScenarioParameterScope().HideWith(Symbol.Deployment.AggregateParametersScope);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
 
@@ -166,8 +166,8 @@ namespace Tdl
         Actions.InGenerator             = true;
         Symbol.Actions                  = Actions.ScenarioActions;
 
-        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
-        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope);
+        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForGeneratorScenario(context.GetScenarioParameterScope(), Symbol.Deployment, Symbol.Froms, context);
+        Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope));
 
         DeploymentRef                   = Deployment.Ref.Resolve();
         PlatformRef                     = Platform.Ref.Resolve();
@@ -178,7 +178,7 @@ namespace Tdl
         Symbol.Product                  = ProductRef   .Symbol;
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenarioGenerator(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context, Symbol.Defs);
 
         FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);

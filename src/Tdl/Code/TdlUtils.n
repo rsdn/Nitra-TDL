@@ -1428,6 +1428,34 @@ namespace Tdl
       }
     }
 
+    public MakeDefinitionScopeForGeneratorScenario(predefinedParameterScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    {
+      mutable builder;
+
+      match (deployment)
+      {
+        | DeploymentSymbol as d when !d.IsAggregateParametersScopeEvaluated => return VNone();
+        | DeploymentSymbol as d => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
+        | VarSymbol as v =>
+          foreach (from in froms)
+          foreach (var when v.Id == var.Id in from.Vars with i)
+          {
+            def list = from.Elems.GetExprListForVar(i);
+            foreach (x in list)
+            {
+              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAggregateParametersScopeEvaluated => return VNone();
+              | Reference(Symbol=DeploymentSymbol as d) => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
+              | _ => ()
+            }
+            break;
+          }
+        | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
+      }
+
+      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
+      VSome(predefinedParameterScope.HideWith(builder.ToScope()))
+    }
+
     public MakeAggregateParametersScopeForScenarioDef(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : Scope
     {
       mutable builder;
@@ -1445,7 +1473,7 @@ namespace Tdl
       FilteringScope(builder.ToScope(), filter)
     }
 
-    public MakeAggregateParametersScope(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    public MakeAggregateParametersScopeForScenarioGenerator(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
     {
       def deployments = List();
       def tdlContext  = context.ToTdlContext();
@@ -1477,7 +1505,20 @@ namespace Tdl
           }
         | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
       }
-      MakeAggregateParametersScope(deployments, parametersScope)
+      def result = MakeAggregateParametersScope(deployments, parametersScope);
+      if (result is VSome(scope))
+      {
+        def assignedParams = HashSet(StringComparer.InvariantCultureIgnoreCase);
+        foreach (d in defs)
+          _ = assignedParams.Add(d.Symbol.Name);
+        def filter(symbol : DeclarationSymbol) : bool
+        {
+          !assignedParams.Contains(symbol.Name)
+        }
+        VSome(FilteringScope(scope, filter))
+      }
+      else
+        result
     }
 
     //public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
