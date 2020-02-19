@@ -1,10 +1,10 @@
 ﻿import * as vscode from 'vscode';
 import { TdlTaskProvider } from './tdlTaskProvider';
-import { workspace, ExtensionContext, Position, Range } from 'vscode';
+import { workspace, Range } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, NotificationType } from 'vscode-languageclient';
 import * as fs from 'fs';
 import * as path from 'path';
-import { showMessage, showError, ExtentionName, log, error, HighlightingNotification, SpanClassInfoNotification } from './utils';
+import { showMessage, showError, ExtentionName, log, HighlightingNotification, SpanClassInfoNotification } from './utils';
 import { platform } from 'os';
 
 const langDllName = "Tdl.dll";
