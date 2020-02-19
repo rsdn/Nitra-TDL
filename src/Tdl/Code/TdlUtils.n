@@ -313,30 +313,9 @@ namespace Tdl
     {
       foreach (scenario when visited.Add(scenario.Id) in scenarios)
       {
-        match (scenario)
-        {
-          | s is Scenario.DefSymbol when s.IsDeploymentEvaluated =>
-            unless (s.Deployment.IsAggregateParametersScopeEvaluated)
-              return false;
-
-            UnionScopeBuilder.Add(s.Deployment.AggregateParametersScope, ref builder);
-            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-
-          | s is Scenario.SetSymbol when s.IsScenariosEvaluated =>
-            unless (CollectScenarios(visited, ref builder, s.Scenarios))
-              return false;
-
-          | s is Scenario.GeneratorSymbol when s.IsDeploymentEvaluated =>
-            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-            when (s.Deployment is DeploymentSymbol as deployment)
-            {
-              unless (deployment.IsAggregateParametersScopeEvaluated)
-                return false;
-              UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
-            }
-
-          | _ => ()
-        }
+        unless (scenario.IsAggregateParametersScopeEvaluated)
+          return false;
+        UnionScopeBuilder.Add(scenario.AggregateParametersScope, ref builder);
       }
       true
     }
@@ -2127,6 +2106,9 @@ namespace Tdl
                 | DotNet.Expr.String as s   => result.Add(BarrierNamePart.String(ConvertStringLiteralOrNull(s.Value)));
                 | Expr.SimpleName    as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => hasUnculculated = true;
                 | Expr.SimpleName    as n   => result.Add(BarrierNamePart.Reference(n.Ref.Symbol));
+                | _ =>
+                  barrierExpr.Error(context, "Unsupported expression type " + expr.GetType().Name);
+                  hasUnculculated = true;
               }
               loop(sum);
               def result = result;

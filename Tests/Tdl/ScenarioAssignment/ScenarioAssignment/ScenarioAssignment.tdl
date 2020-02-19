@@ -1,6 +1,6 @@
-scenario TheScenario
+scenario Scenario1
 {
-    deployment TheDeployment;
+    deployment Deployment1;
     environments (all_pc, TheProduct);
     sequence
     {
@@ -14,17 +14,25 @@ scenario TheScenario
     TfsId = 1075083;
 }
 
-deployment TheDeployment(string Area = "", string CustomParameter)
+deployment Deployment1(string Area = "", string CustomParameter)
   script @"foo.cmd"
 {
     expected 42;
 }
 
+deployment Deployment2() // W: Unused deployment.
+  script @"bar.cmd"
+{
+    expected 42;
+}
+
+scenario Scenarios = Scenario1;
+
 suite "TheSuite"
 {
     platform all_pc;
     product TheProduct;
-    TheScenario();
+    Scenarios();
 }
 
 product TheProduct : ProductType

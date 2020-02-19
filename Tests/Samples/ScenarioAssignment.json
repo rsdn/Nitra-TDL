@@ -2,7 +2,7 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
-    "TheDeployment": {
+    "Deployment1": {
       "Type": "Script",
       "ReturnValue": 42,
       "ScriptArgs": {
@@ -14,11 +14,11 @@
       },
       "ScriptPath": "foo.cmd"
     },
-    "TheDeployment-1": {
+    "Deployment1-1": {
       "Type": "Sequence",
       "Deployments": [
         {
-          "TheDeployment": {
+          "Deployment1": {
             "Area": "Dnt",
             "CustomParameter": "test"
           }
@@ -49,15 +49,15 @@
         "TheProduct"
       ],
       "TestScenarios": [
-        "TheScenario"
+        "Scenarios"
       ]
     }
   },
   "TestScenarios": {
-    "TheScenario": {
+    "Scenario1": {
       "Area": "Dnt",
       "Deployments": [
-        "TheDeployment-1"
+        "Deployment1-1"
       ],
       "Environments": [
         {
@@ -79,6 +79,11 @@
       "TfsId": 1075083,
       "Timeout": "00:30:00",
       "UniqueId": "ef1f3579-2d04-4de6-a0b8-fa50d2602433"
+    },
+    "Scenarios": {
+      "TestScenarios": [
+        "Scenario1"
+      ]
     }
   },
   "TestEntities": {}
