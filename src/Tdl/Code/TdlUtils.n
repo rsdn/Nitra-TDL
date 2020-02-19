@@ -677,7 +677,7 @@ namespace Tdl
         ast.Error(context, $<#The following $(name)$(if (count == 1) "" else "s") are required: ..$missingFields.#>);
     }
 
-    public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope) : void
+    public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope, _defaultDefs : ImmutableArray[FormalParameterSymbol]) : void
     {
       try
       {
