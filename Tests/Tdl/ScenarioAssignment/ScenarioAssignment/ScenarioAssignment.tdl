@@ -1,0 +1,43 @@
+scenario TheScenario
+{
+    deployment TheDeployment;
+    environments (all_pc, TheProduct);
+    sequence
+    {
+      gtest "cmd" "/C exit 0";
+    }
+    UniqueId = "ef1f3579-2d04-4de6-a0b8-fa50d2602433";
+    RevertAgentAfter = true;
+    Timeout = "00:30:00";
+    Area = "Dnt";
+    CustomParameter = "test";
+    TfsId = 1075083;
+}
+
+deployment TheDeployment(string Area = "", string CustomParameter)
+{
+    expected 42;
+}
+
+suite "TheSuite"
+{
+    platform all_pc;
+    product TheProduct;
+    TheScenario();
+}
+
+product TheProduct : ProductType
+{
+    Name = "TheProduct";
+    BranchName = "Main";
+    Version = "1.0";
+}
+
+product type ProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+platform all_pc;

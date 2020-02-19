@@ -1449,13 +1449,21 @@ namespace Tdl
       }
     }
 
-    public MakeAggregateParametersScope(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
+    public MakeAggregateParametersScopeForScenarioDef(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : Scope
     {
       mutable builder;
       UnionScopeBuilder.Add(parametersScope, ref builder);
       UnionScopeBuilder.Add(deploymentScope, ref builder);
       AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-      builder.ToScope();
+
+      def assignedParams = HashSet(StringComparer.InvariantCultureIgnoreCase);
+      foreach (d in defs)
+        _ = assignedParams.Add(d.Symbol.Name);
+      def filter(symbol : DeclarationSymbol) : bool
+      {
+        !assignedParams.Contains(symbol.Name)
+      }
+      FilteringScope(builder.ToScope(), filter)
     }
 
     public MakeAggregateParametersScope(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
