@@ -38,7 +38,6 @@ using System.Threading;
 using Tdl;
 using Tdl2Json.ExceptionHelper;
 
-// Сгенерированно с помощью: https://app.quicktype.io/
 namespace Tdl2Json
 {
   public delegate TransfomationFunc(context : TransformationContext) : void;
@@ -398,8 +397,6 @@ namespace Tdl2Json
       initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler,
       barrierCompilerOpt : option[BarrierCompiler]) : TestGroup
     {
-      //def parallelSetOpt = if (g.IsParallelSetOptEvaluated) g.ParallelSetOpt else null;
-      //def barriersCount  = parallelSetOpt?.BarriersCount?.ToDictionary() ?? Dictionary();
       def getString(name : string) : string
       {
         def getValue(expr : Tdl.Expr) : string
@@ -605,11 +602,12 @@ namespace Tdl2Json
             ArtifactsCollectionTimeout = artifactsCollectionTimeout;
           }
       }
+      def assignedParams = g.Defs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
 
       def testGroup =
         TestGroup() <-
         {
-          Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployment, compiler);
+          Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployment, compiler, assignedParams);
           Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
           TestMethod              = getTestMethod();
           Area                    = getString("Area");
@@ -680,7 +678,6 @@ namespace Tdl2Json
           def defs = r.Defs.ToHashtable(x => x.Symbol.Name, x => x.Expr);
           def defs = defs;
           def parallelSetOpt = if (r.IsParallelSetOptEvaluated) r.ParallelSetOpt else null;
-          def barriersCount  = parallelSetOpt?.BarriersCount?.ToDictionary() ?? Dictionary();
           def getString(name : string) : string
           {
             defs.Get(name).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
@@ -873,10 +870,12 @@ namespace Tdl2Json
               }
           }
 
+          def assignedParams = r.Defs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
+
           def testGroup =
             TestGroup() <-
             {
-                Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler);
+                Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler, assignedParams);
                 Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
                 TestMethod              = getTestMethod();
                 Area                    = getString("Area");
@@ -929,7 +928,7 @@ namespace Tdl2Json
     }
 
     private GetTestGroupDeployments(initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, scenarioDeployment : DeploymentSymbol,
-      compiler : DeploymentCompiler) : array[TestGroupDeployment]
+                                    compiler : DeploymentCompiler, assignedParams : array[Def]) : array[TestGroupDeployment]
     {
       mutable deployments = if (finalDeployment == null) [] else [finalDeployment];
 
@@ -939,7 +938,7 @@ namespace Tdl2Json
       when (initialDeployment != null && !NList.Contains(deployments, initialDeployment))
         deployments ::= initialDeployment;
 
-      def result = compiler.Compile(deployments);
+      def result = compiler.Compile(deployments, assignedParams);
       compiler.GetCompositeDeployment(scenarioDeployment.Name, result)
     }
 
