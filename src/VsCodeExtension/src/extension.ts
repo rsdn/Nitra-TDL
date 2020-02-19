@@ -21,215 +21,215 @@ const LanguageLoadedNotificationType = new NotificationType<SpanClassInfoNotific
 var SpanClassInfos = new Map<number, { decor: vscode.TextEditorDecorationType, color: string }>();
 
 export function activate(context: vscode.ExtensionContext): void {
-	log(`activate`);
-	tdlTaskProvider = vscode.tasks.registerTaskProvider(TdlTaskProvider.TdlType, new TdlTaskProvider());
-	activateLspServer(context);
+  log(`activate`);
+  tdlTaskProvider = vscode.tasks.registerTaskProvider(TdlTaskProvider.TdlType, new TdlTaskProvider());
+  activateLspServer(context);
 }
 
 export function deactivate(): Thenable<void> | undefined {
-	if (tdlTaskProvider)
-		tdlTaskProvider.dispose();
+  if (tdlTaskProvider)
+    tdlTaskProvider.dispose();
 
-	if (client)
-		return client.stop();
-	else
-		return undefined;
+  if (client)
+    return client.stop();
+  else
+    return undefined;
 }
 
-function ApplySpanInfos(note: HighlightingNotification) : void {
-	
-	let editor = vscode.window.activeTextEditor!;
-	let doc = editor.document;
-	if(!doc) return;
+function ApplySpanInfos(note: HighlightingNotification): void {
 
-	if(doc.fileName !== note.uri) return;
+  let editor = vscode.window.activeTextEditor!;
+  let doc = editor.document;
+  if (!doc) return;
 
-	let ranges = new Map<number, Range[]>();
+  if (doc.fileName !== note.uri) return;
 
-	note.spanInfos.forEach((v, i) => {
-		let start = doc!.positionAt(v.Span.StartPos);
-		let end = doc!.positionAt(v.Span.EndPos);
-		var range = new Range(start, end);
+  let ranges = new Map<number, Range[]>();
 
-		if (ranges.has(v.SpanClassId)) {
-			ranges.get(v.SpanClassId)!.push(range);
-		}
-		else {
-			ranges.set(v.SpanClassId, [range]);
-		}
-	});
+  note.spanInfos.forEach((v, i) => {
+    let start = doc!.positionAt(v.Span.StartPos);
+    let end = doc!.positionAt(v.Span.EndPos);
+    var range = new Range(start, end);
 
-	for (let key of ranges) {
-		let decor = SpanClassInfos.get(key[0])!;
-		if (!decor) {
-			let a = 0; a;
-		}
-		editor.setDecorations(decor.decor, []);
-		editor.setDecorations(decor.decor, key[1]);
-	}
+    if (ranges.has(v.SpanClassId)) {
+      ranges.get(v.SpanClassId)!.push(range);
+    }
+    else {
+      ranges.set(v.SpanClassId, [range]);
+    }
+  });
+
+  for (let key of ranges) {
+    let decor = SpanClassInfos.get(key[0])!;
+    if (!decor) {
+      let a = 0; a;
+    }
+    editor.setDecorations(decor.decor, []);
+    editor.setDecorations(decor.decor, key[1]);
+  }
 }
 
 function activateLspServer(context: vscode.ExtensionContext): void {
-	log(`activateLspServer`);
-	const nitraPath = getNitraPath();
+  log(`activateLspServer`);
+  const nitraPath = getNitraPath();
 
-	showMessage(`nitraPath=${nitraPath}`);
+  showMessage(`nitraPath=${nitraPath}`);
 
-	if (!nitraPath)
-		return;
+  if (!nitraPath)
+    return;
 
-	const tdlPath = getTdlPath();
+  const tdlPath = getTdlPath();
 
-	showMessage(`tdlPath=${tdlPath}`);
+  showMessage(`tdlPath=${tdlPath}`);
 
-	if (!tdlPath)
-		return;
+  if (!tdlPath)
+    return;
 
-	const lspServerPath = path.join(nitraPath, lspServerName);
-	const tdlDllPath = path.join(tdlPath, langDllName);
+  const lspServerPath = path.join(nitraPath, lspServerName);
+  const tdlDllPath = path.join(tdlPath, langDllName);
 
-	showMessage(`lspServerPath=${lspServerPath}`);
-	showMessage(`tdlDllPath=${tdlDllPath}`);
+  showMessage(`lspServerPath=${lspServerPath}`);
+  showMessage(`tdlDllPath=${tdlDllPath}`);
 
-	let serverOptions: ServerOptions = platform() === 'win32'
-		? { command: lspServerPath, args: ["-lsp"], options: { stdio: "pipe" } }
-		: { command: "mono", args: [lspServerPath, "-lsp"], options: { stdio: "pipe" } };
+  let serverOptions: ServerOptions = platform() === 'win32'
+    ? { command: lspServerPath, args: ["-lsp"], options: { stdio: "pipe" } }
+    : { command: "mono", args: [lspServerPath, "-lsp"], options: { stdio: "pipe" } };
 
-	// Options to control the language client
-	let clientOptions: LanguageClientOptions = {
-		documentSelector: [
-			{ scheme: 'file', language: 'tdl' },
-			{ scheme: 'untitled', language: 'tdl' }
-		],
-		synchronize:
-		{
+  // Options to control the language client
+  let clientOptions: LanguageClientOptions = {
+    documentSelector: [
+      { scheme: 'file', language: 'tdl' },
+      { scheme: 'untitled', language: 'tdl' }
+    ],
+    synchronize:
+    {
 
-			// Notify the server about file changes to '.clientrc files contained in the workspace
-			fileEvents: [
-				workspace.createFileSystemWatcher('**/*.tdl'),
-				workspace.createFileSystemWatcher('**/.clientrc')
-			]
-		},
-		initializationOptions: {
-			FileExtension: ".tdl",
-			Config: {
-				ProjectSupport: {
-					Caption: "TdlLang",
-					TypeFullName: "Tdl.ProjectSupport",
-					Path: tdlDllPath
-				},
-				Languages: [{
-					Name: "TdlLang",
-					Path: tdlDllPath,
-					DynamicExtensions: []
-				}],
-				References: [
-					"FullName:mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-					"FullName:System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-				]
-			},
-			References: []
-		}
-	};
+      // Notify the server about file changes to '.clientrc files contained in the workspace
+      fileEvents: [
+        workspace.createFileSystemWatcher('**/*.tdl'),
+        workspace.createFileSystemWatcher('**/.clientrc')
+      ]
+    },
+    initializationOptions: {
+      FileExtension: ".tdl",
+      Config: {
+        ProjectSupport: {
+          Caption: "TdlLang",
+          TypeFullName: "Tdl.ProjectSupport",
+          Path: tdlDllPath
+        },
+        Languages: [{
+          Name: "TdlLang",
+          Path: tdlDllPath,
+          DynamicExtensions: []
+        }],
+        References: [
+          "FullName:mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+          "FullName:System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+        ]
+      },
+      References: []
+    }
+  };
 
-	client = new LanguageClient(
-		'tdl',
-		'TDL Extension',
-		serverOptions,
-		clientOptions
-	);
+  client = new LanguageClient(
+    'tdl',
+    'TDL Extension',
+    serverOptions,
+    clientOptions
+  );
 
-	client.onReady().then(() => {
-		client.onNotification(KeywordHightightNotificationType, x => {
-			//showMessage("KeywordHightightNotificationType");
+  client.onReady().then(() => {
+    client.onNotification(KeywordHightightNotificationType, x => {
+      //showMessage("KeywordHightightNotificationType");
 
-			ApplySpanInfos(x);
+      ApplySpanInfos(x);
 
-		});
-		client.onNotification(SymbolHightightNotificationType, x => {
-			//showMessage("SymbolHightightNotificationType");
-			ApplySpanInfos(x);
-		});
+    });
+    client.onNotification(SymbolHightightNotificationType, x => {
+      //showMessage("SymbolHightightNotificationType");
+      ApplySpanInfos(x);
+    });
 
-		client.onNotification(LanguageLoadedNotificationType, x => {
-			//showMessage("LanguageLoadedNotificationType");
+    client.onNotification(LanguageLoadedNotificationType, x => {
+      //showMessage("LanguageLoadedNotificationType");
 
-			x.SpanClassInfo.reduce((k, v) => {
-				let col = v.ForegroundColor + 16777216;
-				let forecolor = '#' + ('00000' + (col | 0).toString(16)).substr(-6);
-				let decor = vscode.window.createTextEditorDecorationType({
-					isWholeLine: false
-					, color: forecolor
-				});
-				SpanClassInfos.set(v.Id, { decor: decor, color: forecolor });
-				return k;
-			});
+      x.SpanClassInfo.reduce((k, v) => {
+        let col = v.ForegroundColor + 16777216;
+        let forecolor = '#' + ('00000' + (col | 0).toString(16)).substr(-6);
+        let decor = vscode.window.createTextEditorDecorationType({
+          isWholeLine: false
+          , color: forecolor
+        });
+        SpanClassInfos.set(v.Id, { decor: decor, color: forecolor });
+        return k;
+      });
 
-		});
-	});
+    });
+  });
 
 
-	log(`--> client.start();`);
-	client.start();
+  log(`--> client.start();`);
+  client.start();
 
-	log(`<-- client.start();`);
+  log(`<-- client.start();`);
 }
 
 let _nitraPath: string | undefined;
 
 function getNitraPath(): string | undefined {
-	if (_nitraPath)
-		return _nitraPath;
+  if (_nitraPath)
+    return _nitraPath;
 
-	let nitraBinPath: string | undefined = process.env.NitraBinPath;
+  let nitraBinPath: string | undefined = process.env.NitraBinPath;
 
-	if (!nitraBinPath || !fs.existsSync(nitraBinPath)) {
-		const ext = vscode.extensions.getExtension('VladislavChistyakov.tdl')!;
-		const binPath = path.join(ext.extensionPath!, "bin");
-		if (!fs.existsSync(binPath)) {
-			showError(`The TDL extension cannot find a path to Nitra. Reinstall ${ExtentionName} or specify path to Nitra in NitraBinPath environment variable. NitraBinPath="${nitraBinPath}".`);
-			return undefined;
-		}
+  if (!nitraBinPath || !fs.existsSync(nitraBinPath)) {
+    const ext = vscode.extensions.getExtension('VladislavChistyakov.tdl')!;
+    const binPath = path.join(ext.extensionPath!, "bin");
+    if (!fs.existsSync(binPath)) {
+      showError(`The TDL extension cannot find a path to Nitra. Reinstall ${ExtentionName} or specify path to Nitra in NitraBinPath environment variable. NitraBinPath="${nitraBinPath}".`);
+      return undefined;
+    }
 
-		nitraBinPath = binPath;
-	}
+    nitraBinPath = binPath;
+  }
 
-	const lspServerPath = path.join(nitraBinPath, lspServerName);
+  const lspServerPath = path.join(nitraBinPath, lspServerName);
 
-	if (!fs.existsSync(nitraBinPath)) {
-		showError(`The "${nitraBinPath}" directory does not contain ${lspServerName} LSP Server. Reinstall the ${ExtentionName} or place the Nitra binary in the specified directory.`);
-		return undefined;
-	}
+  if (!fs.existsSync(nitraBinPath)) {
+    showError(`The "${nitraBinPath}" directory does not contain ${lspServerName} LSP Server. Reinstall the ${ExtentionName} or place the Nitra binary in the specified directory.`);
+    return undefined;
+  }
 
-	return _nitraPath = nitraBinPath;
+  return _nitraPath = nitraBinPath;
 }
 
 let _tdlPath: string | undefined;
 
 function getTdlPath(): string | undefined {
-	if (_tdlPath)
-		return _tdlPath;
+  if (_tdlPath)
+    return _tdlPath;
 
-	const nitraPath = getNitraPath();
+  const nitraPath = getNitraPath();
 
-	if (nitraPath) {
-		const langDllPath = path.join(nitraPath, langDllName);
+  if (nitraPath) {
+    const langDllPath = path.join(nitraPath, langDllName);
 
-		if (fs.existsSync(langDllPath))
-			return _tdlPath = nitraPath;
-	}
+    if (fs.existsSync(langDllPath))
+      return _tdlPath = nitraPath;
+  }
 
-	const langPath: string | undefined = process.env.TDL;
+  const langPath: string | undefined = process.env.TDL;
 
-	if (langPath && fs.existsSync(langPath)) {
-		const langDllPath = path.join(langPath, langDllName);
-		if (fs.existsSync(langDllPath))
-			return _tdlPath = langPath;
+  if (langPath && fs.existsSync(langPath)) {
+    const langDllPath = path.join(langPath, langDllName);
+    if (fs.existsSync(langDllPath))
+      return _tdlPath = langPath;
 
-		showError(`The ${langDllName} not found in "${langPath}". Reinstall the ${ExtentionName} or place ${langDllName} into the specified path.`);
-		return undefined;
-	}
+    showError(`The ${langDllName} not found in "${langPath}". Reinstall the ${ExtentionName} or place ${langDllName} into the specified path.`);
+    return undefined;
+  }
 
-	showError(`The ${langDllName} not found. Reinstall the ${ExtentionName} or set "TDL" environment variable to ${langDllName} location.`);
-	return undefined;
+  showError(`The ${langDllName} not found. Reinstall the ${ExtentionName} or set "TDL" environment variable to ${langDllName} location.`);
+  return undefined;
 }
