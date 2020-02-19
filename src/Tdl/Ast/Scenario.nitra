@@ -52,7 +52,7 @@ namespace Tdl
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
-        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context);
+        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScopeForScenarioDef(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context, Symbol.Defs);
 
         Actions.Scope                   = MethodConditionalScope.Value;
         Actions.InGenerator             = false;
@@ -67,7 +67,7 @@ namespace Tdl
         Symbol.Environments             = Environments.Environment;
 
         Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope);
-        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
+        Definitions.DefinitionScope     = context.GetScenarioParameterScope().HideWith(Symbol.Deployment.AggregateParametersScope);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
 
         FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
