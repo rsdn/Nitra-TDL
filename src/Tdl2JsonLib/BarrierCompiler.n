@@ -14,10 +14,10 @@ namespace Tdl2Json
 {
   class BarrierCompiler
   {
-    static _baseStableGuid : Guid = Guid.Parse("{BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB}");
+    static         _baseStableGuid : Guid = Guid.Parse("{BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB}");
+    static mutable _counter        : uint;
 
     _barrierMap : Hashtable[string, int * Guid] = Hashtable();
-    mutable _counter : uint;
 
     public ScanBarriers(scenarios : Seq[ScenarioSymbol]) : void
     {
