@@ -1,0 +1,46 @@
+suite Suite1
+{
+    platform acceptance_platforms;
+    product TheProduct;
+    Scenario1();
+}
+scenario Scenario1 =
+    from platform in [w10Rs5-x64]
+    select {
+        deployment Deployment2;
+        environments (platform, TheProduct);
+        sequence
+        {
+            method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck;
+        }
+        Area="SW_AntiCryptor;";
+        ExternalAutotestId=5055;
+        UniqueId=@"0398378c-ddc4-486f-82ab-5c580e072bd1";
+        TfsId=3226925;
+        Timeout= @"00:45:00";
+    };
+
+deployment Deployment2 = Deployment1(IncludeRegex: "", ExcludeRegex : @"Collections\\");
+
+deployment Deployment1(string IncludeRegex, string ExcludeRegex=@"")
+    script @"foo.cmd" 
+{
+    expected 42;
+}
+
+product TheProduct : ProductType
+{
+    Name = "TheProduct";
+    BranchName = "Main";
+    Version = "1.0";
+}
+
+product type ProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+platform w10Rs5-x64;
+platform acceptance_platforms;

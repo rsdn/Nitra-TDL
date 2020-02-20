@@ -20,14 +20,48 @@
         {
           "Deployment1": {
             "Area": "Dnt",
-            "CustomParameter": "test"
+            "CustomParameter": "test1"
           }
         }
       ]
+    },
+    "Deployment1-2": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deployment1": {
+            "Area": "test2",
+            "CustomParameter": "test2"
+          }
+        }
+      ]
+    },
+    "Deployment1-3": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deployment1": {
+            "Area": "test3",
+            "CustomParameter": "test3"
+          }
+        }
+      ]
+    },
+    "Deployment2": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "bar.cmd"
     }
   },
   "Platforms": {
-    "all_pc": {}
+    "all_pc": [
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ],
+    "w10rs4-x64": {},
+    "w10rs4-x86": {}
   },
   "Products": {
     "TheProduct": {
@@ -80,9 +114,214 @@
       "Timeout": "00:30:00",
       "UniqueId": "ef1f3579-2d04-4de6-a0b8-fa50d2602433"
     },
+    "Scenario2": {
+      "TestScenarios": [
+        "Scenario2-1",
+        "Scenario2-2",
+        "Scenario2-3",
+        "Scenario2-4",
+        "Scenario2-5",
+        "Scenario2-6",
+        "Scenario2-7",
+        "Scenario2-8"
+      ]
+    },
+    "Scenario2-1": {
+      "Area": "test2",
+      "Deployments": [
+        "Deployment1-2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x86"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb73-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "Scenario2-2": {
+      "Area": "test2",
+      "Deployments": [
+        "Deployment1-2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb74-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "Scenario2-3": {
+      "Area": "test2",
+      "Deployments": [
+        "Deployment2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x86"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb76-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "Scenario2-4": {
+      "Area": "test2",
+      "Deployments": [
+        "Deployment2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb79-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "Scenario2-5": {
+      "Area": "test3",
+      "Deployments": [
+        "Deployment1-3"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x86"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb7d-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "Scenario2-6": {
+      "Area": "test3",
+      "Deployments": [
+        "Deployment1-3"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb82-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "Scenario2-7": {
+      "Area": "test3",
+      "Deployments": [
+        "Deployment2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x86"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb88-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "Scenario2-8": {
+      "Area": "test3",
+      "Deployments": [
+        "Deployment2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb8f-5563-4882-9a33-86afe07eb6b5",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
     "Scenarios": {
       "TestScenarios": [
-        "Scenario1"
+        "Scenario1",
+        "Scenario2"
       ]
     }
   },
