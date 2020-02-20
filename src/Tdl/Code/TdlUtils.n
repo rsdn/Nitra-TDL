@@ -259,39 +259,9 @@ namespace Tdl
         unless (visited.Add(deployment.Id))
           continue;
 
-        match (deployment)
-        {
-          | s is Deployment.SelectSymbol =>
-            unless (s.IsParameterScopeEvaluated)
-              return false;
-            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-
-            unless (s.IsDeploymentsEvaluated)
-              return false;
-
-            foreach (seq in s.Deployments)
-              unless (CollectDeployments(visited, ref builder, seq))
-                return false;
-
-          | s is Deployment.SetSymbol =>
-            unless (s.IsDeploymentsEvaluated)
-              return false;
-
-            unless (CollectDeployments(visited, ref builder, s.Deployments))
-              return false;
-
-          | _ is Deployment.ScriptSymbol
-          | _ is Deployment.CodeSymbol
-          | _ is Deployment.CurryingSymbol =>
-            unless (deployment.IsAggregateParametersScopeEvaluated)
-              return false;
-            UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
-
-          | _ is Deployment.EmptySymbol
-          | _ is DeploymentRebootSymbol => ()
-          | null => assert(false, "Deployment can not be null.")
-          | _    => assert(false, "Not supported deployment type: " + deployment.GetType().Name)
-        }
+        unless (deployment.IsAggregateParametersScopeEvaluated)
+          return false;
+        UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
       }
       true
     }
