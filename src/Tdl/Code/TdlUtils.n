@@ -1488,8 +1488,7 @@ namespace Tdl
 
       match (deployment)
       {
-        | DeploymentSymbol as d when !d.IsAllDeploymentsEvaluated => return VNone();
-        | DeploymentSymbol as d => deployments.AddRange(d.AllDeployments);
+        | DeploymentSymbol as d => deployments.Add(d);
         | VarSymbol as v =>
           foreach (from in froms)
           foreach (var when v.Id == var.Id in from.Vars with i)
@@ -1497,8 +1496,7 @@ namespace Tdl
             def list = from.Elems.GetExprListForVar(i);
             foreach (x in list)
             {
-              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAllDeploymentsEvaluated => return VNone();
-              | Reference(Symbol=DeploymentSymbol as d) => deployments.AddRange(d.AllDeployments);
+              | Reference(Symbol=DeploymentSymbol as d) => deployments.Add(d);
               | _ => ()
             }
             break;
