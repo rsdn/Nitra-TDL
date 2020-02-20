@@ -1,4 +1,4 @@
-﻿scenario Scenario1
+scenario Scenario1
 {
     deployment Deployment1;
     environments (all_pc, TheProduct);
@@ -10,7 +10,7 @@
     RevertAgentAfter = true;
     Timeout = "00:30:00";
     Area = "Dnt";
-    CustomParameter = "";
+    CustomParameter = "test1";
     TfsId = 1075083;
 }
 
