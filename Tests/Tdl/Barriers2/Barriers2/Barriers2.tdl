@@ -1,0 +1,69 @@
+suite Suite1
+{
+    platform acceptance_platforms;
+    product TheProduct;
+    ParallelScenarios();
+}
+
+parallel scenario ParallelScenarios = 
+  Scenario1,
+  Scenario2;
+  
+scenario Scenario1
+{
+        deployment Deployment2;
+        environments (w10Rs5-x64, TheProduct);
+        sequence
+        {
+            method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount;
+            barrier GetOrCreateBarrier("AntiCryptorBlockCryptorActions-1-" + w10Rs5-x64, "00:41:00");
+            barrier GetOrCreateBarrier("AntiCryptorBlockCryptorActions-2-" + w10Rs5-x64, "00:42:00");
+        }
+        Area="SW_AntiCryptor;";
+        ExternalAutotestId=5055;
+        UniqueId=@"0398378c-ddc4-486f-82ab-5c580e072bd1";
+        TfsId=3226925;
+        Timeout= @"00:45:00";
+}
+
+scenario Scenario2
+{
+    deployment Deployment2;
+    environments (w10Rs5-x64, TheProduct);
+    sequence
+    {
+        barrier GetOrCreateBarrier("AntiCryptorBlockCryptorActions-1-" + w10Rs5-x64, "00:43:00");
+        method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice;
+        barrier GetOrCreateBarrier("AntiCryptorBlockCryptorActions-2-" + w10Rs5-x64, "00:44:00");
+    }
+    Area="SW_AntiCryptor;";
+    ExternalAutotestId=5055;
+    UniqueId=@"0398378c-ddc4-486f-82ab-5c580e072bd0";
+    TfsId=3226925;
+    Timeout= @"00:45:00";
+}
+
+deployment Deployment2 = Deployment1(IncludeRegex: "", ExcludeRegex : @"Collections\\");
+
+deployment Deployment1(string IncludeRegex, string ExcludeRegex=@"")
+    script @"foo.cmd" 
+{
+    expected 42;
+}
+
+product TheProduct : ProductType
+{
+    Name = "TheProduct";
+    BranchName = "Main";
+    Version = "1.0";
+}
+
+product type ProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+platform w10Rs5-x64;
+platform acceptance_platforms;
