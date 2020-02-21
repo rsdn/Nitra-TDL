@@ -36,7 +36,6 @@ namespace Tdl
           in Actions        : ImmutableArray[ScenarioAction];
           in Deployment     : DeploymentSymbol;
           in Environments   : ImmutableArray[Environment];
-          in ParallelSetOpt : Scenario.SetSymbol;
         stage 3:
           in Defs           : ImmutableArray[Def];
           in Filter         : object;
@@ -99,8 +98,6 @@ namespace Tdl
         stage 1:
           in Scenarios      : ImmutableArray[ScenarioSymbol];
           in IsMultiMachine : bool;
-          in MultiMachineId : Guid;
-          in BarriersCount  : list[BarrierSymbol * int];
 
           Kind           = "scenario set";
           SpanClass      = TdlLang.ScenarioSpanClass;
@@ -113,7 +110,6 @@ namespace Tdl
         Scenarios.Scope                 = Scope;
         Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios, context);
-        Symbol.MultiMachineId           = if (Symbol.IsMultiMachine) context.NewGuid() else Guid.Empty;
         Symbol.IsMultiMachine           = IsMultiMachine.HasValue && IsMultiMachine.Value;
 
         ThisTriggerPaths                = TdlUtils.GetTriggerPaths(Attributes, context);

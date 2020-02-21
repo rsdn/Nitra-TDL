@@ -335,7 +335,6 @@ namespace Tdl
                                      .SelectMany(mms => mms.Scenarios.Select(s => (mms, s)))
                                      .GroupBy((_, s) => s);
 
-      // Данная проверка нужна так как в текущем API Hive-а нельзя включать сценарий в несколько многомашинных сценариев.
       foreach (group when group.Count() > 1 in groups)
       {
         def scenario = group.Key;
@@ -360,28 +359,6 @@ namespace Tdl
             }
           }
         }
-      }
-
-      foreach (set in scenarioSets)
-      {
-        def scenarios        = TdlUtils.GetSetScenarios(set);
-        def barriersCountMap = Dictionary();
-        foreach (scenario in scenarios)
-        {
-          scenario.ParallelSetOpt = set;
-
-          // Claculate count of barrier usages.
-          def inc(barrier : BarrierSymbol) : void
-          {
-            mutable value;
-            _ = barriersCountMap.TryGetValue(barrier, out value);
-            barriersCountMap[barrier] = value + 1;
-          }
-          when (scenario.IsActionsEvaluated)
-            foreach (b is ScenarioAction.Barrier in scenario.Actions)
-              inc(b.barrier);
-        }
-        set.BarriersCount = barriersCountMap.Map(x => (x.Key, x.Value));
       }
     }
 

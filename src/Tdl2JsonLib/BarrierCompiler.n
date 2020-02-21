@@ -18,6 +18,7 @@ namespace Tdl2Json
     static mutable _counter        : uint;
 
     _barrierMap : Hashtable[string, int * Guid] = Hashtable();
+    public MultiMachineId : Guid = Api.IncrementGuid(_baseStableGuid, { _counter++; _counter });
 
     public ScanBarriers(scenarios : Seq[ScenarioSymbol]) : void
     {
