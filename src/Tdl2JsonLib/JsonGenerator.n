@@ -217,17 +217,7 @@ namespace Tdl2Json
       def platformNameSet = HashSet(platforms.Select(p => p.Key), StringComparer.InvariantCultureIgnoreCase);
 
 
-      def barrierCompilerMap = Hashtable();
-
-      foreach (Tdl.Scenario.SetSymbol(IsIsMultiMachineEvaluated=true, IsMultiMachine=true) as set in symbols)
-      {
-        def barrierCompiler = BarrierCompiler();
-        def selfId          = set.Id;
-        def scenarios       = set.AllScenarios.Where(x => x.Id != selfId).ToArray();
-        barrierCompiler.ScanBarriers(scenarios);
-        foreach (scenario in scenarios)
-          barrierCompilerMap[scenario] = barrierCompiler;
-      }
+      def barrierCompilerMap = PrepareBarrierCompilerMap(symbols);
 
       foreach (symbol in symbols)
       {
@@ -283,6 +273,23 @@ namespace Tdl2Json
       output.Value.Flush();
 
       ReportElapsedTime(stopwatch);
+    }
+
+    private PrepareBarrierCompilerMap(symbols : List[DeclarationSymbol]) : Hashtable[ScenarioSymbol, BarrierCompiler]
+    {
+      def barrierCompilerMap = Hashtable();
+
+      foreach (Tdl.Scenario.SetSymbol(IsIsMultiMachineEvaluated=true, IsMultiMachine=true) as set in symbols)
+      {
+        def barrierCompiler = BarrierCompiler();
+        def selfId          = set.Id;
+        def scenarios       = set.AllScenarios.Where(x => x.Id != selfId).ToArray();
+        barrierCompiler.ScanBarriers(scenarios);
+        foreach (scenario in scenarios)
+          barrierCompilerMap[scenario] = barrierCompiler;
+      }
+
+      barrierCompilerMap
     }
 
     private GeneratePlatform(platformSymbol : PlatformSymbol) : PlatformValue
@@ -625,6 +632,7 @@ namespace Tdl2Json
           UniqueId                = uniqueId;
           ProductGroupName        = getString("ProductGroupName");
           FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase, dic);
+          MultiMachineId          =  if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
         };
 
       testGroup
@@ -677,7 +685,6 @@ namespace Tdl2Json
         | Tdl.Scenario.DefSymbol as r =>
           def defs = r.Defs.ToHashtable(x => x.Symbol.Name, x => x.Expr);
           def defs = defs;
-          def parallelSetOpt = if (r.IsParallelSetOptEvaluated) r.ParallelSetOpt else null;
           def getString(name : string) : string
           {
             defs.Get(name).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
@@ -869,9 +876,7 @@ namespace Tdl2Json
                 ArtifactsCollectionTimeout = artifactsCollectionTimeout;
               }
           }
-
           def assignedParams = r.Defs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
-
           def testGroup =
             TestGroup() <-
             {
@@ -893,7 +898,7 @@ namespace Tdl2Json
                 UniqueId                = getGuid  ("UniqueId");
                 ProductGroupName        = getString("ProductGroupName");
                 FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
-                MultiMachineId          = if (parallelSetOpt == null) null else parallelSetOpt.MultiMachineId;
+                MultiMachineId          =  if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
             };
           addTestCase(scenarioSymbol.Name, testGroup);
 
