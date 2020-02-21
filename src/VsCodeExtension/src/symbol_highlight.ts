@@ -19,8 +19,8 @@ export function SubscribeToSymbolHighlightNotyfications(client: LanguageClient) 
         let col = v.ForegroundColor + 16777216;
         let forecolor = '#' + ('00000' + (col | 0).toString(16)).substr(-6);
         let decor = vscode.window.createTextEditorDecorationType({
-          isWholeLine: false
-          , color: forecolor
+            isWholeLine: false
+          , color      : forecolor
         });
         SpanClassInfos.set(v.Id, { decor: decor, color: forecolor });
         return k;

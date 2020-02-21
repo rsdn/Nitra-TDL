@@ -47,7 +47,7 @@ function activateLspServer(context: vscode.ExtensionContext): void {
     return;
 
   const lspServerPath = path.join(nitraPath, lspServerName);
-  const tdlDllPath = path.join(tdlPath, langDllName);
+  const tdlDllPath    = path.join(tdlPath, langDllName);
 
   showMessage(`lspServerPath=${lspServerPath}`);
   showMessage(`tdlDllPath=${tdlDllPath}`);
