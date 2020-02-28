@@ -114,7 +114,7 @@ namespace Tdl
 
     public GetCommandParameterValuesScope(this _context : DependentPropertyEvalContext, scope : Scope, stepNumber : int) : Scope
     {
-      FilteringScope(scope,
+      scope.FilterWith(
         fun (_)
         {
           | CommmandCallOutputArgumentSymbol as s => s.IsStepNumberEvaluated && s.StepNumber < stepNumber
@@ -573,7 +573,7 @@ namespace Tdl
 
         true
       }
-      FilteringScope(scope, predicate)
+      scope.FilterWith(predicate)
     }
 
     public FilterDeployment(defs : ImmutableArray[Def]) : List[DeploymentSymbol]
@@ -612,7 +612,7 @@ namespace Tdl
             true
           }
         }
-        VSome(FilteringScope(scope, isInternedSymbol))
+        VSome(scope.FilterWith(isInternedSymbol))
       }
       else
         VNone()
@@ -634,8 +634,7 @@ namespace Tdl
         | _                => false
       }
 
-      def filteringScope = FilteringScope(scope, filter);
-      filteringScope
+      scope.FilterWith(filter)
     }
 
     public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def], _dependency : object = null) : void
@@ -652,7 +651,7 @@ namespace Tdl
       try
       {
         def definedParameters = HashSet();
-        foreach (s in productScope.AllSymbols)
+        foreach (s in productScope.GetAllSymbols())
           _ = definedParameters.Add(s.NameId);
         foreach (d in suiteDefs)
           _ = definedParameters.Add(d.Symbol.NameId);
@@ -668,7 +667,7 @@ namespace Tdl
             when (scenaro.IsAggregateParametersScopeEvaluated)
             {
               def scenarioScope = scenaro.AggregateParametersScope;
-              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
+              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.GetAllSymbols())
               {
                 when (definedParameters.Contains(parameter.NameId)
                    || parameter.HasDefault()
@@ -1121,7 +1120,7 @@ namespace Tdl
               | Reference(Symbol=ProductSymbol as symbol) => symbol
               | _ => null
             }
-            return list.Select(toSymbol).Where(_ == null).SelectMany(getAllProducts);
+            return list.Select(toSymbol).Where(_ != null).SelectMany(getAllProducts);
           }
           []
         | _ => assert(false);
@@ -1440,7 +1439,7 @@ namespace Tdl
       {
         !assignedParams.Contains(symbol.Name)
       }
-      FilteringScope(builder.ToScope(), filter)
+      builder.ToScope().FilterWith(filter)
     }
 
     public MakeAggregateParametersScopeForScenarioGenerator(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
@@ -1483,7 +1482,7 @@ namespace Tdl
         {
           !assignedParams.Contains(symbol.Name)
         }
-        VSome(FilteringScope(scope, filter))
+        VSome(scope.FilterWith(filter))
       }
       else
         result
@@ -1878,7 +1877,7 @@ namespace Tdl
       {
         symbol is Tdl.VarSymbol || symbol is Tdl.ProductSymbol
       }
-      FilteringScope(scope, filter)
+      scope.FilterWith(filter)
     }
 
     public ScenarioMakeHint(symbolCache : ISymbolCache, symbol : Scenario.DefSymbol) : string
