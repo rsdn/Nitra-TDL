@@ -614,7 +614,7 @@ namespace Tdl
             true
           }
         }
-        VSome(scope.FilterWith(isInternedSymbol).Memoize())
+        VSome(scope.Memoize().FilterWith(isInternedSymbol))
       }
       else
         VNone()
