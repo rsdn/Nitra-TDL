@@ -423,7 +423,7 @@ namespace Tdl
     public MakeDefinitions(definitions : IAstList[Definition], context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]], isIgnore : string -> bool = null) : ImmutableArray[Def]
     {
       def builder         = ImmutableArray.CreateBuilder(definitions.Count);
-      def existsDefsNames = HashSet(builder.Capacity);
+      def existsDefsNames = HashSet();
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
       {
         def sym = definition.SymbolRef.Symbol;
@@ -1475,7 +1475,7 @@ namespace Tdl
 
     private FilterOutAssignedParameters(scope : Scope, defs : ImmutableArray[Tdl.Def]) : Scope
     {
-      def assignedParams = HashSet(defs.Length);
+      def assignedParams = HashSet();
       foreach (d in defs)
         _ = assignedParams.Add(GetCaseInsensitiveId(d.Symbol));
 
