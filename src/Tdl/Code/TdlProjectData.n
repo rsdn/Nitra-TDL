@@ -28,8 +28,8 @@ namespace Tdl
       ExternalSymbolTable           = externalSymbol.MemberTable;
       MethodScopeFactory            = MethodScopeFactoryImpl;
       IsTestMode                    = isTestMode;
-      CommandScopeFactory           = fun (scope) { FilteringScope(scope, symbol => GetCommandSymbolKind(symbol) == CommandSymbolKind.NamespaceOrCommand) }
-      CommandParametersScopeFactory = fun (scope) { FilteringScope(scope, symbol => (GetCommandSymbolKind(symbol) & CommandSymbolKind.InputOrOutput) != 0) }
+      CommandScopeFactory           = fun (scope) { scope.FilterWith(symbol => GetCommandSymbolKind(symbol) == CommandSymbolKind.NamespaceOrCommand) }
+      CommandParametersScopeFactory = fun (scope) { scope.FilterWith(symbol => (GetCommandSymbolKind(symbol) & CommandSymbolKind.InputOrOutput) != 0) }
       BaseProductType               = baseProductType;
       PlatformType                  = platformType;
       DeploymentType                = deploymentType;
@@ -111,8 +111,7 @@ namespace Tdl
         result
       }
 
-      def filteringScope = FilteringScope(scope, filter);
-      filteringScope
+      scope.FilterWith(filter)
     }
 
     [Memoize]
