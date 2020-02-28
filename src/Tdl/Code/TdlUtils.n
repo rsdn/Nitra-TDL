@@ -2,6 +2,7 @@
 using DotNet.AstUtils;
 
 using Nitra;
+using Nitra.Internal;
 using Nitra.Declarations;
 using Nitra.ProjectSystem;
 using Nitra.Runtime.GraphUtils;
@@ -114,7 +115,7 @@ namespace Tdl
 
     public GetCommandParameterValuesScope(this _context : DependentPropertyEvalContext, scope : Scope, stepNumber : int) : Scope
     {
-      FilteringScope(scope,
+      scope.FilterWith(
         fun (_)
         {
           | CommmandCallOutputArgumentSymbol as s => s.IsStepNumberEvaluated && s.StepNumber < stepNumber
@@ -354,7 +355,7 @@ namespace Tdl
         | Error                   => ()
         | SimpleEscape       as x =>
           def text = x.Source.Text;
-          _ = builder.Append(Nitra.Internal.DotUtils.EscapeSequence(text[x.Span.StartPos + 1]));
+          _ = builder.Append(DotUtils.EscapeSequence(text[x.Span.StartPos + 1]));
 
         | UnicodeEscape      as x
         | HexadecimalEscape  as x =>
@@ -421,7 +422,8 @@ namespace Tdl
 
     public MakeDefinitions(definitions : IAstList[Definition], context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]], isIgnore : string -> bool = null) : ImmutableArray[Def]
     {
-      def builder = ImmutableArray.CreateBuilder(definitions.Count);
+      def builder         = ImmutableArray.CreateBuilder(definitions.Count);
+      def existsDefsNames = HashSet(builder.Capacity);
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
       {
         def sym = definition.SymbolRef.Symbol;
@@ -455,11 +457,11 @@ namespace Tdl
         }
 
         builder.Add(Def(sym, definition.Expr.Result));
+        _ = existsDefsNames.Add(GetCaseInsensitiveId(sym));
       }
 
-      def existsDefsNames = HashSet(builder.Select(x => x.Symbol.Name), StringComparer.InvariantCultureIgnoreCase);
-      foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr), Name=name) as field when !existsDefsNames.Contains(name) in type.Scope.GetAllSymbols())
-        when (isIgnore == null || !isIgnore(name))
+      foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr)) as field when !existsDefsNames.Contains(GetCaseInsensitiveId(field)) in type.Scope.GetAllSymbols())
+        when (isIgnore == null || !isIgnore(field.Name))
           builder.Add(Def(field, expr));
 
       builder.TryMoveToImmutable()
@@ -573,7 +575,7 @@ namespace Tdl
 
         true
       }
-      FilteringScope(scope, predicate)
+      scope.FilterWith(predicate)
     }
 
     public FilterDeployment(defs : ImmutableArray[Def]) : List[DeploymentSymbol]
@@ -612,7 +614,7 @@ namespace Tdl
             true
           }
         }
-        VSome(FilteringScope(scope, isInternedSymbol))
+        VSome(scope.FilterWith(isInternedSymbol).Memoize())
       }
       else
         VNone()
@@ -634,8 +636,7 @@ namespace Tdl
         | _                => false
       }
 
-      def filteringScope = FilteringScope(scope, filter);
-      filteringScope
+      scope.FilterWith(filter)
     }
 
     public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def], _dependency : object = null) : void
@@ -652,7 +653,7 @@ namespace Tdl
       try
       {
         def definedParameters = HashSet();
-        foreach (s in productScope.AllSymbols)
+        foreach (s in productScope.GetAllSymbols())
           _ = definedParameters.Add(s.NameId);
         foreach (d in suiteDefs)
           _ = definedParameters.Add(d.Symbol.NameId);
@@ -668,7 +669,7 @@ namespace Tdl
             when (scenaro.IsAggregateParametersScopeEvaluated)
             {
               def scenarioScope = scenaro.AggregateParametersScope;
-              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
+              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.GetAllSymbols())
               {
                 when (definedParameters.Contains(parameter.NameId)
                    || parameter.HasDefault()
@@ -1121,7 +1122,7 @@ namespace Tdl
               | Reference(Symbol=ProductSymbol as symbol) => symbol
               | _ => null
             }
-            return list.Select(toSymbol).Where(_ == null).SelectMany(getAllProducts);
+            return list.Select(toSymbol).Where(_ != null).SelectMany(getAllProducts);
           }
           []
         | _ => assert(false);
@@ -1432,15 +1433,7 @@ namespace Tdl
       UnionScopeBuilder.Add(parametersScope, ref builder);
       UnionScopeBuilder.Add(deploymentScope, ref builder);
       AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-
-      def assignedParams = HashSet(StringComparer.InvariantCultureIgnoreCase);
-      foreach (d in defs)
-        _ = assignedParams.Add(d.Symbol.Name);
-      def filter(symbol : DeclarationSymbol) : bool
-      {
-        !assignedParams.Contains(symbol.Name)
-      }
-      FilteringScope(builder.ToScope(), filter)
+      FilterOutAssignedParameters(builder.ToScope(), defs)
     }
 
     public MakeAggregateParametersScopeForScenarioGenerator(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
@@ -1475,18 +1468,20 @@ namespace Tdl
       }
       def result = MakeAggregateParametersScope(deployments, parametersScope);
       if (result is VSome(scope))
-      {
-        def assignedParams = HashSet(StringComparer.InvariantCultureIgnoreCase);
-        foreach (d in defs)
-          _ = assignedParams.Add(d.Symbol.Name);
-        def filter(symbol : DeclarationSymbol) : bool
-        {
-          !assignedParams.Contains(symbol.Name)
-        }
-        VSome(FilteringScope(scope, filter))
-      }
+        VSome(FilterOutAssignedParameters(scope, defs))
       else
         result
+    }
+
+    private FilterOutAssignedParameters(scope : Scope, defs : ImmutableArray[Tdl.Def]) : Scope
+    {
+      def assignedParams = HashSet(defs.Length);
+      foreach (d in defs)
+        _ = assignedParams.Add(GetCaseInsensitiveId(d.Symbol));
+
+      scope
+        .FilterWith(symbol => !assignedParams.Contains(GetCaseInsensitiveId(symbol)))
+        .Memoize()
     }
 
     //public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
@@ -1805,6 +1800,7 @@ namespace Tdl
       match (list)
       {
         | Expr.Reference(Symbol=Product.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
+        | Expr.Reference(Symbol=Platform.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
         | _ => context.ConstructType("System.Collections.Generic.IEnumerable", type)
       }
     }
@@ -1877,7 +1873,7 @@ namespace Tdl
       {
         symbol is Tdl.VarSymbol || symbol is Tdl.ProductSymbol
       }
-      FilteringScope(scope, filter)
+      scope.FilterWith(filter)
     }
 
     public ScenarioMakeHint(symbolCache : ISymbolCache, symbol : Scenario.DefSymbol) : string
@@ -2138,6 +2134,11 @@ namespace Tdl
       }
 
       //ScenarioAction.Barrier(BarrierExpr.Location, null)
+    }
+
+    private GetCaseInsensitiveId(symbol : DeclarationSymbol) : int
+    {
+      StringIndex.GetCaseInsensitivePart(symbol.NameId)
     }
   } // module
 } // namespace
