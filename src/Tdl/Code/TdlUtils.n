@@ -1805,6 +1805,7 @@ namespace Tdl
       match (list)
       {
         | Expr.Reference(Symbol=Product.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
+        | Expr.Reference(Symbol=Platform.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
         | _ => context.ConstructType("System.Collections.Generic.IEnumerable", type)
       }
     }
