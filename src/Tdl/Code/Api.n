@@ -181,10 +181,11 @@ namespace Tdl
                 | (value, ResultKind.Value)   => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));
                 | (_,     ResultKind.NotSet)  => valueParts.Add(null);
                 | (value, ResultKind.ExternalParameter) => erroneousParameters.Add((p, ResultKind.ExternalParameter, value));
-                | (value, ResultKind.Error as kind)
+                | (value, ResultKind.Error           as kind)
                 | (value, ResultKind.GlobalParameter as kind)
-                | (value, ResultKind.Product as kind)
-                | (value, ResultKind.External as kind) => erroneousParameters.Add((p, kind, value));
+                | (value, ResultKind.Product         as kind)
+                | (value, ResultKind.VmCapability    as kind)
+                | (value, ResultKind.External        as kind) => erroneousParameters.Add((p, kind, value));
               }
             }
             else

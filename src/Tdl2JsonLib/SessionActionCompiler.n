@@ -145,6 +145,7 @@ namespace Tdl2Json
           | (value, ResultKind.ExternalParameter) => "#(" + value + ")"
           | (value, ResultKind.GlobalParameter)   => "$(" + value + ")"
           | (value, ResultKind.Product)           => value
+          | (value, ResultKind.VmCapability)      => value
           | (value, ResultKind.Error)             => throw NotSupportedException("An error has occurred when calculating '$expression': " + value)
           | (_,     ResultKind.External)          => throw NotSupportedException("Reference to externals root symbol is not allowed.")
         }
