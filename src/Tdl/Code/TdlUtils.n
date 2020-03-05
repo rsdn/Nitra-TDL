@@ -2071,7 +2071,7 @@ namespace Tdl
     {
       match (barrierExpr)
       {
-        | Expr.SimpleName as n when !n.IsRefEvaluated => VNone()
+        | Expr.SimpleName as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => VNone()
         | Expr.SimpleName(Ref=Ref(IsSymbolEvaluated =true, Symbol=symbol)) =>
           if (symbol is BarrierSymbol as b)
             VSome(ScenarioAction.Barrier(barrierExpr.Location, b))
