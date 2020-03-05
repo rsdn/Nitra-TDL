@@ -312,6 +312,9 @@ namespace QuickType
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string LocalTestBinariesFolder { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> Capabilities { get; set; }
     }
 
     public partial class EnvironmentElement

@@ -179,6 +179,9 @@
     <Compile Include="Ast\DeploymentScriptContent.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\VmCapability.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\CommandSymbolKind.n">
       <SubType>Code</SubType>
     </Compile>
