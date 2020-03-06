@@ -196,12 +196,13 @@ namespace Tdl2Json
         else
           DefaultScenarioTrigger.Instance;
 
-      def platforms   = SortedDictionary();
-      def products    = SortedDictionary();
-      def entities    = SortedDictionary();
-      def suites      = SortedDictionary();
-      def suiteGroups = SortedDictionary();
-      def scenarios   = SortedDictionary();
+      def platforms      = SortedDictionary();
+      def products       = SortedDictionary();
+      def entities       = SortedDictionary();
+      def suites         = SortedDictionary();
+      def suiteGroups    = SortedDictionary();
+      def scenarios      = SortedDictionary();
+      def vmCapabilities = SortedDictionary();
 
       foreach (s is PlatformSymbol in symbols)
         platforms.AddEx(s.Name, GeneratePlatform(s), "platforms");
@@ -221,10 +222,17 @@ namespace Tdl2Json
         | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
           GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s))
 
+        | VmCapabilitySymbol   as s when !(s.Value is Tdl.Expr.NotSet) =>
+          def value = s.Value.ToObject();
+          vmCapabilities.AddEx(s.Name, value, "vmCapabilities");
+
         | _ => ()
       }
 
       def defaultValues = SortedDictionary();
+      when (vmCapabilities.Count > 0)
+        defaultValues.AddEx("Capabilities", vmCapabilities, "defaultValues");
+
       foreach (f is FieldSymbol in context.ExternalSymbols.GetAllSymbols())
       {
         when (f.Value is VSome(v))
@@ -391,10 +399,30 @@ namespace Tdl2Json
       g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
     }
 
+    private SplitScenarioDefs(defs : ImmutableArray[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : Hashtable[string, Tdl.Expr] * SortedDictionary[string, object]
+    {
+      def defTable       = Hashtable();
+      def vmCapabilities = SortedDictionary();
+      foreach (d in defs)
+      {
+        def key = d.Symbol.Name;
+        if (d.Symbol is VmCapabilitySymbol)
+        {
+          def value = d.Expr.ToObject(variables=variables);
+          vmCapabilities.AddEx(key, value, "vmCapabilities");
+        }
+        else
+          defTable.AddEx(key, d.Expr, "defs");
+      }
+      (defTable, vmCapabilities)
+    }
+    
     private GenerateTestGroup(g : Tdl.Scenario.GeneratorSymbol, uniqueId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
       initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler,
       barrierCompilerOpt : option[BarrierCompiler]) : TestGroup
     {
+      def (defs, vmCapabilities) = SplitScenarioDefs(g.Defs, dic);
+
       def getString(name : string) : string
       {
         def getValue(expr : Tdl.Expr) : string
@@ -404,7 +432,7 @@ namespace Tdl2Json
           | Reference(Symbol=FieldSymbol(DeclaredIn=ExternalSymbol) as fld) => $"#($(fld.Name))"
           | _ => throw NotSupportedException($"$expr ($(expr.GetType().Name))")
         }
-        g.Defs.Find(d => d.Symbol.Name == name).Map(d => getValue(d.Expr)).WithDefault(null);
+        defs.Get(name).Map(getValue).WithDefault(null);
       }
       def getBool(name : string) : bool?
       {
@@ -415,7 +443,7 @@ namespace Tdl2Json
               | Reference(Symbol=VarSymbol as v) => getValue(dic[v])
               | _              => throw NotSupportedException($"$expr ($(expr.GetType().Name))")
         }
-        g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(getValue).WithDefault(null);
+        defs.Get(name).Map(getValue).WithDefault(null);
       }
       def getLong(name : string) : long?
       {
@@ -425,7 +453,7 @@ namespace Tdl2Json
             | Reference(Symbol=VarSymbol as v) => getValue(dic[v])
             | _ => throw NotSupportedException($"$expr ($(expr.GetType().Name))")
           }
-          g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(getValue).WithDefault(null);
+          defs.Get(name).Map(getValue).WithDefault(null);
       }
       def getInt(name : string) : int?
       {
@@ -435,7 +463,7 @@ namespace Tdl2Json
             | Reference(Symbol=VarSymbol as v) => getValue(dic[v])
             | _ => throw NotSupportedException($"$expr ($(expr.GetType().Name))")
           }
-          g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(getValue).WithDefault(null);
+          defs.Get(name).Map(getValue).WithDefault(null);
       }
       def deployment = Api.TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
       def platform   = Api.TryResolveVar(dic, g.Platform)   : PlatformSymbol;
@@ -623,7 +651,8 @@ namespace Tdl2Json
           UniqueId                = uniqueId;
           ProductGroupName        = getString("ProductGroupName");
           FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase, dic);
-          MultiMachineId          =  if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
+          MultiMachineId          = if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
+          Capabilities            = if (vmCapabilities.Count > 0) vmCapabilities else null;
         };
 
       testGroup
@@ -674,8 +703,8 @@ namespace Tdl2Json
       {
         | Tdl.Scenario.SetSymbol as s => addTestCase(scenarioSymbol.Name, TestGroup() <- { TestScenarios = GetScenarioList(s.Scenarios, scenarioTrigger) });
         | Tdl.Scenario.DefSymbol as r =>
-          def defs = r.Defs.ToHashtable(x => x.Symbol.Name, x => x.Expr);
-          def defs = defs;
+          def (defs, vmCapabilities) = SplitScenarioDefs(r.Defs, null);
+
           def getString(name : string) : string
           {
             defs.Get(name).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
@@ -889,7 +918,8 @@ namespace Tdl2Json
                 UniqueId                = getGuid  ("UniqueId");
                 ProductGroupName        = getString("ProductGroupName");
                 FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
-                MultiMachineId          =  if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
+                MultiMachineId          = if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
+                Capabilities            = if (vmCapabilities.Count > 0) vmCapabilities else null;
             };
           addTestCase(scenarioSymbol.Name, testGroup);
 

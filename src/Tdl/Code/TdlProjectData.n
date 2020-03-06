@@ -21,7 +21,8 @@ namespace Tdl
     public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, entityFieldsScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol, isTestMode : bool, baseProductType : ProductTypeSymbol, platformType : PlatformTypeSymbol, deploymentType : DeploymentTypeSymbol)
     {
       base(backEnd, context, rootNamespace);
-      ScenarioParameterScope        = scenarioParameterScope;
+      VmCapabilityScope             = rootNamespace.MemberTable.FilterWith(_ is VmCapabilitySymbol);
+      ScenarioParameterScope        = VmCapabilityScope.HideWith(scenarioParameterScope);
       EntityFieldsScope             = entityFieldsScope;
       RequiredScenarioParameters    = requiredScenarioParameters;
       ExternalSymbol                = externalSymbol;
@@ -35,7 +36,8 @@ namespace Tdl
       DeploymentType                = deploymentType;
     }
 
-    public ScenarioParameterScope        : TableScope                            { get; }
+    public VmCapabilityScope             : Scope                                 { get; }
+    public ScenarioParameterScope        : Scope                                 { get; }
     public EntityFieldsScope             : TableScope                            { get; }
     public RequiredScenarioParameters    : ImmutableArray[FormalParameterSymbol] { get; }
     public ExternalSymbolTable           : TableScope                            { get; }

@@ -154,6 +154,15 @@ namespace Tdl
     | External -> External { Name = Name(Location.WithSpan(KwExternal.FromStart()), "external"); ExternalBody.Fields -> Fields; }
     | Barrier  -> Barrier  { Name -> Name; Timeout -> Timeout; }
     | Entity   -> Entity   { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
+    | VmCapability -> VmCapability
+      {
+        Name -> Name;
+        match (DefExprOpt)
+        {
+          | Some((_, e)) -> Some(e)
+          | None -> None()
+        } -> Value;
+      }
   }
 
   map syntax Grammar.DeploymentModifier -> DeploymentModifier

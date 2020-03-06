@@ -26,6 +26,7 @@ namespace Tdl2Json
         | (value, ResultKind.ExternalParameter) => "#(" + value + ")"
         | (value, ResultKind.GlobalParameter)   => "$(" + value + ")"
         | (value, ResultKind.Product)           => value
+        | (value, ResultKind.VmCapability)      => value
         | (value, ResultKind.Error)             => throw NotSupportedException("An error has occurred when calculating '$expression': " + value)
         | (_,     ResultKind.External)          => throw NotSupportedException("Reference to externals root symbol is not allowed.")
       }
@@ -49,6 +50,8 @@ namespace Tdl2Json
         | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ResultKind.ExternalParameter)
         | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ResultKind.External)
         | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s.Name, ResultKind.Product)
+        | Reference(Symbol=DotNet.EnumMemberSymbol as s)
+        | Reference(Symbol=DotNet.TopEnumSymbol as s)                                 => (s.Name, ResultKind.VmCapability) // TODO: check symbol name
         | Reference(Symbol=s) =>
           mutable referenceValue;
           if (values != null && values.TryGetValue(s.Name, out referenceValue))
@@ -59,9 +62,10 @@ namespace Tdl2Json
         | MemberAccess as m =>
           match (Convert(m.Expr, values, variables))
           {
-            | (value, ResultKind.Product)  => ("Product:" + value + "." + m.Symbol.Name, ResultKind.GlobalParameter)
-            | (_,     ResultKind.External) => (m.Symbol.Name,                            ResultKind.ExternalParameter)
-            | _                            => throw NotSupportedException($"Invalid member access expression '$m'.")
+            | (value, ResultKind.Product)      => ("Product:" + value + "." + m.Symbol.Name, ResultKind.GlobalParameter)
+            | (_,     ResultKind.External)     => (m.Symbol.Name,                            ResultKind.ExternalParameter)
+            | (_,     ResultKind.VmCapability) => (m.Symbol.Name,                            ResultKind.VmCapability)
+            | _                                => throw NotSupportedException($"Invalid member access expression '$m'.")
           }
 
         | x => throw NotSupportedException($"Invalid expression '$x'.")

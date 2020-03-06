@@ -8,18 +8,19 @@
   authors     = Vlad Chistyakov;
   copyright   = NitraTeam;
 
-  span class StringEx    { ForegroundColor=Maroon; }
-  span class Platform    { ForegroundColor=BlueViolet; }
-  span class Deployment  { ForegroundColor=DarkCyan; }
-  span class Product     { ForegroundColor=Chocolate; }
-  span class Entity      { ForegroundColor=Chocolate; }
-  span class TdlType     { ForegroundColor=DarkRed; }
-  span class Scenario    { ForegroundColor=OliveDrab; }
-  span class Suite       { ForegroundColor=DarkBlue; }
-  span class External    { ForegroundColor=LightSkyBlue; }
-  span class Barrier     { ForegroundColor=Gray; }
-  span class Var         { ForegroundColor=DodgerBlue; }
-  span class Attribite   { ForegroundColor=Gray; }
+  span class StringEx     { ForegroundColor=Maroon; }
+  span class Platform     { ForegroundColor=BlueViolet; }
+  span class Deployment   { ForegroundColor=DarkCyan; }
+  span class Product      { ForegroundColor=Chocolate; }
+  span class Entity       { ForegroundColor=Chocolate; }
+  span class TdlType      { ForegroundColor=DarkRed; }
+  span class Scenario     { ForegroundColor=OliveDrab; }
+  span class Suite        { ForegroundColor=DarkBlue; }
+  span class External     { ForegroundColor=LightSkyBlue; }
+  span class Barrier      { ForegroundColor=Gray; }
+  span class Var          { ForegroundColor=DodgerBlue; }
+  span class Attribite    { ForegroundColor=Gray; }
+  span class VmCapability { ForegroundColor=Fuchsia; }
 
   syntax module Tdl.Grammar start rule Module;
 }
