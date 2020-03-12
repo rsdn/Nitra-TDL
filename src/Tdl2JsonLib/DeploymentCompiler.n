@@ -312,15 +312,20 @@ namespace Tdl2Json
 
     private CompileSelect(sel : Deployment.SelectSymbol) : void
     {
-      def separator = Separators.DeploymentSelectSeparator;
-      def deployments = sel.Deployments;
-      def cases       = sel.Cases;
+      def separator    = Separators.DeploymentSelectSeparator;
+      def deployments  = sel.Deployments;
+      def cases        = sel.Cases;
       assert2(deployments.Length == cases.Length);
-      def condition   = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
-      def values      = Dictionary();
+      def condition    = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
+      def values       = Dictionary();
+      def defaultValue = "906868B7-634A-456D-9C89-331CC742650F";
       for (mutable i; i < deployments.Length; ++i)
       {
-        def selector = string.Join(separator, cases[i].Select(v => v ?? Tdl.Expr.NotSetValue));
+        def selector =
+          if (cases[i].All(_ == defaultValue))
+            defaultValue
+          else
+            string.Join(separator, cases[i].Select(v => v ?? Tdl.Expr.NotSetValue));
         def sequence = CompileSequence(deployments[i], Dictionary(StringComparer.OrdinalIgnoreCase));
         def handler  =
           if (sequence.Length == 1)

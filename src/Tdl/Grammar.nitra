@@ -129,6 +129,7 @@
         | String   = StringLiteral
         | Wildcard = "_"
         | NotSet   = "not-set"
+        | Else     = "else"
       }
 
       syntax Pattern = "|" sm (Value; "," sm)+ sm;
