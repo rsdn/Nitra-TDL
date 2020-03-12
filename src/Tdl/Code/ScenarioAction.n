@@ -77,7 +77,7 @@ namespace Tdl
     | Logoff           { }
     | LockWorkstation  { }
     | Reboot           { }
-    | WaitForReboot    { TimeSpan : string; }
+    | WaitForReboot    { TimeSpan : string; MaxRebootsCountOpt : ValueOption[Expr]; }
     | Barrier          { barrier : BarrierSymbol; }
     | BarrierGenerator { BarrierName : ImmutableArray[BarrierNamePart]; Timeout : TimeSpan; }
 

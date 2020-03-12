@@ -581,14 +581,15 @@ namespace Tdl2Json
         def makeAction(action : ScenarioAction) : TestSequenceItem
         {
           | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
-          | Method        as m => makeMethodAction(m)
-          | WaitForReboot as x =>
+          | Method        as method => makeMethodAction(method)
+          | WaitForReboot as wbr =>
             WaitForRebootTestStep() <-
             {
               WaitForReboot =
                 WaitForRebootTestStep.Data() <-
                 {
-                  RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
+                  RebootTimeout   = if (string.IsNullOrEmpty(wbr.TimeSpan)) "00:05:00" else wbr.TimeSpan;
+                  MaxRebootsCount = wbr.MaxRebootsCountOpt.ExprToInt();
                 };
             }
           | BarrierGenerator as bg => MakeBarrier(dic, barrierCompilerOpt, bg)
@@ -849,13 +850,14 @@ namespace Tdl2Json
             {
               | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
               | Method        as m => makeMethodAction(m)
-              | WaitForReboot as x =>
+              | WaitForReboot as wbr =>
                 WaitForRebootTestStep() <-
                 {
                   WaitForReboot =
                     WaitForRebootTestStep.Data() <-
                     {
-                      RebootTimeout = if (string.IsNullOrEmpty(x.TimeSpan)) "00:05:00" else x.TimeSpan
+                      RebootTimeout   = if (string.IsNullOrEmpty(wbr.TimeSpan)) "00:05:00" else wbr.TimeSpan;
+                      MaxRebootsCount = wbr.MaxRebootsCountOpt.ExprToInt();
                     };
                 }
               | BarrierGenerator as bg => MakeBarrier(Dictionary(), barrierCompilerOpt, bg)

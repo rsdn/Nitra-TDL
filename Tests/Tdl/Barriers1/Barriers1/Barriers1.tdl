@@ -1,4 +1,4 @@
-﻿suite BuildAcceptance
+suite BuildAcceptance
 {
     platform platform_group_1;
     product App6;
@@ -19,6 +19,7 @@ scenario KpmDownloadAndInstallMultiMachineDevice1
     {
         method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount;
         barrier CreateUcpAccountBarrier;
+        wait-for-reboot 00:11:00 max-reboots 2;
         method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice;
     }
     
@@ -36,6 +37,7 @@ scenario KpmDownloadAndInstallMultiMachineDevice2
     sequence
     {
         barrier CreateUcpAccountBarrier;
+        wait-for-reboot 00:10:00; // W: Redundant 'wait-for-reboot' scenario action.
         method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice;
     }
 

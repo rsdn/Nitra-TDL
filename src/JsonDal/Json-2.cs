@@ -64,6 +64,9 @@ namespace QuickType
         {
             [JsonProperty("RebootTimeout", NullValueHandling = NullValueHandling.Ignore)]
             public string RebootTimeout { get; set; }
+
+            [JsonProperty("MaxRebootsCount", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+            public int? MaxRebootsCount { get; set; }
         }
     }
 

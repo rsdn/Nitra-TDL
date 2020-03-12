@@ -441,8 +441,8 @@ namespace Tdl
     | Logoff          -> Logoff          { }
     | LockWorkstation -> LockWorkstation { }
     | Reboot          -> Reboot          { }
-    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; }
-    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; }
+    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
     | Barrier         -> Barrier         { Expression -> BarrierExpr; }
   }
 

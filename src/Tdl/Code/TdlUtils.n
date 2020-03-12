@@ -789,16 +789,17 @@ namespace Tdl
       mutable prevAction = null;
       for (mutable i = 0; i < actions.Length; ++i)
       {
-        when (actions[i] is ScenarioAction.WaitForReboot as action)
+        when (actions[i] is ScenarioAction.WaitForReboot(MaxRebootsCountOpt=VNone) as action)
         {
           match (prevAction)
           {
-            | ScenarioAction.Script  (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Config  (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.GTest   (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Apk     (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Marathon(MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Method  (MaxRebootsCountOpt = VSome(maxReboots)) =>
+            | ScenarioAction.WaitForReboot(MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Script       (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Config       (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.GTest        (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Apk          (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Marathon     (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Method       (MaxRebootsCountOpt = VSome(maxReboots)) =>
               match (maxReboots.Calc(values, variables, getPropertyValue))
               {
                 | (_,     ResultKind.Missing)           => assert(false)
