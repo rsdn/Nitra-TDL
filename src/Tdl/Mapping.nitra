@@ -196,7 +196,8 @@ namespace Tdl
   {
     | String   -> String   { this.StringLiteral -> Value; }
     | Wildcard -> Wildcard { }
-    | NotSet   -> NotSet { }
+    | NotSet   -> NotSet   { }
+    | Else     -> Else     { }
   }
 
   map syntax Grammar.Case.Pattern(deployments : DeploymentExpr*) -> Case
