@@ -202,9 +202,10 @@ namespace Tdl
     | Reboot          { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot
       {
-        ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value);
+        ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value, MaxRebootsCountOpt.Result);
 
-        TimeSpan : ParsedValue[string];
+        TimeSpan           : ParsedValue[string];
+        MaxRebootsCountOpt : DefExpr?;
       }
     | Barrier
       {

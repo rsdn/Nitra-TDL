@@ -201,8 +201,8 @@
       | Logoff          = "logoff" ";" nl;
       | LockWorkstation = "lock-workstation" ";" nl;
       | Reboot          = "reboot" ";"
-      | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan ";"
-      | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan ";"
+      | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan MaxRebootsCount? ";"
+      | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan MaxRebootsCount? ";"
       | Barrier         = "barrier" sm Expression ";"
     }
 
