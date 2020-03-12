@@ -154,6 +154,15 @@ namespace Tdl
     | External -> External { Name = Name(Location.WithSpan(KwExternal.FromStart()), "external"); ExternalBody.Fields -> Fields; }
     | Barrier  -> Barrier  { Name -> Name; Timeout -> Timeout; }
     | Entity   -> Entity   { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
+    | VmCapability -> VmCapability
+      {
+        Name -> Name;
+        match (DefExprOpt)
+        {
+          | Some((_, e)) -> Some(e)
+          | None -> None()
+        } -> Value;
+      }
   }
 
   map syntax Grammar.DeploymentModifier -> DeploymentModifier
@@ -432,8 +441,8 @@ namespace Tdl
     | Logoff          -> Logoff          { }
     | LockWorkstation -> LockWorkstation { }
     | Reboot          -> Reboot          { }
-    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; }
-    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; }
+    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
     | Barrier         -> Barrier         { Expression -> BarrierExpr; }
   }
 

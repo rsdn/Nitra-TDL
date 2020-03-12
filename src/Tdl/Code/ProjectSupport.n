@@ -205,6 +205,7 @@ namespace Tdl
     private MakePredefinedSymbols(rootNamespace : NamespaceSymbol, context : TdlDependentPropertyEvalContext) : void
     {
       def stringType = BindType(BindNs(rootNamespace.Scope, "System").Scope, "String").Symbol;
+      def int32Type  = BindType(BindNs(rootNamespace.Scope, "System").Scope, "Int32").Symbol;
 
       def internalNs = ExternalDeclaration.[NamespaceSymbol](ND.Name(NoLocation, "TdlInternals")).DefineSymbol(rootNamespace.MemberTable);
       internalNs.DeclaredInOpt = VSome(rootNamespace);
@@ -246,6 +247,29 @@ namespace Tdl
       getOrCreateBarrierMethod.Parameters = ImmutableArray.Create(param1, param2);
       getOrCreateBarrierMethod.ReturnType = stringType;
       getOrCreateBarrierMethod.EvalProperties(context);
+
+      def vmCapability = ExternalDeclaration.[TopEnumSymbol](ND.Name(NoLocation, "VmCapability")).DefineSymbol(rootNamespace.MemberTable);
+      def flags = ModifierSet(context);
+      flags.Add(Modifiers.Public);
+      vmCapability.Flags               = flags;
+      vmCapability.DeclaredInOpt       = VSome(rootNamespace);
+      vmCapability.DeclaredIn          = rootNamespace;
+      vmCapability.Scope               = vmCapability.MemberTable;
+      vmCapability.CustomAttributes    = ImmutableArray.Empty;
+      vmCapability.FullName            = "VmCapability";
+      vmCapability.UnderlyingType      = int32Type;
+      vmCapability.EvalProperties(context);
+
+      foreach (capability in array["Unacceptable", "Acceptable", "Required"])
+      {
+        def symbol = ExternalDeclaration.[EnumMemberSymbol](ND.Name(NoLocation, capability)).DefineSymbol(vmCapability.MemberTable);
+        symbol.DeclaredIn     = vmCapability;
+        symbol.DeclaredInOpt  = VSome(vmCapability);
+        symbol.Scope          = EmptyScope.Instance;
+        symbol.FullName       = "VmCapability." + capability;
+        symbol.Type           = vmCapability;
+        symbol.EvalProperties(context);
+      }
     }
 
     public TryIncrementalRefreshProject(cancellationToken : CancellationToken, before : IAst, after : IAst, data : object) : bool

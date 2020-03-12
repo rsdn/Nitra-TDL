@@ -18,6 +18,7 @@ namespace Tdl
     | GlobalParameter
     | External
     | Product
+    | VmCapability
     | Error
   }
 }

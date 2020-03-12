@@ -93,6 +93,11 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.ScenarioParameterScope
     }
 
+    public GetVmCapabilityScope(this context : DependentPropertyEvalContext) : Scope
+    {
+      ToTdlContext(context).TdlProjectData.VmCapabilityScope
+    }
+
     public GetRequiredScenarioParameters(this context : DependentPropertyEvalContext) : ImmutableArray[FormalParameterSymbol]
     {
       ToTdlContext(context).TdlProjectData.RequiredScenarioParameters
@@ -784,16 +789,17 @@ namespace Tdl
       mutable prevAction = null;
       for (mutable i = 0; i < actions.Length; ++i)
       {
-        when (actions[i] is ScenarioAction.WaitForReboot as action)
+        when (actions[i] is ScenarioAction.WaitForReboot(MaxRebootsCountOpt=VNone) as action)
         {
           match (prevAction)
           {
-            | ScenarioAction.Script  (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Config  (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.GTest   (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Apk     (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Marathon(MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Method  (MaxRebootsCountOpt = VSome(maxReboots)) =>
+            | ScenarioAction.WaitForReboot(MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Script       (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Config       (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.GTest        (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Apk          (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Marathon     (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Method       (MaxRebootsCountOpt = VSome(maxReboots)) =>
               match (maxReboots.Calc(values, variables, getPropertyValue))
               {
                 | (_,     ResultKind.Missing)           => assert(false)
@@ -802,6 +808,7 @@ namespace Tdl
                 | (_value, ResultKind.GlobalParameter)
                 | (_value, ResultKind.Product)
                 | (_value, ResultKind.Error)
+                | (_value, ResultKind.VmCapability)
                 | (_,     ResultKind.External) => error(prevAction.Location, "This kind of expression is not allowed in max-reboots.");
                 | (value : object, ResultKind.Value)             =>
                   if (value is int as intVal)
@@ -1399,7 +1406,12 @@ namespace Tdl
       }
     }
 
-    public MakeDefinitionScopeForGeneratorScenario(predefinedParameterScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    public MakeDefinitionScopeForScenarioDef(deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
+    {
+      GetScenarioParameterScope(context).HideWith(deploymentScope.UnionWith(GetVmCapabilityScope(context)))
+    }
+
+    public MakeDefinitionScopeForGeneratorScenario(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       mutable builder;
 
@@ -1420,11 +1432,12 @@ namespace Tdl
             }
             break;
           }
-        | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
+        | _ => assert(false, $"Unsupported expressoin type $(deployment.GetType().FullName)");
       }
 
       AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-      VSome(predefinedParameterScope.HideWith(builder.ToScope()))
+      UnionScopeBuilder.Add(GetVmCapabilityScope(context), ref builder);
+      VSome(GetScenarioParameterScope(context).HideWith(builder.ToScope()))
     }
 
     public MakeAggregateParametersScopeForScenarioDef(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : Scope
@@ -1464,7 +1477,7 @@ namespace Tdl
             }
             break;
           }
-        | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
+        | _ => assert(false, $"Unsupported expressoin type $(deployment.GetType().FullName)");
       }
       def result = MakeAggregateParametersScope(deployments, parametersScope);
       if (result is VSome(scope))
@@ -1708,7 +1721,8 @@ namespace Tdl
       type
     }
 
-    public BindType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParamCount : int = 0) : GenericTypeSymbol
+    public BindType[TSymbol](this context : DependentPropertyEvalContext, fullTypeName : string, typeParamCount : int = 0) : TSymbol
+      where TSymbol: DeclarationSymbol
     {
       def bindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
       {
@@ -1719,19 +1733,22 @@ namespace Tdl
         assert2(res.Symbols.Length == 1);
         res
       }
-      def bindType(scope : Scope, name : string) : TopGenericTypeSymbol
+      def bindType(scope : Scope, name : string) : TSymbol
       {
-        def res = Reference(Location.Default, name).Bind.[TopGenericTypeSymbol](scope);
+        def res = Reference(Location.Default, name).Bind.[TSymbol](scope);
         assert2(!res.IsUnresolved);
         assert2(!res.IsAmbiguous);
-        foreach (symbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
-          return symbol;
-        assert2(false);
-        assert(false);
+        when (typeParamCount > 0)
+        {
+          foreach (symbol is GenericTypeSymbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
+            return (symbol : object) :> TSymbol;
+        }
+        assert2(res.Symbols.Length == 1);
+        res.Symbol
       }
       def data  = context.Project.Data :> DotNetProjectData;
       def names = fullTypeName.SplitToList('.');
-      def loop(scope : Scope, names) : GenericTypeSymbol
+      def loop(scope : Scope, names) : TSymbol
       {
         match (names)
         {

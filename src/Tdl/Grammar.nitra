@@ -89,6 +89,7 @@
       | External          = "external"            sm ExternalBody;
       | Barrier           = "barrier"             sm Name "timeout" sm Timeout=StringLiteral ";" nl;
       | Entity            = "entity"              sm Name nl EntityBody;
+      | VmCapability      = "vm" sm "capability"  sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
     }
 
     syntax BaseType = sm ":" sm Type=Reference;
@@ -200,8 +201,8 @@
       | Logoff          = "logoff" ";" nl;
       | LockWorkstation = "lock-workstation" ";" nl;
       | Reboot          = "reboot" ";"
-      | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan ";"
-      | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan ";"
+      | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan MaxRebootsCount? ";"
+      | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan MaxRebootsCount? ";"
       | Barrier         = "barrier" sm Expression ";"
     }
 
