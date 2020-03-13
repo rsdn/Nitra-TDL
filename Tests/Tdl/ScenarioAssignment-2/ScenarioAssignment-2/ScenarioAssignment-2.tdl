@@ -1,0 +1,89 @@
+﻿suite Sute1
+{
+    platform all_pc;
+    product TheProduct;
+    ScenarioAll();
+}
+
+scenario ScenarioAll = Scenario1, Scenario2, Scenario3, Scenario4;
+
+scenario Scenario1
+{
+    deployment SharedDeploy;
+    environments (all_pc, TheProduct);
+    method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
+    Area="Area-1";
+    ExternalAutotestId=1216;
+    UniqueId=@"58e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c4";
+    TfsId=530469;
+    Timeout= @"01:00:00";
+}
+
+scenario Scenario2
+{
+    deployment SharedDeploy;
+    environments (all_pc, TheProduct);
+    method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
+    Area="Area-2";
+    ExternalAutotestId=1216;
+    UniqueId = "58e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c5";
+    TfsId=530469;
+    Timeout= @"01:00:00";
+}
+
+scenario Scenario3
+{
+    deployment SharedDeploy;
+    environments (all_pc, TheProduct);
+    method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
+    Area="Area-duplicate";
+    ExternalAutotestId=1216;
+    UniqueId = "56e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c5";
+    TfsId=530469;
+    Timeout= @"01:00:00";
+}
+
+scenario Scenario4
+{
+    deployment SharedDeploy_Duplicate;
+    environments (all_pc, TheProduct);
+    method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
+    Area="Area-duplicate";
+    ExternalAutotestId=1216;
+    UniqueId = "57e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c5";
+    TfsId=530469;
+    Timeout= @"01:00:00";
+}
+
+deployment SharedDeploy           = SimpleDeploy, UsingAreaDeploy;
+deployment SharedDeploy_Duplicate = SimpleDeploy, UsingAreaDeploy;
+
+deployment SimpleDeploy()
+    script @"foo.cmd"
+{
+    expected 42;
+}
+
+deployment UsingAreaDeploy(string Area)
+    script @"foo.cmd"
+{
+    expected 42;
+}
+
+product TheProduct : ProductType
+{
+    Name = "TheProduct";
+    BranchName = "Main";
+    Version = "1.0";
+}
+
+product type ProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+platform all_pc = w10rs4-x86, w10rs4-x64;
+platform w10rs4-x86;
+platform w10rs4-x64;

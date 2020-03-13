@@ -104,6 +104,9 @@
     <Compile Include="..\AssemblyVersion.n">
       <Link>Properties\AssemblyVersion.n</Link>
     </Compile>
+    <Compile Include="BarrierCompiler.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="BooleanLiterals.n">
       <SubType>Code</SubType>
     </Compile>
@@ -144,7 +147,22 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.n" />
+    <Compile Include="ScenarioTriggers\DefaultScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScenarioTriggers\DiffFileScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScenarioTriggers\ExcludeTriggerPathScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScenarioTriggers\IScenarioTrigger.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Separators.n">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SessionActionCompiler.n">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CompilerMessagesCheckResult.n">
@@ -159,14 +177,12 @@
     <Compile Include="TransformationContext.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ScenarioTriggerProcessor.n">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Utils.n">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ScenarioTriggers" />
     <Folder Include="Tests" />
     <Folder Include="Properties\" />
   </ItemGroup>

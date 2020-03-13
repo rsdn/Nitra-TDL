@@ -1,0 +1,152 @@
+﻿using DotNet;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+
+namespace Tdl
+{
+  public variant DeploymentTreeNode
+  {
+    [StructuralEquality]
+    public variant Reson
+    {
+      | Cycled { deployment : DeploymentSymbol; }
+      | Normal { }
+      | Select { erroneousParameters : list[FormalParameterSymbol * ResultKind * object]; deployment : Deployment.SelectSymbol; }
+
+      public override ToString() : string
+      {
+        match (this)
+        {
+          | Cycled as x => $"The $(x.deployment.Name) deployment is cycled"
+          | Normal      => "Normal"
+          | Select as x =>
+            def argToString(p : FormalParameterSymbol, kind : ResultKind, value : object) : string
+            {
+              $"$(p.Name) with $kind ($value)"
+            }
+            def reson = if (x.erroneousParameters.IsEmpty) "no match any case" else $<#has arguments: ..$(x.erroneousParameters; ", "; argToString)#>;
+            $"The $(x.deployment.Name) select deployment $reson"
+        }
+      }
+    }
+
+    | Nodes
+      {
+        reson : Reson;
+        nodes : list[DeploymentTreeNode];
+
+        [OverrideObjectEquals]
+        public Equals(other : Nodes) : bool
+        {
+          reson.Equals(other.reson) && nodes.Equals(other.nodes)
+        }
+
+        public override GetHashCode() : int
+        {
+          reson.GetHashCode() ^ nodes.GetHashCode()
+        }
+      }
+
+    | Leaf
+      {
+        variables : Dictionary[string, Tdl.Expr];
+        deployment : DeploymentSymbol;
+
+        public Parameters : ImmutableArray[FormalParameterSymbol]
+        {
+          get
+          {
+            if (deployment is Deployment.ScriptSymbol as d)
+              d.Parameters
+            else
+              ImmutableArray.Empty
+          }
+        }
+
+        [OverrideObjectEquals]
+        public Equals(other : Leaf) : bool
+        {
+          when (deployment : object != other.deployment)
+            return false;
+
+          foreach (p in Parameters)
+          {
+            def name = p.Name;
+            mutable var1;
+            mutable var2;
+            _ = variables.TryGetValue(name, out var1);
+            _ = other.variables.TryGetValue(name, out var2);
+            unless (object.Equals(var1, var2))
+              return false;
+          }
+
+          true
+        }
+
+        public override GetHashCode() : int
+        {
+          mutable hash = deployment.GetHashCode();
+          mutable var1;
+          foreach (p in Parameters)
+            if (variables.TryGetValue(p.Name, out var1))
+              hash ^= var1?.GetHashCode();
+            else
+              hash ^= p.Default.GetHashCode();
+          hash
+        }
+      }
+
+    public override ToString() : string
+    {
+      def makeString(vars, deployment : ParameterizableSymbol) : string
+      {
+        def makeParamValue(p : FormalParameterSymbol) : string
+        {
+          mutable expr;
+          def value =
+            if (vars.TryGetValue(p.Name, out expr))
+              expr.ToString()
+            else
+            {
+              def toString(defaultValue : DotNet.DefaultValue) : string
+              {
+                | None
+                | Error
+                | Overflow             => "<error>"
+                | Null                 => "null"
+                | Number (value, _, _) => value.ToString()
+                | String (value)       => value.ToString()
+                | Bool   (value)       => value.ToString()
+                | Custom (value)       => value.ToString()
+                | Single (value)       => value.ToString()
+                | Double (value)       => value.ToString()
+                | Decimal(value)       => value.ToString()
+              }
+              toString(p.Default)
+            };
+            $"$(p.Name): $value"
+        }
+        $<#$(deployment.Name)(..$(deployment.Parameters; ", "; makeParamValue))#>
+      }
+      match (this)
+      {
+        | Leaf(_, Deployment.EmptySymbol)          => "Empty()"
+        | Leaf(vars, Deployment.ScriptSymbol as d) => makeString(vars, d)
+        | Leaf(vars, Deployment.CodeSymbol as d)   => makeString(vars, d)
+        | Leaf                                     => "Error. Unsupported type: Leaf($deployment)"
+        | Nodes(Reson.Normal, nodes)               => $"..$nodes"
+        | Nodes(reson, _)                          => reson.ToString()
+      }
+    }
+  }
+}

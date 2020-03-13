@@ -13,50 +13,98 @@ namespace Tdl
   {
     public Location : Location { get; }
 
+    | Error { }
+    | Method
+      {
+        //TypeSymbol         : DeclarationSymbol;
+        //MethodSymbol       : Member.MethodSymbol;
+        Expr               : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
+        BinariesFolderOpt  : ValueOption[Expr];
+        ContinueOnErrorOpt : ParsedValue[bool];
+      }
     | Script
       {
-        Name               : ParsedValue[string];
-        Arguments          : ImmutableArray[ParsedValue[string]];
+        Name               : Expr;
+        Arguments          : ImmutableArray[Expr];
         Defs               : ImmutableArray[Def];
-        MaxRebootsCountOpt : ParsedValue[int];
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
-    | Config        { path   : ParsedValue[string]; MaxRebootsCountOpt : ParsedValue[int]; }
+    | Config        { path   : Expr; MaxRebootsCountOpt : ValueOption[Expr]; }
     | GTest
       {
-        Name               : ParsedValue[string];
-        Arguments          : ImmutableArray[ParsedValue[string]];
-        MaxRebootsCountOpt : ParsedValue[int];
+        Name               : Expr;
+        Arguments          : ImmutableArray[Expr];
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
     | XCode
       {
-        Container          : ParsedValue[string];
-        XcodePath          : ParsedValue[string];
-        MaxRebootsCountOpt : ParsedValue[int];
+        Container          : Expr;
+        XcodePath          : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
+      }
+    | VsTest
+      {
+        Container                   : Expr;
+        VsTestRunCmdLineOpt         : ValueOption[Expr];
+        FilterOpt                   : ValueOption[Expr];
+        VsTestPlatformOpt           : ValueOption[Expr];
+        VsTestFrameworkOpt          : ValueOption[Expr];
+        VsTestAdditionalOptionsOpt  : ValueOption[Expr];
+        MaxRebootsCountOpt          : ValueOption[Expr];
       }
     | Apk
       {
-        Name               : ParsedValue[string];
-        FilterOpt          : ParsedValue[string];
-        RunnerPath         : ParsedValue[string];
-        MaxRebootsCountOpt : ParsedValue[int];
+        Name               : Expr;
+        FilterOpt          : ValueOption[Expr];
+        RunnerPath         : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
+      }
+    | Marathon
+      {
+        TestContainerApk   : Expr;
+        AppApk             : Expr;
+        RunnerPath         : Expr;
+        Filter             : Expr;
+        BinariesFolder     : Expr;
+        MaxRebootsCountOpt : ValueOption[Expr];
       }
     | Login
       {
-        User               : ParsedValue[string];
-        Password           : ParsedValue[string];
+        User               : Expr;
+        Password           : Expr;
       }
-    | Logoff          { }
-    | LockWorkstation { }
-    | Method
+    | Logoff           { }
+    | LockWorkstation  { }
+    | Reboot           { }
+    | WaitForReboot    { TimeSpan : string; MaxRebootsCountOpt : ValueOption[Expr]; }
+    | Barrier          { barrier : BarrierSymbol; }
+    | BarrierGenerator { BarrierName : ImmutableArray[BarrierNamePart]; Timeout : TimeSpan; }
+
+    public IsTest : bool
+    {
+      get
       {
-        TypeSymbol         : DeclarationSymbol;
-        MethodSymbol       : Member.MethodSymbol;
-        MaxRebootsCountOpt : ParsedValue[int];
-        BinariesFolderOpt  : ParsedValue[string];
-        ContinueOnErrorOpt : ParsedValue[bool];
+        match (this)
+        {
+          | Method
+          | Script
+          | Config
+          | GTest
+          | XCode
+          | VsTest
+          | Apk
+          | Marathon => true
+          | Error
+          | BarrierGenerator
+          | Login
+          | Logoff
+          | LockWorkstation
+          | Reboot
+          | WaitForReboot
+          | Barrier => false
+        }
       }
-    | Reboot          { }
-    | WaitForReboot   { TimeSpan : string; }
-    | Barrier         { barrier : BarrierSymbol; }
+    }
   }
 }

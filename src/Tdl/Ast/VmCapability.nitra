@@ -1,0 +1,29 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  ignore-case declaration VmCapability : NamespaceMember, TypedDeclaration
+  {
+    symbol
+    {
+      in Value : Tdl.Expr;
+
+      Type          = context.BindType.[TopEnumSymbol]("VmCapability", 0);
+      Kind          = "vm capability";
+      SpanClass     = TdlLang.VmCapabilitySpanClass;
+    }
+
+    Value.Scope        = Scope;
+    Value.ExpectedType = Symbol.Type;
+    Symbol.Value       = Value.Result.WithDefault(Tdl.Expr.NotSet());
+
+    Value : DefExpr?;
+  }
+}

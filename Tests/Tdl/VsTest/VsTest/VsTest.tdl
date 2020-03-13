@@ -1,0 +1,52 @@
+scenario AllParameters
+{
+  deployment Deploy;
+  environments (Platform, Product);
+  vstest @"bin\test.dll" vstest_cmdline @"dotnet.exe vstest" filter @"Name~abc" platform @"x64" framework @"netcore21" additional_options @"/parallel --";
+  UniqueId = "59398BB2-1DCC-4842-8E3F-BB8A651353EC";
+  Timeout = "00:10";
+}
+
+scenario SomeParameters
+{
+  deployment Deploy;
+  environments (Platform, Product);
+  vstest @"bin\test.dll" filter @"Name~abc";
+  UniqueId = "E5FF1D95-5BD3-4DAE-ACDA-ABFCFCF1DFEA";
+  Timeout = "00:10";
+}
+
+scenario RequiredParameters
+{
+  deployment Deploy;
+  environments (Platform, Product);
+  vstest @"bin\test.dll";
+  UniqueId = "A790CB69-36D2-4B0D-ABCF-4A8ED236ACAC";
+  Timeout = "00:10";
+}
+
+product type ProductType
+{
+  string Name = "Product 1";
+  string Version = "1.0";
+}
+
+product Product : ProductType
+{
+}
+
+platform Platform;
+
+suite Suite
+{
+  platform Platform;
+  product Product;
+  AllParameters();
+  SomeParameters();
+  RequiredParameters();
+}
+
+deployment Deploy()
+ script "Deploy.ps1"
+{
+}

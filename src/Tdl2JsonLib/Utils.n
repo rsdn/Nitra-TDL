@@ -1,4 +1,6 @@
-﻿using Nemerle;
+﻿using DotNet;
+
+using Nemerle;
 using Nemerle.Collections;
 using Nemerle.Imperative;
 using Nemerle.Text;
@@ -7,12 +9,27 @@ using Nemerle.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Immutable;
 
 namespace Tdl2Json
 {
   module Utils
   {
-    public GetValue[K, V](this dic : Dictionary[K, V], key : K, dicName : string = null) : V
+    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement]) : Hashtable[TKey, TElement]
+    {
+      ToHashtable(immutableArray, keySelector, elementSelector, EqualityComparer[TKey].Default);
+    }
+
+    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement], comparer : IEqualityComparer[TKey]) : Hashtable[TKey, TElement]
+    {
+      def result = Hashtable(immutableArray.Length, comparer);
+      foreach (v in immutableArray)
+          result.Add(keySelector(v), elementSelector(v));
+
+      result
+    }
+
+    public GetValue[K, V](this dic : IDictionary[K, V], key : K, dicName : string = null) : V
     {
       mutable value;
       if (dic.TryGetValue(key, out value))
@@ -23,11 +40,11 @@ namespace Tdl2Json
         throw KeyNotFoundException($"The '$key' key not found in Dictionary[$(default(K)), $(default(V))]$suffix");
       }
     }
-    
+
     public MultyAdd[TKey, TValue](this multiDictionary : Dictionary[TKey, List[TValue]], key : TKey, value : TValue) : void
     {
       mutable values;
-      
+
       unless (multiDictionary.TryGetValue(key, out values))
       {
         values = List();
@@ -36,11 +53,11 @@ namespace Tdl2Json
 
       values.Add(value);
     }
-    
+
     public MultyAdd[TKey1, TKey2, TValue](this multiDictionary : Dictionary[TKey1, Dictionary[TKey2, List[TValue]]], key1 : TKey1, key2 : TKey2, value : TValue) : void
     {
       mutable values;
-      
+
       unless (multiDictionary.TryGetValue(key1, out values))
       {
         values = Dictionary();
@@ -49,24 +66,24 @@ namespace Tdl2Json
 
       values.MultyAdd(key2, value);
     }
-    
+
     module ListUtil[T]
     {
       public Empty : IReadOnlyList[T] = List(0);
     }
-    
+
     public MultyGetValues[TKey1, TKey2, TValue](this multiDictionary : Dictionary[TKey1, Dictionary[TKey2, List[TValue]]], key1 : TKey1, key2 : TKey2) : IReadOnlyList[TValue]
     {
       mutable dic;
 
       unless (multiDictionary.TryGetValue(key1, out dic))
         return ListUtil.[TValue].Empty;
-        
+
       mutable values;
-      
+
       unless (dic.TryGetValue(key2, out values))
         return ListUtil.[TValue].Empty;
-        
+
       values
     }
 
@@ -74,6 +91,38 @@ namespace Tdl2Json
       where TCmp: IComparable[TCmp]
     {
       list.Sort((x, y) => selector(x).CompareTo(selector(y)))
+    }
+
+    public ExprToInt(this exprOpt : ValueOption[Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : int?
+    {
+      if (exprOpt is VSome(expr))
+        expr.ToObject(values=null, variables=variables) :> int
+      else
+        null
+    }
+
+    public ExprToString(this exprOpt : ValueOption[Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
+    {
+      if (exprOpt is VSome(expr))
+        ExprToString(expr, variables)
+      else
+        null
+    }
+
+    public ExprToString(this expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
+    {
+      expr.ToObject(values=null, variables=variables) :> string
+    }
+
+    public AddEx[K, V](this dictionary : IDictionary[K, V], key : K, value : V, dictionaryName : string) : void
+    {
+      try dictionary.Add(key, value);
+      catch
+      {
+        | e is KeyNotFoundException =>
+          throw KeyNotFoundException(
+            $"The '$key' key was not present in the '$dictionaryName' dictionary. New value: '$value'. Old value: '$(dictionary[key])'.", e)
+      }
     }
   }
 }

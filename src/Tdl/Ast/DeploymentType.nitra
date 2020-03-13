@@ -1,0 +1,19 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+namespace Tdl
+{
+  ignore-case declaration DeploymentType : NamespaceMember, Container, Type, SupportsInheritanceType
+  {
+    symbol
+    {
+      Scope          = MemberTable;
+      Kind           = "deployment type";
+      IsSameIdentity = candidate is Tdl.DeploymentType;
+      SpanClass      = TdlLang.TdlTypeSpanClass;
+    }
+  }
+}

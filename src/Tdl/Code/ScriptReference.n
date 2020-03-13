@@ -10,7 +10,6 @@ using System.Linq;
 
 namespace Tdl
 {
-  
   public variant ScriptReference
   {
     | FilePath

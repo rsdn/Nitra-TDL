@@ -14,14 +14,17 @@ namespace Tdl
       {
         symbol
         {
-          in Platform    : PlatformSymbol;
-          in Product     : ProductSymbol;
-          in Statements  : ImmutableArray[SuiteStatement];
-          in EntityOpt   : ValueOption[EntitySymbol];
-        stage 3:
-          in Defs        : ImmutableArray[Def];
-        stage 4:
-          in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
+          in Platform           : PlatformSymbol;
+          in Product            : ProductSymbol;
+          in Statements         : ImmutableArray[SuiteStatement];
+          in EntityOpt          : ValueOption[EntitySymbol];
+        stage 3                 :
+          in Predefineds        : ImmutableArray[Def];
+          in Defs               : ImmutableArray[Def];
+        stage 4                 :
+          in DefaultDefs        : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
+          in SessionInitializer : ValueOption[DeploymentTreeNode];
+          in SessionFinalizer   : ValueOption[DeploymentTreeNode];
 
           Kind           = "suite";
           SpanClass      = TdlLang.SuiteSpanClass;
@@ -45,9 +48,13 @@ namespace Tdl
         Statements.ScopeIn          = EmptyScope.Instance;
         Symbol.Statements           = Statements.Statement;
 
-        Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
+        Predefineds.DefinitionScope = Symbol.Type.Scope;
+        Predefineds.Scope           = ContainingTable;
+        Symbol.Predefineds          = TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, context.GetIsNotPredefinedSuiteField());
+
+        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope), Symbol.Predefineds);
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
-        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef);
+        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, context.GetIsPredefinedSuiteField());
 
         TypeOpt.Scope               = Scope;
         TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
@@ -58,15 +65,24 @@ namespace Tdl
         EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
         Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
 
-        SetUsed(Symbol.Statements);
-        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
+        Symbol.SessionInitializer   = Api.TryMakeSessionInitializer(Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
+        Symbol.SessionFinalizer     = Api.TryMakeSessionFinalizer  (Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
 
-        EntityOpt   : Reference?;
-        TypeOpt     : Reference?;
-        Platform    : Reference;
-        Product     : Reference;
-        Definitions : Definition*;
-        Statements  : SuiteStatementAst*;
+        SetUsed(Symbol.Statements);
+        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope, Symbol.DefaultDefs);
+
+        decompose AllDefinitions
+        {
+          Definitions : Definition.Ordinary*;
+          Predefineds : Definition.Predefined*;
+        }
+
+        EntityOpt      : Reference?;
+        TypeOpt        : Reference?;
+        Platform       : Reference;
+        Product        : Reference;
+        AllDefinitions : Definition*;
+        Statements     : SuiteStatementAst*;
       }
 
     | ignore-case List
@@ -104,8 +120,10 @@ namespace Tdl
           in Product     : TypedDeclarationSymbol;
           in EntityOpt   : ValueOption[TypedDeclarationSymbol];
         stage 3          :
-          in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
+          in Predefineds : ImmutableArray[Def];
           in Defs        : ImmutableArray[Def];
+        stage 4          :
+          in DefaultDefs : ImmutableArray[FormalParameterSymbol]; // Parameters of select deployments which not set explicitly.
           in Froms       : ImmutableArray[Code.From];
 
           Scope          = MemberTable;
@@ -135,9 +153,14 @@ namespace Tdl
         ProductRef                  = Product.Ref.Resolve();
         Symbol.Product              = ProductRef.Symbol;
 
-        Definitions.DefinitionScope = TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope));
+        Predefineds.DefinitionScope = Symbol.Type.Scope;
+        Predefineds.Scope           = ContainingTable.HideWith(Symbol.MemberTable);
+        Symbol.Predefineds          = TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, context.GetIsNotPredefinedSuiteField());
+
+        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope), Symbol.Predefineds);
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable).HideWith(Symbol.MemberTable);
-        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef);
+
+        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, context.GetIsPredefinedSuiteField());
 
         TypeOpt.Scope               = Scope;
         TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
@@ -151,15 +174,22 @@ namespace Tdl
         Platform.  CheckExpected(context, context.GetPlatformTypeSymbol(), PlatformRef.Symbol.Type);
         Product.   CheckExpected(context, context.GetProductTypeSymbol(),  ProductRef.Symbol.Type);
         SetUsed(Symbol.Statements);
-        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
+        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope, Symbol.DefaultDefs);
+        Name.ValidateSessionInitializer(context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs, Symbol.Froms);
 
-        Froms        : From*;
-        EntityOpt    : Reference?;
-        TypeOpt      : Reference?;
-        Platform     : Reference;
-        Product      : Reference;
-        Definitions  : Definition*;
-        Statements   : SuiteStatementAst*;
+        decompose AllDefinitions
+        {
+          Definitions           : Definition.Ordinary*;
+          Predefineds : Definition.Predefined*;
+        }
+
+        Froms           : From*;
+        EntityOpt       : Reference?;
+        TypeOpt         : Reference?;
+        Platform        : Reference;
+        Product         : Reference;
+        AllDefinitions  : Definition*;
+        Statements      : SuiteStatementAst*;
       }
   }
 }

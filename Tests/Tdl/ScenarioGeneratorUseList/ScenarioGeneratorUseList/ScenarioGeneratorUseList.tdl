@@ -1,3 +1,22 @@
+﻿scenario SbSFuncScenarios1 =
+    from Platform in [win7]
+    from Deployment in [DeployMultiProductWithDeployerAndPreparingKsm60,
+         DeployMultiProductWithDeployerAndPreparingKsm65,
+         DeployMultiProductWithDeployerAndPreparingApp2_19]
+    from Method in [Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan,
+                    Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck]
+    from Product in [Sbs2019Func]
+    select
+    {
+        deployment Deployment;
+        environments (Platform, Product);
+        method Method;
+    
+        UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
+        Timeout = "02:30:00";
+        ProductGroupName = "SbSFuncProductGroup";
+    };
+
 platform win7-x86;
 platform win7-x64;
 platform win7 = win7-x86, win7-x64;
@@ -273,25 +292,6 @@ product Sbs2019Func : MultiProductWithPrepare =
     Ksu2_Kfp6_App93_Ks2_App3MR4_FuncTests,
     App93_App3MR3_App1_2019_FuncTests,
     Kpm9_App62019_App92_FuncTests;
-
-scenario SbSFuncScenarios1 =
-    from Platform in [win7]
-    from Deployment in [DeployMultiProductWithDeployerAndPreparingKsm60,
-         DeployMultiProductWithDeployerAndPreparingKsm65,
-         DeployMultiProductWithDeployerAndPreparingApp2_19]
-    from Method in [Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan,
-                    Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck]
-    from Product in [Sbs2019Func]
-    select
-    {
-        deployment Deployment;
-        environments (Platform, Product);
-        method Method;
-    
-        UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
-        Timeout = "02:30:00";
-        ProductGroupName = "SbSFuncProductGroup";
-    };
 
 suite type Ext
 {

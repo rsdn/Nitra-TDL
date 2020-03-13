@@ -5,11 +5,12 @@ namespace Tdl.Transformator.Models.Scenario.Actions
 {
     public sealed class MethodActionModel : BaseActionModel
     {
-        public MethodActionModel([NotNull] Tdl.ScenarioAction.Method method, Location location) 
+        public MethodActionModel([NotNull] Tdl.ScenarioAction.Method method, Location location)
             : base(location)
         {
-            FullName = method.MethodSymbol.FullName;
-            MaxReboots = method.MaxRebootsCountOpt.Value;
+            FullName = method.Expr.ToString();
+            if (method.MaxRebootsCountOpt.HasValue)
+                MaxReboots = (int)method.MaxRebootsCountOpt.Value.GetValue();
             Method = method;
         }
 

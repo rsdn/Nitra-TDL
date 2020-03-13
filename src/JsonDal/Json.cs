@@ -84,6 +84,12 @@ namespace QuickType
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public IDictionary<string, TestEntity> TestEntities { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, SessionActionBase> PreSessionActions { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, SessionActionBase> PostSessionActions { get; set; }
     }
 
     /// <summary>
@@ -101,10 +107,10 @@ namespace QuickType
         public TypeEnum Type { get; set; }
 
         [JsonProperty("RebootExitCode", NullValueHandling = NullValueHandling.Ignore)]
-        public long? RebootExitCode { get; set; }
+        public int? RebootExitCode { get; set; }
 
         [JsonProperty("ReturnValue", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ReturnValue { get; set; }
+        public int? ReturnValue { get; set; }
 
         [JsonProperty("ScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
         public IDictionary<string, object> ScriptArgs { get; set; }
@@ -207,6 +213,12 @@ namespace QuickType
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public List<string> DashboardVisibleParameters { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string PreSessionAction { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string PostSessionAction { get; set; }
     }
 
     public partial class TestGroup
@@ -300,6 +312,9 @@ namespace QuickType
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string LocalTestBinariesFolder { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> Capabilities { get; set; }
     }
 
     public partial class EnvironmentElement
@@ -360,7 +375,7 @@ namespace QuickType
         {
             if (other == null || !string.Equals(DeploymentName, other.DeploymentName))
                 return false;
-            
+
             return Parameters.DictionaryEquals(other.Parameters, StringComparison.InvariantCultureIgnoreCase);
         }
 

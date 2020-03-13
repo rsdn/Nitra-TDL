@@ -1,0 +1,139 @@
+﻿using DotNet;
+
+using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+
+namespace Tdl
+{
+  [StructuralEquality]
+  public variant Expr
+  {
+    public static NotSetValue = "C3EEBA2A-D830-4947-83B2-045529DCB327";
+
+    | NotSet       { }
+    | Error        { Location : Nitra.Location; }
+    | String       { Value : string; }
+    | True         { }
+    | False        { }
+    | Real         { Value : double; }
+    | Integer      { Value : int; }
+    | Reference    { Symbol : DeclarationSymbol; }
+    | MemberAccess { Expr : Expr;  Symbol : DeclarationSymbol; Type : TypeSymbol; }
+    | List         { Elems : ImmutableArray[Expr]; Type : TypeSymbol; }
+    | Tuple        { Elems : ImmutableArray[Expr]; Type : TypeSymbol; }
+
+    public GetExprListForVar(varIndex : int) : Seq[Expr]
+    {
+      def it = this;
+      match (it)
+      {
+        | Reference(Symbol=Product.SetSymbol    as s) when varIndex == 0 => s.AllProducts.Select(Expr.Reference)
+        | Reference(Symbol=Platform.SetSymbol   as s) when varIndex == 0 => s.Platforms  .Select(Expr.Reference)
+        | Reference(Symbol=Deployment.SetSymbol as s) when varIndex == 0 => s.Deployments.Select(Expr.Reference)
+        | List as list =>
+          def getElem(e : Expr) : Expr
+          {
+            | Reference as r => r
+            | Tuple as t => t.Elems[varIndex]
+            | _ => e
+          }
+          list.Elems.Select(getElem)
+        | _ => assert(false, $"Unsupported expression type $(GetType().FullName)")
+      }
+    }
+
+    public GetExprList() : Seq[Expr]
+    {
+      match (this)
+      {
+        | Reference(Symbol=Product.SetSymbol    as s) => s.AllProducts.Select(Expr.Reference)
+        | Reference(Symbol=Platform.SetSymbol   as s) => s.Platforms  .Select(Expr.Reference)
+        | Reference(Symbol=Deployment.SetSymbol as s) => s.Deployments.Select(Expr.Reference)
+        | List as list                                => list.Elems
+        | _ => assert(false, $"Unsupported expression type $(GetType().FullName)")
+      }
+    }
+
+    public GetValue() : object
+    {
+      match (this)
+      {
+        | True         => true
+        | False        => false
+        | String  as x => x.Value
+        | Real    as x => x.Value
+        | Integer as x => x.Value
+        | _ => assert(false, $"Non value extression $(GetType().FullName)");
+      }
+    }
+
+    public Calc(
+      values     : IReadOnlyDictionary[string, Tdl.Expr],
+      variables  : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
+      getPropertyValue : object * DeclarationSymbol -> object * ResultKind
+    ) : object * ResultKind
+    {
+      match (this)
+      {
+        | Error              => (this,    ResultKind.Error)
+        | Tuple              => (this,    ResultKind.Error)
+        | NotSet             => (null,    ResultKind.NotSet)
+        | False              => (false,   ResultKind.Value)
+        | True               => (true,    ResultKind.Value)
+        | Integer      as i  => (i.Value, ResultKind.Value)
+        | Real         as r  => (r.Value, ResultKind.Value)
+        | String       as s  => (s.Value, ResultKind.Value)
+        | Reference(Symbol=VarSymbol      as s)                                       => variables[s].Calc(values, variables, getPropertyValue)
+        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ResultKind.ExternalParameter)
+        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ResultKind.External)
+        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s,      ResultKind.Product)
+        | Reference(Symbol=s) =>
+          mutable referenceValue;
+          if (values != null && values.TryGetValue(s.Name, out referenceValue))
+            referenceValue.Calc(values, variables, getPropertyValue)
+          else
+            (s.Name, ResultKind.GlobalParameter)
+
+        | List         as xs =>
+          def elems = xs.Elems.Select(e => e.Calc(values, variables, getPropertyValue)).ToArray();
+          (elems, ResultKind.Value)
+        | MemberAccess as m =>
+          match (m.Expr.Calc(values, variables, getPropertyValue))
+          {
+            | (value, ResultKind.Product)  => getPropertyValue(value, m.Symbol)
+            | (_,     ResultKind.External) => (m.Symbol.Name, ResultKind.ExternalParameter)
+            | _                            => throw NotSupportedException($"Invalid member access expression '$m'.")
+          }
+      }
+    }
+
+    public override ToString() : string
+    {
+      match (this)
+      {
+        | NotSet             => NotSetValue
+        | Error              => "<Error>"
+        | String(value)      => "@\"" + value.Replace(@"\", @"\\").Replace("\"", @"\""") + '"'
+        | True               => "true"
+        | False              => "false"
+        | Real          as x => x.Value.ToString()
+        | Integer       as x => x.Value.ToString()
+        | Reference     as x => x.Symbol.InitialName
+        | MemberAccess as x  => $"$(x.Expr).$(x.Symbol.Name)"
+        | List         as xs => def elems = xs.Elems.Select(_.ToString());  $<#[..$elems]#>
+        | Tuple        as x  => def elems =  x.Elems.Select(_.ToString());  $<#(..$elems)#>
+      }
+    }
+  }
+}

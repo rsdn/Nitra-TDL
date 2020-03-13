@@ -1,0 +1,48 @@
+vm capability Cap1;
+vm capability Cap2 = VmCapability.Required;
+vm capability Cap3 = VmCapability.Acceptable;
+
+scenario Scenario1
+{
+  deployment Empty;
+  environments (Platform, Product);
+  vstest @"bin\test.dll" filter @"Name~abc";
+  UniqueId = "E5FF1D95-5BD3-4DAE-ACDA-ABFCFCF1DFEA";
+  Timeout = "00:10";
+  Cap1 = VmCapability.Unacceptable;
+  Cap2 = VmCapability.Required;
+  Cap3 = VmCapability.Acceptable;
+}
+
+scenario Scenario2 =
+  from x in [VmCapability.Required, VmCapability.Unacceptable, VmCapability.Acceptable]
+  select
+  {
+    deployment Empty;
+    environments (Platform, Product);
+    vstest @"bin\test.dll" filter @"Name~abc";
+    UniqueId = "E5FF1D95-5BD3-4DAE-ACDA-ABFCFCF1DFEB";
+    Timeout = "00:10";
+    Cap1 = x;
+  };
+
+suite Suite
+{
+  platform Platform;
+  product Product;
+  Scenario1();
+  Scenario2();
+}
+
+product type ProductType
+{
+  string Name = "Product 1";
+  string Version = "1.0";
+}
+
+product Product : ProductType
+{
+}
+
+platform Platform;
+

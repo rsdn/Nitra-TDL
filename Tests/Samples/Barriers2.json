@@ -1,0 +1,154 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deployment1": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "IncludeRegex": "$(IncludeRegex)",
+        "ExcludeRegex": "$(ExcludeRegex)"
+      },
+      "DefaultValues": {
+        "ExcludeRegex": ""
+      },
+      "ScriptPath": "foo.cmd"
+    },
+    "Deployment2": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deployment1": {
+            "IncludeRegex": "",
+            "ExcludeRegex": "Collections\\\\"
+          }
+        }
+      ]
+    }
+  },
+  "Platforms": {
+    "acceptance_platforms": {},
+    "w10Rs5-x64": {}
+  },
+  "Products": {
+    "TheProduct": {
+      "Name": "TheProduct",
+      "Parameters": {
+        "Name": "TheProduct"
+      },
+      "BranchName": "Main",
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {},
+      "Platforms": [
+        "acceptance_platforms"
+      ],
+      "Products": [
+        "TheProduct"
+      ],
+      "TestScenarios": [
+        "ParallelScenarios"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "ParallelScenarios": {
+      "TestScenarios": [
+        "Scenario1",
+        "Scenario2"
+      ]
+    },
+    "Scenario1": {
+      "Area": "SW_AntiCryptor;",
+      "Deployments": [
+        "Deployment2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10Rs5-x64"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "ExternalAutotestId": 5055,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:41:00",
+              "Count": 2
+            }
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:42:00",
+              "Count": 2
+            }
+          }
+        ]
+      },
+      "TfsId": 3226925,
+      "Timeout": "00:45:00",
+      "UniqueId": "0398378c-ddc4-486f-82ab-5c580e072bd1",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+    },
+    "Scenario2": {
+      "Area": "SW_AntiCryptor;",
+      "Deployments": [
+        "Deployment2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10Rs5-x64"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "ExternalAutotestId": 5055,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:43:00",
+              "Count": 2
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:44:00",
+              "Count": 2
+            }
+          }
+        ]
+      },
+      "TfsId": 3226925,
+      "Timeout": "00:45:00",
+      "UniqueId": "0398378c-ddc4-486f-82ab-5c580e072bd0",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+    }
+  },
+  "TestEntities": {}
+}

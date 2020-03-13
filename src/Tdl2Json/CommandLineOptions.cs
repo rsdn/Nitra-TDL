@@ -56,6 +56,8 @@ namespace Tdl2Json
 
         public string DiffFile { get; private set; }
 
+        public bool ExcludeTriggerPathScenarios { get; private set; }
+
         public string RepositoryPath { get; private set; }
 
         public bool IsTestMode => ComilerMessagesTest || SampleOutputFile != null;
@@ -78,6 +80,7 @@ namespace Tdl2Json
                 { "json-schema-type=",        "JSON schema type.",                                       v => JsonSchemaType = v, true },
                 { "diff-file=",               "Diff file path (--name-status format).",                  v => DiffFile = v },
                 { "repo-directory=",          "Repository root path.",                                   v => RepositoryPath = v },
+                { "exclude-triggerpath-scenarios", "Include only scenarios without TriggerPath attribute.", v => ExcludeTriggerPathScenarios = true },
                 new ResponseFileSource(),
 
                 // backward compatibility

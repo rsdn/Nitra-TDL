@@ -1,0 +1,151 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Imperative;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+
+using Nitra;
+using Nitra.ProjectSystem;
+using Tdl;
+
+namespace Tdl2Json
+{
+  class DiffFileScenarioTrigger : IScenarioTrigger
+  {
+    private _scenarioTable               : Dictionary[string, List[ScenarioSymbol * ISet[string]]] = Dictionary();
+    private _triggeredScenarios          : HashSet[ScenarioSymbol]                                 = HashSet();
+    private _repositoryRoot              : string;
+
+    public this(repositoryRoot : string)
+    {
+      _repositoryRoot = Path.GetFullPath(repositoryRoot)
+        .TrimEnd(array[Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]);
+    }
+
+    public Messages : CompilerMessageList { get; default CompilerMessageList() }
+
+    public AddScenario(symbol : ScenarioSymbol) : void
+    {
+      unless (symbol.IsUnconditional)
+      {
+        foreach (trigger in symbol.TriggerPaths)
+        {
+          mutable list;
+          unless (_scenarioTable.TryGetValue(trigger.Path, out list))
+          {
+            list = List();
+            _scenarioTable.Add(trigger.Path, list);
+          }
+          def excludes : ISet[string] =
+            if (trigger.Excludes.IsEmpty)
+              ImmutableHashSet.Empty
+            else
+              HashSet(trigger.Excludes);
+          list.Add((symbol, excludes));
+        }
+      }
+    }
+
+    public IsTriggered(symbol : ScenarioSymbol) : bool
+    {
+      symbol.IsUnconditional || _triggeredScenarios.Contains(symbol)
+    }
+
+    public LoadDiff(input : TextReader, filePath : string) : void
+    {
+      def source = if (string.IsNullOrEmpty(filePath)) Location.Default.Source else SingleLineSourceSnapshot("", filePath);
+ 
+      mutable line : uint;
+      while (true)
+      {
+        ++line;
+        def text = input.ReadLine();
+        match (text)
+        {
+          | null                => break
+          | x when x.Length < 3 => continue
+          | _                   => ()
+        }
+
+        match (text[0])
+        {
+          | 'A' /* Addition     */
+          | 'C' /* Copy         */
+          | 'D' /* Deletion     */
+          | 'M' /* Modification */
+          | 'R' /* Renaming     */
+          | 'T' /* TypeChange   */
+          | 'U' /* UnmergedFile */ => ()
+          | _ when text.StartsWith("warning:", StringComparison.OrdinalIgnoreCase) with messageType = CompilerMessageType.Warning
+          | _ when text.StartsWith("error:",   StringComparison.OrdinalIgnoreCase) with messageType = CompilerMessageType.Error =>
+            def message = "git diff:" + text.Substring(text.IndexOf(':') + 1);
+            Messages.ReportMessage(messageType, Location(source, 0), message, 0);
+            continue
+
+          | x => throw FormatException($"Invalid diff file format at line $line: bad update type '$x'")
+        }
+
+        def processPath(pos)
+        {
+          def nextTabPos   = text.IndexOf('\t', pos);
+          def relativePath = if (nextTabPos < 0) text.Substring(pos) else text.Substring(pos, nextTabPos - pos);
+          when (try { string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath) } catch { | _ => true })
+            throw FormatException($"Invalid diff file format at line $line: bad relative path '$relativePath'");
+
+          def fullPath = Path.GetFullPath(Path.Combine(_repositoryRoot, relativePath));
+
+          def walkUpward(head, tail)
+          {
+            mutable list;
+            when (_scenarioTable.TryGetValue(head, out list))
+            {
+              foreach ((s, excludes) in list)
+              {
+                def isExcluded(p)
+                {
+                  if (excludes.Contains(p))
+                    true
+                  else
+                  {
+                    def directory = Path.GetDirectoryName(p);
+                    if (string.IsNullOrEmpty(directory))
+                      false
+                    else
+                      isExcluded(directory)
+                  }
+                }
+
+                when (excludes.Count == 0 || !isExcluded(tail))
+                  _ = _triggeredScenarios.Add(s);
+              }
+            }
+
+            def directory = Path.GetDirectoryName(head);
+            when (directory != _repositoryRoot)
+            {
+              def name = Path.GetFileName(head);
+              def tail = if (string.IsNullOrEmpty(tail)) name else Path.Combine(name, tail);
+              walkUpward(directory, tail);
+            }
+          }
+          walkUpward(fullPath, "");
+
+          when (nextTabPos > 0)
+            processPath(nextTabPos + 1);
+        }
+
+        def firstTabPos = text.IndexOf('\t');
+        if (firstTabPos > 0)
+          processPath(firstTabPos + 1);
+        else
+          throw FormatException($"Invalid diff file format at line $line: tab character not found '$text'");
+      }
+    }
+  }
+}

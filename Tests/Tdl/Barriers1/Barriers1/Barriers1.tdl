@@ -1,0 +1,216 @@
+suite BuildAcceptance
+{
+    platform platform_group_1;
+    product App6;
+    KpmDownloadAndInstallMultiMachineScenario();
+}
+
+parallel scenario KpmDownloadAndInstallMultiMachineScenario =
+    KpmDownloadAndInstallMultiMachineDevice1,
+    KpmDownloadAndInstallMultiMachineDevice2;
+    
+barrier CreateUcpAccountBarrier timeout "00:10:00";
+
+scenario KpmDownloadAndInstallMultiMachineDevice1
+{
+    deployment "Install product no uac-1124";
+    environments (platform_group_1, App6);
+    sequence
+    {
+        method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount;
+        barrier CreateUcpAccountBarrier;
+        wait-for-reboot 00:11:00 max-reboots 2;
+        method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectMainProductToUcpOnFirstDevice;
+    }
+    
+    UniqueId = "3028FAB1-767B-4628-9F20-CCAD45AF16A0";
+    RevertAgentAfter  = true;
+    Timeout = "00:40:00";
+    Area = "KPMIntergration";
+    TfsId = 891723;
+}
+
+scenario KpmDownloadAndInstallMultiMachineDevice2
+{
+    deployment "Disable UAC";
+    environments (platform_group_1, App6);
+    sequence
+    {
+        barrier CreateUcpAccountBarrier;
+        wait-for-reboot 00:10:00; // W: Redundant 'wait-for-reboot' scenario action.
+        method Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice;
+    }
+
+    UniqueId = "691F0DCE-96C5-4DC2-96D8-8707D169EB53";
+    RevertAgentAfter  = true;
+    Timeout = "00:40:00";
+    Area = "KPMIntergration";
+    TfsId = 891723;
+}
+
+platform platform_group_1 = w10rs5-x64, w10rs6-x64, w10rs5-x86, w10rs6-x86, win7-x64, win7-x86, win811-x64, win811-x86;
+
+platform win7-x64;
+platform win7-x86;
+platform win811-x64;
+platform win811-x86;
+platform win10-x64;
+platform w10rs4-x64;
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs6-x64;
+platform w10rs6-x86;
+
+deployment "RebootAgent" = reboot "00:15:00";
+deployment "Disable UAC Impl"(
+    string UacAction = "Disable")
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\ManageUAC\ManageUAC.ps1"
+{
+    expected 42;
+}
+
+deployment "Disable UAC" = "Disable UAC Impl", "RebootAgent";
+
+deployment "Install product no uac-1124" = "Disable UAC", "Install product NoBackdoor TraceLevel_1000";
+
+select deployment "Install product NoBackdoor TraceLevel_1000"(InstallationType)
+{
+    | not-set        => "_Install product NoBackdoor TraceLevel_1000"
+    | "Regular"      => "_Install product NoBackdoor TraceLevel_1000"
+    | "Upgrade 2019" => "Install 2019 -> Install product NoBackdoor TraceLevel_1000"
+}
+deployment "_Install product NoBackdoor TraceLevel_1000" = "_Install product"(
+    ForceTraceLevel: "1000",
+    InstallLicenceBackdoor: "Off");
+
+deployment "_Install product"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string DumpFolder = @"",
+    string AcceptEula = "On",
+    string AcceptKsnAgreement = "On",
+    string AcceptMarketingAgreement = "On",
+    string AcceptSocializationAgreement = "On",
+    bool ActivateEmbeddedTrial = false,
+    string ActivationCode = "",
+    string ActivationServerUrl = "",
+    string AdditionalFiles = @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2.Main.AdditionalContinuousIntegration",
+    string BundleApp9 = "Default",
+    bool CollectContinuousProductTraces = true,
+    string CollectionMountType = "File share",
+    string CollectionsNetworkPath = @"\\tis-dfs.company.ru\Autotests\App2\Deployment\App2.Main",
+    string ConfigFilesFamily,
+    bool ContinueOnErrors = false,
+    string DefaultUpdateSource = "",
+    bool DisableDistribFilesDownloading = false,
+    bool DisablePpl = false,
+    bool DisableProductInstallation = false,
+    bool DisableRestartService = true,
+    bool DisableTestModulesInstallation = false,
+    bool DisableVSCollectorsDeployment = false,
+    string DriversLogState = "MainEnableBranchDisable",
+    bool EnableAntiSpam = false,
+    bool EnableAutomaticApp11Downgrade = false,
+    bool EnableBssLogs = false,
+    bool EnableSslDecoding = false,
+    bool ForceDisableAppVerifier = false,
+    bool ForceDisableDriverVerifier = false,
+    bool ForceInstallCertificates = false,
+    bool ForcePreloadDumpWriter = false,
+    string ForceTraceLevel = "",
+    bool IgnoreNothingToUpdateCode = false,
+    bool InstallActivationServerBackdoor = false,
+    string InstallerExecutableFileMask = "",
+    bool InstallLib1 = false,
+    string InstallLicenceBackdoor = "On",
+    string IsoImageFileName = "",
+    string KpcActivationCode = "",
+    string KpcCompanyId = "",
+    string KpcOneTimeRegistrationSharedSecret = "",
+    string KPCRegion = "",
+    string KpcUserId = "",
+    string LocalizationCode = "",
+    bool PostUpdateServiceStartStop = false,
+    string RegisterAiCom = "Off",
+    bool ReplaceDistributiveFromIso = false,
+    string RequestApp8TrialTier = "Default",
+    bool RunAtSystemStartup = false,
+    string SaveHashesPath = "",
+    string ScreenshotsFolder = "",
+    bool SetProductNameForFacade = true,
+    bool Silent = false,
+    bool StartService = false,
+    string SuggestApp3 = "Off",
+    int TimesToUpdate = 1,
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    bool TurnOffDumpOnAssert = false,
+    bool TurnOffProtection = false,
+    string UpdateChromeToVersion = "",
+    string UpdateFirefoxToVersion = "",
+    string UpdateSource = "",
+    string UseCollections = "On",
+    string UseGDPR = "Default",
+    bool UseProxyForUpdate = false,
+    bool Verbose = false,
+    bool VerboseExternalProcessesOutput = false,
+    bool WaitForProductActivation = false)
+    script @"\\tis-dfs.company.ru\Autotests\App2\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}
+
+deployment "Install 2019 -> Install product NoBackdoor TraceLevel_1000" = "Install Base Product 2019", "_Install product NoBackdoor TraceLevel_1000", "RebootAgent";
+deployment "Install Base Product 2019" = "Install Base Product"(
+    AdditionalFiles: @"\\tis-dfs.company.ru\Autotests\App2\AdditionalFiles\App2_2019.MP0.AdditionalContinuousIntegration");
+
+deployment "Install Base Product" = "_Install product"(
+    BuildPath: @"$(SessionWorkFolder)\BaseProductBuild",
+    DisableTestModulesInstallation: true,
+    DisableVSCollectorsDeployment: true,
+    InstallActivationServerBackdoor: true,
+    SetProductNameForFacade: false,
+    StartService: true,
+    TurnOffDumpOnAssert: true,
+    UseCollections: "Off");
+    
+product App6 : AppType
+{
+    Name = @"App6";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+    InstallationType = "Regular";
+}
+
+product type AppType
+{
+    string Name;
+    string BranchName;
+    string Version;
+    string AutotestBinariesExcludedFilesMasks;
+    string ProductBinariesExcludedFilesMasks;
+    string ConfigFilesFamily;
+    string TestAppPackName;
+    bool   DisableAddingTrustedApplications;
+    bool   SkipRecommendedSettings;
+    string InstallerExecutableFileMask;
+    string InstallationType;
+}
+
+external
+{
+    string ProductVersion;
+    string DistribFiles;
+    string DistribTestModules;
+    string AutotestsBinariesPath;
+    string BaseDistribFiles;
+    string BaseDistribTestModules;
+    string ProductBasesPath;
+}

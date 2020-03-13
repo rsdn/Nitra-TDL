@@ -2,6 +2,7 @@
 using DotNet.AstUtils;
 
 using Nitra;
+using Nitra.Internal;
 using Nitra.Declarations;
 using Nitra.ProjectSystem;
 using Nitra.Runtime.GraphUtils;
@@ -27,13 +28,13 @@ namespace Tdl
   {
     static RequiredProductTypeFields : list[string] = ["Name", "Version"];
     static ObsoleteProductTypeFields : Dictionary[string, string] = [("ReleaseName", "BranchName")].ToDictionary();
-    
+
     public NoLocation         : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan             : NSpan              = NSpan(0);
-    
+
     public BaseStableGuid : Guid = Guid.Parse("{AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA}");
-    
+
     public ToDictionary[TKey, TValue](this seq : Seq[TKey * TValue]) : Dictionary[TKey, TValue]
     {
       def dictionary = Dictionary();
@@ -52,9 +53,29 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.EntityFieldsScope
     }
 
+    public GetBarrierScope(this context : DependentPropertyEvalContext) : Scope
+    {
+      context.BindType("TdlInternals.Predefined", 0).Scope
+    }
+
     public GetExternalSymbolTable(this context : DependentPropertyEvalContext) : TableScope
     {
       ToTdlContext(context).TdlProjectData.ExternalSymbolTable
+    }
+
+    public GetIsPredefinedSuiteField(this context : DependentPropertyEvalContext) : string -> bool
+    {
+      value => ToTdlContext(context).PredefinedSuiteFields.Contains(value)
+    }
+
+    public GetIsNotPredefinedSuiteField(this context : DependentPropertyEvalContext) : string -> bool
+    {
+      value => !ToTdlContext(context).PredefinedSuiteFields.Contains(value)
+    }
+
+    public GetDeploymentTypeSymbol(this context : DependentPropertyEvalContext) : DeploymentTypeSymbol
+    {
+      ToTdlContext(context).TdlProjectData.DeploymentType
     }
 
     public GetProductTypeSymbol(this context : DependentPropertyEvalContext) : ProductTypeSymbol
@@ -70,6 +91,11 @@ namespace Tdl
     public GetScenarioParameterScope(this context : DependentPropertyEvalContext) : Scope
     {
       ToTdlContext(context).TdlProjectData.ScenarioParameterScope
+    }
+
+    public GetVmCapabilityScope(this context : DependentPropertyEvalContext) : Scope
+    {
+      ToTdlContext(context).TdlProjectData.VmCapabilityScope
     }
 
     public GetRequiredScenarioParameters(this context : DependentPropertyEvalContext) : ImmutableArray[FormalParameterSymbol]
@@ -94,7 +120,7 @@ namespace Tdl
 
     public GetCommandParameterValuesScope(this _context : DependentPropertyEvalContext, scope : Scope, stepNumber : int) : Scope
     {
-      FilteringScope(scope,
+      scope.FilterWith(
         fun (_)
         {
           | CommmandCallOutputArgumentSymbol as s => s.IsStepNumberEvaluated && s.StepNumber < stepNumber
@@ -122,7 +148,7 @@ namespace Tdl
       catch { e => _ = builder.HintMlException(e); }
       builder.ToString()
     }
-    
+
     public DeploymentMakeHint(symbolCache : ISymbolCache, symbol : DeploymentSymbol) : string
     {
       def builder = StringBuilder();
@@ -134,15 +160,15 @@ namespace Tdl
           .AppendLine();
 
         def project = symbolCache :> Project;
-        
+
         def rootNs = (project.Data :> TdlProjectData).RootNamespace;
-        
+
         def scenarios = rootNs.MemberTable
           .GetAllSymbols()
           .OfType.[Scenario.DefSymbol]()
           .Where(s => s.Deployment.Id == symbol.Id || s.Deployment.AllDeployments.Contains(symbol))
           .ToList();
-        
+
         if (scenarios.Count == 0)
           _ = builder.Append(<#Deployment is not used in any scenario.#>);
         else
@@ -158,7 +184,7 @@ namespace Tdl
       catch { e => _ = builder.HintMlException(e); }
       builder.ToString()
     }
-    
+
     public MakeDeployments(deploymentRefs : ImmutableArray[Ref[DeploymentSymbol]]) : ImmutableArray[DeploymentSymbol]
     {
       def builder = ImmutableArray.CreateBuilder();
@@ -175,7 +201,7 @@ namespace Tdl
       def builder = ImmutableArray.CreateBuilder();
       def visited = HashSet();
       _ = visited.Add(it.Id);
-      
+
       def collect(products : ImmutableArray[ProductSymbol]) : void
       {
         foreach (product in products)
@@ -193,7 +219,7 @@ namespace Tdl
       }
 
       collect(products);
-      
+
       builder.ToImmutable()
     }
 
@@ -239,39 +265,9 @@ namespace Tdl
         unless (visited.Add(deployment.Id))
           continue;
 
-        match (deployment)
-        {
-          | s is Deployment.SelectSymbol =>
-            unless (s.IsParameterScopeEvaluated)
-              return false;
-            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-
-            unless (s.IsDeploymentsEvaluated)
-              return false;
-            
-            foreach (seq in s.Deployments)
-              unless (CollectDeployments(visited, ref builder, seq))
-                return false;
-            
-          | s is Deployment.SetSymbol =>
-            unless (s.IsDeploymentsEvaluated)
-              return false;
-
-            unless (CollectDeployments(visited, ref builder, s.Deployments))
-              return false;
-
-          | _ is Deployment.ScriptSymbol
-          | _ is Deployment.CodeSymbol
-          | _ is Deployment.CurryingSymbol =>
-            unless (deployment.IsAggregateParametersScopeEvaluated)
-              return false;
-            UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
-
-          | _ is Deployment.EmptySymbol
-          | _ is DeploymentRebootSymbol => ()
-          | null => assert(false, "Deployment can not be null.")
-          | _    => assert(false, "Not supported deployment type: " + deployment.GetType().Name)
-        }
+        unless (deployment.IsAggregateParametersScopeEvaluated)
+          return false;
+        UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
       }
       true
     }
@@ -293,30 +289,9 @@ namespace Tdl
     {
       foreach (scenario when visited.Add(scenario.Id) in scenarios)
       {
-        match (scenario)
-        {
-          | s is Scenario.DefSymbol when s.IsDeploymentEvaluated =>
-            unless (s.Deployment.IsAggregateParametersScopeEvaluated)
-              return false;
-
-            UnionScopeBuilder.Add(s.Deployment.AggregateParametersScope, ref builder);
-            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-
-          | s is Scenario.SetSymbol when s.IsScenariosEvaluated =>
-            unless (CollectScenarios(visited, ref builder, s.Scenarios))
-              return false;
-
-          | s is Scenario.GeneratorSymbol when s.IsDeploymentEvaluated =>
-            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
-            when (s.Deployment is DeploymentSymbol as deployment)
-            {
-              unless (deployment.IsAggregateParametersScopeEvaluated)
-                return false;
-              UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
-            }
-
-          | _ => ()
-        }
+        unless (scenario.IsAggregateParametersScopeEvaluated)
+          return false;
+        UnionScopeBuilder.Add(scenario.AggregateParametersScope, ref builder);
       }
       true
     }
@@ -325,7 +300,7 @@ namespace Tdl
     {
       if (valueOpt.HasValue) valueOpt.Value.Value else ParsedValue(valueOpt.Span.StartPos)
     }
-    
+
     public MakeForReboot(valueOpt : DeploymentOption.ForReboot.IAstOption) : ParsedValue[int]
     {
       if (valueOpt.HasValue) valueOpt.Value.Value else ParsedValue(valueOpt.Span.StartPos)
@@ -336,10 +311,10 @@ namespace Tdl
       if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value.Value) else ParsedValue(valueOpt.Span.StartPos)
     }
 
-    public ConvertStringLiteral(this valueOpt : CSharp.StringLiteral.IAstOption) : ParsedValue[string]
-    {
-      if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value) else ParsedValue(valueOpt.Span.StartPos)
-    }
+    //public ConvertStringLiteral(this valueOpt : CSharp.StringLiteral.IAstOption) : ParsedValue[string]
+    //{
+    //  if (valueOpt.HasValue) TdlUtils.ConvertStringLiteral(valueOpt.Value) else ParsedValue(valueOpt.Span.StartPos)
+    //}
 
     public ConvertStringLiteralOrNull(str : CSharp.StringLiteral) : string
     {
@@ -349,7 +324,7 @@ namespace Tdl
       else
         null
     }
-    
+
     [DebuggerStepThroughAttribute]
     private HexDigit(c : char) : int
     {
@@ -372,7 +347,7 @@ namespace Tdl
 
       result
     }
-    
+
     public ConvertStringLiteral(str : CSharp.StringLiteral) : ParsedValue[string]
     {
       def builder = Text.StringBuilder();
@@ -385,16 +360,16 @@ namespace Tdl
         | Error                   => ()
         | SimpleEscape       as x =>
           def text = x.Source.Text;
-          _ = builder.Append(Nitra.Internal.DotUtils.EscapeSequence(text[x.Span.StartPos + 1]));
-          
-        | UnicodeEscape      as x 
+          _ = builder.Append(DotUtils.EscapeSequence(text[x.Span.StartPos + 1]));
+
+        | UnicodeEscape      as x
         | HexadecimalEscape  as x =>
           def span = x.Span;
           def value = HexToInt(part.Location, span.StartPos + 3, span.EndPos);
           try
             _ = builder.Append(value :> char);
           catch { _ is OverflowException => return ParsedValue(str.Span.StartPos); }
-        
+
         | RegulaChars             => _ = builder.Append(part.Location.GetText());
         | VerbatimEscape          => _ = builder.Append('"');
         | _                       => ()
@@ -444,15 +419,16 @@ namespace Tdl
           unless (Guid.TryParse(strGuid, out guid))
             definition.Expr.Error(context, <#Invalid GUID.#>);
         }
-        
+
         builder.Add(Def(sym, result));
       }
       builder.TryMoveToImmutable()
     }
 
-    public MakeDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]]) : ImmutableArray[Def]
+    public MakeDefinitions(definitions : IAstList[Definition], context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]], isIgnore : string -> bool = null) : ImmutableArray[Def]
     {
-      def builder = ImmutableArray.CreateBuilder(definitions.Count);
+      def builder         = ImmutableArray.CreateBuilder(definitions.Count);
+      def existsDefsNames = HashSet();
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
       {
         def sym = definition.SymbolRef.Symbol;
@@ -486,11 +462,12 @@ namespace Tdl
         }
 
         builder.Add(Def(sym, definition.Expr.Result));
+        _ = existsDefsNames.Add(GetCaseInsensitiveId(sym));
       }
-      
-      def existsDefsNames = HashSet(builder.Select(x => x.Symbol.Name), StringComparer.InvariantCultureIgnoreCase);
-      foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr), Name=name) as field when !existsDefsNames.Contains(name) in type.Scope.GetAllSymbols())
-        builder.Add(Def(field, expr));
+
+      foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr)) as field when !existsDefsNames.Contains(GetCaseInsensitiveId(field)) in type.Scope.GetAllSymbols())
+        when (isIgnore == null || !isIgnore(field.Name))
+          builder.Add(Def(field, expr));
 
       builder.TryMoveToImmutable()
     }
@@ -502,7 +479,7 @@ namespace Tdl
         builder.Add(UntypedDef(definition.Reference.Text, definition.Expr.Result));
       builder.TryMoveToImmutable()
     }
-    
+
     public Resolve[TSymbol](refs : ImmutableArray[Ref[DeclarationSymbol]]) : ImmutableArray[Ref[TSymbol]]
       where TSymbol : DeclarationSymbol
     {
@@ -559,7 +536,7 @@ namespace Tdl
 
       builder.TryMoveToImmutable()
     }
-    
+
     public ToSymbol(it : PlatformSymbol, platforms : ImmutableArray[Ref[PlatformSymbol]]) : ImmutableArray[PlatformSymbol]
     {
       def builder = ImmutableArray.CreateBuilder(platforms.Length);
@@ -608,26 +585,51 @@ namespace Tdl
 
         true
       }
-      FilteringScope(scope, predicate)
+      scope.FilterWith(predicate)
     }
-    
-    public MakeParameterScope(scope : Scope) : Scope
+
+    public FilterDeployment(defs : ImmutableArray[Def]) : List[DeploymentSymbol]
     {
-      def internTable = Dictionary(ParameterComparer());
-      def isInternedSymbol(symbol)
-      {
-        mutable internedSymbol;
-        if (internTable.TryGetValue(symbol, out internedSymbol))
-          symbol : object == internedSymbol
-        else
-        {
-          internTable.Add(symbol, symbol);
-          true
-        }
-      }
-      FilteringScope(scope, isInternedSymbol)
+      def deployments = List();
+      foreach (Def(Expr=Expr.Reference(Symbol=DeploymentSymbol as d)) in defs)
+        deployments.Add(d);
+      deployments
     }
-    
+
+    //public FilterDeploymentDefs(defs : ImmutableArray[Def]) : List[TypedDeclarationSymbol * DeploymentSymbol]
+    //{
+    //  def deployments = List();
+    //  foreach (Def(Symbol=s, Expr=Expr.Reference(Symbol=DeploymentSymbol as d)) in defs)
+    //    deployments.Add(s, d);
+    //  deployments
+    //}
+
+    public MakeParameterScope(scope : Scope, predefineds : ImmutableArray[Def]) : ValueOption[Scope]
+    {
+      def deployments = FilterDeployment(predefineds);
+
+      def scopeOpt = MakeAggregateParametersScope(deployments, scope);
+
+      if (scopeOpt is VSome(scope))
+      {
+        def internTable = Dictionary(ParameterComparer());
+        def isInternedSymbol(symbol)
+        {
+          mutable internedSymbol;
+          if (internTable.TryGetValue(symbol, out internedSymbol))
+            symbol : object == internedSymbol
+          else
+          {
+            internTable.Add(symbol, symbol);
+            true
+          }
+        }
+        VSome(scope.Memoize().FilterWith(isInternedSymbol))
+      }
+      else
+        VNone()
+    }
+
     public TryMoveToImmutable[T](this builder : ImmutableArray[T].Builder) : ImmutableArray[T]
     {
       if (builder.Capacity == builder.Count)
@@ -644,11 +646,10 @@ namespace Tdl
         | _                => false
       }
 
-      def filteringScope = FilteringScope(scope, filter);
-      filteringScope
+      scope.FilterWith(filter)
     }
-    
-    public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def]) : void
+
+    public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def], _dependency : object = null) : void
     {
       def defSet        = fields.Select(d => d.Symbol);
       def missingFields = requiredFields.Except(defSet).MapToArray(x => x.InitialName);
@@ -657,51 +658,55 @@ namespace Tdl
         ast.Error(context, $<#The following $(name)$(if (count == 1) "" else "s") are required: ..$missingFields.#>);
     }
 
-    public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope) : void
+    public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope, _defaultDefs : ImmutableArray[FormalParameterSymbol]) : void
     {
-      def definedParameters = HashSet();
-      foreach (s in productScope.AllSymbols)
-        _ = definedParameters.Add(s.NameId);
-      foreach (d in suiteDefs)
-        _ = definedParameters.Add(d.Symbol.NameId);
-
-      mutable hasUnconditionalScenario;
-      def undefinedParameters = HashSet();
-      foreach (statement in suiteStatements)
+      try
       {
-        | CallScenario(scenaro) =>
-          when (scenaro.IsUnconditional)
-            hasUnconditionalScenario = true;
+        def definedParameters = HashSet();
+        foreach (s in productScope.GetAllSymbols())
+          _ = definedParameters.Add(s.NameId);
+        foreach (d in suiteDefs)
+          _ = definedParameters.Add(d.Symbol.NameId);
 
-          when (scenaro.IsAggregateParametersScopeEvaluated)
-          {
-            def scenarioScope = scenaro.AggregateParametersScope;
-            foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
+        mutable hasUnconditionalScenario;
+        def undefinedParameters = HashSet();
+        foreach (statement in suiteStatements)
+        {
+          | CallScenario(scenaro) =>
+            when (scenaro.IsIsUnconditionalEvaluated && scenaro.IsUnconditional)
+              hasUnconditionalScenario = true;
+
+            when (scenaro.IsAggregateParametersScopeEvaluated)
             {
-              when (definedParameters.Contains(parameter.NameId)
-                 || parameter.HasDefault()
-                 || parameter.DeclaredIn is Deployment.SelectSymbol
-                 || parameter.Type is SuiteTypeSymbol)
-                continue; // OK
-
-              when (undefinedParameters.Add(parameter.NameId))
+              def scenarioScope = scenaro.AggregateParametersScope;
+              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.GetAllSymbols())
               {
-                def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
-                using (root = msgs.RootError(ast.Name, $"Value is not specified for parameter '$(parameter)' declared in '$(parameter.DeclaredIn)'."))
+                when (definedParameters.Contains(parameter.NameId)
+                   || parameter.HasDefault()
+                   || parameter.DeclaredIn is Deployment.SelectSymbol
+                   || parameter.Type is SuiteTypeSymbol)
+                  continue; // OK
+
+                when (undefinedParameters.Add(parameter.NameId))
                 {
-                  def parameterDefinition = parameter.FirstParsedDeclarationOrDefault;
-                  when (parameterDefinition != null)
-                    root.Hint(parameterDefinition.Name.Location, "Parameter definition.");
+                  def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
+                  using (root = msgs.RootError(ast.Name, $"Value is not specified for parameter '$(parameter)' declared in '$(parameter.DeclaredIn)'."))
+                  {
+                    def parameterDefinition = parameter.FirstParsedDeclarationOrDefault;
+                    when (parameterDefinition != null)
+                      root.Hint(parameterDefinition.Name.Location, "Parameter definition.");
+                  }
                 }
               }
             }
-          }
 
-        | _ => ()
+          | _ => ()
+        }
+
+        when (!hasUnconditionalScenario && suiteStatements.Length > 0)
+          ast.Name.Error(context, "Suite must contain at least one scenario without TriggerPath attribute.", 0);
       }
-
-      when (!hasUnconditionalScenario && suiteStatements.Length > 0)
-        ast.Name.Error(context, "Suite must contain at least one scenario without TriggerPath attribute.", 0);
+      catch { | e => ast.Name.Error(context, $"Internal Compiler Error: Exception: $e.", 0); }
     }
 
     public ResolveSuiteTypeSymbol(this context : DependentPropertyEvalContext, typeRef : Ref[DeclarationSymbol]) : SuiteTypeSymbol
@@ -724,7 +729,7 @@ namespace Tdl
           result.Symbol
       }
     }
-    
+
     public ReportProductTypeFields(this ast : IAst, context : DependentPropertyEvalContext, fields : ImmutableArray[Tdl.FieldSymbol]) : void
     {
       mutable replacedWith;
@@ -734,13 +739,21 @@ namespace Tdl
         unless (set.Remove(field.Name))
           when (ObsoleteProductTypeFields.TryGetValue(field.Name, out replacedWith))
             _ = set.Remove(replacedWith);
-      
+
       unless (set.IsEmpty())
         ast.Error(context, $"Missing required fields: ..$set");
-      
+
       // Check obsolete fields
       foreach (field when ObsoleteProductTypeFields.TryGetValue(field.Name, out replacedWith) in fields)
         field.FirstDeclarationOrDefault.Name.Warning(context, $"Field $(field.Name) is obsolete and will be replaced with $replacedWith field.");
+    }
+
+    public CheckTestMethods(this ast : IAst, name : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
+    {
+      foreach (x when x.IsTest in actions)
+        return;
+
+      name.Error(context, "Scenario must have at least one test method.");
     }
 
     public ReportDuplicateBarrier(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
@@ -754,24 +767,60 @@ namespace Tdl
       }
     }
 
-    public CheckMaxReboots(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
+    public CheckMaxReboots(
+      this ast       : IAst,
+           context   : DependentPropertyEvalContext,
+           actions   : ImmutableArray[ScenarioAction],
+           variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null
+    ) : void
     {
+      def values = Dictionary();
+      def getPropertyValue(obj : object, prop : Declarations.DeclarationSymbol) : object * ResultKind
+      {
+        | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
+          def res = prod.Defs
+                        .Find(d => d.Symbol.Id == field.Id)
+                        .Map(d => d.Expr.Calc(values, variables, getPropertyValue))
+                        .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
+          res
+
+        | _ => ("unsuported expression", ResultKind.Error)
+      }
+      def error(loc : Location, msg : string) : void
+      {
+        def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+        msgs.Error(loc, msg);
+      }
       mutable prevAction = null;
       for (mutable i = 0; i < actions.Length; ++i)
       {
-        when (actions[i] is ScenarioAction.WaitForReboot as action)
+        when (actions[i] is ScenarioAction.WaitForReboot(MaxRebootsCountOpt=VNone) as action)
         {
           match (prevAction)
           {
-            | ScenarioAction.Script(MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Config(MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.GTest (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Apk   (MaxRebootsCountOpt = maxReboots)
-            | ScenarioAction.Method(MaxRebootsCountOpt = maxReboots) =>
-              when (maxReboots.ValueOrDefault < 1)
+            | ScenarioAction.WaitForReboot(MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Script       (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Config       (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.GTest        (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Apk          (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Marathon     (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Method       (MaxRebootsCountOpt = VSome(maxReboots)) =>
+              match (maxReboots.Calc(values, variables, getPropertyValue))
               {
-                def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-                msgs.Error(prevAction.Location, "Directive 'max-reboots' with non-zero value is required by following 'wait-for-reboot' scenario action.");
+                | (_,     ResultKind.Missing)           => assert(false)
+                | (_,     ResultKind.NotSet)            => assert(false)
+                | (_value, ResultKind.ExternalParameter)
+                | (_value, ResultKind.GlobalParameter)
+                | (_value, ResultKind.Product)
+                | (_value, ResultKind.Error)
+                | (_value, ResultKind.VmCapability)
+                | (_,     ResultKind.External) => error(prevAction.Location, "This kind of expression is not allowed in max-reboots.");
+                | (value : object, ResultKind.Value)             =>
+                  if (value is int as intVal)
+                    when (intVal < 1)
+                      error(prevAction.Location, "Directive 'max-reboots' with non-zero value is required by following 'wait-for-reboot' scenario action.");
+                  else
+                    error(prevAction.Location, "The max-reboots should have int type.");
               }
 
             | _ =>
@@ -796,7 +845,7 @@ namespace Tdl
     {
       public Symbol : TSymbol;
     }
-    
+
     public CheckMultiMachineScenario(this ast : IAst, context : DependentPropertyEvalContext, scenarios : ImmutableArray[ScenarioSymbol], _depend : object) : void
     {
       def edges = List();
@@ -806,7 +855,7 @@ namespace Tdl
         | Scenario.DefSymbol as d =>
           unless (d.IsActionsEvaluated)
             return;
-            
+
           mutable prev;
           foreach (action is ScenarioAction.Barrier in d.Actions)
           {
@@ -816,16 +865,16 @@ namespace Tdl
               node = Node(action.barrier);
               nodesMap.Add(action.barrier, node);
             }
-            
+
             when (prev != null)
             {
               nodesMap[prev.barrier].AddConnection(node);
               edges.Add(Edge(prev, action));
             }
-            
+
             prev = action;
           }
-        
+
         | Scenario.SetSymbol as s =>
           unless (s.IsScenariosEvaluated)
             return;
@@ -836,16 +885,16 @@ namespace Tdl
       }
       foreach (scenario in scenarios)
         loop(scenario);
-        
+
       def groups = GraphAlgorithms.FindStronglyConnectedComponents(nodesMap.Values);
-      
+
       foreach (group in groups)
         when (group.IsNonTrivial())
         {
           def symbols = HashSet();
           foreach (node in group.Nodes)
             _ = symbols.Add(node.Symbol);
-            
+
           def barrierUsages = HashSet();
           foreach (edge in edges)
           {
@@ -855,7 +904,7 @@ namespace Tdl
               _ = barrierUsages.Add(edge.To);
             }
           }
-          
+
           def msgs               = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
           def deadLockedBarriers = group.Nodes.ToArray().Map(n => AsName(n.Symbol.Name));
           foreach (usage in barrierUsages.OrderBy(u => u.Location.Source.File).ThenBy(u => u.Location.StartPos))
@@ -867,7 +916,7 @@ namespace Tdl
     {
       GetSetScenarios(scenarioSet, null)
     }
-    
+
     public GetSetScenarios(scenarioSet : Scenario.SetSymbol, duplicates : HashSet[Scenario.SetSymbol * Scenario.DefSymbol]) : List[Scenario.DefSymbol]
     {
       def result  = List();
@@ -890,7 +939,7 @@ namespace Tdl
       loop(scenarioSet);
       result
     }
-    
+
     public CheckUniquenessOfScenarios(this _ast : IAst, context : DependentPropertyEvalContext, set : Scenario.SetSymbol, _depend : object) : void
     {
       def duplicates = HashSet();
@@ -914,7 +963,7 @@ namespace Tdl
         }
       }
     }
-    
+
     public CheckExpected(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, type2 : TypeSymbol) : void
     {
       if (TdlTypeUnifier.Instance.TryRequire(type2, type1))
@@ -931,14 +980,14 @@ namespace Tdl
         | (expectedTuple is TdlType.TupleSymbol, tuple2 is TdlType.TupleSymbol) =>
           def expectedArgs = expectedTuple.Args;
           def args = tuple2.Args;
-          
+
           when (expectedArgs.Length != items.Count || expectedArgs.Length != args.Length)
           {
             def got = if (expectedArgs.Length == items.Count) args.Length else items.Count;
             items.Error(context, $"Expected $(expectedArgs.Length) but got $got tuple elemens.", 0);
             return;
           }
-            
+
           for (mutable i = 0; i < expectedArgs.Length; i++)
           {
             def t1   = expectedArgs[i];
@@ -949,12 +998,12 @@ namespace Tdl
             else
               item.Error(context, $"Expected '$(TypeToString(expectedType))' but got '$(TypeToString(type))'.", 0);
           }
-          
+
         | _ when TdlTypeUnifier.Instance.TryUnify(expectedType, type) => _ = TdlTypeUnifier.Instance.Unify(expectedType, type);
         | _ => ast.Error(context, $"Expected $(TypeToString(expectedType)) but got $(TypeToString(type)).", 0);
       }
     }
-    
+
     public MakeTupleType(this context : DependentPropertyEvalContext, items : ImmutableArray[TypeSymbol]) : ValueOption[TypeSymbol]
     {
       def tuple  = TdlType.TupleSymbol();
@@ -962,10 +1011,10 @@ namespace Tdl
       tuple.EvalProperties(context);
       VSome(tuple)
     }
-    
+
     TypeToString(type : TypeSymbol) : string
     {
-      | f is FunctionTypeSymbol when f.IsParametersEvaluated && f.IsReturnEvaluated && f.Parameters.Length == 0 
+      | f is FunctionTypeSymbol when f.IsParametersEvaluated && f.IsReturnEvaluated && f.Parameters.Length == 0
                                   && f.Return.Name.Equals("void", StringComparison.OrdinalIgnoreCase)           => "Test method"
       | _ => type.ToString()
     }
@@ -974,13 +1023,13 @@ namespace Tdl
     {
       when (items.Length == 1)
         return items[0];
-        
+
       def tuple = TdlType.TupleSymbol();
       tuple.Args = items;
       tuple.EvalProperties(context);
       tuple
     }
-    
+
     public MakeFroms(froms : From.IAstList) : ValueOption[ImmutableArray[Code.From]]
     {
       def builder = ImmutableArray.CreateBuilder(froms.Count);
@@ -988,11 +1037,11 @@ namespace Tdl
       {
         when (!from.Vars.IsSymbolEvaluated || !from.List.IsResultEvaluated)
           return VNone();
-          
+
         def result = Code.From(from.Vars.Symbol, from.List.Result);
         builder.Add(result);
       }
-      
+
       VSome(builder.MoveToImmutable())
     }
 
@@ -1008,7 +1057,7 @@ namespace Tdl
         }
       }
     }
-    
+
     public Error(this location : Location, context : DependentPropertyEvalContext, message : string) : void
     {
         def msgs = context.GetFileData(location.Source.File.Id).GetCompilerMessage();
@@ -1029,30 +1078,30 @@ namespace Tdl
 
     public CheckSelectDeployment(this ast : IAst, context : DependentPropertyEvalContext, cases : Case.IAstList, parameterCount : int) : void
     {
-      def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-      
-      foreach (case in cases)
+      try
       {
-        when (case.Values.Count != parameterCount)
+        def msgs = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+
+        foreach (case in cases)
         {
-          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
-          break;
+          when (case.Values.Count != parameterCount)
+          {
+            msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
+            break;
+          }
+        }
+
+        def set = HashSet();
+        foreach (case in cases with k)
+        {
+          def values = case.Values.Map(_.Text);
+          unless (set.Add(values))
+            msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Duplicate entry.", 0);
         }
       }
-
-      foreach (case in cases with k)
-      foreach (value when value.Text == "" in case.Values)
-        msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value can't be empty.", 0);
-      
-      def set = HashSet();
-      foreach (case in cases with k)
-      {
-        def values = case.Values.Map(_.Text);
-        unless (set.Add(values))
-          msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Duplicate entry.", 0);
-      }
+      catch { | e => Ice(ast, context, e); }
     }
-    
+
     public MakeDefaultDefs(this ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
       def getAllProducts(product : TypedDeclarationSymbol) : Seq[Product.DefSymbol]
@@ -1087,121 +1136,131 @@ namespace Tdl
         | _ => assert(false);
       }
 
-      try MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
-      catch VNone()
+      MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
     }
-    
+
     MakeDefaultDefs(ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, getAllProducts : TypedDeclarationSymbol -> Seq[Product.DefSymbol]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
-      def filteringScope    = definitionScope :> FilteringScope;
-      def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
-                                                    .OfType.[FormalParameterSymbol]()
-                                                    .Where(p => p.IsDeclaredInEvaluated && p.DeclaredIn is Deployment.SelectSymbol));
-                                         
-      when (selectParams.Count == 0)
-        return VSome(ImmutableArray.Empty);
-      
-      def selectDeployments = HashSet(selectParams.Select(p => p.DeclaredIn :> Deployment.SelectSymbol));
-      def paramMap          = Dictionary(ParameterComparer.Instance);
-      
-      // We fill the values explicitly specified.
-      foreach (d in defs)
-          match (d.Expr)
-          {
-            | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
-            | _ => ()
-          }
-          
-      foreach (ds in getAllProducts(product)) // TODO: вычислить продукты сразу, так как они на первом проходе не вычисленны и остальные вычисления делать бессмысленно.
+      try
       {
-        unless (ds.IsDefsEvaluated)
-          return VNone();
+        def filteringScope    = definitionScope :> FilteringScope;
+        def selectParams      = HashSet(filteringScope.Scope.GetAllSymbols()
+                                                      .OfType.[FormalParameterSymbol]()
+                                                      .Where(p => p.IsDeclaredInEvaluated && p.DeclaredIn is Deployment.SelectSymbol));
 
-        foreach (d in ds.Defs)
-          match (d.Expr)
-          {
-            | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-            | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
-            | _ => ()
-          }
-      }
-
-      foreach (selectDeployment in selectDeployments)
-      {
-        unless (selectDeployment.IsParametersEvaluated)
-          return VNone();
-
-        def len        = selectDeployment.Parameters.Length;
-        def names      = array(len);
-        def isUsedVars = array(len);
-        def values     = array(len);
-        foreach (p in selectDeployment.Parameters with k)
-        {
-          names[k] = p.Name;
-          mutable value;
-          when (paramMap.TryGetValue(p, out value))
-          {
-            if (value == null)
-              isUsedVars[k] = true;
-            else
-              values[k] = value;
-          }
-        }
-        
-        unless (selectDeployment.IsCasesEvaluated)
-          return VNone();
-          
-        mutable isEntryPresent;
-        foreach (entry in selectDeployment.Cases)
-        {
-          when (entry.Length != values.Length)
-            return VSome(ImmutableArray.Empty); // An error message has already been reported.
-
-          mutable isEntryMatch = true;
-          for (mutable i = 0; i < values.Length; i++)
-          {
-            isEntryMatch &= entry[i] == values[i];
-            unless (isEntryMatch)
-              break;
-          }
-          isEntryPresent |= isEntryMatch;
-        }
-        when (!isEntryPresent && isUsedVars.All(x => !x))
-        {
-          def notSetVar = List();
-          for (mutable i = 0; i < names.Length; i++)
-          {
-            def name  = names[i];
-            def value = values[i];
-            when (value == null)
-              notSetVar.Add("\"" + name + "\"");
-          }
-
-          def entryStr      = values.Select(v => if (v == null) "_" else "\"" + v + "\"");
-          def msgs          = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
-          def suffix        = if (notSetVar.Count > 1) "s" else "";
-          def notSetVarText = if (notSetVar.Count > 0) $"Valiable$suffix: ..$notSetVar not set. And the" else "The";
-          using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"$notSetVarText \"$(selectDeployment.Name)\" select deployment has no ..$entryStr entry.", 0))
-            root.ReportMessage(CompilerMessageType.Hint, selectDeployment.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
+        when (selectParams.Count == 0)
           return VSome(ImmutableArray.Empty);
-        }
-      }
-      
-      def distinctSelectParams = HashSet(selectParams, ParameterComparer.Instance);
-      
-      def builder = ImmutableArray.CreateBuilder(distinctSelectParams.Count);
-      foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
-        builder.Add(p);
 
-      VSome(builder.ToImmutable())
+        def selectDeployments = HashSet(selectParams.Select(p => p.DeclaredIn :> Deployment.SelectSymbol));
+        def paramMap          = Dictionary(ParameterComparer.Instance);
+
+        // We fill the values explicitly specified.
+        foreach (d in defs)
+            match (d.Expr)
+            {
+              | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
+              | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
+              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
+              | _ => ()
+            }
+
+        foreach (ds in getAllProducts(product)) // TODO: вычислить продукты сразу, так как они на первом проходе не вычисленны и остальные вычисления делать бессмысленно.
+        {
+          unless (ds.IsDefsEvaluated)
+            return VNone();
+
+          foreach (d in ds.Defs)
+            match (d.Expr)
+            {
+              | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
+              | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
+              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
+              | _ => ()
+            }
+        }
+
+        foreach (selectDeployment in selectDeployments)
+        {
+          unless (selectDeployment.IsParametersEvaluated)
+            return VNone();
+
+          def len        = selectDeployment.Parameters.Length;
+          def names      = array(len);
+          def isUsedVars = array(len);
+          def values     = array(len);
+          foreach (p in selectDeployment.Parameters with k)
+          {
+            names[k] = p.Name;
+            mutable value;
+            when (paramMap.TryGetValue(p, out value))
+            {
+              if (value == null)
+                isUsedVars[k] = true;
+              else
+                values[k] = value;
+            }
+          }
+
+          unless (selectDeployment.IsCasesEvaluated)
+            return VNone();
+
+          mutable isEntryPresent;
+          foreach (entry in selectDeployment.Cases)
+          {
+            when (entry.Length != values.Length)
+              return VSome(ImmutableArray.Empty); // An error message has already been reported.
+
+            mutable isEntryMatch = true;
+            for (mutable i = 0; i < values.Length; i++)
+            {
+              isEntryMatch &= entry[i] == values[i];
+              unless (isEntryMatch)
+                break;
+            }
+            isEntryPresent |= isEntryMatch;
+          }
+          when (!isEntryPresent && isUsedVars.All(x => !x))
+          {
+            def notSetVar = List();
+            for (mutable i = 0; i < names.Length; i++)
+            {
+              def name  = names[i];
+              def value = values[i];
+              when (value == null)
+                notSetVar.Add("\"" + name + "\"");
+            }
+
+            def entryStr      = values.Select(v => if (v == null) "_" else "\"" + v + "\"");
+            def msgs          = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
+            def suffix        = if (notSetVar.Count > 1) "s" else "";
+            def notSetVarText = if (notSetVar.Count > 0) $"Valiable$suffix: ..$notSetVar not set. And the" else "The";
+            using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"$notSetVarText \"$(selectDeployment.Name)\" select deployment has no ..$entryStr entry.", 0))
+              root.ReportMessage(CompilerMessageType.Hint, selectDeployment.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
+            return VSome(ImmutableArray.Empty);
+          }
+        }
+
+        def distinctSelectParams = HashSet(selectParams, ParameterComparer.Instance);
+
+        def builder = ImmutableArray.CreateBuilder(distinctSelectParams.Count);
+        foreach (p when !paramMap.ContainsKey(p) in distinctSelectParams)
+          builder.Add(p);
+
+        VSome(builder.ToImmutable())
+      }
+      catch { | e => Ice(ast, context, e); VNone() }
+    }
+
+    Ice(ast : IAst, context : DependentPropertyEvalContext, e : Exception) : void
+    {
+      ast.Error(context, "Internal compiler error. Notify TDL developers about it: " + e);
     }
 
     public AsName(text : string) : string
     {
       foreach (ch when char.IsWhiteSpace(ch) in text)
         return "\"" + text + '"';
-      
+
       text
     }
 
@@ -1261,12 +1320,12 @@ namespace Tdl
       {
           | _ is Scenario.DefSymbol   => []
           | s is Scenario.SetSymbol      => if (s.IsScenariosEvaluated) s.Scenarios else []
-          | _ is Scenario.GeneratorSymbol => [] // 
+          | _ is Scenario.GeneratorSymbol => [] //
           | s => assert(false, "Unsupported symbol type: " + s.GetType().FullName)
       }
       CheckForRecursion(ast, context, symbol, getDescendants, _depend)
     }
-    
+
     public CheckForRecursionDeployment(this ast : IAst, context : DependentPropertyEvalContext, symbol : DeploymentSymbol, _depend : object) : ImmutableArray[DeploymentSymbol]
     {
       def getDescendants(sym : DeploymentSymbol) : Seq[DeploymentSymbol]
@@ -1282,7 +1341,7 @@ namespace Tdl
       }
       CheckForRecursion(ast, context, symbol, getDescendants, _depend)
     }
-    
+
     public CheckForRecursion[TSymbol](ast : IAst, context : DependentPropertyEvalContext, symbol : TSymbol, getDescendants : TSymbol -> Seq[TSymbol], _depend : object) : ImmutableArray[TSymbol]
       where TSymbol: DeclarationSymbol
     {
@@ -1300,16 +1359,16 @@ namespace Tdl
           foreach (subSym in descendants)
             loop(node, subSym);
         }
-        
+
         when (parentNode != null)
           node.AddConnection(parentNode);
       }
 
       loop(null, symbol);
-        
+
       def nodesMap = nodesMap;
       def groups = GraphAlgorithms.FindStronglyConnectedComponents(nodesMap.Values);
-      
+
       foreach (group when group.IsNonTrivial() in groups)
       {
         def names = group.Nodes.ToArray().Map(n => AsName(n.Symbol.Name));
@@ -1323,7 +1382,7 @@ namespace Tdl
           msgs.ReportMessage(CompilerMessageType.Error, loc, msg, 0);
         }
       }
-      
+
       nodesMap.Keys.ToImmutableArray()
     }
 
@@ -1348,16 +1407,50 @@ namespace Tdl
       }
     }
 
-    public MakeAggregateParametersScope(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
+    public MakeDefinitionScopeForScenarioDef(deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
+    {
+      GetScenarioParameterScope(context).HideWith(deploymentScope.UnionWith(GetVmCapabilityScope(context)))
+    }
+
+    public MakeDefinitionScopeForGeneratorScenario(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    {
+      mutable builder;
+
+      match (deployment)
+      {
+        | DeploymentSymbol as d when !d.IsAggregateParametersScopeEvaluated => return VNone();
+        | DeploymentSymbol as d => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
+        | VarSymbol as v =>
+          foreach (from in froms)
+          foreach (var when v.Id == var.Id in from.Vars with i)
+          {
+            def list = from.Elems.GetExprListForVar(i);
+            foreach (x in list)
+            {
+              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAggregateParametersScopeEvaluated => return VNone();
+              | Reference(Symbol=DeploymentSymbol as d) => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
+              | _ => ()
+            }
+            break;
+          }
+        | _ => assert(false, $"Unsupported expressoin type $(deployment.GetType().FullName)");
+      }
+
+      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
+      UnionScopeBuilder.Add(GetVmCapabilityScope(context), ref builder);
+      VSome(GetScenarioParameterScope(context).HideWith(builder.ToScope()))
+    }
+
+    public MakeAggregateParametersScopeForScenarioDef(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : Scope
     {
       mutable builder;
       UnionScopeBuilder.Add(parametersScope, ref builder);
       UnionScopeBuilder.Add(deploymentScope, ref builder);
       AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-      builder.ToScope();
+      FilterOutAssignedParameters(builder.ToScope(), defs)
     }
 
-    public MakeAggregateParametersScope(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    public MakeAggregateParametersScopeForScenarioGenerator(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
     {
       def deployments = List();
       foreach (deployment in GetScenarioGeneratorDeployments(deployment, froms, context))
@@ -1368,7 +1461,11 @@ namespace Tdl
         deployments.AddRange(deployment.AllDeployments);
       }
 
-      MakeAggregateParametersScope(deployments, parametersScope)
+      def result = MakeAggregateParametersScope(deployments, parametersScope);
+      if (result is VSome(scope))
+        VSome(FilterOutAssignedParameters(scope, defs))
+      else
+        result
     }
 
     public GetScenarioGeneratorDeployments(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : Seq[DeploymentSymbol]
@@ -1402,18 +1499,29 @@ namespace Tdl
       }
     }
 
-    public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
+    private FilterOutAssignedParameters(scope : Scope, defs : ImmutableArray[Tdl.Def]) : Scope
     {
-      unless (maxRebootsCountOpt.HasValue)
-        return ParsedValue(maxRebootsCountOpt.Span.StartPos);
-        
-      def lit = maxRebootsCountOpt.Value.Value;
-      
-      when (lit.IsMissing || lit.IsAmbiguous)
-        return ParsedValue(lit.Span.StartPos);
-      
-      ParsedValue(lit.Span, int.Parse(lit.GetText()))
+      def assignedParams = HashSet();
+      foreach (d in defs)
+        _ = assignedParams.Add(GetCaseInsensitiveId(d.Symbol));
+
+      scope
+        .FilterWith(symbol => !assignedParams.Contains(GetCaseInsensitiveId(symbol)))
+        .Memoize()
     }
+
+    //public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
+    //{
+    //  unless (maxRebootsCountOpt.HasValue)
+    //    return ParsedValue(maxRebootsCountOpt.Span.StartPos);
+    //
+    //  def lit = maxRebootsCountOpt.Value.Value;
+    //
+    //  when (lit.IsMissing || lit.IsAmbiguous)
+    //    return ParsedValue(lit.Span.StartPos);
+    //
+    //  ParsedValue(lit.Span, int.Parse(lit.GetText()))
+    //}
 
     public ToBool(this continueOnErrorOpt : OptionParseTree[GrammarParseTree.ContinueOnError]) : ParsedValue[bool]
     {
@@ -1422,7 +1530,7 @@ namespace Tdl
       else
         ParsedValue(continueOnErrorOpt.Span.StartPos)
     }
-    
+
     public ResolveOpt[TSymbol](this refOpt : ValueOption[Ref[DeclarationSymbol]]) : ValueOption[Ref[TSymbol]]
       where TSymbol: DeclarationSymbol
     {
@@ -1434,7 +1542,7 @@ namespace Tdl
     {
       if (refOpt.HasValue && refOpt.Value.IsSymbolEvaluated) VSome(refOpt.Value.Symbol) else VNone()
     }
-    
+
     public IncrementGuid(guid : Guid, value : uint) : Guid
     {
       def bytes1   = guid.ToByteArray();
@@ -1446,7 +1554,7 @@ namespace Tdl
       bytes1[3] = bytes2[3];
       Guid(bytes1)
     }
-    
+
     public NewGuid(this context : DependentPropertyEvalContext) : Guid
     {
       def data = context.ToTdlContext().TdlProjectData;
@@ -1455,22 +1563,22 @@ namespace Tdl
       else
         Guid.NewGuid()
     }
-    
+
     [Record]
     private class AstVisitor : IAstVisitor
     {
       public this(onName : Name -> void, onReference : Reference -> void) { _onReference = onReference; _onName = onName; }
-      
+
       private _onReference : Reference -> void;
       private _onName      : Name      -> void;
       private _onIRef      : IRef      -> void;
       private _onIAst      : IAst      -> void;
-      
+
       public Visit(ast : IAst)  : void
       {
         when (_onIAst != null)
           _onIAst(ast);
-          
+
         ast.Accept(this)
       }
       public Visit(r : IRef)    : void
@@ -1495,16 +1603,16 @@ namespace Tdl
       ast.Accept(AstVisitor(onName, onReference));
     }
 
-    public CreateLoginAction(context : DependentPropertyEvalContext, location : Location, user : CSharp.StringLiteral, password : CSharp.StringLiteral) : ScenarioAction.Login
-    {
-      def userValue     = ConvertStringLiteral(user);
-      def passwordValue = ConvertStringLiteral(password);
-
-      when (string.IsNullOrEmpty(userValue.Value))
-        user.Error(context, "User name must be non empty string.");
-
-      ScenarioAction.Login(location, userValue, passwordValue)
-    }
+    //public CreateLoginAction(context : DependentPropertyEvalContext, location : Location, user : Tdl.Expr, password : Tdl.Expr) : ScenarioAction.Login
+    //{
+    //  def userValue     = ConvertStringLiteral(user);
+    //  def passwordValue = ConvertStringLiteral(password);
+    //
+    //  when (string.IsNullOrEmpty(userValue.Value))
+    //    user.Error(context, "User name must be non empty string.");
+    //
+    //  ScenarioAction.Login(location, userValue, passwordValue)
+    //}
 
     public ValidateCommandParameters(this ast : CommandCall, command : DeclaredTypeSymbol, context : DependentPropertyEvalContext) : void
     {
@@ -1573,14 +1681,14 @@ namespace Tdl
     //  Require(ast, context, type, baseType);
     //  baseTypeParam
     //}
-    
+
     public ProvidedTypeParam1(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedTypeFullTypeName : string, derivedTypeParam : TypeSymbol) : TypeSymbol
     {
       def derivedType = context.ConstructType(derivedTypeFullTypeName, derivedTypeParam);
       Provide(ast, context, type, derivedType);
       derivedTypeParam
     }
-    
+
     //public Require(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, baseTypeFullTypeName : string, baseTypeParam : TypeSymbol) : void
     //{
     //  def baseType = context.ConstructType(baseTypeFullTypeName, baseTypeParam);
@@ -1592,7 +1700,7 @@ namespace Tdl
     //  def derivedType = context.ConstructType(derivedFullTypeName, derivedTypeParam);
     //  Provide(ast, context, type1, derivedType)
     //}
-    
+
     public SubtypeUnifyOf[T1, T2](this subtype : T1, supertype : T2) : bool
       where T1: class, TypeSymbol
       where T2: class, TypeSymbol
@@ -1608,14 +1716,14 @@ namespace Tdl
         ast.Error(context, $"$(Esc(type)) is not subtype of $(Esc(baseTypeConstraint))");
       _ = TdlTypeUnifier.Instance.Require(type, baseTypeConstraint);
     }
-    
+
     public Provide(this ast : IAst, context : DependentPropertyEvalContext, type : TypeSymbol, derivedType : TypeSymbol) : void
     {
       unless (TdlTypeUnifier.Instance.TryProvide(type, derivedType))
         ast.Error(context, $"$(Esc(type)) is not derived from $(Esc(derivedType))");
       _ = TdlTypeUnifier.Instance.Provide(type, derivedType);
     }
-    
+
     public ConstructType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParam : TypeSymbol) : TypeSymbol
     {
       def typeInfo = context.BindType(fullTypeName : string, 1);
@@ -1625,8 +1733,9 @@ namespace Tdl
       type.EvalProperties(context);
       type
     }
-    
-    public BindType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParamCount : int = 0) : GenericTypeSymbol
+
+    public BindType[TSymbol](this context : DependentPropertyEvalContext, fullTypeName : string, typeParamCount : int = 0) : TSymbol
+      where TSymbol: DeclarationSymbol
     {
       def bindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
       {
@@ -1637,19 +1746,22 @@ namespace Tdl
         assert2(res.Symbols.Length == 1);
         res
       }
-      def bindType(scope : Scope, name : string) : TopGenericTypeSymbol
+      def bindType(scope : Scope, name : string) : TSymbol
       {
-        def res = Reference(Location.Default, name).Bind.[TopGenericTypeSymbol](scope);
+        def res = Reference(Location.Default, name).Bind.[TSymbol](scope);
         assert2(!res.IsUnresolved);
         assert2(!res.IsAmbiguous);
-        foreach (symbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
-          return symbol;
-        assert2(false);
-        assert(false);
-      }      
+        when (typeParamCount > 0)
+        {
+          foreach (symbol is GenericTypeSymbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
+            return (symbol : object) :> TSymbol;
+        }
+        assert2(res.Symbols.Length == 1);
+        res.Symbol
+      }
       def data  = context.Project.Data :> DotNetProjectData;
       def names = fullTypeName.SplitToList('.');
-      def loop(scope : Scope, names) : GenericTypeSymbol
+      def loop(scope : Scope, names) : TSymbol
       {
         match (names)
         {
@@ -1669,7 +1781,7 @@ namespace Tdl
       foreach (FieldSymbol(IsValueEvaluated=false, Name="Platforms") as fld in memberScope.GetAllSymbols())
         fld.Value = VSome(Tdl.Expr.List(globalScope.GetAllSymbols().OfType.[PlatformSymbol]().Select(p => Tdl.Expr.Reference(p)).ToImmutableArray(), GetPlatformTypeSymbol(context)));
     }
-    
+
     public DefinePredefinedFields(this _ast : ProductType, context : DependentPropertyEvalContext, table : TableScope) : void
     {
       def collectionName = "System.Collections.Generic.IReadOnlyList";
@@ -1680,7 +1792,7 @@ namespace Tdl
       flags.Add(Modifiers.Public);
       def type = context.ConstructType(collectionName, GetPlatformTypeSymbol(context));
       prop.Type = type;
-      
+
       prop.EvalProperties(context);
     }
 
@@ -1718,6 +1830,7 @@ namespace Tdl
       match (list)
       {
         | Expr.Reference(Symbol=Product.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
+        | Expr.Reference(Symbol=Platform.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
         | _ => context.ConstructType("System.Collections.Generic.IEnumerable", type)
       }
     }
@@ -1727,13 +1840,18 @@ namespace Tdl
       HintML.XmlEscape(self.ToString())
     }
 
+    public GetType(this context : DependentPropertyEvalContext, fullName : string) : TypeSymbol
+    {
+      context.BindType(fullName, 0)
+    }
+
     public MakeType(this context : DependentPropertyEvalContext, symbol : DeclarationSymbol) : ValueOption[TypeSymbol]
     {
       match (symbol)
       {
         | TypedDeclarationSymbol as t  when !t.IsTypeEvaluated => VNone()
         | TypedDeclarationSymbol as t => VSome(t.Type)
-        | TypeSymbol as t => VSome(t)
+        | TypeSymbol => VSome(context.ToTdlContext().TypeType)
         | NamespaceSymbol as ns when !ns.IsScopeEvaluated => VNone()
         | NamespaceSymbol as ns =>
           def type = SelfTypeBaseSymbol();
@@ -1746,21 +1864,21 @@ namespace Tdl
       }
     }
 
-    public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ParsedValue[int],
-      binariesFolderOpt : CSharp.StringLiteral.IAstOption, continueOnErrorOpt : ParsedValue[bool]) : ValueOption[ScenarioAction.Method]
-    {
-      match (methodAst)
-      {
-        | Qualified as q when q.Qualifier.IsRefEvaluated && q.Qualifier.Ref.IsSymbolEvaluated =>
-          VSome(ScenarioAction.Method(methodAst.Location,
-                                      q.Qualifier.Ref.Symbol,
-                                      methodSymbol,
-                                      maxRebootsCountOpt,
-                                      binariesFolderOpt.ConvertStringLiteral(),
-                                      continueOnErrorOpt))
-        | _ => VNone()
-      }
-    }
+    //public MakeMethodAction(methodAst : QualifiedReference, methodSymbol : Member.MethodSymbol, maxRebootsCountOpt : ValueOption[Tdl.Expr],
+    //  binariesFolderOpt : ValueOption[Tdl.Expr], continueOnErrorOpt : ValueOption[Tdl.Expr]) : ValueOption[ScenarioAction.Method]
+    //{
+    //  match (methodAst)
+    //  {
+    //    | Qualified as q when q.Qualifier.IsRefEvaluated && q.Qualifier.Ref.IsSymbolEvaluated =>
+    //      VSome(ScenarioAction.Method(methodAst.Location,
+    //                                  q.Qualifier.Ref.Symbol,
+    //                                  methodSymbol,
+    //                                  maxRebootsCountOpt,
+    //                                  binariesFolderOpt.ConvertStringLiteral(),
+    //                                  continueOnErrorOpt))
+    //    | _ => VNone()
+    //  }
+    //}
 
     private AddSpecialDeploymentsAggregateParameterScope(builder : ref UnionScopeBuilder, context : DependentPropertyEvalContext) : void
     {
@@ -1785,7 +1903,7 @@ namespace Tdl
       {
         symbol is Tdl.VarSymbol || symbol is Tdl.ProductSymbol
       }
-      FilteringScope(scope, filter)
+      scope.FilterWith(filter)
     }
 
     public ScenarioMakeHint(symbolCache : ISymbolCache, symbol : Scenario.DefSymbol) : string
@@ -1800,7 +1918,7 @@ namespace Tdl
 
         def project = symbolCache :> Project;
         def id = symbol.Id;
-        
+
         def rootNs = (project.Data :> TdlProjectData).RootNamespace;
 
         def symbols = rootNs.MemberTable.GetAllSymbols().ToArray();
@@ -1808,7 +1926,7 @@ namespace Tdl
           .OfType.[Suite.DefSymbol]()
           .Where(s => s.Statements.Any(st => (st :> SuiteStatement.CallScenario).Reference.AllScenarios.Any(sc => sc.Id == id)))
           .ToList();
-        
+
         if (suites.Count == 0)
           _ = builder.Append(<#Данный сценарий не используется из ни в одном suite-е.#>);
         else
@@ -1826,12 +1944,22 @@ namespace Tdl
       builder.ToString()
     }
 
-    public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableHashSet[string]
+    public GetTriggerPaths(ast : DotNet.CustomAttributeReference.IAstList, context : DependentPropertyEvalContext) : ImmutableHashSet[TriggerPath]
     {
       def builder = ImmutableHashSet.CreateBuilder();
-      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttributes.TriggerPathSymbol in ast)
+
+      def isValidPath(path)
       {
-        foreach (x in r.Arguments)
+        Directory.Exists(path) || File.Exists(path)
+      }
+
+      def processExcludes(path, args) : list[string]
+      {
+        when (args == null || args.Count == 0)
+          return [];
+
+        def excludes = SortedSet();
+        foreach (x in args)
         {
           | DotNet.Expr.Argument(Expr = DotNet.Expr.String as text) =>
             def rawValue = ConvertStringLiteral(text.Value);
@@ -1839,25 +1967,61 @@ namespace Tdl
               x.Error(context, "Non empty string required.");
             else
             {
-              try
-              {
-                def path = ExpandPathRelativeToAst(text, rawValue.Value);
-                when (builder.Add(path) && !Directory.Exists(path) && !File.Exists(path))
-                  x.Error(context, $"Trigger path '$(path)' not found.");
-              }
-              catch
-              {
-                | e is Exception => x.Error(context, $"Failed to process trigger path ($(e.GetType())): $(e.Message)")
-              }
+              def fullPath = Path.Combine(path, rawValue.Value);
+              unless (isValidPath(fullPath))
+                x.Error(context, $"Excluded trigger path '$(fullPath)' not found.");
+              _ = excludes.Add(rawValue.Value);
             }
 
-          | _ => x.Error(context, "String literal expected.", 0)
+          | _ => x.Error(context, "String literal expected.", 0);
         }
+        NList.ToList(excludes)
       }
+
+      def processArguments(args) : void
+      {
+        | [] => ()
+        | DotNet.Expr.Argument(Expr = DotNet.Expr.String as text) as x ::
+          DotNet.Expr.Argument(Expr = DotNet.Expr.Invocation(Left = DotNet.Expr.SimpleName as name, Arguments = excludes)) :: other
+          when (name.Reference.Text == "Exclude")
+        | DotNet.Expr.Argument(Expr = DotNet.Expr.String as text) as x :: other with excludes = null =>
+          def rawValue = ConvertStringLiteral(text.Value);
+          if (!rawValue.HasValue || string.IsNullOrEmpty(rawValue.Value))
+            x.Error(context, "Non empty string required.");
+          else
+          {
+            try
+            {
+              def path     = ExpandPathRelativeToAst(text, rawValue.Value);
+              def excludes =
+                if (isValidPath(path))
+                  processExcludes(path, excludes)
+                else
+                {
+                  x.Error(context, $"Trigger path '$(path)' not found.");
+                  []
+                };
+              _ = builder.Add(TriggerPath(path, excludes));
+            }
+            catch
+            {
+              | e is Exception => x.Error(context, $"Failed to process trigger path ($(e.GetType())): $(e.Message)")
+            }
+          }
+          processArguments(other);
+
+        | x :: other =>
+          x.Error(context, "String literal expected.", 0);
+          processArguments(other);
+      }
+
+      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttributes.TriggerPathSymbol in ast)
+        processArguments(NList.ToList(r.Arguments));
+
       builder.ToImmutable()
     }
 
-    public GetTriggerPaths(mutable triggerPaths : ImmutableHashSet[string], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[ImmutableArray[string]]
+    public GetTriggerPaths(mutable triggerPaths : ImmutableHashSet[TriggerPath], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[ImmutableArray[TriggerPath]]
     {
       foreach (s in scenarios)
       {
@@ -1869,7 +2033,7 @@ namespace Tdl
       VSome(triggerPaths.ToImmutableArray())
     }
 
-    public GetIsUnconditional(triggerPaths : ImmutableHashSet[string], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[bool]
+    public GetIsUnconditional(triggerPaths : ImmutableHashSet[TriggerPath], scenarios : ImmutableArray[ScenarioSymbol]) : ValueOption[bool]
     {
       when (triggerPaths.IsEmpty)
       {
@@ -1927,6 +2091,123 @@ namespace Tdl
     private ExpandPathRelativeToAst(ast : IAst, path : string) : string
     {
       Path.GetFullPath(Path.Combine(Path.GetDirectoryName(ast.Location.Source.File.FullName), path))
+    }
+
+    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement]) : Hashtable[TKey, TElement]
+    {
+      ToHashtable(immutableArray, keySelector, elementSelector, EqualityComparer[TKey].Default);
+    }
+
+    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement], comparer : IEqualityComparer[TKey]) : Hashtable[TKey, TElement]
+    {
+      def result = Hashtable(immutableArray.Length, comparer);
+      foreach (v in immutableArray)
+          result.Add(keySelector(v), elementSelector(v));
+
+      result
+    }
+
+    public GetMembers(expr : Tdl.Expr) : Scope
+    {
+      | Reference   (Symbol=Product.DefSymbol as p)     => p.Type.Scope
+      | Reference   (Symbol=FormalParameterSymbol as p) => p.Type.Scope
+      | Reference   (Symbol=ContainerSymbol as cont)
+      | MemberAccess(Symbol=ContainerSymbol as cont) => cont.Scope
+      | Reference
+      | MemberAccess
+      | NotSet
+      | Error
+      | String
+      | True
+      | False
+      | Real
+      | Integer
+      | List
+      | Tuple => EmptyScope.Instance
+    }
+
+    public ParseInt(context : DependentPropertyEvalContext, text : string) : int
+    {
+      mutable result;
+      unless (int.TryParse(text, out result))
+      {
+        //str.Error(context, $"Failed to process deployment file path ($(e.GetType())): $(e.Message)");
+      }
+      result
+    }
+
+    public MakeScenarioActions(context : DependentPropertyEvalContext, barrierExpr : DotNet.Expr) : ValueOption[ScenarioAction]
+    {
+      match (barrierExpr)
+      {
+        | Expr.SimpleName as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => VNone()
+        | Expr.SimpleName(Ref=Ref(IsSymbolEvaluated =true, Symbol=symbol)) =>
+          if (symbol is BarrierSymbol as b)
+            VSome(ScenarioAction.Barrier(barrierExpr.Location, b))
+          else
+          {
+            barrierExpr.Error(context, "Expected barrier.");
+            VSome(ScenarioAction.Error(barrierExpr.Location))
+          }
+
+        | Expr.Invocation as inv when !inv.IsMethodEvaluated => VNone()
+        | Expr.Invocation as inv when inv.Method.Name != "GetOrCreateBarrier" =>
+          barrierExpr.Error(context, "Expected call of GetOrCreateBarrier() method or barrier.");
+          VSome(ScenarioAction.Error(barrierExpr.Location))
+        | Expr.Invocation as inv when inv.Arguments.Count == 2 =>
+          def arg2 = inv.Arguments[1] :> Expr.Argument;
+          when (!(arg2.Expr is DotNet.Expr.String))
+          {
+            barrierExpr.Error(context, "Expected string with timeout.");
+            return VSome(ScenarioAction.Error(arg2.Location));
+          }
+          def timeoutStr = ConvertStringLiteralOrNull((arg2.Expr :> DotNet.Expr.String).Value);
+          mutable timeout;
+          when (timeoutStr == null || !TimeSpan.TryParse(timeoutStr, out timeout))
+          {
+            barrierExpr.Error(context, "Expected string with timeout. Format: ЧЧ:ММ:СС");
+            return VSome(ScenarioAction.Error(arg2.Location));
+          }
+          def arg1 = inv.Arguments[0] :> Expr.Argument;
+          if (arg1.Expr is Expr.Sum as sum)
+          {
+            mutable hasUnculculated;
+            {
+              def result = ImmutableArray.CreateBuilder();
+              def loop(expr : DotNet.Expr) : void
+              {
+                | Expr.Sum           as sum => loop(sum.Expr1); loop(sum.Expr2);
+                | DotNet.Expr.String as s   => result.Add(BarrierNamePart.String(ConvertStringLiteralOrNull(s.Value)));
+                | Expr.SimpleName    as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => hasUnculculated = true;
+                | Expr.SimpleName    as n   => result.Add(BarrierNamePart.Reference(n.Ref.Symbol));
+                | _ =>
+                  barrierExpr.Error(context, "Unsupported expression type " + expr.GetType().Name);
+                  hasUnculculated = true;
+              }
+              loop(sum);
+              def result = result;
+              if (hasUnculculated)
+                VNone()
+              else
+                VSome(ScenarioAction.BarrierGenerator(barrierExpr.Location, result.ToImmutable(), timeout))
+            }
+          }
+          else
+          {
+            _ = arg2;
+            arg1.Error(context, "Expected concatination of barrier name.");
+            VSome(ScenarioAction.Error(arg1.Location))
+          }
+
+        | _ => assert2(false); VNone()
+      }
+
+      //ScenarioAction.Barrier(BarrierExpr.Location, null)
+    }
+
+    private GetCaseInsensitiveId(symbol : DeclarationSymbol) : int
+    {
+      StringIndex.GetCaseInsensitivePart(symbol.NameId)
     }
   } // module
 } // namespace

@@ -95,7 +95,7 @@ namespace Tdl
         } -> Parameters;
         Froms                                     -> Froms;
         SelectScenario.Deployment.Reference       -> Deployment;
-        SelectScenario.Method.QualifiedIdentifier -> Method;
+        SelectScenario.Action                     -> Actions;
         SelectScenario.Platform                   -> Platform;
         SelectScenario.Product                    -> Product;
         SelectScenario.DefDeclarations            -> Definitions;
@@ -124,7 +124,7 @@ namespace Tdl
         }-> EntityOpt;
         SuiteBody.Platform.Reference -> Platform;
         SuiteBody.Product.Reference  -> Product;
-        SuiteBody.DefDeclarations    -> Definitions;
+        SuiteBody.DefDeclarations    -> AllDefinitions;
         SuiteBody.SuiteStatements    -> Statements;
       }
     | SuiteList        -> Suite.List
@@ -148,12 +148,21 @@ namespace Tdl
         }-> EntityOpt;
         SuiteScenario.Platform.Reference -> Platform;
         SuiteScenario.Product.Reference  -> Product;
-        SuiteScenario.DefDeclarations    -> Definitions;
+        SuiteScenario.DefDeclarations    -> AllDefinitions;
         SuiteScenario.SuiteStatements    -> Statements;
       }
     | External -> External { Name = Name(Location.WithSpan(KwExternal.FromStart()), "external"); ExternalBody.Fields -> Fields; }
     | Barrier  -> Barrier  { Name -> Name; Timeout -> Timeout; }
     | Entity   -> Entity   { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
+    | VmCapability -> VmCapability
+      {
+        Name -> Name;
+        match (DefExprOpt)
+        {
+          | Some((_, e)) -> Some(e)
+          | None -> None()
+        } -> Value;
+      }
   }
 
   map syntax Grammar.DeploymentModifier -> DeploymentModifier
@@ -187,7 +196,8 @@ namespace Tdl
   {
     | String   -> String   { this.StringLiteral -> Value; }
     | Wildcard -> Wildcard { }
-    | NotSet   -> NotSet { }
+    | NotSet   -> NotSet   { }
+    | Else     -> Else     { }
   }
 
   map syntax Grammar.Case.Pattern(deployments : DeploymentExpr*) -> Case
@@ -201,7 +211,7 @@ namespace Tdl
     VarDecl -> Vars;
     List    -> List;
   }
-  
+
   map syntax Grammar.From.VarDecl -> Var*
   {
     | Name  -> [Var { Name -> Name; }]
@@ -246,26 +256,56 @@ namespace Tdl
           | None    -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
-        MaxRebootsCountOpt = Script.MaxRebootsCountOpt.ToInt();
+        Script.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
-    | Config   -> 
+    | Config   ->
       [ Action.Config
         {
           Config.Path -> Path;
-          MaxRebootsCountOpt = Config.MaxRebootsCountOpt.ToInt();
+          Config.MaxRebootsCountOpt -> MaxRebootsCountOpt;
         }
       ]
     | GTest    -> [ Action.GTest
       {
         GTest.Name      -> Name;
         GTest.Arguments -> Arguments;
-        MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
+        GTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | XCode    -> [ Action.XCode
       {
         XCode.Container -> Container;
         XCode.XcodePath -> XcodePath;
-        MaxRebootsCountOpt = XCode.MaxRebootsCountOpt.ToInt();
+        XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      } ]
+    | VsTest    -> [ Action.VsTest
+      {
+        VsTest.Container -> Container;
+        match (VsTest.VsTestRunCmdLineOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestRunCmdLineOpt;
+        match (VsTest.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        match (VsTest.VsTestPlatformOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestPlatformOpt;
+        match (VsTest.VsTestFrameworkOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestFrameworkOpt;
+        match (VsTest.VsTestAdditionalOptionsOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestAdditionalOptionsOpt;
+        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
     | Apk      -> [ Action.Apk
       {
@@ -276,35 +316,48 @@ namespace Tdl
           | None()  -> None()
         } -> FilterOpt;
         Apk.RunnerPath -> RunnerPath;
-        MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
+        Apk.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       } ]
-    | Method   -> 
+    | Marathon -> [ Action.Marathon
+      {
+        Marathon.TestContainerApk   -> TestContainerApk;
+        Marathon.AppApk             -> AppApk;
+        Marathon.RunnerPath         -> RunnerPath;
+        Marathon.Filter             -> Filter;
+        Marathon.BinariesFolder     -> BinariesFolder;
+        Marathon.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      } ]
+    | Method   ->
       [ Action.Method
         {
-          Method.QualifiedIdentifier -> Method;
+          Method.Method -> Method;
           match (Method.BinariesFolderOpt)
           {
             | None    -> None()
             | Some(x) -> Some(x)
           } -> BinariesFolderOpt;
-          MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
+          Method.MaxRebootsCountOpt -> MaxRebootsCountOpt;
           ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
         }
       ]
     | Sequence -> SequenceActions
   }
 
+  map syntax Grammar.MaxRebootsCount -> DefExpr { Value }
+
+  map syntax Grammar.Filter -> DefExpr { Value }
+
   map syntax Grammar.SequenceAction -> Action
   {
     | Method  -> Method
       {
-        Method.QualifiedIdentifier -> Method;
+        Method.Method -> Method;
         match (Method.BinariesFolderOpt)
         {
           | None    -> None()
           | Some(x) -> Some(x)
         } -> BinariesFolderOpt;
-        MaxRebootsCountOpt = Method.MaxRebootsCountOpt.ToInt();
+        Method.MaxRebootsCountOpt -> MaxRebootsCountOpt;
         ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
       }
     | Script ->  Action.Script
@@ -316,24 +369,54 @@ namespace Tdl
           | None -> []
           | Some(x) -> x.Defs.Item1
         } -> Definitions;
-        MaxRebootsCountOpt = Script.MaxRebootsCountOpt.ToInt();
+        Script.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Config -> Action.Config
         {
           Config.Path -> Path;
-          MaxRebootsCountOpt = Config.MaxRebootsCountOpt.ToInt();
+          Config.MaxRebootsCountOpt -> MaxRebootsCountOpt;
         }
     | GTest -> Action.GTest
       {
         GTest.Name      -> Name;
         GTest.Arguments -> Arguments;
-        MaxRebootsCountOpt = GTest.MaxRebootsCountOpt.ToInt();
+        GTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | XCode    -> Action.XCode
       {
-        XCode.Container -> Container;
-        XCode.XcodePath -> XcodePath;
-        MaxRebootsCountOpt = XCode.MaxRebootsCountOpt.ToInt();
+        XCode.Container          -> Container;
+        XCode.XcodePath          -> XcodePath;
+        XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      }
+    | VsTest    -> Action.VsTest
+      {
+        VsTest.Container -> Container;
+        match (VsTest.VsTestRunCmdLineOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestRunCmdLineOpt;
+        match (VsTest.FilterOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> FilterOpt;
+        match (VsTest.VsTestPlatformOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestPlatformOpt;
+        match (VsTest.VsTestFrameworkOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestFrameworkOpt;
+        match (VsTest.VsTestAdditionalOptionsOpt)
+        {
+          | Some(x) -> Some(x.Value)
+          | None()  -> None()
+        } -> VsTestAdditionalOptionsOpt;
+        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Apk -> Action.Apk
       {
@@ -344,15 +427,24 @@ namespace Tdl
           | None()  -> None()
         } -> FilterOpt;
         Apk.RunnerPath -> RunnerPath;
-        MaxRebootsCountOpt = Apk.MaxRebootsCountOpt.ToInt();
+        Apk.MaxRebootsCountOpt -> MaxRebootsCountOpt;
+      }
+    | Marathon -> Action.Marathon
+      {
+        Marathon.TestContainerApk   -> TestContainerApk;
+        Marathon.AppApk             -> AppApk;
+        Marathon.RunnerPath         -> RunnerPath;
+        Marathon.Filter             -> Filter;
+        Marathon.BinariesFolder     -> BinariesFolder;
+        Marathon.MaxRebootsCountOpt -> MaxRebootsCountOpt;
       }
     | Login           -> Login           { User -> User; Password -> Password; }
     | Logoff          -> Logoff          { }
     | LockWorkstation -> LockWorkstation { }
     | Reboot          -> Reboot          { }
-    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; }
-    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; }
-    | Barrier         -> Barrier         { Reference -> Reference; }
+    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | Barrier         -> Barrier         { Expression -> BarrierExpr; }
   }
 
   map syntax Grammar.DeploymentOption -> DeploymentOption
@@ -365,17 +457,17 @@ namespace Tdl
 
   map syntax Grammar.DefDeclaration -> Definition
   {
-    Reference -> Reference;
-    DefExpr   -> Expr;
+    | Ordinary   -> Ordinary   { Reference -> Reference; DefExpr -> Expr; }
+    | Predefined -> Predefined { Reference -> Reference; DefExpr -> Expr; }
   }
 
-  map syntax Grammar.DefEnv -> Definition
+  map syntax Grammar.DefEnv -> Definition.Ordinary
   {
     Reference -> Reference;
     DefExpr   -> Expr;
   }
 
-  map syntax Grammar.ParameterCurrying -> Definition
+  map syntax Grammar.ParameterCurrying -> Definition.Ordinary
   {
     Reference -> Reference;
     DefExpr   -> Expr;
@@ -452,5 +544,5 @@ namespace Tdl
 
   map syntax Grammar.StringLiteral.VerbatimStringLiteral -> CSharp.StringLiteral { Lit }
 
-  map syntax Grammar.BinariesFolder -> CSharp.StringLiteral { Value }
+  map syntax Grammar.BinariesFolder -> DefExpr { Value }
 }

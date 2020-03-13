@@ -18,7 +18,7 @@ namespace Tdl.Transformator.Processors
 {
     public sealed class ScenarioProcessor
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();     
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void RemoveUnused([ItemNotNull, NotNull] IEnumerable<ScenarioModel> scenarios)
         {
@@ -285,10 +285,10 @@ namespace Tdl.Transformator.Processors
             [NotNull] Func<IEnumerable<MethodActionModel>, IEnumerable<IGrouping<TParameterType, MethodActionModel>>> groupMethod)
         {
             var scenarios = container.GetAll<ScenarioModel>().Where(s => s.HasSequence);
-            var newScenarios = new List<ScenarioModel>(); 
+            var newScenarios = new List<ScenarioModel>();
 
             var names = new HashSet<string>(container.GetAll<ScenarioModel>().Select(s => s.Name));
-            
+
             foreach (var scenario in scenarios)
             {
                 var scenarioParameterValue = scenario.Definitions.Where(d => d.Name == parameterName).Single().Expression.ToString();
@@ -314,12 +314,12 @@ namespace Tdl.Transformator.Processors
                     var newScenario = CreateScenarioWithMethods(scenario, group, container);
                     PrepareName(newScenario, names);
                     UpdateScenarioDefinitionModel(newScenario, parameterName, group.Key);
-                    newScenarios.Add(newScenario); 
+                    newScenarios.Add(newScenario);
                 }
 
                 Remove(scenario);
-                container.Remove(scenario.Id); 
-            } 
+                container.Remove(scenario.Id);
+            }
 
             return newScenarios;
         }
@@ -332,7 +332,7 @@ namespace Tdl.Transformator.Processors
 
             IEnumerable<IGrouping<int, MethodActionModel>> groupMethod(IEnumerable<MethodActionModel> methods)
             {
-                var result = methods.GroupBy(m => m.Method.MethodSymbol.CustomAttributes
+                var result = methods.GroupBy(m => Api.GetAssemblyAndMethod(m.Method.Expr).Field1.CustomAttributes
                     .OfType<DotNet.CustomAttributeSymbol>()
                     .Where(attr => attr.Arguments?.Count > 1 && attr.Arguments[0].ToString() == qcIdDef)
                     .Select(a => Convert.ToInt32(a.Arguments[1].ToString()))
@@ -393,7 +393,7 @@ namespace Tdl.Transformator.Processors
 
             var newScenario = (ScenarioModel)baseScenario.Clone();
             newScenario.Id = container.NextId();
-            newScenario.Name = methods.First().Method.MethodSymbol.Name;
+            newScenario.Name = Api.GetAssemblyAndMethod(methods.First().Method.Expr).Field1.Name;
             newScenario.Actions = new List<BaseActionModel>();
 
             var originalActions = baseScenario.Actions;
@@ -558,6 +558,6 @@ namespace Tdl.Transformator.Processors
                     set.Members[oldIndex] = new ReferenceModel<ScenarioBaseModel>(replacement);
                 }
             }
-        } 
+        }
     }
 }

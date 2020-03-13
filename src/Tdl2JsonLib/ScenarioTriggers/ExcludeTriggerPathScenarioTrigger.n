@@ -1,0 +1,11 @@
+﻿using Tdl;
+
+namespace Tdl2Json
+{
+  class ExcludeTriggerPathScenarioTrigger : IScenarioTrigger
+  {
+    public static Instance : this = ExcludeTriggerPathScenarioTrigger();
+
+    public IsTriggered(symbol : ScenarioSymbol) : bool { symbol.IsUnconditional }
+  }
+}

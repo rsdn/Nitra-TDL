@@ -1,0 +1,12 @@
+{
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "tslint.enable": true,
+  "typescript.tsc.autoDetect": "off",
+  "typescript.suggest.autoImports": true,
+  "typescript.check.npmIsInstalled": true,
+  "typescript.tsserver.log": "off",
+  "debug.inlineValues": true,
+  "debug.onTaskErrors": "debugAnyway",
+  "typescript.preferences.quoteStyle": "single"
+}
