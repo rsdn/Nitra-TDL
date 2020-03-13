@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Deployment : NamespaceMember, TypedDeclaration, UsedDeclaration, DashboardVisibleParametersHost
+  abstract declaration Deployment : NamespaceMember, TypedDeclaration, UsedDeclaration
   {
     symbol
     {
@@ -17,6 +17,7 @@ namespace Tdl
     stage 2:
       in AggregateParametersScope : Scope;
       in AllDeployments : ImmutableArray[DeploymentSymbol];
+      in DashboardVisibleParameters : ImmutableArray[DeclarationSymbol];
     }
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
@@ -62,7 +63,7 @@ namespace Tdl
         Symbol.Defs                       = TdlUtils.MakeUntypedDefinitions(Definitions);
         Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
         Parameters.BuildInvocationScope   = context.BuildInvocationScope(Scope);
-        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, null);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters);
 
         Content         : DeploymentScriptContent;
         Definitions     : Definition*;
@@ -85,7 +86,7 @@ namespace Tdl
         Commands.OuterScope               = Scope;
         Commands.LocalScope               = Symbol.ParameterScope.UnionWith(Symbol.Variables);
         Symbol.AggregateParametersScope   = Symbol.ParameterScope;
-        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, null);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters);
 
         Commands : CommandCall*;
       }

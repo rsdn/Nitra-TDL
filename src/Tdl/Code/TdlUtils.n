@@ -2049,7 +2049,20 @@ namespace Tdl
       VSome(false)
     }
 
-    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[DashboardVisibleParametersHostSymbol]) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[DeploymentSymbol] = null) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    {
+      GetDashboardVisibleParameters(parameters, baseSymbols,
+        fun (d) { if(d.IsDashboardVisibleParametersEvaluated) VSome(d.DashboardVisibleParameters) else VNone() })
+    }
+
+    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[ScenarioSymbol]) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    {
+      GetDashboardVisibleParameters(parameters, baseSymbols,
+        fun (d) { if(d.IsDashboardVisibleParametersEvaluated) VSome(d.DashboardVisibleParameters) else VNone() })
+    }
+
+    private GetDashboardVisibleParameters[T](parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[T],
+      getDashboardVisisbleSymbols : T -> ValueOption[ImmutableArray[DeclarationSymbol]]) : ValueOption[ImmutableArray[DeclarationSymbol]]
     {
       mutable hashSet;
 
@@ -2071,16 +2084,15 @@ namespace Tdl
       {
         foreach (d in baseSymbols)
         {
-          unless (d.IsDashboardVisibleParametersEvaluated)
-            return VNone();
-
-          def additionalParameters = d.DashboardVisibleParameters;
-          unless (additionalParameters.IsDefaultOrEmpty)
+          match (getDashboardVisisbleSymbols(d))
           {
-            when (hashSet == null)
-              hashSet = HashSet();
+            | VNone => return VNone()
+            | VSome(additionalParameters) when additionalParameters.IsDefaultOrEmpty => ()
+            | VSome(additionalParameters) =>
+              when (hashSet == null)
+                hashSet = HashSet();
 
-            hashSet.UnionWith(additionalParameters);
+              hashSet.UnionWith(additionalParameters);
           }
         }
       }

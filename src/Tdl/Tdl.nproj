@@ -95,9 +95,6 @@
     <Compile Include="Ast\CommandCall.nitra">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Ast\DashboardVisibleParametersHost.nitra">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Ast\DeploymentExpr.nitra">
       <SubType>Code</SubType>
     </Compile>

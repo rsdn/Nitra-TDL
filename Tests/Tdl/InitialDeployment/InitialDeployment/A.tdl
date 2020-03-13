@@ -1,4 +1,4 @@
-deployment DeployP1(string DeploymentParameter)
+﻿deployment DeployP1([DashboardVisible]string DeploymentParameter)
   script "deploy.ps1"
 {
 }
@@ -9,7 +9,7 @@ initial select deployment Setup(InitialDeploymentParameter)
   | "B" => B
 }
 
-final deployment Finalize(string FinalDeploymentParameter)
+final deployment Finalize([DashboardVisible]string FinalDeploymentParameter)
   script "finalize.ps1"
 {
 }

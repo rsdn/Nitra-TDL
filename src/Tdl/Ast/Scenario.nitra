@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace Tdl
 {
-  abstract declaration Scenario : NamespaceMember, UsedDeclaration, TypedDeclaration, CustomAttributeHostDeclaration, DashboardVisibleParametersHost
+  abstract declaration Scenario : NamespaceMember, UsedDeclaration, TypedDeclaration, CustomAttributeHostDeclaration
   {
     symbol
     {
@@ -19,6 +19,7 @@ namespace Tdl
     stage 3:
       in AggregateParametersScope   : Scope;
       in AllScenarios               : ImmutableArray[ScenarioSymbol];
+      in DashboardVisibleParameters : ImmutableArray[DeclarationSymbol];
 
       Type = context.ToTdlContext().ScenarioType;
     }
