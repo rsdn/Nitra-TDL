@@ -31,6 +31,7 @@ namespace Tdl.Transformator.Tests.CommonServices
                 jsonSchemaType: "prod",
                 diffFile: null,
                 repositoryRoot: null,
+                excludeTriggerPathScenarios: false,
                 isSampleGeneration: true);
 
             if (context == null)

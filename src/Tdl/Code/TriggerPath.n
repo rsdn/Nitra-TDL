@@ -1,0 +1,19 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Extensions;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Tdl
+{
+  [Record, StructuralEquality]
+  public class TriggerPath
+  {
+    public Path     : string       { get; }
+    public Excludes : list[string] { get; }
+  }
+}

@@ -1,9 +1,12 @@
-﻿namespace QuickType
-{
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
+using VariablesBag = System.Collections.Generic.IDictionary<string, object>;
+
+namespace QuickType
+{
     public interface TestMethodOrTestSequenceItem : TestMethod, TestSequenceItem
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -61,6 +64,9 @@
         {
             [JsonProperty("RebootTimeout", NullValueHandling = NullValueHandling.Ignore)]
             public string RebootTimeout { get; set; }
+
+            [JsonProperty("MaxRebootsCount", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+            public int? MaxRebootsCount { get; set; }
         }
     }
 
@@ -135,6 +141,31 @@
         public int? MaxRebootsCount { get; set; }
     }
 
+    public sealed class VsTest : TestMethodOrTestSequenceItemImpl
+    {
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string VsTestAssemblyName { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string VsTestRunCmdLine { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string TestCaseFilter { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Platform { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Framework { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string AdditionalOptions { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
+    }
+
+
     public sealed class AndroidJava : TestMethodOrTestSequenceItemImpl
     {
         [JsonProperty(Required = Required.Always)]
@@ -145,6 +176,27 @@
 
         [JsonProperty(Required = Required.Always)]
         public string TestRunnerPath { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public int? MaxRebootsCount { get; set; }
+    }
+
+    public sealed class Marathon : TestMethodOrTestSequenceItemImpl
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string AndroidTestContainer { get; set; }
+
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string MarathonApkFilename { get; set; }
+
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string MarathonTestRunnerPath { get; set; }
+
+        [JsonProperty(Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
+        public string TestFilter { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string LocalTestBinariesFolder { get; set; }
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public int? MaxRebootsCount { get; set; }
@@ -200,5 +252,42 @@
     {
         [JsonProperty(Required = Required.Always)]
         public List<string> Suites { get; set; }
+    }
+
+    public abstract class SessionActionBase { }
+
+    public sealed class SessionScriptAction : SessionActionBase
+    {
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string ScriptPath { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public byte[] ScriptData { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public VariablesBag ScriptArgs { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int? ReturnValue { get; set; }
+
+        public override string ToString()
+        {
+            var scriptArgs = ScriptArgs == null ? "" : string.Join(", ", ScriptArgs.Select(a => a.Key + ": " + a.Value));
+            return $"{ScriptPath}({scriptArgs})";
+        }
+    }
+
+    public sealed class SessionActionGroup : SessionActionBase
+    {
+        [JsonProperty(Required = Required.Always)]
+        public string[] Scripts { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public VariablesBag Parameters { get; set; }
+
+        public override string ToString()
+        {
+            return string.Join(", ", Scripts);
+        }
     }
 }

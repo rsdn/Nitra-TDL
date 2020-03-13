@@ -12,7 +12,7 @@ namespace Tdl
   {
     symbol
     {
-      Type = context.ToTdlContext().DeploymentType;
+      Type = context.GetDeploymentTypeSymbol();
 
     stage 2:
       in AggregateParametersScope : Scope;
@@ -26,7 +26,7 @@ namespace Tdl
     when (Modifier.HasValue)
       SetSpecialDeployment(Symbol, Modifier.Value, context);
 
-    when (!Symbol.IsUsed && !(context.Project is Nitra.ProjectSystem.FsProject[IAst]))
+    when (!Symbol.IsUsed && !Symbol.Name.StartsWith("_") && !(context.Project is Nitra.ProjectSystem.FsProject[IAst]))
       Name.Warning(context, "Unused deployment.");
 
     | ignore-case Empty
@@ -36,6 +36,8 @@ namespace Tdl
           AggregateParametersScope   = EmptyScope.Instance;
           AllDeployments             = ImmutableArray.Empty;
           DashboardVisibleParameters = ImmutableArray.Empty;
+          SpanClass                = TdlLang.DeploymentSpanClass;
+          IsSameIdentity           = candidate is Tdl.Deployment;
         }
       }
 
@@ -59,6 +61,7 @@ namespace Tdl
         Definitions.Scope                 = Symbol.ParameterScope;
         Symbol.Defs                       = TdlUtils.MakeUntypedDefinitions(Definitions);
         Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
+        Parameters.BuildInvocationScope   = context.BuildInvocationScope(Scope);
         Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, null);
 
         Content         : DeploymentScriptContent;
@@ -130,7 +133,7 @@ namespace Tdl
         Symbol.BaseDeployment             = BaseDeploymentRef.Symbol;
                                           
         CurredParameters.Scope            = Scope.UnionWith(context.GetExternalSymbolTable()).HideWith(Symbol.ParameterScope);
-        CurredParameters.DefinitionScope  = TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope);
+        CurredParameters.DefinitionScope  = await TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope, ImmutableArray.Empty);
         Symbol.ExcludedParams             = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
         Symbol.AggregateParametersScope   = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams).HideWith(Symbol.ParameterScope);
         Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, array[Symbol.BaseDeployment]);

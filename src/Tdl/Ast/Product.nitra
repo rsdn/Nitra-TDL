@@ -31,18 +31,20 @@ namespace Tdl
       {
         symbol
         {
-        stage 4:
+        stage 3:
           in Defs : ImmutableArray[Def];
-    
+
           Kind           = "product";
           IsSameIdentity = candidate is Tdl.Product;
         }
+      stage 4:
+        out Stage4 : object = null;
 
         Definitions.DefinitionScope = Symbol.ProductType.Scope;
         Definitions.Scope           = Scope.HideWith(context.GetExternalSymbolTable());
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef);
 
-        Name.CheckRequired(context, "field", Symbol.ProductType.MemberTable.GetAllSymbols(), Symbol.Defs);
+        Name.CheckRequired(context, "field", Symbol.ProductType.MemberTable.GetAllSymbols(), Symbol.Defs, Stage4);
 
         Definitions : Definition*;
       }

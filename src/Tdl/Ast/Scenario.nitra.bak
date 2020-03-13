@@ -1,0 +1,205 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  abstract declaration Scenario : NamespaceMember, UsedDeclaration, TypedDeclaration, CustomAttributeHostDeclaration
+  {
+    symbol
+    {
+    stage 2:
+      in TriggerPaths             : ImmutableArray[TriggerPath];
+      in IsUnconditional          : bool;
+    stage 3:
+      in AggregateParametersScope : Scope;
+      in AllScenarios             : ImmutableArray[ScenarioSymbol];
+
+      Type = context.ToTdlContext().ScenarioType;
+    }
+
+    Symbol.AllScenarios = TdlUtils.CheckForRecursionScenario(self, context, Symbol, Symbol.AggregateParametersScope);
+
+    unless (Symbol.IsUsed)
+      Name.Warning(context, "Unused scenario.");
+
+    | ignore-case Def : Parameterizable
+      {
+        symbol
+        {
+        stage 1:
+          in Actions        : ImmutableArray[ScenarioAction];
+          in Deployment     : DeploymentSymbol;
+          in Environments   : ImmutableArray[Environment];
+          in ParallelSetOpt : Scenario.SetSymbol;
+        stage 3:
+          in Defs           : ImmutableArray[Def];
+          in Filter         : object;
+
+          Kind           = "scenario";
+          MakeHint       = TdlUtils.ScenarioMakeHint(symbolCache, this);
+          SpanClass      = TdlLang.ScenarioSpanClass;
+          IsSameIdentity = candidate is Tdl.Scenario;
+        }
+      stage 1:
+        out DeploymentRef          : Ref[DeploymentSymbol];
+        out MethodConditionalScope : ValueOption[Scope] = if (TdlTypingSettings.IsMethodTypingEnabled) VSome(Scope) else VNone();
+
+        Parameters.DeclaredIn           = Symbol;
+        Parameters.Scope                = Scope;
+        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context);
+
+        Actions.Scope                   = MethodConditionalScope.Value;
+        Symbol.Actions                  = Actions.ScenarioActions;
+
+        Deployment.Scope                = Scope;
+        DeploymentRef                   = Deployment.Ref.Resolve();
+        Symbol.Deployment               = DeploymentRef.Symbol;
+        Symbol.Deployment.IsUsed        = true;
+
+        Environments.Scope              = Scope;
+        Symbol.Environments             = Environments.Environment;
+
+        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope);
+        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
+        Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
+
+        FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
+        FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
+        FilterOpt.ExpectedType          = context.GetBooleanType();
+        Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
+
+        Symbol.TriggerPaths             = TdlUtils.GetTriggerPaths(Attributes, context).ToImmutableArray();
+        Symbol.IsUnconditional          = Symbol.TriggerPaths.IsEmpty;
+
+        CheckTestMethods(context, Symbol.Actions);
+        ReportDuplicateBarrier(context, Symbol.Actions);
+        CheckMaxReboots(context, Symbol.Actions);
+
+        Name.CheckRequired(context, "option", context.GetRequiredScenarioParameters(), Symbol.Defs);
+
+        CheckOptionForDuplicates(context, Definitions.SymbolRef);
+
+        Deployment   : Reference;
+        Environments : EnvironmentAst*;
+        Definitions  : Definition*;
+        Actions      : Action*;
+        FilterOpt    : DotNet.Expr?;
+      }
+    | ignore-case Set
+      {
+        symbol
+        {
+        stage 1:
+          in Scenarios      : ImmutableArray[ScenarioSymbol];
+          in IsMultiMachine : bool;
+          in MultiMachineId : Guid;
+          in BarriersCount  : list[BarrierSymbol * int];
+
+          Kind           = "scenario set";
+          SpanClass      = TdlLang.ScenarioSpanClass;
+          IsSameIdentity = candidate is Tdl.Scenario;
+        }
+
+      stage 2:
+        out ThisTriggerPaths : ImmutableHashSet[TriggerPath];
+
+        Scenarios.Scope                 = Scope;
+        Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios, context);
+        Symbol.MultiMachineId           = if (Symbol.IsMultiMachine) context.NewGuid() else Guid.Empty;
+        Symbol.IsMultiMachine           = IsMultiMachine.HasValue && IsMultiMachine.Value;
+
+        ThisTriggerPaths                = TdlUtils.GetTriggerPaths(Attributes, context);
+        Symbol.TriggerPaths             = await TdlUtils.GetTriggerPaths(ThisTriggerPaths, Symbol.Scenarios);
+        Symbol.IsUnconditional          = await TdlUtils.GetIsUnconditional(ThisTriggerPaths, Symbol.Scenarios);
+
+        when (Symbol.IsMultiMachine)
+          CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
+
+        CheckUniquenessOfScenarios(context, Symbol, Symbol.AggregateParametersScope);
+        SetUsed(Symbol.AllScenarios, Symbol.IsUsed);
+
+        IsMultiMachine : bool;
+        Scenarios      : Reference*;
+      }
+    | ignore-case Generator : Container, Parameterizable
+      {
+        symbol
+        {
+        stage 1:
+          in Actions    : ImmutableArray[ScenarioAction];
+          in Deployment : TypedDeclarationSymbol;
+          in Platform   : TypedDeclarationSymbol;
+          in Product    : TypedDeclarationSymbol;
+        stage 3:
+          in Defs       : ImmutableArray[Def];
+          in Froms      : ImmutableArray[Code.From];
+          in Filter     : object;
+
+          Scope          = MemberTable;
+          Kind           = "scenario generator";
+          IsSameIdentity = candidate is Tdl.Scenario;
+          SpanClass      = TdlLang.ScenarioSpanClass;
+        }
+
+      stage 1:
+        out DeploymentRef : Ref[TypedDeclarationSymbol];
+        out PlatformRef   : Ref[TypedDeclarationSymbol];
+        out ProductRef    : Ref[TypedDeclarationSymbol];
+
+        Parameters.DeclaredIn           = Symbol;
+        Parameters.Scope                = Scope;
+        Froms.Scope                     = Scope;
+        Froms.ContainingTable           = Symbol.MemberTable;
+        Deployment.Scope                = Scope.HideWith(Symbol.MemberTable);
+        Platform.Scope                  = Deployment.Scope;
+        Product.Scope                   = TdlUtils.ProductScopeFilter(Deployment.Scope);
+
+        Actions.Scope                   = Scope.UnionWith(Deployment.Scope);
+        Symbol.Actions                  = Actions.ScenarioActions;
+
+        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
+        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope);
+
+        DeploymentRef                   = Deployment.Ref.Resolve();
+        PlatformRef                     = Platform.Ref.Resolve();
+        ProductRef                      = Product.Ref.Resolve();
+
+        Symbol.Deployment               = DeploymentRef.Symbol;
+        Symbol.Platform                 = PlatformRef  .Symbol;
+        Symbol.Product                  = ProductRef   .Symbol;
+        Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
+        Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context);
+
+        FilterOpt.ScopeIn               = Definitions.Scope;
+        FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
+        FilterOpt.ExpectedType          = context.GetBooleanType();
+        Symbol.Filter                   = if (FilterOpt.HasValue) FilterOpt.Value else null;
+
+        Symbol.TriggerPaths             = TdlUtils.GetTriggerPaths(Attributes, context).ToImmutableArray();
+        Symbol.IsUnconditional          = Symbol.TriggerPaths.IsEmpty;
+
+        Deployment.CheckExpected(context, context.GetDeploymentTypeSymbol(), DeploymentRef.Symbol.Type);
+        //Method.    CheckExpected(context, context.ToTdlContext().MethodType, MethodRef.Symbol.Type);
+        Platform.  CheckExpected(context, context.GetPlatformTypeSymbol(),   PlatformRef.Symbol.Type);
+        Product.   CheckExpected(context, context.GetProductTypeSymbol(),    ProductRef.Symbol.Type);
+
+        SetUsed(Symbol.Deployment, true);
+
+        Froms        : From*;
+        Deployment   : Reference;
+        Platform     : Reference;
+        Product      : Reference;
+        Definitions  : Definition*;
+        Actions      : Action*;
+        FilterOpt    : DotNet.Expr?;
+      }
+  } // Scenario
+}

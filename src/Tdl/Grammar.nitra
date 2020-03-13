@@ -69,7 +69,7 @@
       | Currying          = Modifier=DeploymentModifier? "deployment" sm Name Parameters? sm "=" sm Reference "(" (ParameterCurrying; "," sm)+ ")" ";" nl
       | DeploymentSelect  = Modifier=DeploymentModifier? "select" sm "deployment" sm Name "(" (Parameter; "," sm)+ ")"
                             "{" inl
-                                Case*  
+                                Case*
                             d "}" nl outline_end_before
         {
           syntax Parameter = Name;
@@ -89,6 +89,7 @@
       | External          = "external"            sm ExternalBody;
       | Barrier           = "barrier"             sm Name "timeout" sm Timeout=StringLiteral ";" nl;
       | Entity            = "entity"              sm Name nl EntityBody;
+      | VmCapability      = "vm" sm "capability"  sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
     }
 
     syntax BaseType = sm ":" sm Type=Reference;
@@ -128,6 +129,7 @@
         | String   = StringLiteral
         | Wildcard = "_"
         | NotSet   = "not-set"
+        | Else     = "else"
       }
 
       syntax Pattern = "|" sm (Value; "," sm)+ sm;
@@ -142,30 +144,34 @@
       }
     }
 
-    syntax SelectScenario = outline_begin_before 
+    syntax SelectScenario = outline_begin_before
                             "{" inl
                                 Filter? nl
-                                Deployment nl 
+                                Deployment nl
                                 "environments" sm "(" Platform=Reference "," sm Product=Reference ")" ";" nl
-                                Method nl
-                                DefDeclaration* 
+                                Action nl
+                                DefDeclaration*
                           d "}" nl outline_end_before
     {
       syntax Deployment   = "deployment" sm Reference ";" nl;
       syntax Filter = "filter" Condition=Expression ";" nl;
     }
 
-    syntax Environments    = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
-    syntax Environment     = "(" Platform=Reference "," sm Product=Reference ")";
-    syntax Method          = "method" sm QualifiedIdentifier MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
-    syntax Config          = "config" sm Path=StringLiteral MaxRebootsCount? ";" nl;
-    syntax GTest           = "gtest"  sm Name=StringLiteral Arguments=StringLiteral* MaxRebootsCount? ";" nl;
-    syntax XCode           = "xcode"  sm Container=StringLiteral "path" sm XcodePath=StringLiteral MaxRebootsCount? ";" nl;
-    syntax Apk             = "apk"    sm Name=StringLiteral Filter? "runner" RunnerPath=StringLiteral MaxRebootsCount? ";" nl
-    {
-      syntax Filter = "filter" Value=StringLiteral;
-    }
-    syntax Script       = "script" sm Name=StringLiteral Arguments=StringLiteral* Environments? MaxRebootsCount? ";" nl
+    syntax Environments            = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
+    syntax Environment             = "(" Platform=Reference "," sm Product=Reference ")";
+    syntax Method                  = "method" sm Method=DefExpr MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
+    syntax Config                  = "config" sm Path=DefExpr MaxRebootsCount? ";" nl;
+    syntax GTest                   = "gtest"  sm Name=DefExpr Arguments=DefExpr* MaxRebootsCount? ";" nl;
+    syntax XCode                   = "xcode"  sm Container=DefExpr "path" sm XcodePath=DefExpr MaxRebootsCount? ";" nl;
+    syntax VsTest                  = "vstest" sm Container=DefExpr VsTestRunCmdLine? Filter? VsTestPlatform? VsTestFramework? VsTestAdditionalOptions? MaxRebootsCount? ";" nl;
+    syntax Apk                     = "apk"    sm Name=DefExpr Filter? "runner" RunnerPath=DefExpr MaxRebootsCount? ";" nl;
+    syntax Marathon                = "marathon" sm "tests" TestContainerApk=DefExpr "app" AppApk=DefExpr "runner" RunnerPath=DefExpr Filter BinariesFolder MaxRebootsCount? ";" nl;
+    syntax Filter                  = "filter" Value=DefExpr;
+    syntax VsTestRunCmdLine        = "vstest_cmdline" sm Value=DefExpr;
+    syntax VsTestPlatform          = "platform" sm Value=DefExpr;
+    syntax VsTestFramework         = "framework" sm Value=DefExpr;
+    syntax VsTestAdditionalOptions = "additional_options" sm Value=DefExpr;
+    syntax Script                  = "script" sm Name=DefExpr Arguments=DefExpr* Environments? MaxRebootsCount? ";" nl
     {
       syntax Environments = "(" Defs=(DefEnv; ", ")+ ")";
     }
@@ -176,7 +182,9 @@
       | Script
       | GTest
       | XCode
+      | VsTest
       | Apk
+      | Marathon
       | Sequence = "sequence" sm  "{" inl SequenceAction* d "}" nl outline_end_before
     }
     regex TimeSpan = DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit | "";
@@ -186,15 +194,17 @@
       | Config
       | GTest
       | XCode
+      | VsTest
       | Apk
+      | Marathon
       | Script
-      | Login           = "login" sm User=StringLiteral sm Password=StringLiteral ";" nl;
+      | Login           = "login" sm User=DefExpr sm Password=DefExpr ";" nl;
       | Logoff          = "logoff" ";" nl;
       | LockWorkstation = "lock-workstation" ";" nl;
       | Reboot          = "reboot" ";"
-      | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan ";"
-      | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan ";"
-      | Barrier         = "barrier" sm Reference ";"
+      | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan MaxRebootsCount? ";"
+      | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan MaxRebootsCount? ";"
+      | Barrier         = "barrier" sm Expression ";"
     }
 
     syntax DeploymentExpr
@@ -218,7 +228,7 @@
     syntax ExternalBody = outline_begin_before "{" inl Fields=Field* d "}" nl outline_end_before;
 
     syntax Field = Attributes AnyType sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
-    
+
     syntax DeploymentScriptBody = outline_begin_before "{" inl DefDeclaration* Options=DeploymentOption* d "}" nl outline_end_before;
 
     syntax DeploymentOption
@@ -240,7 +250,14 @@
       | InputShort = Reference
     }
 
-    syntax DefDeclaration = Reference sm "=" sm DefExpr ";" nl;
+    syntax DefDeclaration
+    {
+      | Ordinary   = !Predicate Reference sm "=" sm DefExpr ";" nl;
+      | Predefined = &Predicate Reference sm "=" sm DefExpr ";" nl;
+
+      void Predicate = PredefinedName s "=";
+      regex PredefinedName = "SessionInitializer" | "SessionFinalizer";
+    }
     syntax DefEnv         = Reference sm "=" sm DefExpr;
 
     syntax DefExpr
@@ -260,9 +277,9 @@
       | MemberAccess = Expr=DefExpr "." Member=Reference
     }
 
-    syntax MaxRebootsCount = sm "max-reboots" sm Value=DecimalIntegerLiteral;
+    syntax MaxRebootsCount = sm "max-reboots" sm Value=DefExpr;
 
-    syntax BinariesFolder = sm "bins" sm Value=StringLiteral;
+    syntax BinariesFolder = sm "bins" sm Value=DefExpr;
 
     syntax ContinueOnError = sm "continue-on-error";
   }

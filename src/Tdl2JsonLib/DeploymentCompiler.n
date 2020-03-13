@@ -7,6 +7,7 @@ using Nemerle.Imperative;
 using Nemerle.Text;
 using Nemerle.Utility;
 
+using Nitra.Declarations;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -55,15 +56,15 @@ namespace Tdl2Json
     {
       match (parameter.Default)
       {
-        | String    as s => s.Value
-        | Bool      as b => if (b.Value) BooleanLiterals.True else BooleanLiterals.False
-        | Number    as n => n.Value
-        | Decimal   as d => d.Value
-        | Double    as d => d.Value
-        | Single    as s => s.Value
-        | None           => null
+        | String    as s        => s.Value
+        | Bool      as b        => if (b.Value) BooleanLiterals.True else BooleanLiterals.False
+        | Number    as n        => n.Value
+        | Decimal   as d        => d.Value
+        | Double    as d        => d.Value
+        | Single    as s        => s.Value
+        | None                  => null
         | Custom(e is Tdl.Expr) => e.ToObject()
-        | _              => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
+        | _                     => throw NotSupportedException($"$(parameter.Default.GetType().Name) is not supported in deployment parameters")
       }
     }
 
@@ -73,9 +74,13 @@ namespace Tdl2Json
     }
 
     [Memoize]
-    public Compile(seq : list[DeploymentSymbol]) : array[QuickType.TestGroupDeployment]
+    public Compile(seq : list[DeploymentSymbol], defs : list[string * object]) : array[QuickType.TestGroupDeployment]
     {
-      CompileSequence(seq, Dictionary(StringComparer.OrdinalIgnoreCase))
+      def dic = Dictionary(StringComparer.OrdinalIgnoreCase);
+      when (defs != null)
+        foreach (d in defs)
+          dic.Add(d);
+      CompileSequence(seq, dic)
     }
 
     public GetEmptyDeployment() : QuickType.TestGroupDeployment
@@ -83,8 +88,8 @@ namespace Tdl2Json
       when (_emptyDeployment == null)
       {
         def name = ProjectSupport.EmptyDeploymentName;
-        _deployments.Add(name, QuickType.Deployment() <- { Type = QuickType.TypeEnum.Empty });
-        _emptyDeployment = MakeDeploymentReference(name, null);
+        _deployments.AddEx(name, QuickType.Deployment() <- { Type = QuickType.TypeEnum.Empty }, "_deployments");
+        _emptyDeployment = MakeDeploymentReference(name, null, null);
       }
       _emptyDeployment
     }
@@ -104,12 +109,12 @@ namespace Tdl2Json
           | DeploymentRebootSymbol    as s =>
             unless (_deployments.ContainsKey(s.Name))
               CompileReboot(s);
-            sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, null)))
+            sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, null, null)))
 
           | Deployment.ScriptSymbol   as s =>
             unless (_deployments.ContainsKey(s.Name))
               CompileScript(s);
-            sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values)))
+            sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values, s.AggregateParametersScope)))
 
           | Deployment.SetSymbol      as s =>
             foreach (d in s.Deployments)
@@ -123,7 +128,7 @@ namespace Tdl2Json
               {
                 unless (_deployments.ContainsKey(s.Name))
                   CompileCurring(s);
-                sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values)));
+                sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values, s.AggregateParametersScope)));
                 return;
               }
             }
@@ -133,7 +138,7 @@ namespace Tdl2Json
               innerValues[x.Symbol.Name] = x.Expr.ToObject(values);
             walk(s.BaseDeployment, innerValues, sequence, callStack);
 
-          | Deployment.SelectSymbol   as s =>
+          | Deployment.SelectSymbol as s =>
             def parameters = s.Parameters;
             def parameterValues = array(parameters.Length);
 
@@ -164,7 +169,7 @@ namespace Tdl2Json
 
             unless (_deployments.ContainsKey(s.Name))
               CompileSelect(s);
-            sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values)))
+            sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values, s.AggregateParametersScope)))
 
           | d => assert(false, $"Unknown deployment type $(d.GetType())")
         }
@@ -194,8 +199,8 @@ namespace Tdl2Json
           {
             def caller  = compiler.TryGetNearestCaller();
             def newName = (caller?.Name ?? "Tdl") + Separators.DeploymentNumberSeparator + _implCount.ToString();
-            _compiledDeployments.Add(compiledKey, (newName, deployment));
-            _deployments.Add(newName, deployment);
+            _compiledDeployments.AddEx(compiledKey, (newName, deployment), "_compiledDeployments");
+            _deployments.AddEx(newName, deployment, "_deployments");
             ++_implCount;
             newName
           }
@@ -217,16 +222,16 @@ namespace Tdl2Json
               QuickType.Deployment() <-
               {
                 Type = QuickType.TypeEnum.Sequence;
-                Deployments = array[MakeDeploymentReference(implName, values)];
+                Deployments = array[MakeDeploymentReference(implName, values, null)];
               };
-            _compiledDeployments.Add(compiledKey, (newName, deployment));
-            _deployments.Add(newName, deployment);
+            _compiledDeployments.AddEx(compiledKey, (newName, deployment), "_compiledDeployments");
+            _deployments.AddEx(newName, deployment, "_deployments");
             ++_thunkCount;
             newName
           }
         }
         def name = if (values.Count > 0) saveThunk(0) else implName;
-        result.Add(MakeDeploymentReference(name, null));
+        result.Add(MakeDeploymentReference(name, null, null));
         compiler = null;
       }
 
@@ -259,12 +264,13 @@ namespace Tdl2Json
 
     private CompileReboot(symbol : DeploymentRebootSymbol) : void
     {
-      _deployments.Add(symbol.Name,
+      _deployments.AddEx(symbol.Name,
         QuickType.Deployment() <-
         {
           Type          = QuickType.TypeEnum.Reboot;
           RebootTimeout = if (symbol.Timeout.HasValue) symbol.Timeout.ValueOrDefault else "00:30:00";
-        });
+        },
+        "_deployments");
     }
 
     private CompileScript(script : Deployment.ScriptSymbol) : void
@@ -275,7 +281,7 @@ namespace Tdl2Json
       def defs       = script.Defs.Select(d => (d.Name, d.Expr.ToObject()));
       def scriptArgs = parameters.Where((p, _) => !refDefs.Contains(p)).Concat(defs).ToDictionary();
 
-      def deploymentModel = QuickType.Deployment() <- 
+      def deploymentModel = QuickType.Deployment() <-
       {
         Type           = QuickType.TypeEnum.Script;
         ReturnValue    = if (script.Expected.HasValue)    script.Expected.Value  else null;
@@ -287,9 +293,7 @@ namespace Tdl2Json
 
       match (script.ScriptReference)
       {
-        | FilePath   as x =>
-          deploymentModel.ScriptPath          = x.Path.ValueOrDefault;
-
+        | FilePath   as x => deploymentModel.ScriptPath          = x.Path.ValueOrDefault;
         | SourceCode as x =>
           deploymentModel.ScriptData          = Encoding.UTF8.GetBytes(x.Text.ValueOrDefault ?? "");
           deploymentModel.ScriptDataExtension = x.Extension.ValueOrDefault;
@@ -303,20 +307,25 @@ namespace Tdl2Json
         | _ => ()
       }
 
-      _deployments.Add(script.Name, deploymentModel)
+      _deployments.AddEx(script.Name, deploymentModel, "_deployments")
     }
 
     private CompileSelect(sel : Deployment.SelectSymbol) : void
     {
-      def separator = Separators.DeploymentSelectSeparator;
-      def deployments = sel.Deployments;
-      def cases       = sel.Cases;
+      def separator    = Separators.DeploymentSelectSeparator;
+      def deployments  = sel.Deployments;
+      def cases        = sel.Cases;
       assert2(deployments.Length == cases.Length);
-      def condition   = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
-      def values      = Dictionary();
+      def condition    = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
+      def values       = Dictionary();
+      def defaultValue = "906868B7-634A-456D-9C89-331CC742650F";
       for (mutable i; i < deployments.Length; ++i)
       {
-        def selector = string.Join(separator, cases[i].Select(v => v ?? JsonGenerator.ParameterDefaultValue));
+        def selector =
+          if (cases[i].All(_ == defaultValue))
+            defaultValue
+          else
+            string.Join(separator, cases[i].Select(v => v ?? Tdl.Expr.NotSetValue));
         def sequence = CompileSequence(deployments[i], Dictionary(StringComparer.OrdinalIgnoreCase));
         def handler  =
           if (sequence.Length == 1)
@@ -324,23 +333,23 @@ namespace Tdl2Json
           else
           {
             def name = sel.Name + separator + selector;
-            _deployments.Add(name, QuickType.Deployment() <-
+            _deployments.AddEx(name, QuickType.Deployment() <-
             {
               Type        = QuickType.TypeEnum.Sequence;
               Deployments = sequence;
-            });
-            MakeDeploymentReference(name, null)
+            }, "_deployments");
+            MakeDeploymentReference(name, null, null)
           };
-        values.Add(selector, handler)
+        values.AddEx(selector, handler, "values")
       }
 
-      _deployments.Add(sel.Name, 
-        QuickType.Deployment() <- 
-        { 
+      _deployments.AddEx(sel.Name,
+        QuickType.Deployment() <-
+        {
           Type      = QuickType.TypeEnum.Select;
           Condition = condition;
           Values    = values;
-        })
+        }, "_deployments")
     }
 
     private CompileCurring(currying : Deployment.CurryingSymbol) : void
@@ -348,14 +357,14 @@ namespace Tdl2Json
       def defaults = MakeDefaultValues(currying.Parameters);
       def values   = Dictionary(StringComparer.OrdinalIgnoreCase);
       foreach (p in currying.ParameterValues)
-        values.Add(p.Symbol.Name, p.Expr.ToObject());
-      _deployments.Add(currying.Name,
+        values.AddEx(p.Symbol.Name, p.Expr.ToObject(), "values");
+      _deployments.AddEx(currying.Name,
         QuickType.Deployment() <-
         {
             Type          = QuickType.TypeEnum.Sequence;
             Deployments   = CompileSequence(array[currying.BaseDeployment], values);
             DefaultValues = if (defaults.Count == 0) null else defaults;
-        })
+        }, "_deployments")
     }
 
     private static MakeDefaultValues(parameters : ImmutableArray[FormalParameterSymbol]) : Dictionary[string, object]
@@ -363,12 +372,34 @@ namespace Tdl2Json
       parameters.Select(p => (p.Name, GetDefaultValue(p))).Where(((_, d)) => d != null).ToDictionary()
     }
 
-    private static MakeDeploymentReference(name : string, values : IDictionary[string, object]) : QuickType.TestGroupDeployment
+    private static MakeDeploymentReference(name : string, values : IDictionary[string, object], parametersScope : Scope) : QuickType.TestGroupDeployment
     {
+      def removeMissingParameters(values)
+      {
+        mutable usedValues : IDictionary[string, object];
+        when (values != null && parametersScope != null)
+        {
+          foreach (value in values)
+          {
+            when (!parametersScope.Contains(value.Key))
+            {
+              when (usedValues == null)
+                usedValues = Dictionary(values);
+
+              _ = usedValues.Remove(value.Key);
+            }
+          }
+        }
+
+        usedValues ?? values
+      }
+
+      def usedValues = removeMissingParameters(values);
+
       QuickType.TestGroupDeployment() <-
       {
         DeploymentName = name;
-        Parameters = if (values != null && values.Count > 0) values else null
+        Parameters     = usedValues
       }
     }
 
@@ -389,32 +420,26 @@ namespace Tdl2Json
     {
       when (deployments.Length == 1 && (deployments[0].Parameters == null || deployments[0].Parameters.Count == 0))
         return deployments;
-      
+
       mutable compositeDeploymentName;
       def key = deployments.ToNList();
       unless (_compositeDeployments.TryGetValue(key, out compositeDeploymentName))
       {
         mutable counter = 0;
         compositeDeploymentName = prototypeName;
-        when (_deployments.ContainsKey(compositeDeploymentName) && deployments.Length > 1)
-        {
-          def name = $<#..$(deployments; "-"; _.DeploymentName)#>;
-          unless (_deployments.ContainsKey(name))
-            compositeDeploymentName = name;
-        }
         while (_deployments.ContainsKey(compositeDeploymentName))
         {
           counter++;
           compositeDeploymentName = prototypeName + "-" + counter;
         }
-        
-        _compositeDeployments.Add(key, compositeDeploymentName);
+
+        _compositeDeployments.AddEx(key, compositeDeploymentName, "_compositeDeployments");
         def deployment = QuickType.Deployment() <-
         {
           Type        = QuickType.TypeEnum.Sequence;
           Deployments = deployments;
         };
-        _deployments.Add(compositeDeploymentName, deployment);
+        _deployments.AddEx(compositeDeploymentName, deployment, "_deployments");
       }
       array[QuickType.TestGroupDeployment() <- { DeploymentName=compositeDeploymentName; }]
     }

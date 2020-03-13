@@ -12,104 +12,207 @@ namespace Tdl
 {
   abstract ast Action : BindableAst
   {
+    in InGenerator : bool;
   stage 2:
     out ScenarioActions : ScenarioAction;
 
-    | Script
-      {
-        ScenarioActions = ScenarioAction.Script(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef), MaxRebootsCountOpt);
-
-        Name               : CSharp.StringLiteral;
-        Arguments          : CSharp.StringLiteral*;
-        Definitions        : Definition*;
-        MaxRebootsCountOpt : ParsedValue[int];
-      }
-
-    | Config
-      {
-        ScenarioActions = ScenarioAction.Config(Path.Location, TdlUtils.ConvertStringLiteral(Path), MaxRebootsCountOpt);
-
-        MaxRebootsCountOpt : ParsedValue[int];
-        Path               : CSharp.StringLiteral;
-      }
-
-    | GTest
-      {
-        ScenarioActions = ScenarioAction.GTest(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
-          Arguments.Select(TdlUtils.ConvertStringLiteral).ToImmutableArray(), MaxRebootsCountOpt);
-
-        Name               : CSharp.StringLiteral;
-        Arguments          : CSharp.StringLiteral*;
-        MaxRebootsCountOpt : ParsedValue[int];
-      }
-
-    | XCode
-      {
-        ScenarioActions = ScenarioAction.XCode(Container.Location,
-          TdlUtils.ConvertStringLiteral(Container), 
-          TdlUtils.ConvertStringLiteral(XcodePath),
-          MaxRebootsCountOpt);
-
-        Container          : CSharp.StringLiteral;
-        XcodePath          : CSharp.StringLiteral;
-        MaxRebootsCountOpt : ParsedValue[int];
-      }
-
-    | Apk
-      {
-        ScenarioActions = ScenarioAction.Apk(Name.Location, TdlUtils.ConvertStringLiteral(Name), 
-          FilterOpt.ConvertStringLiteral(), TdlUtils.ConvertStringLiteral(RunnerPath), MaxRebootsCountOpt);
-
-        Name               : CSharp.StringLiteral;
-        FilterOpt          : CSharp.StringLiteral?;
-        RunnerPath         : CSharp.StringLiteral;
-        MaxRebootsCountOpt : ParsedValue[int];
-      }
-
-    | Login
-      {
-        ScenarioActions = TdlUtils.CreateLoginAction(context, this.Location, User, Password);
-
-        User               : CSharp.StringLiteral;
-        Password           : CSharp.StringLiteral;
-      }
-
-    | Logoff          { ScenarioActions = ScenarioAction.Logoff(this.Location); }
-    | LockWorkstation { ScenarioActions = ScenarioAction.LockWorkstation(this.Location); }
     | Method
       {
       stage 1:
         out MethodRef : Ref[Member.MethodSymbol];
+        in Fake : Ref[Member.MethodSymbol];
 
-        Method.NameScopeFactory = context.GetMethodScopeFactory();
-        Method.Scope            = Scope;
-        MethodRef               = Method.Ref.Resolve();
-        ScenarioActions         = await TdlUtils.MakeMethodAction(Method, MethodRef.Symbol, MaxRebootsCountOpt, BinariesFolderOpt, ContinueOnErrorOpt);
+        MethodRef = Fake;
+        ScenarioActions         = ScenarioAction.Method(Method.Location, Method.Result, MaxRebootsCountOpt.Result, BinariesFolderOpt.Result, ContinueOnErrorOpt);
 
-        Method             : QualifiedReference;
-        MaxRebootsCountOpt : ParsedValue[int];
-        BinariesFolderOpt  : CSharp.StringLiteral?;
+        Method            .Scope            = Scope;
+        MaxRebootsCountOpt.Scope            = Scope;
+        BinariesFolderOpt .Scope            = Scope;
+
+        Method            .NameScopeFactory = context.GetMethodScopeFactory();
+
+        Method            .ExpectedType     = context.ToTdlContext().MethodType;
+        MaxRebootsCountOpt.ExpectedType     = context.GetType("int");
+        BinariesFolderOpt .ExpectedType     = context.GetType("string");
+
+        Method             : DefExpr;
+        MaxRebootsCountOpt : DefExpr?; // int
+        BinariesFolderOpt  : DefExpr?; // string
         ContinueOnErrorOpt : ParsedValue[bool];
 
-        when (!(Method is QualifiedReference.Qualified))
-          Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
+        //when (!(Method is DefExpr.MemberAccess))
+        //  Method.Error(context, "Invalid method reference. Only qualified method references supported, e.g.: MyType.MyMethod.");
       }
-    | Reboot        { ScenarioActions = ScenarioAction.Reboot(this.Location); }
+    | Script
+      {
+        ScenarioActions = ScenarioAction.Script(Name.Location, Name.Result, Arguments.Result,
+          TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef), MaxRebootsCountOpt.Result);
+
+        Name              .Scope        = Scope;
+        Arguments         .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Name              .ExpectedType = context.GetType("string");
+        Arguments         .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
+        Name               : DefExpr;
+        Arguments          : DefExpr*;
+        Definitions        : Definition*;
+        MaxRebootsCountOpt : DefExpr?;
+      }
+
+    | Config
+      {
+        ScenarioActions = ScenarioAction.Config(Path.Location, Path.Result, MaxRebootsCountOpt.Result);
+
+        Path              .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Path              .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
+        Path               : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
+      }
+
+    | GTest
+      {
+        ScenarioActions = ScenarioAction.GTest(Name.Location, Name.Result, Arguments.Result, MaxRebootsCountOpt.Result);
+
+        Name              .Scope        = Scope;
+        Arguments         .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Name              .ExpectedType = context.GetType("string");
+        Arguments         .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
+        Name               : DefExpr;
+        Arguments          : DefExpr*;
+        MaxRebootsCountOpt : DefExpr?;
+      }
+
+    | XCode
+      {
+        ScenarioActions = ScenarioAction.XCode(Container.Location, Container.Result, XcodePath.Result, MaxRebootsCountOpt.Result);
+
+        Container         .Scope        = Scope;
+        XcodePath         .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Container         .ExpectedType = context.GetType("string");
+        XcodePath         .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
+        Container          : DefExpr;
+        XcodePath          : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
+      }
+
+    | VsTest
+      {
+        ScenarioActions = ScenarioAction.VsTest(Container.Location, Container.Result, VsTestRunCmdLineOpt.Result, FilterOpt.Result, VsTestPlatformOpt.Result, VsTestFrameworkOpt.Result, VsTestAdditionalOptionsOpt.Result, MaxRebootsCountOpt.Result);
+
+        Container                 .Scope        = Scope;
+        VsTestRunCmdLineOpt       .Scope        = Scope;
+        FilterOpt                 .Scope        = Scope;
+        VsTestPlatformOpt         .Scope        = Scope;
+        VsTestFrameworkOpt        .Scope        = Scope;
+        VsTestAdditionalOptionsOpt.Scope        = Scope;
+        MaxRebootsCountOpt        .Scope        = Scope;
+
+        Container                 .ExpectedType = context.GetType("string");
+        VsTestRunCmdLineOpt       .ExpectedType = context.GetType("string");
+        FilterOpt                 .ExpectedType = context.GetType("string");
+        VsTestPlatformOpt         .ExpectedType = context.GetType("string");
+        VsTestFrameworkOpt        .ExpectedType = context.GetType("string");
+        VsTestAdditionalOptionsOpt.ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt        .ExpectedType = context.GetType("int");
+
+        Container                  : DefExpr;
+        VsTestRunCmdLineOpt        : DefExpr?;
+        FilterOpt                  : DefExpr?;
+        VsTestPlatformOpt          : DefExpr?;
+        VsTestFrameworkOpt         : DefExpr?;
+        VsTestAdditionalOptionsOpt : DefExpr?;
+        MaxRebootsCountOpt         : DefExpr?;
+      }
+
+    | Apk
+      {
+        ScenarioActions = ScenarioAction.Apk(Name.Location, Name.Result, FilterOpt.Result, RunnerPath.Result, MaxRebootsCountOpt.Result);
+
+        Name              .Scope        = Scope;
+        FilterOpt         .Scope        = Scope;
+        RunnerPath        .Scope        = Scope;
+        MaxRebootsCountOpt.Scope        = Scope;
+
+        Name              .ExpectedType = context.GetType("string");
+        FilterOpt         .ExpectedType = context.GetType("string");
+        RunnerPath        .ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
+        Name               : DefExpr;
+        FilterOpt          : DefExpr?;
+        RunnerPath         : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
+      }
+
+    | Marathon
+      {
+        ScenarioActions = ScenarioAction.Marathon(TestContainerApk.Location, TestContainerApk.Result, AppApk.Result, RunnerPath.Result,
+          Filter.Result, BinariesFolder.Result, MaxRebootsCountOpt.Result);
+
+        TestContainerApk  .Scope = Scope;
+        AppApk            .Scope = Scope;
+        RunnerPath        .Scope = Scope;
+        Filter            .Scope = Scope;
+        BinariesFolder    .Scope = Scope;
+        MaxRebootsCountOpt.Scope = Scope;
+
+        TestContainerApk.ExpectedType = context.GetType("string");
+        AppApk.ExpectedType = context.GetType("string");
+        RunnerPath.ExpectedType = context.GetType("string");
+        Filter.ExpectedType = context.GetType("string");
+        BinariesFolder.ExpectedType = context.GetType("string");
+        MaxRebootsCountOpt.ExpectedType = context.GetType("int");
+
+        TestContainerApk   : DefExpr;
+        AppApk             : DefExpr;
+        RunnerPath         : DefExpr;
+        Filter             : DefExpr;
+        BinariesFolder     : DefExpr;
+        MaxRebootsCountOpt : DefExpr?;
+      }
+
+    | Login
+      {
+        ScenarioActions = ScenarioAction.Login(this.Location, User.Result, Password.Result);
+
+        User.ExpectedType = context.GetType("string");
+        Password.ExpectedType = context.GetType("string");
+
+        User               : DefExpr;
+        Password           : DefExpr;
+      }
+
+    | Logoff          { ScenarioActions = ScenarioAction.Logoff(this.Location); }
+    | LockWorkstation { ScenarioActions = ScenarioAction.LockWorkstation(this.Location); }
+    | Reboot          { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot
       {
-        ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value);
+        ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value, MaxRebootsCountOpt.Result);
 
-        TimeSpan : ParsedValue[string];
+        TimeSpan           : ParsedValue[string];
+        MaxRebootsCountOpt : DefExpr?;
       }
     | Barrier
       {
-        out BarrierRef : Ref[BarrierSymbol] = Reference.Ref.Resolve();
+        BarrierExpr.ScopeIn = Scope.HideWith(context.GetBarrierScope());
+        ScenarioActions     = await TdlUtils.MakeScenarioActions(context, BarrierExpr);
 
-        Reference.Scope = Scope;
-        ScenarioActions = ScenarioAction.Barrier(Reference.Location, BarrierRef.Symbol);
-
-        Reference : Reference;
+        BarrierExpr : DotNet.Expr;
       }
   }
 }

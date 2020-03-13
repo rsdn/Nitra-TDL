@@ -4,7 +4,17 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
 
-  <UsingTask TaskName="TdlTask" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+  <PropertyGroup Condition=" '$(MSBuildRuntimeType)' != 'Core' ">
+    <TdlTaskFactory>CodeTaskFactory</TdlTaskFactory>
+    <TdlTaskFactoryAssembly>Microsoft.Build.Tasks.v4.0.dll</TdlTaskFactoryAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(MSBuildRuntimeType)' == 'Core' ">
+    <TdlTaskFactory>RoslynCodeTaskFactory</TdlTaskFactory>
+    <TdlTaskFactoryAssembly>Microsoft.Build.Tasks.Core.dll</TdlTaskFactoryAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="TdlTask" TaskFactory="$(TdlTaskFactory)" AssemblyFile="$(MSBuildToolsPath)\$(TdlTaskFactoryAssembly)">
     <ParameterGroup>
       <ToolPath                     ParameterType="System.String" Required="false" />
       <WorkingDirectory             ParameterType="System.String" Required="false" />
@@ -13,6 +23,7 @@
       <BooleanMarshalMode           ParameterType="System.String" Required="false" />
       <DiffFile                     ParameterType="System.String" Required="false" />
       <RepositoryPath               ParameterType="System.String" Required="false" />
+      <ExcludeTriggerPathScenarios  ParameterType="System.Boolean" Required="false" />
       <Sources                      ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <References                   ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <OutputFile                   ParameterType="System.String" Required="true" Output="true" />
@@ -37,7 +48,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="PrepareDiffTesting" Condition=" '$(TARGETBRANCH)' != '' AND '$(SOURCEVERSION)' != '' " DependsOnTargets="PrepareTdlCompile">
+  <Target Name="PrepareDiffTesting" Condition=" '$(TARGETBRANCH)' != '' AND '$(SOURCEVERSION)' != '' AND '$(TdlDisableDiffTesting)' != 'true' " DependsOnTargets="PrepareTdlCompile">
     <Exec Command="git show -s --format=%%P" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="TdlMergeParents" />
     </Exec>
@@ -59,7 +70,7 @@
 
     <ItemGroup>
       <FileWrites Include="$(TdlDiffFile)" />
-    </ItemGroup>  
+    </ItemGroup>
   </Target>
 
   <Target Name="CoreCompile"
@@ -74,6 +85,7 @@
             DeploymentToolPath           = "$(TdlDeploymentToolPath)"
             BooleanMarshalMode           = "$(TdlBooleanMarshalMode)"
             RepositoryPath               = "$(TdlRepositoryPath)"
+            ExcludeTriggerPathScenarios  = "$(TdlExcludeTriggerPathScenarios)"
             DiffFile                     = "$(TdlDiffFile)"
             References                   = "@(ReferencePath)"
             Sources                      = "@(TdlCompile)"

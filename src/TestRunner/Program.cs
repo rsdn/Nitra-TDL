@@ -87,7 +87,7 @@ namespace TestRunner
                 else
                     Print($"All tests passed. Elapsed time: {timer.Elapsed}", ConsoleColor.Green);
 
-                Directory.Delete(outputDir, recursive: true);
+                //Directory.Delete(outputDir, recursive: true);
 
                 return failed > 0 ? -4 : 0;
             }

@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Nitra.Declarations;
+using Tdl.Transformator.Models.Expressions;
+using Tdl;
+
+using JetBrains.Annotations;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using JetBrains.Annotations;
-using Tdl.Transformator.Models.Expressions;
-using Tdl;
 
 namespace Tdl.Transformator.Models.Parameters
 {
@@ -14,7 +17,7 @@ namespace Tdl.Transformator.Models.Parameters
         public static List<DefinitionModel> GetDefinitions(
             ImmutableArray<Def> defs,
             [ItemNotNull, NotNull]
-            Definition.IAstList definitions)
+            IAstList<Definition> definitions)
         {
             var defMap = defs.ToDictionary(d => d.Symbol, d => d.Expr);
             var definitionModels = new List<DefinitionModel>();

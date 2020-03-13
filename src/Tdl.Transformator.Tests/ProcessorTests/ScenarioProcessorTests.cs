@@ -63,22 +63,22 @@ namespace Tdl.Transformator.Tests.ProcessorTests
 
             void action(ModelContainer container) => new ScenarioProcessor().Ungrouping(container, null);
 
-            CompareModuleAfterAction(testFolder, tdl, excpectedTdl, action); 
+            CompareModuleAfterAction(testFolder, tdl, excpectedTdl, action);
         }
 
         [TestMethod]
         public void UngroupScenarioSequenceByQcId()
-        { 
+        {
             const string testFolder = "UngroupingScenarioSequence";
             const string tdl = "UngroupingByQcId.tdl";
             const string excpectedTdl = "UngroupingByQcId_After.tdl";
 
             void action(ModelContainer container) => new ScenarioProcessor().UngroupingByQcId(container);
 
-            CompareModuleAfterAction(testFolder, tdl, excpectedTdl, action); 
+            CompareModuleAfterAction(testFolder, tdl, excpectedTdl, action);
         }
 
-        private static string TdlDirectory([NotNull] string testFolder) => Path.Combine(TestUtils.TdlsRoot, testFolder);  
+        private static string TdlDirectory([NotNull] string testFolder) => Path.Combine(TestUtils.TdlsRoot, testFolder);
 
         private static void ValidateScenarioSet(
             IEnumerable<ScenarioBaseModel> scenarios,
@@ -99,8 +99,8 @@ namespace Tdl.Transformator.Tests.ProcessorTests
         }
 
         private void CompareModuleAfterAction(
-            [NotNull] string tdlDir, 
-            [NotNull] string originalTdlFile, 
+            [NotNull] string tdlDir,
+            [NotNull] string originalTdlFile,
             [NotNull] string excpectedTdlFile,
             [NotNull] Action<ModelContainer> actionBeforeCompare)
         {
@@ -137,4 +137,4 @@ namespace Tdl.Transformator.Tests.ProcessorTests
             }
         }
     }
-} 
+}

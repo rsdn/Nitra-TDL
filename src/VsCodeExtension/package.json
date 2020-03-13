@@ -1,0 +1,70 @@
+{
+	"name": "tdl",
+	"displayName": "TDL VS Code Extension",
+	"description": "Test Definition Language (TDL) VS Code Extension.",
+	"version": "1.0.1",
+	"publisher": "VladislavChistyakov",
+	"baseUri": "https://github.com/rsdn/nitra-tdl",
+	"enableProposedApi": "true",
+	"engines": {
+		"vscode": "^1.39.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rsdn/Nitra-TDL.git"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension",
+	"contributes": {
+		"languages": [
+			{
+				"id": "tdl",
+				"aliases": [
+					"TDL",
+					"tdl"
+				],
+				"extensions": [
+					"tdl"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "tdl",
+				"scopeName": "source.tdl",
+				"path": "./syntaxes/tdl.tmLanguage.json"
+			}
+		],
+		"problemMatchers": [
+			{
+				"name": "tdl",
+				"source": "tdl",
+				"owner": "tdl",
+				"fileLocation": "absolute",
+				"pattern": {
+					"regexp": "^(.*)\\((\\d+),(\\d+),(\\d+),(\\d+)\\):\\s*(warning|error|hint):\\s*(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"endLine": 4,
+					"endColumn": 5,
+					"severity": 6,
+					"message": 7
+				}
+			}
+		]
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/node": "^8.10.59",
+		"@types/vscode": "^1.39.0",
+		"tslint": "^5.16.0",
+		"typescript": "^3.5.1"
+	}
+}
