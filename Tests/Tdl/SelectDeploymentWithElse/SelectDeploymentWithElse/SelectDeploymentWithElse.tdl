@@ -1,17 +1,14 @@
-suite "Ksos.BvtPvt.UCP-Beta-4" : SessionParameters 
+suite "Ksos.BvtPvt.UCP-Beta-4" 
 {
     platform all_pc;
     product KSOS;
-    ExcludeMasks = "*.iso,*.vhd,*_full.exe";
-    DistribFiles = DistribFiles;
-    DistribTestModules = DistribTestModules;
     UcpContextType = UcpContextType;
     SelectDeploymentWithElseScenario();
 }
 scenario SelectDeploymentWithElseScenario
 {
     deployment SelectDeploymentWithElse;
-    environments (all_pc_and_servers, KAV-KIS-PURE-KSOS-KSOSFS);
+    environments (all_pc, KAV-KIS-PURE-KSOS-KSOSFS);
     method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck;
     UniqueId = "B83B33B3-3D96-4C5D-B5DC-0F4E5670F7E3";
     RevertAgentBefore = true;
@@ -35,14 +32,9 @@ deployment Curry4 = Basic(UcpContextType: "predefined");
 
 product KSOS : Kavkis
 {
-    Name = "KSOS";
+    Name       = "KSOS";
     BranchName = "Main";
-    Version = ProductVersion;
-    AutotestBinariesExcludedFilesMasks = "ksm*.Product.Config;ksde*.Product.Config";
-    ProductBinariesExcludedFilesMasks = "*_full.exe;*_reduced.exe";
-    ConfigFilesFamily = "Kis.";
-    TestAppPackName = "KasperskyLab.Kis.UI.TestApp.zip";
-    DumpServerProduct = DumpServerProduct;
+    Version    = "KAV.21.0.0.0";
 }
 
 product KAV-KIS-PURE-KSOS-KSOSFS : Kavkis = KSOS;
@@ -52,42 +44,12 @@ product type Kavkis
     string Name;
     string BranchName;
     string Version;
-    string AutotestBinariesExcludedFilesMasks;
-    string ProductBinariesExcludedFilesMasks;
-    string ConfigFilesFamily;
-    string TestAppPackName;
-    string DumpServerProduct;
 }
 
-platform all_pc_and_servers = all_pc;
 platform w10rs5-x86;
 platform all_pc = w10rs5-x86;
 
 external
 {
-  string ProductVersion;
-  string DistribFiles;
-  string DistribTestModules;
-  string AutotestsBinariesPath;
-  string ProductBasesPath;
-  string BaseDistribFiles;
-  string BaseDistribTestModules;
-  string UpdateSource;
-  string BasesVersion;
   string UcpContextType;
-  string LocalTestBinariesFolder = @"C:\AutotestBinaries";
-  string DeployerExePath = @"C:\AutotestBinaries\Autotests.Deployer.exe";
-  string DumpServerProduct = "KAV.21.0.0.0";
-  string CollectXPerfLog = "Disable";
-}
-
-suite type SessionParameters
-{
-    string DistribFiles;
-    string DistribTestModules;
-    string AutotestsBinariesPath;
-    string ExcludeMasks;
-    string BaseDistribFiles;
-    string BaseDistribTestModules;
-    string CollectXPerfLog = CollectXPerfLog;
 }
