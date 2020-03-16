@@ -50,7 +50,7 @@ namespace Tdl
 
     | Else
       {
-        Text = "906868B7-634A-456D-9C89-331CC742650F";
+        Text = Api.CaseElseValue;
       }
   }
 }

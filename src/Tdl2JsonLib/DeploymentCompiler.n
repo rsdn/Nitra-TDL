@@ -318,14 +318,10 @@ namespace Tdl2Json
       assert2(deployments.Length == cases.Length);
       def condition    = string.Join(separator, sel.Parameters.Select(p => "$(" + p.Name + ")"));
       def values       = Dictionary();
-      def defaultValue = "906868B7-634A-456D-9C89-331CC742650F";
+      mutable defaultBranch;
       for (mutable i; i < deployments.Length; ++i)
       {
-        def selector =
-          if (cases[i].All(_ == defaultValue))
-            defaultValue
-          else
-            string.Join(separator, cases[i].Select(v => v ?? Tdl.Expr.NotSetValue));
+        def selector = string.Join(separator, cases[i].Select(v => v ?? Tdl.Expr.NotSetValue));
         def sequence = CompileSequence(deployments[i], Dictionary(StringComparer.OrdinalIgnoreCase));
         def handler  =
           if (sequence.Length == 1)
@@ -340,7 +336,11 @@ namespace Tdl2Json
             }, "_deployments");
             MakeDeploymentReference(name, null, null)
           };
-        values.AddEx(selector, handler, "values")
+
+        if (cases[i].Any(_ == Api.CaseElseValue))
+          defaultBranch = handler;
+        else
+          values.AddEx(selector, handler, "values")
       }
 
       _deployments.AddEx(sel.Name,
@@ -349,6 +349,7 @@ namespace Tdl2Json
           Type      = QuickType.TypeEnum.Select;
           Condition = condition;
           Values    = values;
+          Default   = defaultBranch;
         }, "_deployments")
     }
 
