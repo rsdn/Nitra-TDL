@@ -145,7 +145,10 @@ namespace QuickType
         public string Condition { get; set; }
 
         [JsonProperty("Values", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public IDictionary<string, object> Values { get; set; }
+        public IDictionary<string, TestGroupDeployment> Values { get; set; }
+
+        [JsonProperty("Default", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public TestGroupDeployment Default { get; set; }
 
         #endregion
 

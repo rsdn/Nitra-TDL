@@ -21,9 +21,9 @@
           "Basic": {
             "UcpContextType": "predefined"
           }
-        },
-        "906868B7-634A-456D-9C89-331CC742650F": "Basic"
-      }
+        }
+      },
+      "Default": "Basic"
     }
   },
   "Platforms": {
@@ -90,4 +90,3 @@
   },
   "TestEntities": {}
 }
-
