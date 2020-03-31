@@ -26,12 +26,12 @@ namespace Tdl
 {
   module TdlUtils
   {
-    static RequiredProductTypeFields : list[string] = ["Name", "Version"];
-    static ObsoleteProductTypeFields : Dictionary[string, string] = [("ReleaseName", "BranchName")].ToDictionary();
-
     public NoLocation         : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan             : NSpan              = NSpan(0);
+
+    RequiredProductTypeFields : list[string] = ["Name", "Version"];
+    ObsoleteProductTypeFields : Dictionary[string, string] = [("ReleaseName", "BranchName")].ToDictionary();
 
     public BaseStableGuid : Guid = Guid.Parse("{AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA}");
 
@@ -1084,11 +1084,19 @@ namespace Tdl
 
         foreach (case in cases)
         {
-          when (case.Values.Count != parameterCount)
-          {
-            msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
-            break;
-          }
+          def isDefault = case.Values.Any(v => v.Text == Api.CaseElseValue);
+          if (isDefault)
+            when (case.Values.Count != 1)
+            {
+              msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Expected single 'else' keyword.", 0);
+              return;
+            }
+          else
+            when (case.Values.Count != parameterCount)
+            {
+              msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
+              return;
+            }
         }
 
         def set = HashSet();
