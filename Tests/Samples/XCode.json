@@ -1,0 +1,64 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deploy": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "Deploy.ps1"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "S1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S1": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "XCodeTestContainer": "Standalone-VPN_iphonesimulator12.2-x86_64.xctestrun",
+        "XcodePath": "/Applications/Xcode 10.2.1.app"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e71"
+    }
+  },
+  "TestEntities": {}
+}

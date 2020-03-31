@@ -1,0 +1,13 @@
+product type Kavkis
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product MobileSdk : Kavkis 
+{
+    Name = @"MobileSdk";
+    BranchName = @"1";
+    Version = @"1.0.0.0";
+}

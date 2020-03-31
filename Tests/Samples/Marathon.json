@@ -1,0 +1,127 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "RunEmulator": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "StartEmulatorScriptPath": "$(StartEmulatorScriptPath)",
+        "--avd": "{EmulatorVersion}"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "$(StartEmulatorScriptPath)",
+      "Timeout": "00:05:00"
+    }
+  },
+  "Platforms": {
+    "all_droids": [
+      "droid-25/5.1",
+      "droid-25/6.0",
+      "droid-25/7.1",
+      "droid-25/8.1",
+      "droid-25/9.0"
+    ],
+    "droid-25/5.1": {},
+    "droid-25/6.0": {},
+    "droid-25/7.1": {},
+    "droid-25/8.1": {},
+    "droid-25/9.0": {}
+  },
+  "Products": {
+    "SafeKids-Android": {
+      "Name": "SafeKids-Android",
+      "Parameters": {
+        "Name": "SafeKids-Android"
+      },
+      "BranchName": "master",
+      "Version": "1.30.0.1000"
+    }
+  },
+  "Suites": {
+    "Marathon": {
+      "Parameters": {
+        "SafeKids-VersionName": "$(Product:SafeKids-Android.Version)",
+        "StartEmulatorScriptPath": "\\\\SomeShare\\temp_drop\\builds2\\KSK_Android\\test\\ci\\hive\\common\\start_emulator.py",
+        "VersionCode": 1000
+      },
+      "Platforms": [
+        "all_droids"
+      ],
+      "Products": [
+        "SafeKids-Android"
+      ],
+      "TestScenarios": [
+        "AndroidGroup"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "AndroidGroup": {
+      "TestScenarios": [
+        "AppPullRequestTest",
+        "CommonPullRequestTest"
+      ]
+    },
+    "AppPullRequestTest": {
+      "Deployments": [
+        "RunEmulator"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_droids"
+          ],
+          "Products": [
+            "SafeKids-Android"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AndroidTestContainer": "artifacts\\App\\apk\\safekids-prod-internal-debug-$(SafeKids-VersionName)-$(VersionCode).apk",
+            "MarathonTestRunnerPath": "ci\\hive\\common\\pull_request_marathon_app_run.sh",
+            "TestFilter": "^.*$",
+            "LocalTestBinariesFolder": "\\\\SomeShare\\temp_drop\\builds2\\KSK_Android\\test",
+            "MaxRebootsCount": 0
+          }
+        ]
+      },
+      "Timeout": "00:10:00",
+      "UniqueId": "6cceeaa0-a1a0-4c15-b705-0cb228ca02e6"
+    },
+    "CommonPullRequestTest": {
+      "Deployments": [
+        "RunEmulator"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_droids"
+          ],
+          "Products": [
+            "SafeKids-Android"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AndroidTestContainer": "Fake",
+            "MarathonTestRunnerPath": "ci\\hive\\common\\pull_request_marathon_common_run.sh",
+            "TestFilter": "^.*$",
+            "LocalTestBinariesFolder": "\\\\SomeShare\\temp_drop\\builds2\\KSK_Android\\test"
+          }
+        ]
+      },
+      "Timeout": "00:10:00",
+      "UniqueId": "41fcc6b0-8f9b-403e-a000-f725446fb705"
+    }
+  },
+  "TestEntities": {}
+}
+

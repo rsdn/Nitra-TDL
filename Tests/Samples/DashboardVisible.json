@@ -1,0 +1,114 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deployment1": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "Message": "$(Message)",
+        "isVerbose": "$(isVerbose)",
+        "NotVisible": "$(NotVisible)"
+      },
+      "DefaultValues": {
+        "isVerbose": 0
+      },
+      "ScriptPath": "a.ps1"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {
+        "Message": "C# deployment",
+        "SuiteTypeField1": 1,
+        "SuiteTypeField2": 1,
+        "ScenarioParam1": 42,
+        "ScenarioParam2": 48,
+        "NotVisible": 1
+      },
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "S1"
+      ],
+      "DashboardVisibleParameters": [
+        "Message",
+        "SuiteTypeField1",
+        "ScenarioParam1"
+      ]
+    },
+    "SuiteGenerator-1": {
+      "Parameters": {
+        "Message": "C# deployment",
+        "SuiteTypeField1": 1,
+        "SuiteTypeField2": 1,
+        "ScenarioParam1": 42,
+        "ScenarioParam2": 48,
+        "NotVisible": 1
+      },
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "S1"
+      ],
+      "DashboardVisibleParameters": [
+        "Message",
+        "SuiteTypeField1",
+        "ScenarioParam1"
+      ]
+    }
+  },
+  "SuiteGroups": {
+    "SuiteGenerator": {
+      "Suites": [
+        "SuiteGenerator-1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S1": {
+      "Deployments": [
+        "Deployment1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e71"
+    }
+  },
+  "TestEntities": {}
+}

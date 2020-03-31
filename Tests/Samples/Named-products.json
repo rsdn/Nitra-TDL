@@ -1,0 +1,106 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "InstallProduct": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "PRODUCT_VERSION": "$(Version)",
+        "Size100": "$(Product:ProductA.Size)",
+        "Size42": "$(Product:ProductB.Size)",
+        "ReleaseName": "$(Product:ProductB.BranchName)"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "\\\\SomeShare\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
+    }
+  },
+  "Platforms": {
+    "w10rs5": [
+      "w10rs5-x64",
+      "w10rs5-x86"
+    ],
+    "w10rs5-x64": {},
+    "w10rs5-x86": {}
+  },
+  "Products": {
+    "Excel": {
+      "Name": "Excel",
+      "Parameters": {
+        "Name": "Excel",
+        "Size": 42
+      },
+      "BranchName": "Excel",
+      "Version": "#(ProductVersion)"
+    },
+    "MonorepoHelloWorld": {
+      "Name": "MonorepoHelloWorld",
+      "Parameters": {
+        "Name": "MonorepoHelloWorld"
+      },
+      "BranchName": "MonorepoHelloWorld",
+      "Version": "#(ProductVersion)"
+    },
+    "OfficeProduct": [
+      "Excel",
+      "Word"
+    ],
+    "Word": {
+      "Name": "Word",
+      "Parameters": {
+        "Name": "Word",
+        "Size": 100
+      },
+      "BranchName": "Word",
+      "Version": "#(ProductVersion)"
+    }
+  },
+  "Suites": {
+    "NamedProduct": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "ProductA": "Excel",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld"
+      },
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "OfficeProduct"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Test1": {
+      "FilterExpression": "((((TestSuite)globals[\"Suite\"]).Products.Contains(config.Products[\"OfficeProduct\"]) && ((TestSuite)globals[\"Suite\"]).Platforms.Contains(config.Platforms[\"w10rs5\"])) && ((bool)externals[\"IsSome\"]))",
+      "Deployments": [
+        "InstallProduct"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5-x64"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    }
+  },
+  "TestEntities": {}
+}

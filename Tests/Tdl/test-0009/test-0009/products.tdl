@@ -1,0 +1,38 @@
+product type TheProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product type MsOfficeProducts
+{
+    string Name;
+    string BranchName;
+    string Version;
+    int Size;
+}
+
+product MonorepoHelloWorld : TheProductType
+{
+    Name = "MonorepoHelloWorld";
+    BranchName = "MonorepoHelloWorld";
+    Version = ProductVersion;
+}
+
+product Word : MsOfficeProducts
+{
+    Name = "Word";
+    BranchName = "Word";
+    Version = ProductVersion;
+    Size = 100;
+}
+
+product Excel : MsOfficeProducts
+{
+    Name = "Excel";
+    BranchName = "Excel";
+    Version = ProductVersion;
+    Size = 42;
+}
+

@@ -1,0 +1,241 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "DeployCollectors": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Hive\\DeployDataCollectors.ps1"
+    },
+    "DeployWithDeployer": {
+      "Type": "Script",
+      "RebootExitCode": 42,
+      "ReturnValue": 2,
+      "ScriptArgs": {
+        "BuildName": "$(BuildName)",
+        "DeployIsNeeded": "$(DeployIsNeeded)",
+        "DeployerTimeoutSec": "$(DeployerTimeoutSec)",
+        "DeployerFlags": "$(DeploymentConditions)",
+        "TestSettingsDirectory": "$(InternalTestSettingsDirectory)"
+      },
+      "DefaultValues": {
+        "DeployerTimeoutSec": 900
+      },
+      "ScriptPath": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Hive\\Deploy.ps1"
+    },
+    "DeployWithDeployer_NoReboot": {
+      "Type": "Sequence",
+      "Deployments": [
+        "DeployWithDeployer",
+        "DeployCollectors"
+      ]
+    }
+  },
+  "Platforms": {
+    "w10rs4-x64": {},
+    "w10rs4-x86": {},
+    "win10": [
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ]
+  },
+  "Products": {
+    "App4 11.1": {
+      "Name": "App4",
+      "Parameters": {
+        "Name": "App4",
+        "ProductConfigurationPath": "\\\\SomeShare\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ProductConfiguration\\App411.1.xml",
+        "ComponentConfigurationPath": "\\\\SomeShare\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ComponentConfiguration\\App4\\Delivery.Kes.xml",
+        "DeploymentConditions": "/EncryptionEnabled",
+        "DistributiveOriginalPath": "#(KesDistributivePath)",
+        "ModulesPath": "#(KesModulesPath)",
+        "SuiteName": "Kes11.1.Ext.PullRequest"
+      },
+      "BranchName": "11.1",
+      "Version": "#(KesFullVersion)"
+    },
+    "App4 11.1__App6 2020.MP0": [
+      "App4 11.1",
+      "App6 2020.MP0"
+    ],
+    "App6 2020.MP0": {
+      "Name": "App6",
+      "Parameters": {
+        "Name": "App6",
+        "ProductConfigurationPath": "\\\\SomeShare\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ProductConfiguration\\2020.MP0\\App6.xml",
+        "ComponentConfigurationPath": "\\\\SomeShare\\Autotests\\Components\\Delivery\\BlackBox\\AutotestConfiguration\\ComponentConfiguration\\2020.MP0\\Delivery.xml",
+        "DeploymentConditions": "/App9",
+        "DistributiveOriginalPath": "#(App2_DistributivePath)",
+        "ModulesPath": "#(App2_ModulesPath)",
+        "SuiteName": "App6.2020.MP0.Ext.PullRequest"
+      },
+      "BranchName": "20.MP0",
+      "Version": "#(App2_FullVersion)"
+    }
+  },
+  "Suites": {
+    "Ext.Delivery": {
+      "Parameters": {
+        "AutotestAssemblies": "\\\\SomeShare\\Autotests\\Components\\Delivery\\BlackBox\\AutotestAssemblies",
+        "DeployIsNeeded": 1,
+        "UpdateSourceAddress": "",
+        "UseSecondaryUpdateSource": 0,
+        "SecondaryUpdateSource": "",
+        "BugsRobotStatus": 0,
+        "BuildName": "build2",
+        "InternalTestSettingsDirectory": "/"
+      },
+      "Platforms": [
+        "win10"
+      ],
+      "Products": [
+        "App4 11.1__App6 2020.MP0"
+      ],
+      "TestScenarios": [
+        "ExclusiveTestGroup"
+      ]
+    },
+    "Ext.PullRequest": {
+      "Parameters": {
+        "AutotestAssemblies": "\\\\SomeShare\\Autotests\\Components\\Delivery\\BlackBox\\AutotestAssemblies",
+        "DeployIsNeeded": 1,
+        "UpdateSourceAddress": "",
+        "UseSecondaryUpdateSource": 0,
+        "SecondaryUpdateSource": "",
+        "BugsRobotStatus": 0,
+        "BuildName": "build1",
+        "InternalTestSettingsDirectory": "/"
+      },
+      "Platforms": [
+        "win10"
+      ],
+      "Products": [
+        "App4 11.1__App6 2020.MP0"
+      ],
+      "TestScenarios": [
+        "ExclusiveTestGroup"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "ExclusiveTestGroup": {
+      "TestScenarios": [
+        "FacadeProductStopStart",
+        "InternetExplorer_CheckDnT"
+      ]
+    },
+    "FacadeProductStopStart": {
+      "Deployments": [
+        "DeployWithDeployer_NoReboot"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win10"
+          ],
+          "Products": [
+            "App4 11.1__App6 2020.MP0"
+          ]
+        },
+        {
+          "Platforms": [
+            "w10rs4-x64"
+          ],
+          "Products": [
+            "App6 2020.MP0"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart",
+            "MaxRebootsCount": 1,
+            "ContinueOnError": true,
+            "ArtifactsCollectionTimeout": "00:01:00"
+          },
+          {
+            "WaitForReboot": {
+              "RebootTimeout": "00:00:56"
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT",
+            "ArtifactsCollectionTimeout": "00:01:00"
+          },
+          {
+            "ForceReboot": {}
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart",
+            "MaxRebootsCount": 1,
+            "ArtifactsCollectionTimeout": "00:01:00"
+          },
+          {
+            "WaitForReboot": {
+              "RebootTimeout": "00:05:00"
+            }
+          }
+        ],
+        "ArtifactsCollectionTimeout": "00:01:00"
+      },
+      "TfsId": 3020065,
+      "Timeout": "00:20:00",
+      "UniqueId": "c5e33360-e3f1-40e2-a11b-cce562bfc87d"
+    },
+    "InternetExplorer_CheckDnT": {
+      "Deployments": [
+        "DeployWithDeployer_NoReboot"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win10"
+          ],
+          "Products": [
+            "App6 2020.MP0"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 1,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT"
+      },
+      "TfsId": 1203634,
+      "Timeout": "00:20:00",
+      "UniqueId": "0fb5a0e1-1b7e-4ae9-9a63-46a27f375547"
+    },
+    "ScenarioWOAllowReboot": {
+      "Deployments": [
+        "DeployWithDeployer_NoReboot"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win10"
+          ],
+          "Products": [
+            "App6 2020.MP0"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 1,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.WebBrowserTests.DoNotTrack.ApprovedByPDKTeam_Net_Test01_InternetExplorer_CheckDnT"
+      },
+      "TfsId": 1203634,
+      "Timeout": "00:20:00",
+      "UniqueId": "0fb5a0e1-1b7e-4ae9-9a63-46a27f375546"
+    }
+  },
+  "TestEntities": {}
+}

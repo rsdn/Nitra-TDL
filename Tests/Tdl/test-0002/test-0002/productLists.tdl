@@ -1,0 +1,43 @@
+product App6 : AppType =App6_Main, App6_MainOn19;
+product App2 : AppType = App2_Main, App2_MainOn19;
+product App7 : AppType = App7_Main, App7_MainOn19;
+product App8 : AppType = App8_Main, App8_MainOn19;
+product App11 : AppType = App11_Main, App11_MainOn19;
+product App9 : AppType = App9_Main, App9_MainOn19;
+product App10 : AppType = App10_Main, App10_MainOn19;
+product App10FS : AppType = App10FS_Main, App10FS_MainOn19;
+
+product App2-App9 : AppType = App2, App9;
+product App7-App9 : AppType = App7, App9;
+product App8-App10: AppType = App8, App10;
+product App2-App6: AppType = App2, App6;
+product App2-App8: AppType = App2, App8;
+product App6-App8: AppType = App6, App8;
+
+product App7-App2-App6: AppType = App7, App2, App6;
+product App2-App10-App6: AppType = App2, App6, App10;
+product App2-App6-App8: AppType = App2, App6, App8;
+product App6-App10-App10FS: AppType = App6, App10, App10FS;
+
+product App11-App7-App2-App6 : AppType = App11, App7, App2, App6;
+product App11-App7-App2-App9 : AppType = App11, App7, App2, App9;
+product App7-App2-App6-App10 : AppType = App7, App2, App6, App10;
+product App7-App2-App6-App8 : AppType = App7, App2, App6, App8;
+product App2-App6-App10-App8 : AppType = App2, App6, App10, App8;
+product App6-App8-App10-App10FS: AppType = App6, App8, App10, App10FS;
+product App2-App6-App8-App10: AppType = App2, App6, App8, App10;
+product App2-App8-App10-App10FS: AppType = App2, App8, App10, App10FS;
+
+product App7-App2-App6-App10-App10FS : AppType = App7, App2, App6, App10, App10FS;
+product App7-App2-App6-App8-App10 : AppType = App7, App2, App6, App8, App10;
+product App11-App7-App2-App6-App10 : AppType = App11, App7, App2, App6, App10;
+product App2-App6-App8-App10-App10FS: AppType = App2, App6, App8, App10, App10FS;
+product App2-App6-App8-App10-KOSSFS: AppType = App2, App6, App8, App10, App10FS;
+product App11-App7-App2-App6-App8: AppType = App11, App7, App2, App6, App8;
+
+product App11-App7-App2-App6-App10-App10FS : AppType = App11, App7, App2, App6, App10, App10FS;
+product App7-App2-App6-App8-App10-App10FS: AppType = App7, App2, App6, App8, App10, App10FS;
+product App11-App7-App2-App6-App8-App10: AppType = App11, App7, App2, App6, App8, App10;
+
+product App7-App11-App2-App10-App10FS-App6-App8 : AppType = App7, App11, App2, App10, App10FS, App6, App8;
+product App11-App7-App2-App6-App8-App10-App10FS: AppType = App11, App7, App2, App6, App8, App10, App10FS; 

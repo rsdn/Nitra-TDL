@@ -1,0 +1,2459 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "ApplyDplScriptKsm60": {
+      "Type": "Script",
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "DplScript": "\\\\SomeShare\\autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\KfpAutotestModeEnable.dpl",
+        "OverrideTestSettings": "\\\\SomeShare\\autotests\\Components\\TestSettings\\KSM6.0"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\ApplyDpl.ps1"
+    },
+    "DeployDataCollectors": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "\\\\SomeShare\\autotests\\Components\\UserScenarios\\Hive\\HiveDeploy\\DeployDataCollectors.ps1"
+    },
+    "DeployMultiProduct": {
+      "Type": "Script",
+      "RebootExitCode": 101,
+      "ReturnValue": 0,
+      "ScriptArgs": {
+        "MultiProductConfigFile": "$(MultiProductConfig)",
+        "DeployerFlags": "$(DeploymentConditions)",
+        "UpdateSource": "$(UpdateSourceAddress)"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Hive\\DeployMultiProduct.ps1"
+    },
+    "DeployMultiProductWithDeployerAndPreparingKsm60": {
+      "Type": "Sequence",
+      "Deployments": [
+        "DeployMultiProduct",
+        "ApplyDplScriptKsm60",
+        "DeployDataCollectors"
+      ]
+    }
+  },
+  "Platforms": {
+    "all": [
+      "win7-x86",
+      "win7-x64",
+      "win81-x86",
+      "win81-x64",
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ],
+    "test": [
+      "w10rs4-x64",
+      "win7-x86"
+    ],
+    "w10": [
+      "w10rs4-x86",
+      "w10rs4-x64",
+      "w10rs5-x86",
+      "w10rs5-x64"
+    ],
+    "w10rs4": [
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ],
+    "w10rs4-x64": {},
+    "w10rs4-x86": {},
+    "w10rs5": [
+      "w10rs5-x86",
+      "w10rs5-x64"
+    ],
+    "w10rs5-x64": {},
+    "w10rs5-x86": {},
+    "win7": [
+      "win7-x86",
+      "win7-x64"
+    ],
+    "win7-x64": {},
+    "win7-x86": {},
+    "win8": [
+      "win8-x86",
+      "win8-x64"
+    ],
+    "win81": [
+      "win81-x86",
+      "win81-x64"
+    ],
+    "win81-x64": {},
+    "win81-x86": {},
+    "win8-x64": {},
+    "win8-x86": {}
+  },
+  "Products": {
+    "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests": {
+      "Name": "App112019wApp93.0+Ksu2.0+Kfp6.5+App3MR4+Kpm9.0",
+      "Parameters": {
+        "Name": "App112019wApp93.0+Ksu2.0+Kfp6.5+App3MR4+Kpm9.0",
+        "MultiProductConfig": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\1.App112019wApp93.0+Ksu2.0+Kfp6.5+App3MR4+Kpm9.0.txt",
+        "PrepareForTestScript": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\SomeShare\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests": {
+      "Name": "App3MR4+Kfp6.5+Ksu2.0+App2_2019wApp93.0+Kpm9.0",
+      "Parameters": {
+        "Name": "App3MR4+Kfp6.5+Ksu2.0+App2_2019wApp93.0+Kpm9.0",
+        "MultiProductConfig": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\3.App3MR4+Kfp6.5+Ksu2.0+App2_2019wApp93.0+Kpm9.0.txt",
+        "PrepareForTestScript": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\SomeShare\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "App93_Kpm9_App106_Kfp65_FuncTests": {
+      "Name": "App93.0+Kpm9.0+App106.0+Kfp6.5",
+      "Parameters": {
+        "Name": "App93.0+Kpm9.0+App106.0+Kfp6.5",
+        "MultiProductConfig": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\6.App93.0+Kpm9.0+App106.0+Kfp6.5.txt",
+        "PrepareForTestScript": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\SomeShare\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests": {
+      "Name": "Kfp6.5+App1_2019wApp93.0+Kpm9.0+Ksu2.0+App3MR4",
+      "Parameters": {
+        "Name": "Kfp6.5+App1_2019wApp93.0+Kpm9.0+Ksu2.0+App3MR4",
+        "MultiProductConfig": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\2.Kfp6.5+App1_2019wApp93.0+Kpm9.0+Ksu2.0+App3MR4.txt",
+        "PrepareForTestScript": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\SomeShare\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests": {
+      "Name": "Kfp6.5+Ks2.0wApp93.0+Kpm9.0+App3MR4+Ksu2.0",
+      "Parameters": {
+        "Name": "Kfp6.5+Ks2.0wApp93.0+Kpm9.0+App3MR4+Ksu2.0",
+        "MultiProductConfig": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\5.Kfp6.5+Ks2.0wApp93.0+Kpm9.0+App3MR4+Ksu2.0.txt",
+        "PrepareForTestScript": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\SomeShare\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests": {
+      "Name": "Ks2.0+Ksu2.0+Kpm9.0+App92.0+App3MR3",
+      "Parameters": {
+        "Name": "Ks2.0+Ksu2.0+Kpm9.0+App92.0+App3MR3",
+        "MultiProductConfig": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\7.Ks2.0+Ksu2.0+Kpm9.0+App92.0+App3MR3.txt",
+        "PrepareForTestScript": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\SomeShare\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests": {
+      "Name": "Ksu2.0+Kpm9.0+Kfp6.5+App3MR4+App62019wApp93.0",
+      "Parameters": {
+        "Name": "Ksu2.0+Kpm9.0+Kfp6.5+App3MR4+App62019wApp93.0",
+        "MultiProductConfig": "\\\\SomeShare\\autotests\\Components\\Compatibility\\Self-Compatibility\\Configuration\\Deploy\\App7App22019-App3MR4\\4.Ksu2.0+Kpm9.0+Kfp6.5+App3MR4+App62019wApp93.0.txt",
+        "PrepareForTestScript": "\\\\SomeShare\\Autotests\\Components\\DeploymentScripts\\Compatibility\\SelfCompatibility\\PrepareForTesting\\PrepareForDeliveryTestsApp62019.dpl",
+        "OverrideTestSettingsDirectory": "\\\\SomeShare\\Autotests\\Components\\Compatibility\\Self-Compatibility\\TestSettings2019"
+      },
+      "BranchName": "-",
+      "Version": "-"
+    },
+    "Sbs2019Func": [
+      "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests",
+      "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests",
+      "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests",
+      "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests",
+      "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests",
+      "App93_Kpm9_App106_Kfp65_FuncTests",
+      "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+    ]
+  },
+  "Suites": {
+    "SbsTestsSuite": {
+      "Parameters": {
+        "AutotestAssemblies": "\\\\SomeShare\\storage\\CoreTechnologies\\AutotestProjectBuilds\\Components.Autotest\\LatestBuild.txt",
+        "UpdateSourceAddress": "",
+        "UseSecondaryUpdateSource": 0,
+        "SecondaryUpdateSource": "",
+        "DeploymentConditions": "/Update",
+        "BugsRobotStatus": 0
+      },
+      "Platforms": [
+        "all"
+      ],
+      "Products": [
+        "Sbs2019Func"
+      ],
+      "TestScenarios": [
+        "ParallelScenarios"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "ParallelScenarioGenerator1": {
+      "TestScenarios": [
+        "ParallelScenarioGenerator1-1",
+        "ParallelScenarioGenerator1-2",
+        "ParallelScenarioGenerator1-3",
+        "ParallelScenarioGenerator1-4",
+        "ParallelScenarioGenerator1-5",
+        "ParallelScenarioGenerator1-6",
+        "ParallelScenarioGenerator1-7",
+        "ParallelScenarioGenerator1-8",
+        "ParallelScenarioGenerator1-9",
+        "ParallelScenarioGenerator1-10",
+        "ParallelScenarioGenerator1-11",
+        "ParallelScenarioGenerator1-12",
+        "ParallelScenarioGenerator1-13",
+        "ParallelScenarioGenerator1-14",
+        "ParallelScenarioGenerator1-15",
+        "ParallelScenarioGenerator1-16",
+        "ParallelScenarioGenerator1-17",
+        "ParallelScenarioGenerator1-18",
+        "ParallelScenarioGenerator1-19",
+        "ParallelScenarioGenerator1-20",
+        "ParallelScenarioGenerator1-21",
+        "ParallelScenarioGenerator1-22",
+        "ParallelScenarioGenerator1-23",
+        "ParallelScenarioGenerator1-24",
+        "ParallelScenarioGenerator1-25",
+        "ParallelScenarioGenerator1-26",
+        "ParallelScenarioGenerator1-27",
+        "ParallelScenarioGenerator1-28"
+      ]
+    },
+    "ParallelScenarioGenerator1-1": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb73-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-10": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcba0-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-11": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbaa-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-12": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbb5-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-13": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbc1-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-14": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbce-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-15": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbdc-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-16": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbeb-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-17": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbfb-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-18": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc0c-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-19": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc1e-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-2": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb74-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-20": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc31-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-21": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc45-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-22": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc5a-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-23": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc70-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-24": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc87-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-25": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc9f-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-26": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddccb8-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-27": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddccd2-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-28": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcced-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-3": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb76-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-4": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb79-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-5": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb7d-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-6": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb82-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-7": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb88-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-8": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb8f-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator1-9": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.CreateUcpAccount"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb97-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2": {
+      "TestScenarios": [
+        "ParallelScenarioGenerator2-1",
+        "ParallelScenarioGenerator2-2",
+        "ParallelScenarioGenerator2-3",
+        "ParallelScenarioGenerator2-4",
+        "ParallelScenarioGenerator2-5",
+        "ParallelScenarioGenerator2-6",
+        "ParallelScenarioGenerator2-7",
+        "ParallelScenarioGenerator2-8",
+        "ParallelScenarioGenerator2-9",
+        "ParallelScenarioGenerator2-10",
+        "ParallelScenarioGenerator2-11",
+        "ParallelScenarioGenerator2-12",
+        "ParallelScenarioGenerator2-13",
+        "ParallelScenarioGenerator2-14",
+        "ParallelScenarioGenerator2-15",
+        "ParallelScenarioGenerator2-16",
+        "ParallelScenarioGenerator2-17",
+        "ParallelScenarioGenerator2-18",
+        "ParallelScenarioGenerator2-19",
+        "ParallelScenarioGenerator2-20",
+        "ParallelScenarioGenerator2-21",
+        "ParallelScenarioGenerator2-22",
+        "ParallelScenarioGenerator2-23",
+        "ParallelScenarioGenerator2-24",
+        "ParallelScenarioGenerator2-25",
+        "ParallelScenarioGenerator2-26",
+        "ParallelScenarioGenerator2-27",
+        "ParallelScenarioGenerator2-28"
+      ]
+    },
+    "ParallelScenarioGenerator2-1": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb73-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-10": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcba0-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-11": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbaa-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-12": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbb5-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-13": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbc1-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-14": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbce-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-15": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbdc-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-16": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ksu2_Kpm9_Kfp65_App3MR4_App62019wApp93_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbeb-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-17": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcbfb-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-18": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc0c-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-19": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc1e-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-2": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb74-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-20": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_Ks2wApp93_Kpm9_App3MR4_Ksu2_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc31-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-21": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc45-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-22": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc5a-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-23": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc70-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-24": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App93_Kpm9_App106_Kfp65_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc87-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-25": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcc9f-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-26": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddccb8-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-27": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddccd2-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-28": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Ks2_Ksu2_Kpm9_App92_App3MR3_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcced-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-3": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb76-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-4": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "App112019wApp93_Ksu2_Kfp65_App3MR4_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb79-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-5": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb7d-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-6": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb82-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-7": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb88-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-8": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "Kfp65_App1_2019wApp93_Kpm9_Ksu2_App3MR4_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbe-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb8f-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarioGenerator2-9": {
+      "Deployments": [
+        "DeployMultiProductWithDeployerAndPreparingKsm60"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "App3MR4_Kfp65_Ksu2_App2_2019wApp93_Kpm9_FuncTests"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.App2.Suites.KPMIntergration.KpmDownloadAndInstallMultiMachineTests.ConnectKpmToUcpOnSecondDevice"
+          },
+          {
+            "WaitForBarrier": {
+              "Id": "bbbbbbbd-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+              "Timeout": "00:40:00",
+              "Count": 28
+            }
+          },
+          {
+            "AssemblyName": "TestDll.dll",
+            "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeProductStopStart"
+          }
+        ]
+      },
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb97-5563-4882-9a33-86afe07eb6b5",
+      "MultiMachineId": "bbbbbbbc-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "ProductGroupName": "SbSFuncProductGroup"
+    },
+    "ParallelScenarios": {
+      "TestScenarios": [
+        "ParallelScenarioGenerator1",
+        "ParallelScenarioGenerator2"
+      ]
+    }
+  },
+  "TestEntities": {}
+}
+

@@ -1,0 +1,52 @@
+﻿deployment MyDeployment(string Message, int Param2 = 100500, bool WithDefault = false, bool WithoutDefault, bool NotVisible, int Param4)
+  script "a.ps1"
+{
+  expected 0;
+}
+
+deployment OverrideArgs(ProductType Param1, int Param2 = 42, bool Param3) =
+  MyDeployment(Message: Param1.Message, Param2: Param2, NotVisible: external.Xxx, WithoutDefault: Param3);
+
+external
+{
+  bool Xxx;
+}
+
+suite type SuiteType
+{
+}
+
+suite Suite : SuiteType
+{
+  platform Platform;
+  product Product;
+  Param1          = Product;
+  Param3          = false;
+  Param4          = 33;
+  S1();
+}
+
+product type ProductType
+{
+  string Name;
+  string Version;
+  string Message;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0";
+  Message = "some message";
+}
+
+platform Platform;
+
+scenario S1()
+{
+  deployment OverrideArgs;
+  environments (Platform, Product);
+  method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}

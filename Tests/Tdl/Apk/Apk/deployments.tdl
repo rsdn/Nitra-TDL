@@ -1,0 +1,6 @@
+﻿
+deployment AndroidInstall()
+    script @"\\SomeShare\Global\Builds2\Company Mobile Security\Cons-SafeMoney-Mob-SDK\Android\Asgard\ExternalBuild\5.7.0.1047.3084396\distrib\tests\AndroidInstall.Sdk.ps1"
+{
+    timeout "00:07:00";
+}

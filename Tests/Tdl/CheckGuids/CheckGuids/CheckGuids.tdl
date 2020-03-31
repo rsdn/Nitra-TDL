@@ -1,0 +1,64 @@
+﻿scenario Tests = Test1, Test2, Test3;
+scenario Test1
+{
+    deployment Deploy1;
+    environments (w10rs5-x64, MonorepoHelloWorld);
+    method Ns1.DerivedClass.Method1;
+    UniqueId = "C4B3F0E-820E-4AF3-BC95-9C552ECB04E8"; // E: Invalid GUID
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+scenario Test2
+{
+    deployment Deploy1;
+    environments (w10rs5-x64, MonorepoHelloWorld);
+    method Ns1.DerivedClass.Method2;
+    UniqueId = "{ 0x88867bbb, 0x3900, 0x41c8, { 0x91, 0x5a, 0xb5, 0xcc, 0x29, 0x68, 0x92, 0x5 } }"; // E: Scenarios Test2, Test3 have the same UniqueId value 88867bbb-3900-41c8-915a-b5cc29689205
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+scenario Test3
+{
+    deployment Deploy1;
+    environments (w10rs5-x64, MonorepoHelloWorld);
+    method Ns1.DerivedClass.VirtualMethod;
+    UniqueId = "{88867BBB-3900-41C8-915A-B5CC29689205}";  // E: Scenarios Test2, Test3 have the same UniqueId value 88867bbb-3900-41c8-915a-b5cc29689205
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+
+suite Suite1
+{
+    platform w10rs5-x64;
+    product MonorepoHelloWorld;
+    Tests();
+}
+
+platform w10rs5-x64;
+
+deployment Deploy1 (
+    string PathToCerts = @"\\SomeShare\Autotests\UCP\Deployment\Certs"
+)
+    script @"\\SomeShare\Autotests\UCP\Deployment\Certs\installCertificates.ps1"
+{
+  expected 42;
+}
+product type X
+{
+  string Name;
+  string Version;
+}
+product MonorepoHelloWorld : X
+{
+  Name = "MonorepoHelloWorld";
+  Version = "1.0";
+}

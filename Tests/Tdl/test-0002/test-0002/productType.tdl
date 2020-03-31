@@ -1,0 +1,13 @@
+product type AppType
+{
+    string Name;
+    string BranchName;
+    string Version;
+    string AutotestBinariesExcludedFilesMasks;
+    string ProductBinariesExcludedFilesMasks;
+    string ConfigFilesFamily;
+    string TestAppPackName;
+    bool   DisableAddingTrustedApplications;
+    bool   SkipRecommendedSettings;
+    string InstallerExecutableFileMask;
+}

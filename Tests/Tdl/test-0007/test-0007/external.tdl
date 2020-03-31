@@ -1,0 +1,5 @@
+external
+{
+    string ProductVersion;
+    string BuildPath;
+}

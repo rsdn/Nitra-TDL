@@ -1,0 +1,93 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "A": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Par": "$(Par)"
+      },
+      "DefaultValues": {
+        "Par": 700
+      },
+      "ScriptPath": "a.ps1"
+    },
+    "B": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Par": "$(Par)"
+      },
+      "DefaultValues": {
+        "Par": 700
+      },
+      "ScriptPath": "b.ps1"
+    },
+    "CurrySeq": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "A": {
+            "Par": 1000
+          }
+        },
+        {
+          "B": {
+            "Par": 1000
+          }
+        }
+      ]
+    }
+  },
+  "Platforms": {
+    "win7-x86": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product"
+      },
+      "BranchName": "master",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "win7-x86"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario": {
+      "Deployments": [
+        "CurrySeq"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f8287"
+    }
+  },
+  "TestEntities": {}
+}

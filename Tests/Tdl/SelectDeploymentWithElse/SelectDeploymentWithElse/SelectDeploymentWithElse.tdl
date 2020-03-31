@@ -1,0 +1,55 @@
+suite "Ksos.BvtPvt.UCP-Beta-4" 
+{
+    platform all_pc;
+    product KSOS;
+    UcpContextType = UcpContextType;
+    SelectDeploymentWithElseScenario();
+}
+scenario SelectDeploymentWithElseScenario
+{
+    deployment SelectDeploymentWithElse;
+    environments (all_pc, KAV-KIS-PURE-KSOS-KSOSFS);
+    method Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck;
+    UniqueId = "B83B33B3-3D96-4C5D-B5DC-0F4E5670F7E3";
+    RevertAgentBefore = true;
+    Timeout = "01:00:00";
+    Area = "MockTests";
+    TfsId = 739871;
+}
+
+select deployment SelectDeploymentWithElse(UcpContextType)
+{
+    | ""   => Curry4
+    | else => Basic
+}
+
+deployment Basic(string Message = "defuault msg", string UcpContextType)
+  script "a.ps1"
+{
+}
+
+deployment Curry4 = Basic(UcpContextType: "predefined");
+
+product KSOS : Kavkis
+{
+    Name       = "KSOS";
+    BranchName = "Main";
+    Version    = "KAV.21.0.0.0";
+}
+
+product KAV-KIS-PURE-KSOS-KSOSFS : Kavkis = KSOS;
+
+product type Kavkis
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+platform w10rs5-x86;
+platform all_pc = w10rs5-x86;
+
+external
+{
+  string UcpContextType;
+}

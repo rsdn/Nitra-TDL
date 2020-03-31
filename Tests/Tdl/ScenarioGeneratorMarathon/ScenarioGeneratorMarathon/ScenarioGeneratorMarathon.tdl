@@ -1,0 +1,68 @@
+﻿scenario AndroidGroup =
+    from (Str1, Int1) in [("a.apk", 0), ("b.apk", 1)]
+    from Platform in [droid-25-5-1, droid-25-6-0]
+    from Deployment in [Deploy1, Deploy2]
+    from Product in [SafeKids, Kisa]
+    select
+    {
+        deployment Deployment;
+        environments (Platform, Product);
+        sequence
+        {
+          marathon tests Str1 
+           app    @"artifacts\App\apk\safekids-prod-internal-debug.apk"
+           runner Str1
+           filter @"^.*$"
+           bins   @"\\SomeShare\temp_drop\builds2\KSK_Android\test"
+           max-reboots Int1;
+       }
+    
+        UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
+        Timeout = "02:30:00";
+        ProductGroupName = "Group 1";
+    };
+    
+suite Marathon
+{
+    platform all_droids;
+    product Products;
+    AndroidGroup();
+}    
+
+platform droid-25-5-1;
+platform droid-25-6-0;
+
+platform all_droids = droid-25-5-1, droid-25-6-0;
+
+deployment Deploy1()
+script @"\\SomeShare\autotests\Components\UserScenarios\Hive\HiveDeploy\Deploy1.ps1"
+{
+}
+
+deployment Deploy2()
+script @"\\SomeShare\autotests\Components\UserScenarios\Hive\HiveDeploy\Deploy2.ps1"
+{
+}
+
+product type Marathon
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product Products : Marathon = SafeKids, Kisa;
+
+product SafeKids : Marathon
+{
+    Name = "SafeKids-Android";
+    BranchName = "master";
+    Version = "1.30.0.1000";
+}
+
+product Kisa : Marathon
+{
+    Name = "Kis-Android";
+    BranchName = "master";
+    Version = "1.30.0.1000";
+}

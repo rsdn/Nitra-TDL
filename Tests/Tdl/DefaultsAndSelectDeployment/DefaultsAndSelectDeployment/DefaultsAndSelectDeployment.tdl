@@ -1,0 +1,59 @@
+﻿external
+{
+  string XPerf_E;
+}
+
+suite type SessionParameters
+{
+    string XPerf = XPerf_E;
+}
+
+suite "Kis.BvtPvt.DNT" : SessionParameters
+{
+    platform all_pc;
+    product KIS;
+    CheckDntDefaultSettings();
+}
+
+select deployment TakePrepareStepsForXPerfLogsCollection(XPerf)
+{
+    | not-set => Empty
+    | "false" => Empty
+    | "true"  => PrepareEnvironmentForXPerfLogsCollection
+}
+
+deployment PrepareEnvironmentForXPerfLogsCollection()
+{
+    expected 42;
+}
+
+scenario CheckDntDefaultSettings
+{
+    deployment TakePrepareStepsForXPerfLogsCollection;
+    environments (all_pc, KIS);
+    sequence
+    {
+      gtest "cmd" "/C exit 0";
+    }
+    UniqueId = "ef1f3579-2d04-4de6-a0b8-fa50d2602433";
+    RevertAgentAfter = true;
+    Timeout = "00:30:00";
+    Area = "Dnt";
+    TfsId = 1075083;
+}
+
+product KIS : Kavkis
+{
+    Name = "KIS";
+    BranchName = "Main";
+    Version = "1.0";
+}
+
+product type Kavkis
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+platform all_pc;

@@ -1,0 +1,229 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "A": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "A.ps1"
+    },
+    "B": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "A.ps1"
+    },
+    "DeployP1": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "DeploymentParameter": "$(DeploymentParameter)"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "deploy.ps1"
+    },
+    "DeployP1-1": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Setup",
+        "DeployP1",
+        "Finalize"
+      ]
+    },
+    "Finalize": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "FinalDeploymentParameter": "$(FinalDeploymentParameter)"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "finalize.ps1"
+    },
+    "Reboot-10:00": {
+      "Type": "Reboot",
+      "RebootTimeout": "10:00"
+    },
+    "Setup": {
+      "Type": "Select",
+      "Condition": "$(InitialDeploymentParameter)",
+      "Values": {
+        "A": "Setup |||| A",
+        "B": "B"
+      }
+    },
+    "Setup |||| A": {
+      "Type": "Sequence",
+      "Deployments": [
+        "A",
+        "Reboot-10:00",
+        "B"
+      ]
+    },
+    "Setup-1": {
+      "Type": "Sequence",
+      "Deployments": [
+        "Setup",
+        "Finalize"
+      ]
+    }
+  },
+  "Platforms": {
+    "win7-x64": {}
+  },
+  "Products": {
+    "P1": {
+      "Name": "P1",
+      "Parameters": {
+        "Name": "P1"
+      },
+      "BranchName": null,
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {
+        "InitialDeploymentParameter": "A",
+        "DeploymentParameter": "value for normal deployment",
+        "FinalDeploymentParameter": "Z"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    },
+    "Suite2": {
+      "Parameters": {
+        "InitialDeploymentParameter": "B",
+        "DeploymentParameter": "value for normal deployment",
+        "FinalDeploymentParameter": "Z"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario2"
+      ]
+    },
+    "Suite3": {
+      "Parameters": {
+        "InitialDeploymentParameter": "B",
+        "DeploymentParameter": "value for normal deployment",
+        "FinalDeploymentParameter": "Z"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario3"
+      ]
+    },
+    "Suite4": {
+      "Parameters": {
+        "InitialDeploymentParameter": "B",
+        "FinalDeploymentParameter": "Z"
+      },
+      "Platforms": [
+        "win7-x64"
+      ],
+      "Products": [
+        "P1"
+      ],
+      "TestScenarios": [
+        "Scenario4"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "Deployments": [
+        "DeployP1-1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "P1"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "ProgramName": "foo.exe",
+        "Arguments": []
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "7e9edb31-b4c7-431a-ad51-eaaa52498e6a"
+    },
+    "Scenario2": {
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    },
+    "Scenario3": {
+      "TestScenarios": [
+        "Scenario3-1"
+      ]
+    },
+    "Scenario3-1": {
+      "Deployments": [
+        "DeployP1-1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "P1"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "93586316-7b2f-4418-b069-7838d6d407b3"
+    },
+    "Scenario4": {
+      "Deployments": [
+        "Setup-1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "P1"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "ProgramName": "foo.exe",
+        "Arguments": []
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "6adcb4f5-751b-48f6-9a78-fe9e6afb176e"
+    }
+  },
+  "TestEntities": {}
+}
