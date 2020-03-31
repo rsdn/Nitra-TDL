@@ -1,0 +1,148 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "AndroidInstall": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "\\\\SomeShare\\Global\\Builds2\\Company Mobile Security\\Cons-SafeMoney-Mob-SDK\\Android\\Asgard\\ExternalBuild\\5.7.0.1047.3084396\\distrib\\tests\\AndroidInstall.Sdk.ps1",
+      "Timeout": "00:07:00"
+    }
+  },
+  "Platforms": {
+    "w19-droid": {}
+  },
+  "Products": {
+    "MobileSdk": {
+      "Name": "MobileSdk",
+      "Parameters": {
+        "Name": "MobileSdk"
+      },
+      "BranchName": "1",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Android": {
+      "Parameters": {},
+      "Platforms": [
+        "w19-droid"
+      ],
+      "Products": [
+        "MobileSdk"
+      ],
+      "TestScenarios": [
+        "AndroidGroup"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "AndroidGroup": {
+      "TestScenarios": [
+        "AndroidJavaTestGroupKavsdk",
+        "AndroidJavaTestGroupKavatintegrationtest",
+        "AndroidJavaTestGroupAtsdk",
+        "AndroidJavaTestGroupWhocalls"
+      ]
+    },
+    "AndroidJavaTestGroupAtsdk": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AndroidTestContainer": "AntiTheftSdk-debug-androidTest.apk",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
+        "TestRunnerPath": "com.kaspersky.atsdk.test/com.kaspersky.atsdk.test.TestRunner"
+      },
+      "Timeout": "00:02:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea3"
+    },
+    "AndroidJavaTestGroupKavatintegrationtest": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AndroidTestContainer": "KavAtIntegrationTest-debug-androidTest.apk",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
+        "TestRunnerPath": "com.kaspersky.kavatintegrationtest.test/com.kaspersky.kavatintegrationtest.test.TestRunner"
+      },
+      "Timeout": "00:02:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea2"
+    },
+    "AndroidJavaTestGroupKavsdk": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AndroidTestContainer": "KavSdk-full-debug-androidTest.apk",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
+        "TestRunnerPath": "com.kavsdk.test/com.kavsdk.test.TestRunner"
+      },
+      "Timeout": "00:10:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea1"
+    },
+    "AndroidJavaTestGroupWhocalls": {
+      "Deployments": [
+        "AndroidInstall"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w19-droid"
+          ],
+          "Products": [
+            "MobileSdk"
+          ]
+        }
+      ],
+      "NeedUnsignedAgent": true,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AndroidTestContainer": "WhoCallsSdk-debug-androidTest.apk",
+        "TestFilter": "-e pPdkDeliveryTest true -e pPullRequestTest true",
+        "TestRunnerPath": "com.kaspersky.whocalls.test/com.kaspersky.whocalls.test.TestRunner"
+      },
+      "Timeout": "00:02:00",
+      "UniqueId": "bccd157e-ca69-4304-a3af-ae0c5cb0eea4"
+    }
+  },
+  "TestEntities": {}
+}
+

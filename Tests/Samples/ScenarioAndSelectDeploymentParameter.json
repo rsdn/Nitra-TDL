@@ -1,0 +1,132 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "A": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "a.ps1"
+    },
+    "B": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "b.ps1"
+    },
+    "S": {
+      "Type": "Select",
+      "Condition": "$(X)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "A",
+        "BBB": "B"
+      }
+    }
+  },
+  "Platforms": {
+    "Platform1": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "P",
+      "Parameters": {
+        "Name": "P"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {
+        "X": "C3EEBA2A-D830-4947-83B2-045529DCB327"
+      },
+      "Platforms": [
+        "Platform1"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    },
+    "Suite2": {
+      "Parameters": {
+        "X": "BBB"
+      },
+      "Platforms": [
+        "Platform1"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    },
+    "Suite3": {
+      "Parameters": {
+        "X": "BBB"
+      },
+      "Platforms": [
+        "Platform1"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario2"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "FilterExpression": "((globals.ContainsKey(\"X\") ? (string)globals[\"X\"] : @\"\") != \"BBB\")",
+      "Deployments": [
+        "S"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform1"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "Timeout": "00:01",
+      "UniqueId": "21d09b4e-c988-4e33-aec8-b3614452a619"
+    },
+    "Scenario2": {
+      "FilterExpression": "(((string)globals[\"X\"]) != \"BBB\")",
+      "Deployments": [
+        "S"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform1"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "Timeout": "00:01",
+      "UniqueId": "21d09b4e-c988-4e33-aec8-b3614452a61a"
+    }
+  },
+  "TestEntities": {}
+}

@@ -1,0 +1,155 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "DefaultValues": {
+    "Capabilities": {
+      "Cap2": "Required",
+      "Cap3": "Acceptable"
+    }
+  },
+  "Deployments": {
+    "Empty": {
+      "Type": "Empty"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario1",
+        "Scenario2"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll",
+        "TestCaseFilter": "Name~abc"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "e5ff1d95-5bd3-4dae-acda-abfcfcf1dfea",
+      "Capabilities": {
+        "Cap1": "Unacceptable",
+        "Cap2": "Required",
+        "Cap3": "Acceptable"
+      }
+    },
+    "Scenario2": {
+      "TestScenarios": [
+        "Scenario2-1",
+        "Scenario2-2",
+        "Scenario2-3"
+      ]
+    },
+    "Scenario2-1": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll",
+        "TestCaseFilter": "Name~abc"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "e5ff1d95-5bd3-4dae-acda-abfcfcf1dfeb",
+      "Capabilities": {
+        "Cap1": "Required"
+      }
+    },
+    "Scenario2-2": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll",
+        "TestCaseFilter": "Name~abc"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "e5ff1d96-5bd3-4dae-acda-abfcfcf1dfeb",
+      "Capabilities": {
+        "Cap1": "Unacceptable"
+      }
+    },
+    "Scenario2-3": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "VsTestAssemblyName": "bin\\test.dll",
+        "TestCaseFilter": "Name~abc"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "e5ff1d98-5bd3-4dae-acda-abfcfcf1dfeb",
+      "Capabilities": {
+        "Cap1": "Acceptable"
+      }
+    }
+  },
+  "TestEntities": {}
+}

@@ -1,0 +1,10 @@
+
+suite type SessionParameters
+{
+    string DistribFiles;
+    string DistribTestModules;
+    string AutotestsBinariesPath;
+    string ExcludeMasks;
+    string BaseDistribFiles;
+    string BaseDistribTestModules;
+}

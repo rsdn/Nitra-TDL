@@ -1,0 +1,214 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "InstallProduct": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "IntValue": "$(IntValue)",
+        "ParameterFromProduct": "$(ParameterFromProduct)",
+        "PRODUCT_VERSION": "$(Version)",
+        "Size100": "$(Product:ProductA.Size)",
+        "Size42": "$(Product:ProductB.Size)",
+        "ReleaseName": "$(Product:ProductB.BranchName)"
+      },
+      "DefaultValues": {
+        "IntValue": 7
+      },
+      "ScriptPath": "\\\\SomeShare\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
+    }
+  },
+  "Platforms": {
+    "w10rs3-x64": {},
+    "w10rs3-x86": {},
+    "w10rs4-x64": {},
+    "w10rs4-x86": {},
+    "w10rs5-x64": {},
+    "w10rs5-x86": {},
+    "win_10_rs3": [
+      "w10rs3-x86",
+      "w10rs3-x64"
+    ],
+    "win2008r2": {},
+    "win2012r2": {},
+    "win7-x64": {},
+    "win7-x86": {},
+    "win811-x64": {},
+    "win811-x86": {}
+  },
+  "Products": {
+    "Excel": {
+      "Name": "Excel",
+      "Parameters": {
+        "Name": "Excel",
+        "Size": 42,
+        "ParameterFromProduct": "B"
+      },
+      "BranchName": "Excel",
+      "Version": "#(ProductVersion)"
+    },
+    "MonorepoHelloWorld": {
+      "Name": "MonorepoHelloWorld",
+      "Parameters": {
+        "Name": "MonorepoHelloWorld",
+        "ParameterFromProduct": "C"
+      },
+      "BranchName": "MonorepoHelloWorld",
+      "Version": "#(ProductVersion)"
+    },
+    "Word": {
+      "Name": "Word",
+      "Parameters": {
+        "Name": "Word",
+        "Size": 100,
+        "ParameterFromProduct": "A"
+      },
+      "BranchName": "Word",
+      "Version": "#(ProductVersion)"
+    }
+  },
+  "Suites": {
+    "GeneratedSuiteList-Excel-win_10_rs3-2": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "IntValue": 2,
+        "ProductA": "Excel",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld",
+        "AutotestAssemblies": "lib.dll"
+      },
+      "Platforms": [
+        "win_10_rs3"
+      ],
+      "Products": [
+        "Excel"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
+    "GeneratedSuiteList-Word-w10rs4-x86-1": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "IntValue": 1,
+        "ProductA": "Word",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld",
+        "AutotestAssemblies": "lib.dll"
+      },
+      "Platforms": [
+        "w10rs4-x86"
+      ],
+      "Products": [
+        "Word"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
+    "Suite1": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "ProductA": "Excel",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld"
+      },
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
+    "Suite2": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "ProductA": "Excel",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld"
+      },
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
+    "Suite3": {
+      "Parameters": {
+        "Version": "#(ProductVersion)",
+        "ProductA": "Excel",
+        "ProductB": "Word",
+        "ProductC": "MonorepoHelloWorld"
+      },
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    }
+  },
+  "SuiteGroups": {
+    "GeneratedSuiteList": {
+      "Suites": [
+        "GeneratedSuiteList-Word-w10rs4-x86-1",
+        "GeneratedSuiteList-Excel-win_10_rs3-2"
+      ]
+    },
+    "SuiteList": {
+      "Suites": [
+        "Suite1",
+        "Suite2",
+        "Suite3",
+        "GeneratedSuiteList-Word-w10rs4-x86-1",
+        "GeneratedSuiteList-Excel-win_10_rs3-2"
+      ]
+    },
+    "SuiteList1": {
+      "Suites": [
+        "Suite1",
+        "Suite3"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Test1": {
+      "FilterExpression": "(globals.ContainsKey(\"List\") ? (System.Collections.Generic.List<int>)globals[\"List\"] : null).Any()",
+      "Deployments": [
+        "InstallProduct"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5-x64"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    }
+  },
+  "TestEntities": {}
+}

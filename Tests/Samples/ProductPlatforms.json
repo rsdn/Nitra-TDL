@@ -1,0 +1,62 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {},
+  "Platforms": {
+    "Platform1": {},
+    "Platform2": {},
+    "Platform3": {},
+    "Platform4": {}
+  },
+  "Products": {
+    "Product1": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1"
+      },
+      "BranchName": null,
+      "Version": "1.0",
+      "SupportedPlatforms": [
+        "Platform2",
+        "Platform3",
+        "Platform4"
+      ]
+    },
+    "Product2": {
+      "Name": "Product 2",
+      "Parameters": {
+        "Name": "Product 2"
+      },
+      "BranchName": null,
+      "Version": "1.0",
+      "SupportedPlatforms": [
+        "Platform1",
+        "Platform2"
+      ]
+    },
+    "Product3": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1"
+      },
+      "BranchName": null,
+      "Version": "1.0",
+      "SupportedPlatforms": [
+        "Platform2",
+        "Platform3",
+        "Platform4"
+      ]
+    },
+    "Product4": {
+      "Name": "Product 2",
+      "Parameters": {
+        "Name": "Product 2"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {},
+  "TestScenarios": {},
+  "TestEntities": {}
+}

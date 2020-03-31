@@ -1,0 +1,13 @@
+product type AppType
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product MonorepoHelloWorld : AppType 
+{
+    Name = @"MonorepoHelloWorld";
+    BranchName = @"MonorepoHelloWorld";
+    Version = ProductVersion;
+}

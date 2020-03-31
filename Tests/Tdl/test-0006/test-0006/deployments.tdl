@@ -1,0 +1,29 @@
+﻿
+deployment InstallProduct(
+    string ProductInfoJson,
+    string ProductInstallerJson,
+    string ProductPath,
+    string SamplesPath,
+    string TestBotPath,
+    string TestSettingsFile
+)
+    script @"\\SomeShare\storage\CoreTechnologies\AutotestProjectBuilds\MacAutotests\Deployer\deployer.py"
+{
+    "-testbot_path" = TestBotPath;
+    "-product_path" = ProductPath;
+    "-product_info" = ProductInfoJson;
+    "-product_installer" = ProductInstallerJson;
+    "-settings_file" = TestSettingsFile;
+    "-samples_path" = SamplesPath;
+    expected 0;
+}
+
+deployment RebootWithScript()
+    script @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\Scripts\Reboot\deployReboot.sh"
+{
+    expected for reboot 101;
+    timeout "00:02:00";
+    expected 42;
+}
+
+deployment DeployWithTestBot = InstallProduct, RebootWithScript;

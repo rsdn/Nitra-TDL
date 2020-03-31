@@ -1,0 +1,109 @@
+﻿scenario SbSFuncScenarios1 =
+    from Platform in all
+    select
+    {
+        deployment DeployMultiProductWithDeployerAndPreparingKsm60;
+        environments (Platform, Kpm9_App62019_App92_FuncTests);
+        method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
+    
+        UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
+        Timeout = "02:30:00";
+        ProductGroupName = "SbSFuncProductGroup";
+    };
+
+platform win7-x86;
+platform win7-x64;
+platform win7 = win7-x86, win7-x64;
+
+platform win8-x86;
+platform win8-x64;
+platform win8 = win8-x86, win8-x64;
+
+platform win81-x86;
+platform win81-x64;
+platform win81 = win81-x86, win81-x64;
+
+platform w10rs4-x86;
+platform w10rs4-x64;
+platform w10rs4 = w10rs4-x86, w10rs4-x64;
+
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs5 = w10rs5-x86, w10rs5-x64;
+
+platform w10 = w10rs4, w10rs5;
+
+platform all = win7, win81, w10rs4;
+
+deployment DeployDataCollectors()
+script @"\\SomeShare\autotests\Components\UserScenarios\Hive\HiveDeploy\DeployDataCollectors.ps1"
+{
+}
+
+deployment DeployMultiProduct(
+string MultiProductConfig,
+string DeploymentConditions,
+string UpdateSourceAddress)
+script @"\\SomeShare\autotests\Components\Compatibility\Self-Compatibility\Hive\DeployMultiProduct.ps1"
+{
+    MultiProductConfigFile = MultiProductConfig;
+    DeployerFlags = DeploymentConditions;
+    UpdateSource = UpdateSourceAddress;
+    expected-for-reboot 101;
+    expected 0;
+}
+
+
+deployment ApplyDplScriptKsm60(
+)
+script @"\\SomeShare\autotests\Components\Compatibility\Self-Compatibility\Hive\ApplyDpl.ps1"
+{
+    DplScript =  @"\\SomeShare\autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\KfpAutotestModeEnable.dpl";
+    OverrideTestSettings = @"\\SomeShare\autotests\Components\TestSettings\KSM6.0";
+    expected 0;
+}
+
+deployment DeployMultiProductWithDeployerAndPreparingKsm60 = DeployMultiProduct, ApplyDplScriptKsm60, DeployDataCollectors;
+
+product type MultiProductWithPrepare
+{
+    string Name;
+    string BranchName;
+    string Version;
+    string MultiProductConfig;
+    string PrepareForTestScript;
+    string OverrideTestSettingsDirectory;
+}
+
+product Kpm9_App62019_App92_FuncTests : MultiProductWithPrepare
+{
+    Name = "Kpm9.0+App62019+App92.0";
+    BranchName = "-";
+    Version = "-";
+    MultiProductConfig = @"\\SomeShare\autotests\Components\Compatibility\Self-Compatibility\Configuration\Deploy\App7App22019-App3MR4\17.Kpm9.0+App62019+App92.0.txt";
+    PrepareForTestScript = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsApp62019.dpl";
+    OverrideTestSettingsDirectory = @"\\SomeShare\Autotests\Components\Compatibility\Self-Compatibility\TestSettings2019";
+}
+
+suite type Ext
+{
+    string AutotestAssemblies;
+    //string UpdateSourceAddress;
+    bool   UseSecondaryUpdateSource;
+    string SecondaryUpdateSource;
+    //string DeploymentConditions;
+    int    BugsRobotStatus;
+}
+
+suite SbsTestsSuite : Ext
+{
+    platform all;
+    product Kpm9_App62019_App92_FuncTests;
+    AutotestAssemblies = @"\\SomeShare\storage\CoreTechnologies\AutotestProjectBuilds\Components.Autotest\LatestBuild.txt";
+    UpdateSourceAddress = "";
+    UseSecondaryUpdateSource = false;
+    SecondaryUpdateSource = "";
+    DeploymentConditions = "/Update";
+    BugsRobotStatus = 0;
+    SbSFuncScenarios1();
+}

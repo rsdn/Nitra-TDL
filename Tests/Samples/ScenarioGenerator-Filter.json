@@ -1,0 +1,166 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "MyDeployment": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "deploy.ps1"
+    }
+  },
+  "Platforms": {
+    "AllPlatforms": [
+      "Platform1",
+      "Platform2"
+    ],
+    "Platform1": {},
+    "Platform2": {}
+  },
+  "Products": {
+    "AllProducts": [
+      "MyProduct1",
+      "MyProduct2"
+    ],
+    "MyProduct1": {
+      "Name": "MyProduct1",
+      "Parameters": {
+        "Name": "MyProduct1"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    },
+    "MyProduct2": {
+      "Name": "MyProduct2",
+      "Parameters": {
+        "Name": "MyProduct2"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "MySuite": {
+      "Parameters": {
+        "SomeSuiteData": "data3",
+        "isEnabled": 1
+      },
+      "Platforms": [
+        "AllPlatforms"
+      ],
+      "Products": [
+        "AllProducts"
+      ],
+      "TestScenarios": [
+        "Generator1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Generator1": {
+      "TestScenarios": [
+        "Generator1-1",
+        "Generator1-2",
+        "Generator1-3",
+        "Generator1-4"
+      ]
+    },
+    "Generator1-1": {
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform1"
+          ],
+          "Products": [
+            "MyProduct1"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "TfsId": 1,
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb73-5563-4882-9a33-86afe07eb6b5"
+    },
+    "Generator1-2": {
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct1\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform2"
+          ],
+          "Products": [
+            "MyProduct1"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "TfsId": 1,
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb74-5563-4882-9a33-86afe07eb6b5"
+    },
+    "Generator1-3": {
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform1\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform1"
+          ],
+          "Products": [
+            "MyProduct2"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "TfsId": 2,
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb76-5563-4882-9a33-86afe07eb6b5"
+    },
+    "Generator1-4": {
+      "FilterExpression": "(((((TestSuite)globals[\"suite\"]).Platforms.Contains(config.Platforms[\"Platform2\"]) && ((TestSuite)globals[\"suite\"]).Products.Contains(config.Products[\"MyProduct2\"])) && (((string)globals[\"SomeSuiteData\"]) == \"data3\")) && (globals.ContainsKey(\"isEnabled\") ? System.Convert.ToBoolean(globals[\"isEnabled\"]) : false))",
+      "Deployments": [
+        "MyDeployment"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform2"
+          ],
+          "Products": [
+            "MyProduct2"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "TfsId": 2,
+      "Timeout": "02:30:00",
+      "UniqueId": "42ddcb79-5563-4882-9a33-86afe07eb6b5"
+    }
+  },
+  "TestEntities": {}
+}

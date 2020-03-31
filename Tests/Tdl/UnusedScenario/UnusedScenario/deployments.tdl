@@ -1,0 +1,45 @@
+﻿deployment DeployDataCollectors()
+	script @"\\SomeShare\Autotests\Components\DeploymentScripts\Hive\DeployDataCollectors.ps1"
+	{ }
+
+deployment DeployMultiProduct(KlProductType productA, KlProductType productB, string DeploymentConditions, string UpdateSourceAddress, string AutotestAssemblies)
+	script @"\\SomeShare\autotests\Components\Compatibility\Self-Compatibility\Hive\DeployMultiProductNextGen.ps1"
+	{
+		ProductACopyDplPath = productA.CopyDpl;
+		ProductBCopyDplPath = productB.CopyDpl;
+		
+		ProductAInstallDplPath = productA.InstallDpl;
+		ProductBInstallDplPath = productB.InstallDpl;
+
+		AfterRebootDplPath = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\InstallProductsAfterReboot.dpl";
+		
+		ProductARebootAfterAllActions = productA.RebootAfterAllActions;
+		ProductBRebootAfterAllActions = productB.RebootAfterAllActions;
+
+		DeployerFlags = DeploymentConditions;
+		UpdateSource = UpdateSourceAddress;
+		AutotestAssemblies = AutotestAssemblies;
+			   
+		expected-for-reboot 101;
+		expected 0;
+		timeout "02:00:00";
+	}
+
+deployment ApplyDplScriptKsm60()
+	script @"\\SomeShare\autotests\Components\Compatibility\Self-Compatibility\Hive\ApplyDpl.ps1"
+	{
+		DplScript =  @"\\SomeShare\autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\KfpAutotestModeEnable.dpl";
+		OverrideTestSettings = @"\\SomeShare\autotests\Components\TestSettings\KSM6.0";
+		expected 0;
+	}
+
+deployment ApplyDplScriptKis2020()
+	script @"\\SomeShare\autotests\Components\Compatibility\Self-Compatibility\Hive\ApplyDpl.ps1"
+	{
+		DplScript = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\PrepareForTesting\PrepareForDeliveryTestsPure2020.dpl";
+		OverrideTestSettings = @"\\SomeShare\autotests\Components\TestSettings\KIS2020";
+		expected 0;
+	}
+
+deployment DeployMultiProductWithDeployerAndPreparingKsm60 = DeployMultiProduct, ApplyDplScriptKsm60, DeployDataCollectors;
+deployment DeployMultiProductWithDeployerAndPreparingKis2020 = DeployMultiProduct, ApplyDplScriptKis2020, DeployDataCollectors;

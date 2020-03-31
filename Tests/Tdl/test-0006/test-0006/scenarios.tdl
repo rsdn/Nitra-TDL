@@ -1,0 +1,29 @@
+product App4__App3 : AppType  = App4, App3;
+product "App4__App2 for Mac 2018 MR1__App2 for Mac 2018 MR2__App5 for Mac 2018 MR1__App5 for Mac 2018 MR2__App3" : AppType  = App4, "App2 for Mac 2018 MR1", "App2 for Mac 2018 MR2", "App5 for Mac 2018 MR1", "App5 for Mac 2018 MR2", App3;
+product "App4__App2__App5__App3 for Mac 1.0 MR3__App3 for Mac 1.0 MR4" : AppType  = App4, App2, App5, "App3 for Mac 1.0 MR3", "App3 for Mac 1.0 MR4";
+product "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019" : AppType  = "App4 for Mac 10 SP2 MR1", "App2 for Mac 2019", "App5 for Mac 2019";
+platform osx10__osx9 = osx10, osx9;
+
+scenario InterpreczRollback
+{
+    deployment DeployWithTestBot;
+    environments (osx9, App4), (osx10, App4__App3), (osx11, "App4__App2 for Mac 2018 MR1__App2 for Mac 2018 MR2__App5 for Mac 2018 MR1__App5 for Mac 2018 MR2__App3"), (osx12, All), (osx13, "App4__App2__App5__App3 for Mac 1.0 MR3__App3 for Mac 1.0 MR4"), (osx14, "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019");
+    config @"um/interprecz/interprecz_rb.json";
+    UniqueId = @"6480b1c0-12f6-451f-b3ba-091d7c0d036a";
+    Timeout = @"00:15:00";
+    RevertAgentAfter = true;
+}
+
+scenario InterpreczSmoke
+{
+    deployment DeployWithTestBot;
+    environments (osx9, App4), (osx10, App4__App3), (osx11, "App4__App2 for Mac 2018 MR1__App2 for Mac 2018 MR2__App5 for Mac 2018 MR1__App5 for Mac 2018 MR2__App3"), (osx12, All), (osx13, "App4__App2__App5__App3 for Mac 1.0 MR3__App3 for Mac 1.0 MR4"), (osx14, "App4 for Mac 10 SP2 MR1__App2 for Mac 2019__App5 for Mac 2019");
+    config @"um/interprecz/interprecz_smoke.json";
+    UniqueId = @"19a25e05-9f4e-42bb-97e3-40f2c3775c4f";
+    Timeout = @"00:15:00";
+}
+
+scenario Interprecz =
+    InterpreczRollback,
+    InterpreczSmoke;
+

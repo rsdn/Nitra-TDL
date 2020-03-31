@@ -1,0 +1,6 @@
+platform win7-x64;
+platform w10rs5-x64;
+platform osx13-x64;
+platform iOS-9;
+platform Android-9;
+platform AllPlatforms = win7-x64, w10rs5-x64, osx13-x64;

@@ -1,0 +1,37 @@
+﻿deployment Deploy_MyK_CIWD_Certificates (
+    string PathToCerts = @"\\SomeShare\Autotests\UCP\Deployment\Certs"
+)
+    script @"\\SomeShare\Autotests\UCP\Deployment\Certs\installCertificates.ps1"
+{
+  expected 42;
+}
+
+deployment Deploy_MyK_Autotests (
+    string AutotestsPath = @"\\SomeShare\autotests\PMCA\BinaryStorage\Autotests\Win\Portal",
+    string TargetFolder = @"C:\Autotests",
+    string Browser,
+    string UserCountry,
+    string UserLanguage,
+    string UcpInstanceType
+)
+    script @"\\SomeShare\autotests\PMCA\Hive\Deployments\Portal\Scripts\GetPortalAutotestsByPath.ps1"
+{
+    expected 42;
+}
+
+deployment Deploy_CIWD_Autotests (
+    string AutotestsPath = @"\\SomeShare\autotests\PMCA\BinaryStorage\Autotests\Win\CIWD",
+    string TargetFolder = @"C:\Autotests",
+    string Browser,
+    string UserCountry,
+    string UserLanguage,
+    string UcpInstanceType)
+    script @"\\SomeShare\autotests\PMCA\Hive\Deployments\Portal\Scripts\GetPortalAutotestsByPath.ps1"
+{
+    expected 42;
+}
+
+deployment Deployment_MyK_CIWD = 
+    Deploy_MyK_CIWD_Certificates,
+    Deploy_MyK_Autotests,
+    Deploy_CIWD_Autotests;

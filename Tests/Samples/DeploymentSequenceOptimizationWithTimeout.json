@@ -1,0 +1,80 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "DefaultValues": {
+    "DeployerPath": "C:\\AutotestBinaries\\Autotests.Deployer.exe"
+  },
+  "Deployments": {
+    "Install product after langpack //some-site.com// 0": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "DeployerPath": "$(DeployerPath)",
+        "LanguagePacksRootPath": "$(LanguagePacksRootPath)",
+        "SessionType": "$(SessionType)"
+      },
+      "DefaultValues": {
+        " TDL Name ": "Install Windows Language Pack >>>> Save session parameters to deploy context",
+        "DeployerPath": "#(DeployerPath)",
+        "LanguagePacksRootPath": "\\\\SomeShare\\Autotests\\KIS\\Windows Langpacks\\ru-RU",
+        "SessionType": "Debug"
+      },
+      "ScriptData": "cGFyYW0oDQogIFtzdHJpbmddICRMYW5ndWFnZVBhY2tzUm9vdFBhdGgsDQogIFtzdHJpbmddICREZXBsb3llclBhdGgsDQogIFtzdHJpbmddICRTZXNzaW9uVHlwZQ0KKQ0KDQokVGRsRGVwbG95bWVudE5hbWUgPSBAJw0KSW5zdGFsbCBXaW5kb3dzIExhbmd1YWdlIFBhY2sgPj4+PiBTYXZlIHNlc3Npb24gcGFyYW1ldGVycyB0byBkZXBsb3kgY29udGV4dA0KJ0ANCg0KZnVuY3Rpb24gVGRsTWFrZUxpbmVEaXJlY3RpdmUgeyANCiAgICAiI2xpbmUgJCgkTXlJbnZvY2F0aW9uLlNjcmlwdExpbmVOdW1iZXIgKyAxKSAiIiQoJE15SW52b2NhdGlvbi5TY3JpcHROYW1lKSIiIg0KfQ0KDQoNCiRfY3NoYXJwX0xhbmd1YWdlUGFja3NSb290UGF0aCA9ICgnQCInICsgJExhbmd1YWdlUGFja3NSb290UGF0aC5SZXBsYWNlKCciJywgJyIiJykgKyAnIicpDQokX2NzaGFycF9EZXBsb3llclBhdGggPSAoJ0AiJyArICREZXBsb3llclBhdGguUmVwbGFjZSgnIicsICciIicpICsgJyInKQ0KJF9jc2hhcnBfU2Vzc2lvblR5cGUgPSAoJ0AiJyArICRTZXNzaW9uVHlwZS5SZXBsYWNlKCciJywgJyIiJykgKyAnIicpDQoNCg0KV3JpdGUtT3V0cHV0ICRUZGxEZXBsb3ltZW50TmFtZQ0KDQokVGRsRGVwbG95bWVudFNvdXJjZSA9IEAiDQokKFRkbE1ha2VMaW5lRGlyZWN0aXZlKQ0KeyAvLyBJbnN0YWxsIFdpbmRvd3MgTGFuZ3VhZ2UgUGFjaw0KdmFyIGNvbW1hbmQwID0gX19ydW50aW1lX18uQ3JlYXRlQ29tbWFuZDxLTC5BdXRvdGVzdHMuQ29tbWFuZHMuTG9nTWVzc2FnZT4oKTsNCmNvbW1hbmQwLk1lc3NhZ2UgPSAiTWVzc2FnZSAxIjsNCl9fcnVudGltZV9fLkV4ZWN1dGVDb21tYW5kKGNvbW1hbmQwKTsNCn0NCnsgLy8gU2F2ZSBzZXNzaW9uIHBhcmFtZXRlcnMgdG8gZGVwbG95IGNvbnRleHQNCnZhciBjb21tYW5kMCA9IF9fcnVudGltZV9fLkNyZWF0ZUNvbW1hbmQ8S0wuQXV0b3Rlc3RzLkNvbW1hbmRzLkxvZ01lc3NhZ2U+KCk7DQpjb21tYW5kMC5NZXNzYWdlID0gIk1lc3NhZ2UgMiI7DQpfX3J1bnRpbWVfXy5FeGVjdXRlQ29tbWFuZChjb21tYW5kMCk7DQp9DQoNCiNsaW5lIGRlZmF1bHQNCiJADQoNCiRUZGxUZW1wRmlsZSA9IFtTeXN0ZW0uSU8uUGF0aF06OkdldFRlbXBGaWxlTmFtZSgpDQoNClNldC1Db250ZW50IC1QYXRoICRUZGxUZW1wRmlsZSAtRW5jb2RpbmcgVVRGOCAtVmFsdWUgJFRkbERlcGxveW1lbnRTb3VyY2UNCg0KLlxLTC5BdXRvdGVzdHMuRGVwbG95ZXIuZXhlICRUZGxEZXBsb3ltZW50TmFtZSAkVGRsVGVtcEZpbGUNCg0KJFRkbEV4aXRDb2RlID0gJExhc3RFeGl0Q29kZQ0KDQpSZW1vdmUtSXRlbSAtUGF0aCAkVGRsVGVtcEZpbGUNCg0KZXhpdCAkVGRsRXhpdENvZGUNCg==",
+      "ScriptDataExtension": ".ps1",
+      "Timeout": "01:00:00"
+    }
+  },
+  "Platforms": {
+    "win7-x86": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product",
+      "Parameters": {
+        "Name": "Product"
+      },
+      "BranchName": "master",
+      "Version": "1.0.0.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "win7-x86"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "Deployments": [
+        "Install product after langpack //some-site.com// 0"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x86"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:30",
+      "UniqueId": "b80fd6d3-14fc-4bf0-b8ec-e7ab492f8287"
+    }
+  },
+  "TestEntities": {}
+}
+

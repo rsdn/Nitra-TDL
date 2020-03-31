@@ -1,0 +1,105 @@
+﻿external { string Foo; }
+
+deployment Basic(string Message = Foo, bool Flag, int Value)
+{
+  KL.Autotests.Commands.LogMessage(Message);
+  KL.Autotests.Commands.ComplexOperation(IsVerbose: Flag);
+}
+deployment Curry1 = Basic(Message: "111");
+deployment Curry2 = Basic(Message: "---");
+deployment Curry3 = Basic(Message: "---");
+deployment Curry4(string AnotherMessage) = Basic(Message: AnotherMessage);
+deployment CurrySeq = Curry1, Curry2, Curry3, Curry4, Basic;
+select deployment SelectorSeq(V1, V2)
+{
+  | "XXX", "YYY" => Curry1, Curry2, Curry3, Curry4, Basic
+}
+deployment CurrySelector = SelectorSeq(V2: "YYY");
+
+// same deployment sequence for CurryFinal1 and CurryFinal2
+// Basic("111"), Basic("---"), Basic("---"), Basic("333"), Basic(Foo)
+deployment CurryFinal1 = CurrySelector(V1: "XXX", AnotherMessage: "333", Flag: false, Value: 0);
+deployment CurryFinal2 = CurrySeq(AnotherMessage: "333", Flag: false, Value: 0);
+
+
+select deployment ComplexSelector(V1)
+{
+  | "AAA" => Curry1
+  | "BBB" => Curry2
+}
+
+deployment ComplexFinal1 = ComplexSelector(V1: "AAA", Flag: true, Value: 1);
+deployment ComplexFinal2 = ComplexSelector(V1: "BBB", Flag: true, Value: 1);
+
+platform win7-x86;
+
+product type ProductType
+{
+  string Name;
+  string Version;
+  string BranchName;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0.0.0";
+  BranchName = "master";
+}
+
+scenario Scenario1
+{
+  deployment CurryFinal1;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8287";
+  Timeout = "00:30";
+}
+
+
+scenario Scenario2
+{
+  deployment CurryFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8288";
+  Timeout = "00:30";
+}
+
+
+scenario Scenario3
+{
+  deployment ComplexFinal1;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F8289";
+  Timeout = "00:30";
+}
+
+
+scenario Scenario4
+{
+  deployment ComplexFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828A";
+  Timeout = "00:30";
+}
+
+scenario Scenario5
+{
+  deployment ComplexFinal2;
+  environments (win7-x86, Product);
+  method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+  UniqueId = "B80FD6D3-14FC-4BF0-B8EC-E7AB492F828B";
+  Timeout = "00:30";
+}
+
+scenario Scenarios = Scenario1, Scenario2, Scenario3, Scenario4, Scenario5;
+
+suite Suite
+{
+  platform win7-x86;
+  product Product;
+  Scenarios();
+}

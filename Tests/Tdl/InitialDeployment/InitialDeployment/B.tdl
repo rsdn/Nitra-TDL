@@ -1,0 +1,13 @@
+product type MyProducts
+{
+  string Name;
+  string Version;
+}
+
+product P1 : MyProducts
+{
+  Name = "P1";
+  Version = "1.0.0.0";
+}
+
+platform win7-x64;

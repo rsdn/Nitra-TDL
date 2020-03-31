@@ -1,0 +1,11 @@
+﻿external
+{
+  string ProductVersion;
+  string App2_DistributivePath;
+  string App2_ModulesPath;
+  string KesDistributivePath;
+  string KesModulesPath;
+  string App2_FullVersion;
+  string KesFullVersion;
+  string TestBinariesFolder;
+}

@@ -1,0 +1,3 @@
+platform win7_x86; // H: previous definition
+platform win7_x86; // E: Redefinition of 'win7_x86'
+platform win_7 = win7_x86; // E: 'win7_x86' is an ambiguous reference between

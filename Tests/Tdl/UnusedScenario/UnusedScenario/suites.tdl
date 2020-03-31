@@ -1,0 +1,70 @@
+﻿entity SideBySide_KAVKIS2019_Patch
+{
+    Name = "KAVKIS";
+    BranchName = "2019";
+    Version = "Patch L";
+    Type = "SelfCompatibility";
+}
+
+entity SideBySide_KAVKIS2020_Patch
+{
+    Name = "KAVKIS";
+    BranchName = "2020";
+    Version = "Patch B";
+    Type = "SelfCompatibility";
+}
+
+entity SideBySide_KAVKIS2020_SIDRV
+{
+    Name = "KAVKIS";
+    BranchName = "2020";
+    Version = "SIDRV_testing";
+    Type = "SelfCompatibility";
+}
+
+suite type Ext
+{
+    string AutotestAssemblies;
+    string UpdateSourceAddress;
+    string UseSecondaryUpdateSource;
+    string SecondaryUpdateSource;
+    string DeploymentConditions;
+    string BugsRobotStatus;
+}
+
+suite "Compatibility.Self" =
+    from (Product, A, B) in [(PURE2020wKSDE4_KSM2017, PURE2020wKSDE4, KSM2017),
+                             (KSM2017_KIS2020,        KSM2017,        KIS2020),
+                             (PURE2020wKSDE4_KSDE3,   PURE2020wKSDE4, KSDE3)]
+select
+{
+    entity SideBySide_KAVKIS2020_SIDRV;
+    platform all;
+    product Product;
+    AutotestAssemblies = @"\\SomeShare\storage\CoreTechnologies\AutotestProjectBuilds\Components.Autotest\LatestBuild.txt";
+    UpdateSourceAddress = "http://some-site.com/";
+    DeploymentConditions = "/Update";
+
+    productA = A;
+    productB = B;
+
+    Sbs2020Group();
+};
+
+suite "Self.MultiProductSuite" : Ext
+{
+    entity SideBySide_KAVKIS2020_SIDRV;
+    platform all;
+    product KSM2017_PURE2020wKSDE4;
+    AutotestAssemblies = @"\\SomeShare\storage\CoreTechnologies\AutotestProjectBuilds\Components.Autotest\LatestBuild.txt";
+    UpdateSourceAddress = "http://some-site.com/";
+    UseSecondaryUpdateSource = "false";
+    SecondaryUpdateSource = "";
+    DeploymentConditions = "/Update";
+    BugsRobotStatus = "0";
+
+    productA = KSM2017;
+    productB = PURE2020wKSDE4;
+
+    Sbs2020Group();
+}

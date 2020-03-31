@@ -1,0 +1,76 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Empty": {
+      "Type": "Empty"
+    },
+    "TakePrepareStepsForXPerfLogsCollection": {
+      "Type": "Select",
+      "Condition": "$(XPerf)",
+      "Values": {
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "Empty",
+        "false": "Empty",
+        "true": "Empty"
+      }
+    }
+  },
+  "Platforms": {
+    "all_pc": {}
+  },
+  "Products": {
+    "KIS": {
+      "Name": "KIS",
+      "Parameters": {
+        "Name": "KIS"
+      },
+      "BranchName": "Main",
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Kis.BvtPvt.DNT": {
+      "Parameters": {
+        "XPerf": "#(XPerf_E)"
+      },
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "KIS"
+      ],
+      "TestScenarios": [
+        "CheckDntDefaultSettings"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "CheckDntDefaultSettings": {
+      "Area": "Dnt",
+      "Deployments": [
+        "TakePrepareStepsForXPerfLogsCollection"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "KIS"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "ProgramName": "cmd",
+        "Arguments": [
+          "/C exit 0"
+        ]
+      },
+      "TfsId": 1075083,
+      "Timeout": "00:30:00",
+      "UniqueId": "ef1f3579-2d04-4de6-a0b8-fa50d2602433"
+    }
+  },
+  "TestEntities": {}
+}

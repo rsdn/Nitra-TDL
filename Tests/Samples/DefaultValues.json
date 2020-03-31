@@ -1,0 +1,88 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "DefaultValues": {
+    "ExternalField": "external default"
+  },
+  "Deployments": {
+    "Deploy": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Text": "$(Text)",
+        "SuiteTypeField1": "$(SuiteTypeField1)",
+        "SuiteTypeField2": "$(SuiteTypeField2)",
+        "AnotherName": "$(Product:AnotherProduct.Name)"
+      },
+      "DefaultValues": {
+        "AnotherProduct": "Product2",
+        "Text": "#(ExternalField)"
+      },
+      "ScriptPath": "Deploy.ps1"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product1": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1",
+        "ProductTypeField": "#(ExternalField)"
+      },
+      "BranchName": null,
+      "Version": "1.1"
+    },
+    "Product2": {
+      "Name": "Product 2",
+      "Parameters": {
+        "Name": "Product 2",
+        "ProductTypeField": "#(ExternalField)"
+      },
+      "BranchName": null,
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {
+        "SuiteTypeField1": "#(ExternalField)",
+        "SuiteTypeField2": "suite type default"
+      },
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product1"
+      ],
+      "TestScenarios": [
+        "S1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S1": {
+      "Deployments": [
+        "Deploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product1"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile"
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e71"
+    }
+  },
+  "TestEntities": {}
+}

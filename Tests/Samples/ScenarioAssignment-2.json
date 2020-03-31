@@ -1,0 +1,199 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "SharedDeploy": {
+      "Type": "Sequence",
+      "Deployments": [
+        "SimpleDeploy",
+        {
+          "UsingAreaDeploy": {
+            "Area": "Area-1"
+          }
+        }
+      ]
+    },
+    "SharedDeploy-1": {
+      "Type": "Sequence",
+      "Deployments": [
+        "SimpleDeploy",
+        {
+          "UsingAreaDeploy": {
+            "Area": "Area-2"
+          }
+        }
+      ]
+    },
+    "SharedDeploy-2": {
+      "Type": "Sequence",
+      "Deployments": [
+        "SimpleDeploy",
+        {
+          "UsingAreaDeploy": {
+            "Area": "Area-duplicate"
+          }
+        }
+      ]
+    },
+    "SimpleDeploy": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "foo.cmd"
+    },
+    "UsingAreaDeploy": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "Area": "$(Area)"
+      },
+      "DefaultValues": {},
+      "ScriptPath": "foo.cmd"
+    }
+  },
+  "Platforms": {
+    "all_pc": [
+      "w10rs4-x86",
+      "w10rs4-x64"
+    ],
+    "w10rs4-x64": {},
+    "w10rs4-x86": {}
+  },
+  "Products": {
+    "TheProduct": {
+      "Name": "TheProduct",
+      "Parameters": {
+        "Name": "TheProduct"
+      },
+      "BranchName": "Main",
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Sute1": {
+      "Parameters": {},
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "TheProduct"
+      ],
+      "TestScenarios": [
+        "ScenarioAll"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "Area": "Area-1",
+      "Deployments": [
+        "SharedDeploy"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "ExternalAutotestId": 1216,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "TfsId": 530469,
+      "Timeout": "01:00:00",
+      "UniqueId": "58e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c4"
+    },
+    "Scenario2": {
+      "Area": "Area-2",
+      "Deployments": [
+        "SharedDeploy-1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "ExternalAutotestId": 1216,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "TfsId": 530469,
+      "Timeout": "01:00:00",
+      "UniqueId": "58e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c5"
+    },
+    "Scenario3": {
+      "Area": "Area-duplicate",
+      "Deployments": [
+        "SharedDeploy-2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "ExternalAutotestId": 1216,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "TfsId": 530469,
+      "Timeout": "01:00:00",
+      "UniqueId": "56e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c5"
+    },
+    "Scenario4": {
+      "Area": "Area-duplicate",
+      "Deployments": [
+        "SharedDeploy-2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "ExternalAutotestId": 1216,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan"
+      },
+      "TfsId": 530469,
+      "Timeout": "01:00:00",
+      "UniqueId": "57e931f5-e1a9-4bf1-a3b0-e9b3c62cf1c5"
+    },
+    "ScenarioAll": {
+      "TestScenarios": [
+        "Scenario1",
+        "Scenario2",
+        "Scenario3",
+        "Scenario4"
+      ]
+    }
+  },
+  "TestEntities": {}
+}
+
