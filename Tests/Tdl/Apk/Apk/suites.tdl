@@ -1,0 +1,7 @@
+
+suite Android
+{
+    platform w19-droid;
+    product MobileSdk;
+    AndroidGroup();
+}

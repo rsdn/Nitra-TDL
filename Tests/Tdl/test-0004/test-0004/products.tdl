@@ -1,0 +1,24 @@
+﻿product type Kes
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product Kes11_1 : Kes 
+{
+    Name = @"App4";
+    BranchName = @"Main";
+    Version = "11.1";
+}
+
+product Kes11_0 : Kes 
+{
+    Name = @"App4";
+    BranchName = @"Main";
+    Version = "11.0";
+}
+
+product App4 : Kes  =
+    Kes11_1,
+    Kes11_0;

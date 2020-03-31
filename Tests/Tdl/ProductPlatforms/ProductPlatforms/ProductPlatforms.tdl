@@ -1,0 +1,40 @@
+product type ProductTypeWithPlatforms
+{
+  string Name;
+  string Version = "1.0";
+
+  Platforms = [Platform1, Platform2];
+}
+
+product Product1 : ProductTypeWithPlatforms
+{
+  Name = "Product 1";
+  Platforms = [Platform2, Platform4, Platform3];
+}
+
+product Product2 : ProductTypeWithPlatforms
+{
+  Name = "Product 2";
+}
+
+product Product3 : ProductType
+{
+  Name = "Product 1";
+  Platforms = [Platform2, Platform4, Platform3];
+}
+
+product Product4 : ProductType
+{
+  Name = "Product 2";
+}
+
+product type ProductType
+{
+  string Name;
+  string Version = "1.0";
+}
+
+platform Platform1;
+platform Platform2;
+platform Platform3;
+platform Platform4;

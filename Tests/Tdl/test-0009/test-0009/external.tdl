@@ -1,0 +1,6 @@
+external
+{
+    string ProductVersion;
+    string BuildPath;
+    string UpdateSource = "";
+}

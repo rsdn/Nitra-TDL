@@ -1,0 +1,125 @@
+﻿product App11_Main : AppType 
+{
+    Name = @"App11";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product App2_Main : AppType 
+{
+    Name = @"App2";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product App7_Main : AppType 
+{
+    Name = @"App7";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product App8_Main : AppType 
+{
+    Name = @"App8";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = true;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product App10_Main : AppType 
+{
+    Name = @"App10";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product App10FS_Main : AppType 
+{
+    Name = @"App10FS";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product App6_Main : AppType 
+{
+    Name = @"App6";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe;*_reduced.exe";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}
+
+product App6_Webpack_Main : AppType 
+{
+    Name = @"App6";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"ksm*.Product.Config;App9*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*.cab;*.txt";
+    ConfigFilesFamily = @"App2.";
+    TestAppPackName = @"CompanyLab.App2.UI.TestApp.zip";
+    DisableAddingTrustedApplications = false;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"KTS*full.exe";
+}
+
+product App9_Main : AppType 
+{
+    Name = @"App9";
+    BranchName = @"Main";
+    Version = ProductVersion;
+    AutotestBinariesExcludedFilesMasks = @"kis*.Product.Config;ksm*.Product.Config";
+    ProductBinariesExcludedFilesMasks = @"*_full.exe";
+    ConfigFilesFamily = @"App9.";
+    TestAppPackName = @"CompanyLab.App9.UI.TestApp.zip";
+    DisableAddingTrustedApplications = true;
+    SkipRecommendedSettings = false;
+    InstallerExecutableFileMask = @"startup.exe";
+}

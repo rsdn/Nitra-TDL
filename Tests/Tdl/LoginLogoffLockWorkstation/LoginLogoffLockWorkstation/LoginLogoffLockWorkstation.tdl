@@ -1,0 +1,44 @@
+deployment D()
+  script "foobar.cmd"
+{
+  expected 0;
+}
+
+suite Android
+{
+    platform win7;
+    product P;
+    S();
+}
+
+scenario S
+{
+    deployment D;
+    environments (win7, P);
+    sequence
+    {
+      logoff;
+      login "admin" "asdf";
+      lock-workstation;
+      gtest "cmd" "/C exit 0";
+    }
+    UniqueId = "BA3F8DAF-012B-4E51-89D9-07724B9AF038";
+    NeedUnsignedAgent = true;
+    Timeout = @"00:10:00";    
+}
+
+platform win7;
+
+product type MyProduct
+{
+    string Name;
+    string BranchName;
+    string Version;
+}
+
+product P : MyProduct
+{
+    Name = @"MobileSdk";
+    BranchName = @"1";
+    Version = @"1.0.0.0";
+}

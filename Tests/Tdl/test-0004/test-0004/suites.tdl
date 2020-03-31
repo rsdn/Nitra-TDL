@@ -1,0 +1,10 @@
+suite Gate_App11
+{
+    platform gated_platforms;
+    product App4;
+    ProductDistributivePath = ProductDistributivePath;
+    ProductModulesPath = ProductModulesPath;
+    AutotestsPath = AutotestsPath;
+    BaseDistribTestModules = BaseDistribTestModules;
+    GateTests_App4();
+}

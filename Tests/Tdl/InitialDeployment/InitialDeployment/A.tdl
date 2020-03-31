@@ -1,0 +1,18 @@
+deployment DeployP1(string DeploymentParameter)
+  script "deploy.ps1"
+{
+}
+
+initial select deployment Setup(InitialDeploymentParameter)
+{
+  | "A" => A, reboot "10:00", B
+  | "B" => B
+}
+
+final deployment Finalize(string FinalDeploymentParameter)
+  script "finalize.ps1"
+{
+}
+
+deployment A() script "A.ps1" {}
+deployment B() script "A.ps1" {}

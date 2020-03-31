@@ -1,0 +1,76 @@
+﻿product type KlProductType
+{
+	string Name;
+	string BranchName;
+    string CopyDpl;
+	string InstallDpl;
+	bool RebootAfterAllActions;
+    string Version;
+	string DumpServerProduct;
+}
+
+product PURE2020wKSDE4 : KlProductType
+{
+	Name = "PURE";
+	BranchName = "20.MP0";
+	CopyDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2020\PureCopyFiles.dpl";
+	InstallDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2020\PureInstallProduct.dpl";
+	RebootAfterAllActions = true;
+	Version = "20.0.14.1085";
+	DumpServerProduct = "KAV 20.0.0";
+}
+
+product KSM2017 : KlProductType 
+{
+	Name = "KSM";
+	BranchName = "17.MP0";
+	CopyDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2017\KfpCopyFiles.dpl";
+	InstallDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2017\KfpInstallProduct.dpl";
+	RebootAfterAllActions = true;
+	Version = "17.0.0.611";
+	DumpServerProduct = "KAV 17.0.0";
+}
+
+product KIS2020 : KlProductType
+{
+	Name = "KIS";
+	BranchName = "20.MP0";
+	CopyDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2020\KisCopyFiles.dpl";
+	InstallDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2020\KisWoKsdeInstallProduct.dpl";
+	RebootAfterAllActions = true;
+	Version = "20.0.14.1085";
+	DumpServerProduct = "KAV 20.0.0";
+}
+
+product KSDE3 : KlProductType
+{
+	Name = "KSDE";
+	BranchName = "19.MP0";
+	CopyDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2019\KsdeCopyFiles.dpl";
+	InstallDpl = @"\\SomeShare\Autotests\Components\DeploymentScripts\Compatibility\SelfCompatibility\2019\KsdeInstallProduct.dpl";
+	RebootAfterAllActions = true;
+	Version = "19.0.0.1088";
+	DumpServerProduct = "KAV 19.0.0";
+}
+
+product PURE2020wKSDE4_KSM2017 : KlProductType = 
+	PURE2020wKSDE4,
+	KSM2017;
+
+product KSM2017_PURE2020wKSDE4 : KlProductType = 
+	KSM2017,
+	PURE2020wKSDE4;
+
+product KSM2017_KIS2020 : KlProductType = 
+	KSM2017,
+	KIS2020;
+
+product PURE2020wKSDE4_KSDE3 : KlProductType = 
+	KIS2020,
+	KSDE3;
+
+product AllProducts : KlProductType = 
+	PURE2020wKSDE4,
+	KSM2017,
+	KIS2020,
+	KSDE3;

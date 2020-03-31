@@ -1,0 +1,62 @@
+platform Platform1;
+
+deployment A() script "a.ps1" {}
+
+deployment B() script "b.ps1" {}
+
+select deployment S(X) { | not-set => A | "BBB" => B }
+
+product type ProductType
+{
+  string Name;
+  string Version;
+}
+
+product Product : ProductType
+{
+  Name = "P";
+  Version = "1.0";
+}
+
+scenario Scenario1(string X = "")
+{
+  filter X != "BBB";
+  deployment S;
+  environments (Platform1, Product);
+  method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;
+  UniqueId = "21D09B4E-C988-4E33-AEC8-B3614452A619";
+  Timeout = "00:01";
+}
+
+scenario Scenario2(string X)
+{
+  filter X != "BBB";
+  deployment S;
+  environments (Platform1, Product);
+  method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;
+  UniqueId = "21D09B4E-C988-4E33-AEC8-B3614452A61A";
+  Timeout = "00:01";
+}
+
+suite Suite1
+{
+  platform Platform1;
+  product Product;
+  Scenario1();
+}
+
+suite Suite2
+{
+  platform Platform1;
+  product Product;
+  X = "BBB";
+  Scenario1();
+}
+
+suite Suite3
+{
+  platform Platform1;
+  product Product;
+  X = "BBB";
+  Scenario2();
+}

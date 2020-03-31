@@ -1,0 +1,15 @@
+// Linux test
+suite BuildAcceptance
+{
+    platform cent75-x64;
+    product MonorepoHelloWorld;
+    Version = ProductVersion;
+    BuildPath = BuildPath;
+    BuildDir = @"distrib\linux-x86_64";
+    SecondA = Excel;
+    SecondB = Word;
+    ProductInstall = @"install_product.sh";
+    TestArchive = @"MonrepoHelloWorld-tests.tgz";
+    TestsDir = @"/root/autotests";
+    BuildAcceptance();
+}

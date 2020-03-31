@@ -1,0 +1,31 @@
+﻿
+deployment InstallTestAgent()
+    script @"\\SomeShare\global\Builds2\Ido-Dev\TestAgent.Python-monorep\1.2.0.404\drop\Domain.Hive.TestAgent\install_linux.sh"
+{
+    expected 0;
+}
+
+deployment InstallProduct(
+    string BuildDir,
+    string BuildPath,
+    string ProductInstall,
+    string TestArchive,
+    string TestsDir,
+    string Version,
+    string DEPLOY_ROBOT = "hello_deploy.robot",
+    string E_AIR_ACCESSKEY = "{AirToken}",
+    string E_AIR_CLI = "air-cli",
+    string E_BUILD_PKG = "MonrepoHelloWorld",
+    string E_STORAGE = "kesl.domain.com",
+    string PYLIBS = "pexpect,requests,robotframework"
+)
+    script @"$(BuildPath)\$(BuildDir)\$(ProductInstall)"
+{
+    TEST_ARC_PATH = @"$(BuildPath)\$(BuildDir)\$(TestArchive)";
+    E_TESTS_DIR = TestsDir;
+    E_BUILD_PATH = @"$(BuildPath)\$(BuildDir)";
+    E_PRODUCT_VERSION = Version;
+    expected 0;
+}
+
+deployment LinuxDeploy = InstallTestAgent, InstallProduct;

@@ -1,0 +1,102 @@
+﻿select deployment "Install product"(InstallationType)
+{
+    | not-set        => "_Install product"
+    | "Upgrade 2019" => "Install 2019 -> Install product"
+}
+
+deployment "Install 2019 -> Install product" = 
+	"Install Base Product 2019", 
+	"_Install product", 
+	"RebootAgent";
+
+deployment "_Install product"(
+    string BuildPath = @"$(SessionWorkFolder)\ProductBuild",
+    string DataCollectorsPath = @"$(SessionWorkFolder)\Autotests",
+    string TestArtefactsFolder = @"$(SessionWorkFolder)\Artefacts",
+    string DumpFolder = @"",
+    string AcceptEula = "On",
+    string AcceptKsnAgreement = "On",
+    string AcceptMarketingAgreement = "On",
+    string AcceptSocializationAgreement = "On",
+    bool ActivateEmbeddedTrial = false,
+    string ActivationCode = "",
+    string ActivationServerUrl = "",
+    string AdditionalFiles = @"\\SomeShare\Autotests\App2\AdditionalFiles\App2.Main.AdditionalContinuousIntegration",
+    string BundleApp9 = "Default",
+    bool CollectContinuousProductTraces = true,
+    string CollectionMountType = "File share",
+    string CollectionsNetworkPath = @"\\SomeShare\Autotests\App2\Deployment\App2.Main",
+    string ConfigFilesFamily,
+    bool ContinueOnErrors = false,
+    string DefaultUpdateSource = "",
+    bool DisableDistribFilesDownloading = false,
+    bool DisablePpl = false,
+    bool DisableProductInstallation = false,
+    bool DisableRestartService = true,
+    bool DisableTestModulesInstallation = false,
+    bool DisableVSCollectorsDeployment = false,
+    string DriversLogState = "MainEnableBranchDisable",
+    bool EnableAntiSpam = false,
+    bool EnableAutomaticApp11Downgrade = false,
+    bool EnableBssLogs = false,
+    bool EnableSslDecoding = false,
+    bool ForceDisableAppVerifier = false,
+    bool ForceDisableDriverVerifier = false,
+    bool ForceInstallCertificates = false,
+    bool ForcePreloadDumpWriter = false,
+    string ForceTraceLevel = "",
+    bool IgnoreNothingToUpdateCode = false,
+    bool InstallActivationServerBackdoor = false,
+    string InstallerExecutableFileMask = "",
+    bool InstallLib1 = false,
+    string InstallLicenceBackdoor = "On",
+    string IsoImageFileName = "",
+    string KpcActivationCode = "",
+    string KpcCompanyId = "",
+    string KpcOneTimeRegistrationSharedSecret = "",
+    string KPCRegion = "",
+    string KpcUserId = "",
+    string LocalizationCode = "",
+    bool PostUpdateServiceStartStop = false,
+    string RegisterAiCom = "Off",
+    bool ReplaceDistributiveFromIso = false,
+    string RequestApp8TrialTier = "Default",
+    bool RunAtSystemStartup = false,
+    string SaveHashesPath = "",
+    string ScreenshotsFolder = "",
+    bool SetProductNameForFacade = true,
+    bool Silent = false,
+    bool StartService = false,
+    string SuggestApp3 = "Off",
+    int TimesToUpdate = 1,
+    string TraceRootOverriddenLocation = @"C:\Agent\Artifacts",
+    bool TurnOffDumpOnAssert = false,
+    bool TurnOffProtection = false,
+    string UpdateChromeToVersion = "",
+    string UpdateFirefoxToVersion = "",
+    string UpdateSource = "",
+    string UseCollections = "On",
+    string UseGDPR = "Default",
+    bool UseProxyForUpdate = false,
+    bool Verbose = false,
+    bool VerboseExternalProcessesOutput = false,
+    bool WaitForProductActivation = false)
+    script @"\\SomeShare\Autotests\App2\DeploymentScripts\Deployment\deploy.ps1"
+{
+    expected 42;
+}
+
+deployment "Install Base Product 2019" = "Install Base Product"(
+    AdditionalFiles: @"\\SomeShare\Autotests\App2\AdditionalFiles\App2_2019.MP0.AdditionalContinuousIntegration");
+
+deployment "Install Base Product" = "_Install product"(
+    BuildPath: @"$(SessionWorkFolder)\BaseProductBuild",
+    DisableTestModulesInstallation: true,
+    DisableVSCollectorsDeployment: true,
+    InstallActivationServerBackdoor: true,
+    SetProductNameForFacade: false,
+    StartService: true,
+    TurnOffDumpOnAssert: true,
+    UseCollections: "Off");
+
+deployment "RebootAgent" = reboot "00:15:00";

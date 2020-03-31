@@ -1,0 +1,6 @@
+﻿suite Debug
+{
+    platform AllPlatforms;
+    product MyK_CIWD;
+    debug_Run_tests_for_two_product();
+}

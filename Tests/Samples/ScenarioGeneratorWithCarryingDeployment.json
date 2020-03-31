@@ -1,0 +1,90 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deployment1": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "IncludeRegex": "$(IncludeRegex)",
+        "ExcludeRegex": "$(ExcludeRegex)"
+      },
+      "DefaultValues": {
+        "ExcludeRegex": ""
+      },
+      "ScriptPath": "foo.cmd"
+    },
+    "Deployment2": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deployment1": {
+            "IncludeRegex": "",
+            "ExcludeRegex": "Collections\\\\"
+          }
+        }
+      ]
+    }
+  },
+  "Platforms": {
+    "acceptance_platforms": {},
+    "w10Rs5-x64": {}
+  },
+  "Products": {
+    "TheProduct": {
+      "Name": "TheProduct",
+      "Parameters": {
+        "Name": "TheProduct"
+      },
+      "BranchName": "Main",
+      "Version": "1.0"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {},
+      "Platforms": [
+        "acceptance_platforms"
+      ],
+      "Products": [
+        "TheProduct"
+      ],
+      "TestScenarios": [
+        "Scenario1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Scenario1": {
+      "TestScenarios": [
+        "Scenario1-1"
+      ]
+    },
+    "Scenario1-1": {
+      "Area": "SW_AntiCryptor;",
+      "Deployments": [
+        "Deployment2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10Rs5-x64"
+          ],
+          "Products": [
+            "TheProduct"
+          ]
+        }
+      ],
+      "ExternalAutotestId": 5055,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "TfsId": 3226925,
+      "Timeout": "00:45:00",
+      "UniqueId": "0398378c-ddc4-486f-82ab-5c580e072bd1"
+    }
+  },
+  "TestEntities": {}
+}

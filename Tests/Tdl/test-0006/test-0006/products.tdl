@@ -1,0 +1,156 @@
+﻿product type AppType
+{
+    string Name;
+    string BranchName;
+    string Version;
+    string ProductType;
+    string ProductPath;
+    string ProductInfoJson;
+    string ProductInstallerJson;
+}
+
+product "App4 for Mac 10 SP2" : AppType 
+{
+    Name = @"App4 for Mac";
+    BranchName = @"10";
+    Version = @"10.2.0.267";
+    ProductType = @"Kes";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App410SP2";
+    ProductInfoJson = @"kes-10-2.json";
+    ProductInstallerJson = @"um/installers/kes10-2-install.json";
+}
+
+product "App4 for Mac 10 SP2 MR1" : AppType 
+{
+    Name = @"App4 for Mac";
+    BranchName = @"10";
+    Version = @"10.2.1.319";
+    ProductType = @"Kes";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App410SP2MR1";
+    ProductInfoJson = @"kes-10-2.json";
+    ProductInstallerJson = @"um/installers/kes10-2-install.json";
+}
+
+product "App2 for Mac 2018 MR1" : AppType 
+{
+    Name = @"App2 for Mac";
+    BranchName = @"18 MR1";
+    Version = @"18.0.1.35";
+    ProductType = @"App2_";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App22018MR1";
+    ProductInfoJson = @"kis-18-0.json";
+    ProductInstallerJson = @"um/installers/kis18-0-install.json";
+}
+
+product "App2 for Mac 2018 MR2" : AppType 
+{
+    Name = @"App2 for Mac";
+    BranchName = @"18 MR2";
+    Version = @"18.0.2.60";
+    ProductType = @"App2_";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App22018MR2";
+    ProductInfoJson = @"kis-18-0.json";
+    ProductInstallerJson = @"um/installers/kis18-0-install.json";
+}
+
+product "App2 for Mac 2019" : AppType 
+{
+    Name = @"App2 for Mac";
+    BranchName = @"19";
+    Version = @"19.0.0.295";
+    ProductType = @"App2_";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App22019";
+    ProductInfoJson = @"kis-19-0.json";
+    ProductInstallerJson = @"um/installers/install-activate-kis19.json";
+}
+
+product "App5 for Mac 2019" : AppType 
+{
+    Name = @"App5 for Mac";
+    BranchName = @"19";
+    Version = @"19.0.0.294";
+    ProductType = @"Ksecl";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App52019";
+    ProductInfoJson = @"ksecl-19-0.json";
+    ProductInstallerJson = @"um/installers/ksecl19-0-install.json";
+}
+
+product "App5 for Mac 2018 MR1" : AppType 
+{
+    Name = @"App5 for Mac";
+    BranchName = @"18 MR1";
+    Version = @"18.0.1.35";
+    ProductType = @"Ksecl";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App52018MR1";
+    ProductInfoJson = @"ksecl-18-0.json";
+    ProductInstallerJson = @"um/installers/ksecl18-0-install.json";
+}
+
+product "App5 for Mac 2018 MR2" : AppType 
+{
+    Name = @"App5 for Mac";
+    BranchName = @"18 MR2";
+    Version = @"18.0.2.60";
+    ProductType = @"Ksecl";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App52018MR2";
+    ProductInfoJson = @"ksecl-18-0.json";
+    ProductInstallerJson = @"um/installers/ksecl18-0-install.json";
+}
+
+product "App3 for Mac 1.0 MR2" : AppType 
+{
+    Name = @"App3 for Mac";
+    BranchName = @"1";
+    Version = @"1.0.2.282";
+    ProductType = @"App3";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App31MR2";
+    ProductInfoJson = @"safekids-1-0.json";
+    ProductInstallerJson = @"um/installers/safekids-install.json";
+}
+
+product "App3 for Mac 1.0 MR3" : AppType 
+{
+    Name = @"App3 for Mac";
+    BranchName = @"1";
+    Version = @"1.0.3.253";
+    ProductType = @"App3";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App31MR3";
+    ProductInfoJson = @"safekids-1-0.json";
+    ProductInstallerJson = @"um/installers/safekids-install.json";
+}
+
+product "App3 for Mac 1.0 MR4" : AppType 
+{
+    Name = @"App3 for Mac";
+    BranchName = @"1";
+    Version = @"1.0.4.73";
+    ProductType = @"App3";
+    ProductPath = @"\\SomeShare\Autotests\Components\Temp\Marikyan\MacProducts\App31MR4";
+    ProductInfoJson = @"safekids-1-0.json";
+    ProductInstallerJson = @"um/installers/safekids-install.json";
+}
+
+product App4 : AppType  =
+    "App4 for Mac 10 SP2",
+    "App4 for Mac 10 SP2 MR1";
+
+product App2 : AppType  =
+    "App2 for Mac 2018 MR1",
+    "App2 for Mac 2018 MR2",
+    "App2 for Mac 2019";
+
+product App5 : AppType  =
+    "App5 for Mac 2019",
+    "App5 for Mac 2018 MR1",
+    "App5 for Mac 2018 MR2";
+
+product App3 : AppType  =
+    "App3 for Mac 1.0 MR2",
+    "App3 for Mac 1.0 MR3",
+    "App3 for Mac 1.0 MR4";
+
+product All : AppType  =
+    App4,
+    App2,
+    App5,
+    App3;

@@ -1,0 +1,92 @@
+﻿{
+  "version": 7,
+  "$schema": "http://some-site.com/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Basic": {
+      "Type": "Script",
+      "ScriptArgs": {
+        "Message": "$(Message)",
+        "UcpContextType": "$(UcpContextType)"
+      },
+      "DefaultValues": {
+        "Message": "defuault msg"
+      },
+      "ScriptPath": "a.ps1"
+    },
+    "SelectDeploymentWithElse": {
+      "Type": "Select",
+      "Condition": "$(UcpContextType)",
+      "Values": {
+        "": {
+          "Basic": {
+            "UcpContextType": "predefined"
+          }
+        }
+      },
+      "Default": "Basic"
+    }
+  },
+  "Platforms": {
+    "all_pc": [
+      "w10rs5-x86"
+    ],
+    "w10rs5-x86": {}
+  },
+  "Products": {
+    "KAV-KIS-PURE-KSOS-KSOSFS": [
+      "KSOS"
+    ],
+    "KSOS": {
+      "Name": "KSOS",
+      "Parameters": {
+        "Name": "KSOS"
+      },
+      "BranchName": "Main",
+      "Version": "KAV.21.0.0.0"
+    }
+  },
+  "Suites": {
+    "Ksos.BvtPvt.UCP-Beta-4": {
+      "Parameters": {
+        "UcpContextType": "#(UcpContextType)"
+      },
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "KSOS"
+      ],
+      "TestScenarios": [
+        "SelectDeploymentWithElseScenario"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "SelectDeploymentWithElseScenario": {
+      "Area": "MockTests",
+      "Deployments": [
+        "SelectDeploymentWithElse"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "KAV-KIS-PURE-KSOS-KSOSFS"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "RevertAgentBefore": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Common.Suites.Components.Delivery.FacadeTests.FacadeLicenseCheck"
+      },
+      "TfsId": 739871,
+      "Timeout": "01:00:00",
+      "UniqueId": "b83b33b3-3d96-4c5d-b5dc-0f4e5670f7e3"
+    }
+  },
+  "TestEntities": {}
+}

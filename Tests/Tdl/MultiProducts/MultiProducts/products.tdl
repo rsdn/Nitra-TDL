@@ -1,0 +1,34 @@
+product type Products
+{
+    string Name;
+    string BranchName;
+    string Version;
+    string Browser;
+    string UserCountry;
+    string UserLanguage;
+    string UcpInstanceType;
+}
+
+product MyK : Products
+{
+    Name = @"MyK";
+    BranchName = @"Frontend";
+    Version = @"Latest";
+    Browser ="Chrome";
+    UserCountry = "RussianFederation";
+    UserLanguage = "RussianRU";
+    UcpInstanceType = "Prod";
+}
+
+product CIWD : Products
+{
+    Name = @"CIWD";
+    BranchName = @"Frontend";
+    Version = @"Latest";
+    Browser ="Chrome";
+    UserCountry = "RussianFederation";
+    UserLanguage = "RussianRU";
+    UcpInstanceType = "Prod";
+}
+
+product MyK_CIWD : Products = MyK, CIWD;

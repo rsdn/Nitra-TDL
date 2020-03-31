@@ -1,0 +1,78 @@
+scenario Scenario1
+{
+    deployment DeployP1;
+    environments (win7-x64, P1);
+    gtest "foo.exe";
+    UniqueId = "7E9EDB31-B4C7-431A-AD51-EAAA52498E6A";
+    TfsId = 0;
+    Timeout = "00:00:10";
+}
+
+suite Suite1
+{
+  platform win7-x64;
+  product P1;
+  InitialDeploymentParameter = "A";
+  DeploymentParameter = "value for normal deployment";
+  FinalDeploymentParameter = "Z";
+  // простой сценарий
+  Scenario1();
+}
+
+scenario Scenario2 = Scenario1;
+
+suite Suite2
+{
+  platform win7-x64;
+  product P1;
+  InitialDeploymentParameter = "B";
+  DeploymentParameter = "value for normal deployment";
+  FinalDeploymentParameter = "Z";
+  // сценарий - множество
+  Scenario2();
+}
+
+
+scenario Scenario3 = 
+  from p in [win7-x64]
+  from d in [DeployP1]
+  select
+  {
+    deployment d;
+    environments (p, P1);
+    method Autotest.Common.Suites.Components.Delivery.AvpComTests.AvpComQscan;
+    UniqueId = "93586316-7B2F-4418-B069-7838D6D407B3";
+    TfsId = 0;
+    Timeout = "00:00:10";
+  };
+
+suite Suite3
+{
+  platform win7-x64;
+  product P1;
+  InitialDeploymentParameter = "B";
+  DeploymentParameter = "value for normal deployment";
+  FinalDeploymentParameter = "Z";
+  // сценарий - генератор
+  Scenario3();
+}
+
+scenario Scenario4
+{
+    deployment Setup; // это initial deployment
+    environments (win7-x64, P1);
+    gtest "foo.exe";
+    UniqueId = "6ADCB4F5-751B-48F6-9A78-FE9E6AFB176E";
+    TfsId = 0;
+    Timeout = "00:00:10";
+}
+
+suite Suite4
+{
+  platform win7-x64;
+  product P1;
+  InitialDeploymentParameter = "B";
+  FinalDeploymentParameter = "Z";
+  // сценарий, в котором указан собственно initial деплоймент
+  Scenario4();
+}

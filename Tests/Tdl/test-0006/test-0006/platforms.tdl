@@ -1,0 +1,17 @@
+platform osx9;
+platform osx10;
+platform osx11;
+platform osx12;
+platform osx13;
+platform osx14;
+platform Debug =
+    osx11,
+    osx12,
+    osx13;
+platform All =
+    osx9,
+    osx10,
+    osx11,
+    osx12,
+    osx13,
+    osx14;

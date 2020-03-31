@@ -1,0 +1,10 @@
+external
+{
+    string ProductVersion;
+    string DistribFiles;
+    string DistribTestModules;
+    string AutotestsBinariesPath;
+    string BaseDistribFiles;
+    string BaseDistribTestModules;
+    string ProductBasesPath;
+}

@@ -1,0 +1,38 @@
+﻿suite type Ext
+{
+  string AutotestAssemblies;
+  string UpdateSourceAddress;
+  bool   UseSecondaryUpdateSource;
+  string SecondaryUpdateSource;
+  int    BugsRobotStatus;
+}
+
+suite "Ext.PullRequest" : Ext
+{
+    platform win10;
+    product "App4 11.1__App6 2020.MP0";
+    AutotestAssemblies = @"\\SomeShare\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
+    DeployIsNeeded = true;
+    UpdateSourceAddress = "";
+    UseSecondaryUpdateSource = false;
+    SecondaryUpdateSource = "";
+    BugsRobotStatus = 0;
+    BuildName = "build1";
+    InternalTestSettingsDirectory = "/";
+    ExclusiveTestGroup();
+}
+
+suite "Ext.Delivery" : Ext
+{
+    platform win10;
+    product "App4 11.1__App6 2020.MP0";
+    AutotestAssemblies = @"\\SomeShare\Autotests\Components\Delivery\BlackBox\AutotestAssemblies";
+    DeployIsNeeded = true;
+    UpdateSourceAddress = "";
+    UseSecondaryUpdateSource = false;
+    SecondaryUpdateSource = "";
+    BugsRobotStatus = 0;
+    BuildName = "build2";
+    InternalTestSettingsDirectory = "/";
+    ExclusiveTestGroup();
+}

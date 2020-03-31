@@ -1,0 +1,19 @@
+﻿platform win7-x86;
+platform win7-x64;
+platform win7 = win7-x86, win7-x64;
+
+platform win81-x86;
+platform win81-x64;
+platform win81 = win81-x86, win81-x64;
+
+platform w10rs4-x86;
+platform w10rs4-x64;
+platform w10rs4 = w10rs4-x86, w10rs4-x64;
+
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs5 = w10rs5-x86, w10rs5-x64;
+
+platform w10 = w10rs4, w10rs5;
+
+platform all = win7, win81, w10rs5;

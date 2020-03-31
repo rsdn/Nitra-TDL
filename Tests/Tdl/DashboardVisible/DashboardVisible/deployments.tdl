@@ -1,0 +1,63 @@
+deployment Deployment1([DashboardVisible] string Message, [DashboardVisible] bool isVerbose = false, bool NotVisible)
+  script "a.ps1"
+{
+  expected 0;
+}
+
+suite type SuiteType
+{
+  [DashboardVisible]
+  bool SuiteTypeField1;
+  bool SuiteTypeField2;
+}
+
+suite Suite : SuiteType
+{
+  platform Platform;
+  product Product;
+  Message         = "C# deployment";
+  SuiteTypeField1 = true;
+  SuiteTypeField2 = true;
+  ScenarioParam1  = 42;
+  ScenarioParam2  = 48;
+  NotVisible      = true;
+  S1();
+}
+
+suite SuiteGenerator : SuiteType =
+from a in [1]
+select
+{
+  platform Platform;
+  product Product;
+  Message         = "C# deployment";
+  SuiteTypeField1 = true;
+  SuiteTypeField2 = true;
+  ScenarioParam1  = 42;
+  ScenarioParam2  = 48;
+  NotVisible      = true;
+  S1();
+};
+
+product type ProductType
+{
+  string Name;
+  string Version;
+}
+
+product Product : ProductType
+{
+  Name = "Product";
+  Version = "1.0";
+}
+
+platform Platform;
+
+scenario S1([DashboardVisible] int ScenarioParam1, int ScenarioParam2)
+{
+  deployment Deployment1;
+  environments (Platform, Product);
+  method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
