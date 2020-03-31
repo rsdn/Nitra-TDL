@@ -47,5 +47,10 @@ namespace Tdl
       {
         Text = null;
       }
+
+    | Else
+      {
+        Text = Api.CaseElseValue;
+      }
   }
 }

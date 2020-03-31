@@ -13,7 +13,6 @@ namespace Tdl
   {
     public Location : Location { get; }
 
-    | Error { }
     | Method
       {
         //TypeSymbol         : DeclarationSymbol;
@@ -77,9 +76,9 @@ namespace Tdl
     | Logoff           { }
     | LockWorkstation  { }
     | Reboot           { }
-    | WaitForReboot    { TimeSpan : string; MaxRebootsCountOpt : ValueOption[Expr]; }
+    | WaitForReboot    { TimeSpan : string; }
     | Barrier          { barrier : BarrierSymbol; }
-    | BarrierGenerator { BarrierName : ImmutableArray[BarrierNamePart]; Timeout : TimeSpan; }
+    | BarrierGenerator { BarrierName : ImmutableArray[BarrierNamePart]; Timeout : ParsedValue[TimeSpan]; }
 
     public IsTest : bool
     {
@@ -95,8 +94,6 @@ namespace Tdl
           | VsTest
           | Apk
           | Marathon => true
-          | Error
-          | BarrierGenerator
           | Login
           | Logoff
           | LockWorkstation

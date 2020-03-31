@@ -154,6 +154,15 @@ namespace Tdl
     | External -> External { Name = Name(Location.WithSpan(KwExternal.FromStart()), "external"); ExternalBody.Fields -> Fields; }
     | Barrier  -> Barrier  { Name -> Name; Timeout -> Timeout; }
     | Entity   -> Entity   { Name -> Name; EntityBody.DefDeclarations -> Definitions; }
+    | VmCapability -> VmCapability
+      {
+        Name -> Name;
+        match (DefExprOpt)
+        {
+          | Some((_, e)) -> Some(e)
+          | None -> None()
+        } -> Value;
+      }
   }
 
   map syntax Grammar.DeploymentModifier -> DeploymentModifier
@@ -187,7 +196,8 @@ namespace Tdl
   {
     | String   -> String   { this.StringLiteral -> Value; }
     | Wildcard -> Wildcard { }
-    | NotSet   -> NotSet { }
+    | NotSet   -> NotSet   { }
+    | Else     -> Else     { }
   }
 
   map syntax Grammar.Case.Pattern(deployments : DeploymentExpr*) -> Case
@@ -432,9 +442,9 @@ namespace Tdl
     | Logoff          -> Logoff          { }
     | LockWorkstation -> LockWorkstation { }
     | Reboot          -> Reboot          { }
-    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; }
-    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; }
-    | Barrier         -> Barrier         { Reference -> Reference; }
+    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | Barrier         -> Barrier         { Expression -> BarrierExpr; }
   }
 
   map syntax Grammar.DeploymentOption -> DeploymentOption

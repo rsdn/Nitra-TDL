@@ -12,6 +12,7 @@ namespace Tdl
 {
   abstract ast Action : BindableAst
   {
+    in InGenerator : bool;
   stage 2:
     out ScenarioActions : ScenarioAction;
 
@@ -108,7 +109,7 @@ namespace Tdl
         XcodePath          : DefExpr;
         MaxRebootsCountOpt : DefExpr?;
       }
-      
+
     | VsTest
       {
         ScenarioActions = ScenarioAction.VsTest(Container.Location, Container.Result, VsTestRunCmdLineOpt.Result, FilterOpt.Result, VsTestPlatformOpt.Result, VsTestFrameworkOpt.Result, VsTestAdditionalOptionsOpt.Result, MaxRebootsCountOpt.Result);
@@ -201,18 +202,17 @@ namespace Tdl
     | Reboot          { ScenarioActions = ScenarioAction.Reboot(this.Location); }
     | WaitForReboot
       {
-        ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value);
+        ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value, MaxRebootsCountOpt.Result);
 
-        TimeSpan : ParsedValue[string];
+        TimeSpan           : ParsedValue[string];
+        MaxRebootsCountOpt : DefExpr?;
       }
     | Barrier
       {
-        out BarrierRef : Ref[BarrierSymbol] = Reference.Ref.Resolve();
+        BarrierExpr.ScopeIn = Scope.HideWith(context.GetBarrierScope());
+        ScenarioActions     = await TdlUtils.MakeScenarioActions(context, BarrierExpr);
 
-        Reference.Scope = Scope;
-        ScenarioActions = ScenarioAction.Barrier(Reference.Location, BarrierRef.Symbol);
-
-        Reference : Reference;
+        BarrierExpr : DotNet.Expr;
       }
   }
 }

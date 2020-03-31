@@ -107,10 +107,10 @@ namespace QuickType
         public TypeEnum Type { get; set; }
 
         [JsonProperty("RebootExitCode", NullValueHandling = NullValueHandling.Ignore)]
-        public long? RebootExitCode { get; set; }
+        public int? RebootExitCode { get; set; }
 
         [JsonProperty("ReturnValue", NullValueHandling = NullValueHandling.Ignore)]
-        public long? ReturnValue { get; set; }
+        public int? ReturnValue { get; set; }
 
         [JsonProperty("ScriptArgs", NullValueHandling = NullValueHandling.Ignore)]
         public IDictionary<string, object> ScriptArgs { get; set; }
@@ -145,7 +145,10 @@ namespace QuickType
         public string Condition { get; set; }
 
         [JsonProperty("Values", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public IDictionary<string, object> Values { get; set; }
+        public IDictionary<string, TestGroupDeployment> Values { get; set; }
+
+        [JsonProperty("Default", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public TestGroupDeployment Default { get; set; }
 
         #endregion
 
@@ -312,6 +315,9 @@ namespace QuickType
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string LocalTestBinariesFolder { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> Capabilities { get; set; }
     }
 
     public partial class EnvironmentElement

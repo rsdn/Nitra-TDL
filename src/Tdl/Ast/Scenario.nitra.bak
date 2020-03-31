@@ -36,6 +36,7 @@ namespace Tdl
           in Actions        : ImmutableArray[ScenarioAction];
           in Deployment     : DeploymentSymbol;
           in Environments   : ImmutableArray[Environment];
+          in ParallelSetOpt : Scenario.SetSymbol;
         stage 3:
           in Defs           : ImmutableArray[Def];
           in Filter         : object;
@@ -51,10 +52,9 @@ namespace Tdl
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
-        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScopeForScenarioDef(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context, Symbol.Defs);
+        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context);
 
         Actions.Scope                   = MethodConditionalScope.Value;
-        Actions.InGenerator             = false;
         Symbol.Actions                  = Actions.ScenarioActions;
 
         Deployment.Scope                = Scope;
@@ -65,8 +65,8 @@ namespace Tdl
         Environments.Scope              = Scope;
         Symbol.Environments             = Environments.Environment;
 
-        Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope));
-        Definitions.DefinitionScope     = TdlUtils.MakeDefinitionScopeForScenarioDef(Symbol.Deployment.AggregateParametersScope, context);
+        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope);
+        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
 
         FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
@@ -77,7 +77,7 @@ namespace Tdl
         Symbol.TriggerPaths             = TdlUtils.GetTriggerPaths(Attributes, context).ToImmutableArray();
         Symbol.IsUnconditional          = Symbol.TriggerPaths.IsEmpty;
 
-        CheckTestMethods(Name, context, Symbol.Actions);
+        CheckTestMethods(context, Symbol.Actions);
         ReportDuplicateBarrier(context, Symbol.Actions);
         CheckMaxReboots(context, Symbol.Actions);
 
@@ -98,6 +98,8 @@ namespace Tdl
         stage 1:
           in Scenarios      : ImmutableArray[ScenarioSymbol];
           in IsMultiMachine : bool;
+          in MultiMachineId : Guid;
+          in BarriersCount  : list[BarrierSymbol * int];
 
           Kind           = "scenario set";
           SpanClass      = TdlLang.ScenarioSpanClass;
@@ -110,6 +112,7 @@ namespace Tdl
         Scenarios.Scope                 = Scope;
         Symbol.Scenarios                = TdlUtils.MakeScenarios(Scenarios.Ref);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.Scenarios, context);
+        Symbol.MultiMachineId           = if (Symbol.IsMultiMachine) context.NewGuid() else Guid.Empty;
         Symbol.IsMultiMachine           = IsMultiMachine.HasValue && IsMultiMachine.Value;
 
         ThisTriggerPaths                = TdlUtils.GetTriggerPaths(Attributes, context);
@@ -159,11 +162,10 @@ namespace Tdl
         Product.Scope                   = TdlUtils.ProductScopeFilter(Deployment.Scope);
 
         Actions.Scope                   = Scope.UnionWith(Deployment.Scope);
-        Actions.InGenerator             = true;
         Symbol.Actions                  = Actions.ScenarioActions;
 
-        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForGeneratorScenario(Symbol.Deployment, Symbol.Froms, context);
-        Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope));
+        Definitions.DefinitionScope     = context.GetScenarioParameterScope();
+        Definitions.Scope               = context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope);
 
         DeploymentRef                   = Deployment.Ref.Resolve();
         PlatformRef                     = Platform.Ref.Resolve();
@@ -174,7 +176,7 @@ namespace Tdl
         Symbol.Product                  = ProductRef   .Symbol;
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenarioGenerator(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context, Symbol.Defs);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context);
 
         FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);

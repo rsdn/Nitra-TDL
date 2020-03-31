@@ -25,6 +25,8 @@ namespace Tdl
 {
   public module Api
   {
+    public CaseElseValue      : string = "906868B7-634A-456D-9C89-331CC742650F";
+
     public TryResolveVar[T](variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
@@ -181,10 +183,11 @@ namespace Tdl
                 | (value, ResultKind.Value)   => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));
                 | (_,     ResultKind.NotSet)  => valueParts.Add(null);
                 | (value, ResultKind.ExternalParameter) => erroneousParameters.Add((p, ResultKind.ExternalParameter, value));
-                | (value, ResultKind.Error as kind)
+                | (value, ResultKind.Error           as kind)
                 | (value, ResultKind.GlobalParameter as kind)
-                | (value, ResultKind.Product as kind)
-                | (value, ResultKind.External as kind) => erroneousParameters.Add((p, kind, value));
+                | (value, ResultKind.Product         as kind)
+                | (value, ResultKind.VmCapability    as kind)
+                | (value, ResultKind.External        as kind) => erroneousParameters.Add((p, kind, value));
               }
             }
             else
@@ -247,22 +250,27 @@ namespace Tdl
               when (reportedErrors.Add((ast.Location, msg)))
                 ast.Error(context, msg);
             }
+
+            def validateDeployment(name : string, vars : Dictionary[string, Expr], parameters : ImmutableArray[FormalParameterSymbol], options : DeploymentOptionsHostSymbol)
+            {
+              foreach (p when !vars.ContainsKey(p.Name) in parameters)
+                when (p.Default is DefaultValue.None)
+                  reportError($"'$(p.Name)' parameter of '$(name)' deployment used in the $actionName is not set and does not have a default value.");
+
+              when (options.IsForRebootEvaluated && options.ForReboot.HasValue)
+                reportError($"Stetment 'expected-for-reboot' not supported in $actionName");
+            }
+
             def loop(node : DeploymentTreeNode) : void
             {
+              | Leaf(vars, Deployment.CodeSymbol as script) =>
+                validateDeployment(script.Name, vars, script.Parameters, script);
+
               | Leaf(vars, Deployment.ScriptSymbol as script) =>
                 // TODO: Add checks for unsupported features.
-                def sr = script.ScriptReference;
-                unless (sr is ScriptReference.FilePath)
-                  reportError($"Currently, the $(sr.GetType().Name) deployer is not supported because it is not supported in Wrden and Hive restrictions.");
+                validateDeployment(script.Name, vars, script.Parameters, script);
 
-                foreach (p when !vars.ContainsKey(p.Name) in script.Parameters)
-                  when (p.Default is DefaultValue.None)
-                    reportError($"'$(p.Name)' parameter of '$(script.Name)' deployment used in the $actionName is not set and does not have a default value.");
-
-                when (script.IsForRebootEvaluated && script.ForReboot.HasValue)
-                  reportError($"Stetment 'expected-for-reboot' not supported in $actionName");
-
-              | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.Kind).");
+              | Leaf(_, deployment) => reportError($"Unsupported deployment type in $actionName: $(deployment.GetType().Name).");
               | Nodes(Normal, nodes) =>
                 foreach (node in nodes)
                   loop(node);
@@ -299,6 +307,11 @@ namespace Tdl
         | MemberAccess(Expr=Reference   (Symbol=GenericTypeSymbol as t), Symbol=Member.MethodSymbol as m) => (t, m)
         | _ => assert(false, $"Unsupported method reference format '$expr' ($(expr.GetType().FullName))");
       }
+    }
+
+    public IncrementGuid(guid : Guid, value : uint) : Guid
+    {
+      TdlUtils.IncrementGuid(guid, value)
     }
   } // module
 } // namespace
