@@ -21,3 +21,9 @@ export function error(text: string): void {
 }
 
 const date = new Date();
+
+export interface NSpan { StartPos: number; EndPos: number; }
+export interface SpanInfo { Span: NSpan; SpanClassId: number; }
+export interface SpanClassInfoNotification { SpanClassInfo: SpanClassInfo[]; }
+export interface SpanClassInfo { Name: string; Id: number; ForegroundColor: number; }
+export interface HighlightingNotification { uri: string; spanInfos: SpanInfo[]; }

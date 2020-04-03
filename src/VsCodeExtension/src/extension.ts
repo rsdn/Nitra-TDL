@@ -1,10 +1,10 @@
 ﻿import * as vscode from 'vscode';
 import { TdlTaskProvider } from './tdlTaskProvider';
-import { workspace, ExtensionContext, Position } from 'vscode';
-import { LanguageClient, LanguageClientOptions,	ServerOptions } from 'vscode-languageclient';
+import { workspace, Range } from 'vscode';
+import { LanguageClient, LanguageClientOptions, ServerOptions, NotificationType } from 'vscode-languageclient';
 import * as fs from 'fs';
 import * as path from 'path';
-import { showMessage, showError, ExtentionName, log, error } from './utils';
+import { showMessage, showError, ExtentionName, log, HighlightingNotification, SpanClassInfoNotification } from './utils';
 import { platform } from 'os';
 
 const langDllName = "Tdl.dll";
@@ -12,6 +12,12 @@ const lspServerName = "Nitra.ClientServer.Server.exe";
 
 let tdlTaskProvider : vscode.Disposable | undefined;
 let client          : LanguageClient;
+
+const KeywordHightightNotificationType = new NotificationType<HighlightingNotification, void>('$/keywordHighlight');
+const SymbolHightightNotificationType = new NotificationType<HighlightingNotification, void>('$/symbolHighlight');
+const LanguageLoadedNotificationType = new NotificationType<SpanClassInfoNotification, void>('$/languageLoaded');
+
+var SpanClassInfos = new Map<number, { decor: vscode.TextEditorDecorationType, color: string }>();
 
 export function activate(context : vscode.ExtensionContext): void
 {
@@ -31,7 +37,40 @@ export function deactivate(): Thenable<void> | undefined
     return undefined;
 }
 
-function activateLspServer(context : vscode.ExtensionContext) : void
+function ApplySpanInfos(note: HighlightingNotification): void 
+{
+  let editor = vscode.window.activeTextEditor!;
+  let doc = editor.document;
+  if (!doc) return;
+
+  if (doc.fileName !== note.uri) return;
+
+  let ranges = new Map<number, Range[]>();
+
+  note.spanInfos.forEach((v, i) => {
+    let start = doc!.positionAt(v.Span.StartPos);
+    let end = doc!.positionAt(v.Span.EndPos);
+    var range = new Range(start, end);
+
+    if (ranges.has(v.SpanClassId)) {
+      ranges.get(v.SpanClassId)!.push(range);
+    }
+    else {
+      ranges.set(v.SpanClassId, [range]);
+    }
+  });
+
+  for (let key of ranges) {
+    let decor = SpanClassInfos.get(key[0])!;
+    if (!decor) {
+      let a = 0; a;
+    }
+    editor.setDecorations(decor.decor, []);
+    editor.setDecorations(decor.decor, key[1]);
+  }
+}
+
+function activateLspServer(context: vscode.ExtensionContext): void 
 {
   log(`activateLspServer`);
   const nitraPath = getNitraPath();
@@ -71,7 +110,7 @@ function activateLspServer(context : vscode.ExtensionContext) : void
       fileEvents: [
         workspace.createFileSystemWatcher('**/*.tdl'),
         workspace.createFileSystemWatcher('**/.clientrc')
-     ]
+      ]
     },
     initializationOptions: {
       FileExtension: ".tdl",
@@ -101,6 +140,36 @@ function activateLspServer(context : vscode.ExtensionContext) : void
     serverOptions,
     clientOptions
   );
+
+  client.onReady().then(() => {
+    client.onNotification(KeywordHightightNotificationType, x => {
+      //showMessage("KeywordHightightNotificationType");
+
+      ApplySpanInfos(x);
+
+    });
+    client.onNotification(SymbolHightightNotificationType, x => {
+      //showMessage("SymbolHightightNotificationType");
+      ApplySpanInfos(x);
+    });
+
+    client.onNotification(LanguageLoadedNotificationType, x => {
+      //showMessage("LanguageLoadedNotificationType");
+
+      x.SpanClassInfo.reduce((k, v) => {
+        let col = v.ForegroundColor + 16777216;
+        let forecolor = '#' + ('00000' + (col | 0).toString(16)).substr(-6);
+        let decor = vscode.window.createTextEditorDecorationType({
+          isWholeLine: false
+          , color: forecolor
+        });
+        SpanClassInfos.set(v.Id, { decor: decor, color: forecolor });
+        return k;
+      });
+
+    });
+  });
+
 
   log(`--> client.start();`);
   client.start();
