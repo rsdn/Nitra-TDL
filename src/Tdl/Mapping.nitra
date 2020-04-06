@@ -163,6 +163,12 @@ namespace Tdl
           | None -> None()
         } -> Value;
       }
+    | Runner -> Runner
+      {
+        Name -> Name;
+        Parameters.FormalParameters.Item1 -> Parameters;
+        RunnerBody.DefDeclarations -> Definitions;
+      }
   }
 
   map syntax Grammar.DeploymentModifier -> DeploymentModifier
@@ -243,6 +249,21 @@ namespace Tdl
           timeout -> Timeout;
           None() -> Modifier;
       }
+  }
+
+  map syntax Grammar.RunnerCall -> Action.Runner
+  {
+    Name -> Name;
+    RunnerArguments.Item1 -> Arguments;
+  }
+
+  map syntax Grammar.RunnerCall.RunnerArgument -> RunnerArgument
+  {
+    match (NameOpt)
+    {
+      | Some((r, _)) -> RunnerArgument.Named      { DefExpr -> Value; r -> ParameterName; }
+      | None         -> RunnerArgument.Positional { DefExpr -> Value; }
+    }
   }
 
   map syntax Grammar.Action -> Action*
@@ -341,6 +362,7 @@ namespace Tdl
         }
       ]
     | Sequence -> SequenceActions
+    | RunnerCall -> [ RunnerCall ]
   }
 
   map syntax Grammar.MaxRebootsCount -> DefExpr { Value }
@@ -349,6 +371,7 @@ namespace Tdl
 
   map syntax Grammar.SequenceAction -> Action
   {
+    | RunnerCall -> RunnerCall
     | Method  -> Method
       {
         Method.Method -> Method;
@@ -511,9 +534,16 @@ namespace Tdl
     | Reference                 -> Reference                 { this.Reference -> Reference; }
     | MemberAccess              -> MemberAccess              { Expr-> Expr; Member -> Member; }
     | Tuple                     -> Tuple                     { Items.Item1 -> Items; }
+    | ObjectInitializer         -> ObjectInitializer         { Properties.Item1 -> Properties; }
     | RealLiteral               = DefExpr.RealLiteral(Location.WithSpan(RealLiteral));
     | DecimalIntegerLiteral     = DefExpr.DecimalIntegerLiteral(Lit.Location);
     | HexadecimalIntegerLiteral = DefExpr.HexadecimalIntegerLiteral(Lit.Location);
+  }
+
+  map syntax Grammar.PropertyInitializer -> PropertyInitializer
+  {
+    Name    -> Name;
+    DefExpr -> Value;
   }
 
   map syntax Grammar.Field -> Field

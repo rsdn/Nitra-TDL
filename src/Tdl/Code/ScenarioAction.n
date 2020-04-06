@@ -14,6 +14,11 @@ namespace Tdl
     public Location : Location { get; }
 
     | Error { }
+    | Runner
+      {
+        Symbol : RunnerSymbol;
+        Arguments : ImmutableArray[string * Expr];
+      }
     | Method
       {
         //TypeSymbol         : DeclarationSymbol;
@@ -87,6 +92,7 @@ namespace Tdl
       {
         match (this)
         {
+          | Runner
           | Method
           | Script
           | Config

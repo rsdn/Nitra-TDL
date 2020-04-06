@@ -152,6 +152,12 @@
     <Compile Include="Ast\ProductType.nitra">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ast\Runner.nitra">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ast\RunnerArgument.nitra">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Ast\Scenario.nitra">
       <SubType>Code</SubType>
     </Compile>

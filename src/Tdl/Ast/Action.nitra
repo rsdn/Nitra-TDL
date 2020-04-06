@@ -16,6 +16,24 @@ namespace Tdl
   stage 2:
     out ScenarioActions : ScenarioAction;
 
+    | Runner
+      {
+      stage 1:
+        out RunnerRef : Ref[RunnerSymbol];
+
+        ScenarioActions = ScenarioAction.Runner(Location, RunnerRef.Symbol, Arguments.Result.ToImmutableArray());
+
+        Name.Scope                = Scope;
+        Arguments.Scope           = Scope;
+        Arguments.ParametersScope = RunnerRef.Symbol.Scope;
+        RunnerRef                 = Name.Ref.Resolve();
+
+        Name.ValidateRunnerArguments(RunnerRef.Symbol.Parameters, Arguments, context);
+
+        Name      : Reference;
+        Arguments : RunnerArgument*;
+      }
+
     | Method
       {
       stage 1:

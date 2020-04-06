@@ -616,6 +616,7 @@ namespace Tdl2Json
           | VsTest as x        => makeVsTestAction(x)
           | Apk    as a        => makeAndroidJavaAction(a)
           | Marathon as m      => makeMarathonAction(m)
+          | Runner as r        => MakeRunnerTestStep(r, dic)
           | Login  as login    => LoginTestStep() <-
             {
               Login = LoginTestStep.Data() <-
@@ -646,6 +647,8 @@ namespace Tdl2Json
           makeVsTestAction(action)
         else if (tryGetSingleElem() is VSome(action))
           makeAndroidJavaAction(action)
+        else if (tryGetSingleElem() is VSome(action))
+          MakeRunnerTestStep(action, dic)
         else
           TestMethodSequence() <-
           {
@@ -884,6 +887,7 @@ namespace Tdl2Json
               | VsTest as x        => makeVsTestAction(x)
               | Apk    as a        => makeAndroidJavaAction(a)
               | Marathon as m      => makeMarathonAction(m)
+              | Runner   as r      => MakeRunnerTestStep(r, null)
               | Login  as login    => LoginTestStep() <-
                 {
                   Login = LoginTestStep.Data() <-
@@ -915,6 +919,8 @@ namespace Tdl2Json
               makeVsTestAction(action)
             else if (tryGetSingleElem() is VSome(action))
               makeAndroidJavaAction(action)
+            else if (tryGetSingleElem() is VSome(action))
+              MakeRunnerTestStep(action, null)
             else
               TestMethodSequence() <-
               {
@@ -996,6 +1002,29 @@ namespace Tdl2Json
       }
     }
 
+    private MakeRunnerTestStep(runner : ScenarioAction.Runner, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : RunnerTestStep
+    {
+      def step = RunnerTestStep();
+
+      def arguments = runner.Arguments.ToDictionary();
+      foreach (p in runner.Symbol.Parameters)
+      {
+        when (p.HasDefault() && !arguments.ContainsKey(p.Name))
+          arguments[p.Name] = ConvertDefaultValue(p.Default);
+      }
+
+      foreach (d in runner.Symbol.Defs)
+      {
+        match (d.Expr.Calc(values=arguments, variables=variables, getPropertyValue=(_) => ("unsupported expression", ResultKind.Error)))
+        {
+          | (value, ResultKind.Value) => step[d.Name] = value
+          | (data, ResultKind.Error) => throw NotSupportedException($"$data: $d.Expr")
+          | (_, kind) => throw NotSupportedException($"unsupported expression ($kind): $(d.Name) = $(d.Expr)")
+        }
+      }
+      step
+    }
+
     private GetTestGroupDeployments(initialDeployment  : DeploymentSymbol,
                                     finalDeployment    : DeploymentSymbol,
                                     scenarioDeployment : DeploymentSymbol,
@@ -1061,7 +1090,29 @@ namespace Tdl2Json
         | List(items, type) =>
           def args = items.Map(GenerateTdlExpr(_, dic));
           $<#new $(type.FullName)[] { ..$args }#>
+
+        | ObjectInitializer(properties) =>
+          def props = properties.Map((n, v) => $"$n = $(GenerateTdlExpr(v, dic))");
+          $<#new { ..$props }#>
       }
+    }
+
+    private ConvertDefaultValue(value : DotNet.DefaultValue) : Tdl.Expr
+    {
+      | Null                  => Tdl.Expr.NotSet()
+      | String(null)          => Tdl.Expr.String(null)
+      | String(s)             => Tdl.Expr.String(s)
+      | Bool(true)            => Tdl.Expr.True()
+      | Bool(false)           => Tdl.Expr.False()
+      | Number(num, false, false) => Tdl.Expr.Integer(unchecked(num :> int))
+      | Number(num, true, false)  => Tdl.Expr.Real(unchecked(num :> uint))
+      | Number(num, false, true)  => Tdl.Expr.Real(unchecked(num :> long))
+      | Number(num, true, true)   => Tdl.Expr.Real(num : ulong)
+      | Decimal(num)          => Tdl.Expr.Real(num :> double)
+      | Double(num)           => Tdl.Expr.Real(num)
+      | Single(num)           => Tdl.Expr.Real(num)
+      | Custom(x is Tdl.Expr) => x
+      | t                     => throw NotSupportedException($"$(t.GetType().Name) is not supported in scenario parameters")
     }
 
     private GenerateDefaultValue(value : DotNet.DefaultValue) : string

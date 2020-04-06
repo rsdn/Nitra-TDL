@@ -213,6 +213,10 @@ namespace QuickType
         public int? MaxRebootsCount { get; set; }
     }
 
+    public sealed class RunnerTestStep : Dictionary<string, object>, TestMethod, TestSequenceItem
+    {
+    }
+
     public sealed class LoginTestStep : TestMethod, TestSequenceItem
     {
         [JsonProperty(Required = Required.Always)]
