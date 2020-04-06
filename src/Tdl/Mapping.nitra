@@ -441,7 +441,9 @@ namespace Tdl
     | Login           -> Login           { User -> User; Password -> Password; }
     | Logoff          -> Logoff          { }
     | LockWorkstation -> LockWorkstation { }
-    | Reboot          -> Reboot          { }
+    | Reboot              -> Reboot      { Mode = ParsedValue(Keyword, RebootMode.Default); }
+    | RebootEnterSafeMode -> Reboot      { Mode = ParsedValue(Keyword, RebootMode.EnterSafeMode); }
+    | RebootExitSafeMode  -> Reboot      { Mode = ParsedValue(Keyword, RebootMode.ExitSafeMode); }
     | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
     | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
     | Barrier         -> Barrier         { Expression -> BarrierExpr; }

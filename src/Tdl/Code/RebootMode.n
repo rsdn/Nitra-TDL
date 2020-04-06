@@ -1,0 +1,9 @@
+﻿namespace Tdl
+{
+  public enum RebootMode
+  {
+    | Default
+    | EnterSafeMode
+    | ExitSafeMode
+  }
+}

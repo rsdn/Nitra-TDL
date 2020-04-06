@@ -1,0 +1,163 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Empty": {
+      "Type": "Empty"
+    }
+  },
+  "Platforms": {
+    "Platform": {}
+  },
+  "Products": {
+    "Product": {
+      "Name": "Product 1",
+      "Parameters": {
+        "Name": "Product 1"
+      },
+      "BranchName": null,
+      "Version": "1.1"
+    }
+  },
+  "Suites": {
+    "Suite": {
+      "Parameters": {},
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "S1",
+        "S2"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "S1": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "ForceReboot": {}
+          },
+          {
+            "ForceReboot": {
+              "Mode": "EnterSafeMode"
+            }
+          },
+          {
+            "ForceReboot": {
+              "Mode": "ExitSafeMode"
+            }
+          },
+          {
+            "ProgramName": "sample.exe",
+            "Arguments": []
+          }
+        ]
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e71"
+    },
+    "S2": {
+      "TestScenarios": [
+        "S2-1",
+        "S2-2"
+      ]
+    },
+    "S2-1": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "ForceReboot": {}
+          },
+          {
+            "ForceReboot": {
+              "Mode": "EnterSafeMode"
+            }
+          },
+          {
+            "ForceReboot": {
+              "Mode": "ExitSafeMode"
+            }
+          },
+          {
+            "ProgramName": "sample1.exe",
+            "Arguments": []
+          }
+        ]
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e72"
+    },
+    "S2-2": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "TestSequence": [
+          {
+            "ForceReboot": {}
+          },
+          {
+            "ForceReboot": {
+              "Mode": "EnterSafeMode"
+            }
+          },
+          {
+            "ForceReboot": {
+              "Mode": "ExitSafeMode"
+            }
+          },
+          {
+            "ProgramName": "sample2.exe",
+            "Arguments": []
+          }
+        ]
+      },
+      "Timeout": "00:10",
+      "UniqueId": "20a84e6d-1028-48ed-b4e4-3dc8cb599e72"
+    }
+  },
+  "TestEntities": {}
+}

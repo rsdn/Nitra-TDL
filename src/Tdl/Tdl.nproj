@@ -200,6 +200,9 @@
     <Compile Include="Code\Api.n">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Code\RebootMode.n">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Code\TriggerPath.n">
       <SubType>Code</SubType>
     </Compile>

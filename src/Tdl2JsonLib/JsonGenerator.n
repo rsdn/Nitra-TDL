@@ -595,7 +595,7 @@ namespace Tdl2Json
         }
         def makeAction(action : ScenarioAction) : TestSequenceItem
         {
-          | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
+          | Reboot        as r      => MakeRebootTestStep(r)
           | Method        as method => makeMethodAction(method)
           | WaitForReboot as wbr =>
             WaitForRebootTestStep() <-
@@ -863,7 +863,7 @@ namespace Tdl2Json
             }
             def makeAction(action : ScenarioAction) : TestSequenceItem
             {
-              | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
+              | Reboot        as r => MakeRebootTestStep(r)
               | Method        as m => makeMethodAction(m)
               | WaitForReboot as wbr =>
                 WaitForRebootTestStep() <-
@@ -976,6 +976,23 @@ namespace Tdl2Json
           addTestCase(scenarioSymbol.Name, testGroup);
 
         | _ => _ = ThrowNotSupportedSymbol(scenarioSymbol)
+      }
+    }
+
+    private MakeRebootTestStep(reboot : ScenarioAction.Reboot) : RebootTestStep
+    {
+      RebootTestStep() <-
+      {
+        ForceReboot = RebootTestStep.Data() <-
+        {
+          Mode =
+            match (reboot.Mode)
+            {
+              | Tdl.RebootMode.Default       => null
+              | Tdl.RebootMode.EnterSafeMode => QuickType.RebootMode.EnterSafeMode
+              | Tdl.RebootMode.ExitSafeMode  => QuickType.RebootMode.ExitSafeMode
+            }
+        }
       }
     }
 
