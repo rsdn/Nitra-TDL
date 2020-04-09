@@ -222,19 +222,28 @@ namespace Tdl2Json
 
       foreach (symbol in symbols)
       {
-        | ProductSymbol         as s => products .AddEx(s.Name, GenerateProduct(s, platformNameSet), "products")
-        | EntitySymbol          as s => entities .AddEx(s.Name, GenerateEntity(s), "entities")
-        | Suite.DefSymbol       as s => suites   .AddEx(s.Name, GenerateSuite(s, scenarioTrigger,                      preSessionActionCompiler, postSessionActionCompiler), "suites")
-        | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
-        | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
-        | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
-          GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s))
+        try
+          match (symbol)
+          {
+            | ProductSymbol         as s => products .AddEx(s.Name, GenerateProduct(s, platformNameSet), "products")
+            | EntitySymbol          as s => entities .AddEx(s.Name, GenerateEntity(s), "entities")
+            | Suite.DefSymbol       as s => suites   .AddEx(s.Name, GenerateSuite(s, scenarioTrigger,                      preSessionActionCompiler, postSessionActionCompiler), "suites")
+            | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
+            | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
+            | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
+              GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s))
 
-        | VmCapabilitySymbol   as s when !(s.Value is Tdl.Expr.NotSet) =>
-          def value = s.Value.ToObject();
-          vmCapabilities.AddEx(s.Name, value, "vmCapabilities");
+            | VmCapabilitySymbol   as s when !(s.Value is Tdl.Expr.NotSet) =>
+              def value = s.Value.ToObject();
+              vmCapabilities.AddEx(s.Name, value, "vmCapabilities");
 
-        | _ => ()
+            | _ => ()
+          }
+        catch
+        {
+          | e is Exception =>
+            throw InvalidOperationException($"Failed to generate code for '$symbol' symbol.", e)
+        }
       }
 
       def defaultValues = SortedDictionary();

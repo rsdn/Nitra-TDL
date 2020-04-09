@@ -122,6 +122,9 @@ namespace Tdl2Json
         | e is KeyNotFoundException =>
           throw KeyNotFoundException(
             $"The '$key' key was not present in the '$dictionaryName' dictionary. New value: '$value'. Old value: '$(dictionary[key])'.", e)
+        | e is ArgumentException =>
+          throw ArgumentException(
+            $"An element with the same '$key' key already exists in the '$dictionaryName' dictionary. New value: '$value'. Old value: '$(dictionary[key])'.", e)
       }
     }
   }
