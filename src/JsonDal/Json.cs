@@ -189,6 +189,9 @@ namespace QuickType
 
         [JsonProperty("SupportedPlatforms", NullValueHandling = NullValueHandling.Ignore)]
         public string[] Platforms { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> Capabilities { get; set; }
     }
 
     /// <summary>

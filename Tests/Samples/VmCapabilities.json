@@ -22,7 +22,10 @@
         "Name": "Product 1"
       },
       "BranchName": null,
-      "Version": "1.0"
+      "Version": "1.0",
+      "Capabilities": {
+        "Cap1": "Acceptable"
+      }
     }
   },
   "Suites": {
