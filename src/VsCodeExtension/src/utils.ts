@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { TextDocumentItem } from 'vscode-languageclient';
 
 export const ExtentionName = "TDL extension";
 
@@ -27,3 +28,4 @@ export interface SpanInfo { Span: NSpan; SpanClassId: number; }
 export interface SpanClassInfoNotification { SpanClassInfo: SpanClassInfo[]; }
 export interface SpanClassInfo { Name: string; Id: number; ForegroundColor: number; }
 export interface HighlightingNotification { uri: string; spanInfos: SpanInfo[]; }
+export interface FileActivatedNotification { params: {doc: TextDocumentItem} };
