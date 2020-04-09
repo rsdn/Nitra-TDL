@@ -32,13 +32,12 @@ namespace DotNet
       _globalScope : Scope;
       _context     : DependentPropertyEvalContext;
 
-
       private GetExtensionMethodContainers() : Seq[TopClassSymbol]
       {
         foreach (c is TopClassSymbol when c.HasExtensionMethod in _globalScope.GetAllSymbols())
           yield c;
       }
-
+      
       private GetExtensionMethods() : Seq[DeclarationSymbol]
       {
         foreach (c in GetExtensionMethodContainers())
@@ -54,7 +53,7 @@ namespace DotNet
                 def extMethod = subst.SubstExtensionMethod();
                 yield extMethod;
               }
-
+                  
             | _ => ()
           }
         }
@@ -86,21 +85,12 @@ namespace DotNet
                       | _ => ()
                     }
                   }
-
+                  
                 | _ => ()
               }
             }
           }
         }
-      }
-
-      public override Contains(reference : string) : bool
-      {
-        when (_scope.Contains(reference))
-          return true;
-        foreach (m when m.Name == reference in GetExtensionMethods())
-          return true;
-        false
       }
 
       public override Bind[TSymbol](reference : Reference) : BindResult[TSymbol]
@@ -111,11 +101,11 @@ namespace DotNet
         BindExtensionMethod(reference, ref results);
 
         if (results.Count > 0)
-        {
+        {        
           when (br.HasResult)
             foreach (c in br.GetSymbols())
               results.Add(c);
-
+              
           results.ToBindResult()
         }
         else
@@ -127,22 +117,22 @@ namespace DotNet
         def br = _scope.Bind(isMatch);
         br
       }
-
+      
       public override GetAllSymbols() : Seq[DeclarationSymbol]
       {
         foreach (s in _scope.GetAllSymbols())
           yield s;
-
+        
         foreach (s in GetExtensionMethods())
           yield s;
       }
-
+      
       public override ToDot(nodeToIdMap : Dictionary[object, int], nodes : List[string], edges : List[string]) : void
       {
         IgnoreParams();
         _scope.ToDot(nodeToIdMap, nodes, edges)
       }
-
+      
       public override Serialize(writer : System.IO.BinaryWriter, metadataWriter : Nitra.Serialization2.MetadataWriter) : void
       {
         IgnoreParams();

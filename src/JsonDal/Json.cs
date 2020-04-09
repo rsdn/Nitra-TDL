@@ -145,10 +145,7 @@ namespace QuickType
         public string Condition { get; set; }
 
         [JsonProperty("Values", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public IDictionary<string, TestGroupDeployment> Values { get; set; }
-
-        [JsonProperty("Default", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public TestGroupDeployment Default { get; set; }
+        public IDictionary<string, object> Values { get; set; }
 
         #endregion
 
@@ -315,9 +312,6 @@ namespace QuickType
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string LocalTestBinariesFolder { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public IDictionary<string, object> Capabilities { get; set; }
     }
 
     public partial class EnvironmentElement

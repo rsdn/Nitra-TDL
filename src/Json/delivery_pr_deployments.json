@@ -1,0 +1,27 @@
+{
+  "$schema": "../schema.v3.json",
+  "Deployments": {
+    "DeployWithDeployer": {
+      "Type": "Script",
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Sattarov\\HiveStarter\\Deploy.ps1",
+      "ScriptArgs": {
+        "BuildName": "$(BuildName)",
+        "DeployerFlags": "$(DeploymentConditions)",
+        "DeployIsNeeded": "$(DeployIsNeeded)",
+        "TestSettingsDirectory": "$(InternalTestSettingsDirectory)"
+      },
+      "ReturnValue": 2
+    },
+    "DeployCollectors": {
+      "Type": "Script",
+      "ScriptPath": "\\\\sdfs\\Autotests\\Components\\Temp\\Sattarov\\HiveStarter\\DeployDataCollectors.ps1"
+    },
+    "DeployWithDeployer_NoReboot": {
+      "Type": "Sequence",
+      "Deployments": [
+        "DeployWithDeployer",
+        "DeployCollectors"
+      ]
+    }
+  }
+}

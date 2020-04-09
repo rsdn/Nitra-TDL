@@ -1,0 +1,58 @@
+[
+  {
+    "Suites": [
+      "Pure.2020.MP0.Ext.PullRequest"
+    ],
+    "Parameters": {
+      "MmInstanceName": "Coretech.PullRequest"
+	  }
+  },
+  {
+    "Suites": [
+      "Pure.2020.MP0.Ext.Delivery"
+    ],
+    "Parameters": {
+      "MmInstanceName": "Coretech.Delivery"
+	  }
+  },
+  {
+    "Parameters": {
+      "QueuePriority": 4,
+      "AgentsRequired": 1,
+      "AgentsMaximum": 1,
+      "RunSettingsFileName": "Umqc.Stub.runsettings",
+      "HiveProjectName": "Delivery",
+      "MmInstanceUri": "http://tfs12-kis-mm.avp.ru",
+      "LocalTestBinariesFolder": "C:\\AutotestAssemblies",
+      "InitSequences": [
+        31518
+      ],
+      "ExternalLinks": [
+	    {
+          "Icon": "search",
+          "Title": "Auto-reports",
+          "Url": "http://auto-reports.avp.ru/reports/Home/ResultsByHiveId?hiveId={SessionId}"
+        },
+        {
+          "Icon": "edit",
+          "Title": "Edit",
+          "Url": "http://hive.avp.ru/wizard/{ScenarioId}?sessionId={SessionId}"
+        }
+      ],
+      "SystemParameters": {
+        "DisableAtLeastOncePerPlatformDeployGuarantee": "true",
+        "MaxInfraErrorRetries": 1,
+        "MaxTestSequenceErrorRetries": 0,
+        "MaxDeploymentErrorRetries": 1,
+        "ErrorMessageRerunRegex": ".*",
+        "SaveDeploymentFailureSnapshots": "true",
+        "PublisherContextFields": "ComponentConfigurationPath, ProductConfigurationPath, SuiteName, UpdateSourceAddress, SecondaryUpdateSourceAddress, DeploymentConditions, TestConfigurationId, BugsRobotStatus, AutotestAssemblies, BuildName, DistributiveOriginalPath, DashboardSessionId, TestWorkflowAttemptIndex, TaskSnapshotName",
+        "PublisherMessageHeaderFields": "CommonDashboard"
+      },
+      "AdditionalParameters": {
+        "BuildName": "{SessionName}",
+        "CommonDashboard": "true"
+      }
+    }
+  }
+]

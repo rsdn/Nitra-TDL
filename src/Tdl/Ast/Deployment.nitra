@@ -26,7 +26,7 @@ namespace Tdl
     when (Modifier.HasValue)
       SetSpecialDeployment(Symbol, Modifier.Value, context);
 
-    when (!Symbol.IsUsed && !Symbol.Name.StartsWith("_") && !(context.Project is Nitra.ProjectSystem.FsProject[IAst]))
+    when (!Symbol.IsUsed && !(context.Project is Nitra.ProjectSystem.FsProject[IAst]))
       Name.Warning(context, "Unused deployment.");
 
     | ignore-case Empty

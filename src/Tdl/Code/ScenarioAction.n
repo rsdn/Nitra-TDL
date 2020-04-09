@@ -13,7 +13,6 @@ namespace Tdl
   {
     public Location : Location { get; }
 
-    | Error { }
     | Method
       {
         //TypeSymbol         : DeclarationSymbol;
@@ -74,37 +73,10 @@ namespace Tdl
         User               : Expr;
         Password           : Expr;
       }
-    | Logoff           { }
-    | LockWorkstation  { }
-    | Reboot           { }
-    | WaitForReboot    { TimeSpan : string; MaxRebootsCountOpt : ValueOption[Expr]; }
-    | Barrier          { barrier : BarrierSymbol; }
-    | BarrierGenerator { BarrierName : ImmutableArray[BarrierNamePart]; Timeout : TimeSpan; }
-
-    public IsTest : bool
-    {
-      get
-      {
-        match (this)
-        {
-          | Method
-          | Script
-          | Config
-          | GTest
-          | XCode
-          | VsTest
-          | Apk
-          | Marathon => true
-          | Error
-          | BarrierGenerator
-          | Login
-          | Logoff
-          | LockWorkstation
-          | Reboot
-          | WaitForReboot
-          | Barrier => false
-        }
-      }
-    }
+    | Logoff          { }
+    | LockWorkstation { }
+    | Reboot          { }
+    | WaitForReboot   { TimeSpan : string; }
+    | Barrier         { barrier : BarrierSymbol; }
   }
 }

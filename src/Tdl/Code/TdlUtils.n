@@ -2,7 +2,6 @@
 using DotNet.AstUtils;
 
 using Nitra;
-using Nitra.Internal;
 using Nitra.Declarations;
 using Nitra.ProjectSystem;
 using Nitra.Runtime.GraphUtils;
@@ -24,14 +23,15 @@ using System.Text;
 
 namespace Tdl
 {
+
   module TdlUtils
   {
+    static RequiredProductTypeFields : list[string] = ["Name", "Version"];
+    static ObsoleteProductTypeFields : Dictionary[string, string] = [("ReleaseName", "BranchName")].ToDictionary();
+
     public NoLocation         : Location           = Location(SourceSnapshot.Default.File, NSpan(0));
     public NoFile             : ProjectSystem.File = SourceSnapshot.Default.File;
     public NoSpan             : NSpan              = NSpan(0);
-
-    RequiredProductTypeFields : list[string] = ["Name", "Version"];
-    ObsoleteProductTypeFields : Dictionary[string, string] = [("ReleaseName", "BranchName")].ToDictionary();
 
     public BaseStableGuid : Guid = Guid.Parse("{AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA}");
 
@@ -51,11 +51,6 @@ namespace Tdl
     public GetEntityFieldsScope(this context : DependentPropertyEvalContext) : TableScope
     {
       ToTdlContext(context).TdlProjectData.EntityFieldsScope
-    }
-
-    public GetBarrierScope(this context : DependentPropertyEvalContext) : Scope
-    {
-      context.BindType("TdlInternals.Predefined", 0).Scope
     }
 
     public GetExternalSymbolTable(this context : DependentPropertyEvalContext) : TableScope
@@ -93,11 +88,6 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.ScenarioParameterScope
     }
 
-    public GetVmCapabilityScope(this context : DependentPropertyEvalContext) : Scope
-    {
-      ToTdlContext(context).TdlProjectData.VmCapabilityScope
-    }
-
     public GetRequiredScenarioParameters(this context : DependentPropertyEvalContext) : ImmutableArray[FormalParameterSymbol]
     {
       ToTdlContext(context).TdlProjectData.RequiredScenarioParameters
@@ -120,7 +110,7 @@ namespace Tdl
 
     public GetCommandParameterValuesScope(this _context : DependentPropertyEvalContext, scope : Scope, stepNumber : int) : Scope
     {
-      scope.FilterWith(
+      FilteringScope(scope,
         fun (_)
         {
           | CommmandCallOutputArgumentSymbol as s => s.IsStepNumberEvaluated && s.StepNumber < stepNumber
@@ -265,9 +255,39 @@ namespace Tdl
         unless (visited.Add(deployment.Id))
           continue;
 
-        unless (deployment.IsAggregateParametersScopeEvaluated)
-          return false;
-        UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
+        match (deployment)
+        {
+          | s is Deployment.SelectSymbol =>
+            unless (s.IsParameterScopeEvaluated)
+              return false;
+            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
+
+            unless (s.IsDeploymentsEvaluated)
+              return false;
+
+            foreach (seq in s.Deployments)
+              unless (CollectDeployments(visited, ref builder, seq))
+                return false;
+
+          | s is Deployment.SetSymbol =>
+            unless (s.IsDeploymentsEvaluated)
+              return false;
+
+            unless (CollectDeployments(visited, ref builder, s.Deployments))
+              return false;
+
+          | _ is Deployment.ScriptSymbol
+          | _ is Deployment.CodeSymbol
+          | _ is Deployment.CurryingSymbol =>
+            unless (deployment.IsAggregateParametersScopeEvaluated)
+              return false;
+            UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
+
+          | _ is Deployment.EmptySymbol
+          | _ is DeploymentRebootSymbol => ()
+          | null => assert(false, "Deployment can not be null.")
+          | _    => assert(false, "Not supported deployment type: " + deployment.GetType().Name)
+        }
       }
       true
     }
@@ -289,9 +309,30 @@ namespace Tdl
     {
       foreach (scenario when visited.Add(scenario.Id) in scenarios)
       {
-        unless (scenario.IsAggregateParametersScopeEvaluated)
-          return false;
-        UnionScopeBuilder.Add(scenario.AggregateParametersScope, ref builder);
+        match (scenario)
+        {
+          | s is Scenario.DefSymbol when s.IsDeploymentEvaluated =>
+            unless (s.Deployment.IsAggregateParametersScopeEvaluated)
+              return false;
+
+            UnionScopeBuilder.Add(s.Deployment.AggregateParametersScope, ref builder);
+            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
+
+          | s is Scenario.SetSymbol when s.IsScenariosEvaluated =>
+            unless (CollectScenarios(visited, ref builder, s.Scenarios))
+              return false;
+
+          | s is Scenario.GeneratorSymbol when s.IsDeploymentEvaluated =>
+            UnionScopeBuilder.Add(s.ParameterScope, ref builder);
+            when (s.Deployment is DeploymentSymbol as deployment)
+            {
+              unless (deployment.IsAggregateParametersScopeEvaluated)
+                return false;
+              UnionScopeBuilder.Add(deployment.AggregateParametersScope, ref builder);
+            }
+
+          | _ => ()
+        }
       }
       true
     }
@@ -360,7 +401,7 @@ namespace Tdl
         | Error                   => ()
         | SimpleEscape       as x =>
           def text = x.Source.Text;
-          _ = builder.Append(DotUtils.EscapeSequence(text[x.Span.StartPos + 1]));
+          _ = builder.Append(Nitra.Internal.DotUtils.EscapeSequence(text[x.Span.StartPos + 1]));
 
         | UnicodeEscape      as x
         | HexadecimalEscape  as x =>
@@ -427,8 +468,7 @@ namespace Tdl
 
     public MakeDefinitions(definitions : IAstList[Definition], context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]], isIgnore : string -> bool = null) : ImmutableArray[Def]
     {
-      def builder         = ImmutableArray.CreateBuilder(definitions.Count);
-      def existsDefsNames = HashSet();
+      def builder = ImmutableArray.CreateBuilder(definitions.Count);
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
       {
         def sym = definition.SymbolRef.Symbol;
@@ -462,11 +502,11 @@ namespace Tdl
         }
 
         builder.Add(Def(sym, definition.Expr.Result));
-        _ = existsDefsNames.Add(GetCaseInsensitiveId(sym));
       }
 
-      foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr)) as field when !existsDefsNames.Contains(GetCaseInsensitiveId(field)) in type.Scope.GetAllSymbols())
-        when (isIgnore == null || !isIgnore(field.Name))
+      def existsDefsNames = HashSet(builder.Select(x => x.Symbol.Name), StringComparer.InvariantCultureIgnoreCase);
+      foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr), Name=name) as field when !existsDefsNames.Contains(name) in type.Scope.GetAllSymbols())
+        when (isIgnore == null || !isIgnore(name))
           builder.Add(Def(field, expr));
 
       builder.TryMoveToImmutable()
@@ -580,7 +620,7 @@ namespace Tdl
 
         true
       }
-      scope.FilterWith(predicate)
+      FilteringScope(scope, predicate)
     }
 
     public FilterDeployment(defs : ImmutableArray[Def]) : List[DeploymentSymbol]
@@ -619,7 +659,7 @@ namespace Tdl
             true
           }
         }
-        VSome(scope.Memoize().FilterWith(isInternedSymbol))
+        VSome(FilteringScope(scope, isInternedSymbol))
       }
       else
         VNone()
@@ -641,7 +681,8 @@ namespace Tdl
         | _                => false
       }
 
-      scope.FilterWith(filter)
+      def filteringScope = FilteringScope(scope, filter);
+      filteringScope
     }
 
     public CheckRequired(this ast : IAst, context : DependentPropertyEvalContext, name : string, requiredFields : Seq[DeclarationSymbol], fields : ImmutableArray[Def], _dependency : object = null) : void
@@ -653,12 +694,12 @@ namespace Tdl
         ast.Error(context, $<#The following $(name)$(if (count == 1) "" else "s") are required: ..$missingFields.#>);
     }
 
-    public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope, _defaultDefs : ImmutableArray[FormalParameterSymbol]) : void
+    public ValidateParameters(this ast : Suite, context : DependentPropertyEvalContext, suiteDefs : ImmutableArray[Def], suiteStatements : ImmutableArray[SuiteStatement], productScope : Scope) : void
     {
       try
       {
         def definedParameters = HashSet();
-        foreach (s in productScope.GetAllSymbols())
+        foreach (s in productScope.AllSymbols)
           _ = definedParameters.Add(s.NameId);
         foreach (d in suiteDefs)
           _ = definedParameters.Add(d.Symbol.NameId);
@@ -674,7 +715,7 @@ namespace Tdl
             when (scenaro.IsAggregateParametersScopeEvaluated)
             {
               def scenarioScope = scenaro.AggregateParametersScope;
-              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.GetAllSymbols())
+              foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.AllSymbols)
               {
                 when (definedParameters.Contains(parameter.NameId)
                    || parameter.HasDefault()
@@ -743,14 +784,6 @@ namespace Tdl
         field.FirstDeclarationOrDefault.Name.Warning(context, $"Field $(field.Name) is obsolete and will be replaced with $replacedWith field.");
     }
 
-    public CheckTestMethods(this ast : IAst, name : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
-    {
-      foreach (x when x.IsTest in actions)
-        return;
-
-      name.Error(context, "Scenario must have at least one test method.");
-    }
-
     public ReportDuplicateBarrier(this ast : IAst, context : DependentPropertyEvalContext, actions : ImmutableArray[ScenarioAction]) : void
     {
       def set = HashSet();
@@ -789,17 +822,16 @@ namespace Tdl
       mutable prevAction = null;
       for (mutable i = 0; i < actions.Length; ++i)
       {
-        when (actions[i] is ScenarioAction.WaitForReboot(MaxRebootsCountOpt=VNone) as action)
+        when (actions[i] is ScenarioAction.WaitForReboot as action)
         {
           match (prevAction)
           {
-            | ScenarioAction.WaitForReboot(MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Script       (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Config       (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.GTest        (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Apk          (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Marathon     (MaxRebootsCountOpt = VSome(maxReboots))
-            | ScenarioAction.Method       (MaxRebootsCountOpt = VSome(maxReboots)) =>
+            | ScenarioAction.Script  (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Config  (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.GTest   (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Apk     (MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Marathon(MaxRebootsCountOpt = VSome(maxReboots))
+            | ScenarioAction.Method  (MaxRebootsCountOpt = VSome(maxReboots)) =>
               match (maxReboots.Calc(values, variables, getPropertyValue))
               {
                 | (_,     ResultKind.Missing)           => assert(false)
@@ -808,7 +840,6 @@ namespace Tdl
                 | (_value, ResultKind.GlobalParameter)
                 | (_value, ResultKind.Product)
                 | (_value, ResultKind.Error)
-                | (_value, ResultKind.VmCapability)
                 | (_,     ResultKind.External) => error(prevAction.Location, "This kind of expression is not allowed in max-reboots.");
                 | (value : object, ResultKind.Value)             =>
                   if (value is int as intVal)
@@ -1079,20 +1110,16 @@ namespace Tdl
 
         foreach (case in cases)
         {
-          def isDefault = case.Values.Any(v => v.Text == Api.CaseElseValue);
-          if (isDefault)
-            when (case.Values.Count != 1)
-            {
-              msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, "Expected single 'else' keyword.", 0);
-              return;
-            }
-          else
-            when (case.Values.Count != parameterCount)
-            {
-              msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
-              return;
-            }
+          when (case.Values.Count != parameterCount)
+          {
+            msgs.ReportMessage(CompilerMessageType.Error, case.Values.Location, $"The case must have $parameterCount values.", 0);
+            break;
+          }
         }
+
+        foreach (case in cases with k)
+        foreach (value when value.Text == "" in case.Values)
+          msgs.ReportMessage(CompilerMessageType.Error, value.Location, "The value can't be empty.", 0);
 
         def set = HashSet();
         foreach (case in cases with k)
@@ -1133,7 +1160,7 @@ namespace Tdl
               | Reference(Symbol=ProductSymbol as symbol) => symbol
               | _ => null
             }
-            return list.Select(toSymbol).Where(_ != null).SelectMany(getAllProducts);
+            return list.Select(toSymbol).Where(_ == null).SelectMany(getAllProducts);
           }
           []
         | _ => assert(false);
@@ -1410,50 +1437,16 @@ namespace Tdl
       }
     }
 
-    public MakeDefinitionScopeForScenarioDef(deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
-    {
-      GetScenarioParameterScope(context).HideWith(deploymentScope.UnionWith(GetVmCapabilityScope(context)))
-    }
-
-    public MakeDefinitionScopeForGeneratorScenario(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
-    {
-      mutable builder;
-
-      match (deployment)
-      {
-        | DeploymentSymbol as d when !d.IsAggregateParametersScopeEvaluated => return VNone();
-        | DeploymentSymbol as d => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
-        | VarSymbol as v =>
-          foreach (from in froms)
-          foreach (var when v.Id == var.Id in from.Vars with i)
-          {
-            def list = from.Elems.GetExprListForVar(i);
-            foreach (x in list)
-            {
-              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAggregateParametersScopeEvaluated => return VNone();
-              | Reference(Symbol=DeploymentSymbol as d) => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
-              | _ => ()
-            }
-            break;
-          }
-        | _ => assert(false, $"Unsupported expressoin type $(deployment.GetType().FullName)");
-      }
-
-      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-      UnionScopeBuilder.Add(GetVmCapabilityScope(context), ref builder);
-      VSome(GetScenarioParameterScope(context).HideWith(builder.ToScope()))
-    }
-
-    public MakeAggregateParametersScopeForScenarioDef(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : Scope
+    public MakeAggregateParametersScope(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
     {
       mutable builder;
       UnionScopeBuilder.Add(parametersScope, ref builder);
       UnionScopeBuilder.Add(deploymentScope, ref builder);
       AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-      FilterOutAssignedParameters(builder.ToScope(), defs)
+      builder.ToScope();
     }
 
-    public MakeAggregateParametersScopeForScenarioGenerator(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
+    public MakeAggregateParametersScope(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       def deployments = List();
       def tdlContext  = context.ToTdlContext();
@@ -1468,7 +1461,8 @@ namespace Tdl
 
       match (deployment)
       {
-        | DeploymentSymbol as d => deployments.Add(d);
+        | DeploymentSymbol as d when !d.IsAllDeploymentsEvaluated => return VNone();
+        | DeploymentSymbol as d => deployments.AddRange(d.AllDeployments);
         | VarSymbol as v =>
           foreach (from in froms)
           foreach (var when v.Id == var.Id in from.Vars with i)
@@ -1476,29 +1470,15 @@ namespace Tdl
             def list = from.Elems.GetExprListForVar(i);
             foreach (x in list)
             {
-              | Reference(Symbol=DeploymentSymbol as d) => deployments.Add(d);
+              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAllDeploymentsEvaluated => return VNone();
+              | Reference(Symbol=DeploymentSymbol as d) => deployments.AddRange(d.AllDeployments);
               | _ => ()
             }
             break;
           }
-        | _ => assert(false, $"Unsupported expressoin type $(deployment.GetType().FullName)");
+        | _ => assert(false, $"Unsupporten expressoin type $(deployment.GetType().FullName)");
       }
-      def result = MakeAggregateParametersScope(deployments, parametersScope);
-      if (result is VSome(scope))
-        VSome(FilterOutAssignedParameters(scope, defs))
-      else
-        result
-    }
-
-    private FilterOutAssignedParameters(scope : Scope, defs : ImmutableArray[Tdl.Def]) : Scope
-    {
-      def assignedParams = HashSet();
-      foreach (d in defs)
-        _ = assignedParams.Add(GetCaseInsensitiveId(d.Symbol));
-
-      scope
-        .FilterWith(symbol => !assignedParams.Contains(GetCaseInsensitiveId(symbol)))
-        .Memoize()
+      MakeAggregateParametersScope(deployments, parametersScope)
     }
 
     //public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
@@ -1725,8 +1705,7 @@ namespace Tdl
       type
     }
 
-    public BindType[TSymbol](this context : DependentPropertyEvalContext, fullTypeName : string, typeParamCount : int = 0) : TSymbol
-      where TSymbol: DeclarationSymbol
+    public BindType(this context : DependentPropertyEvalContext, fullTypeName : string, typeParamCount : int = 0) : GenericTypeSymbol
     {
       def bindNs(scope : Scope, name : string) : Ref[NamespaceSymbol]
       {
@@ -1737,22 +1716,19 @@ namespace Tdl
         assert2(res.Symbols.Length == 1);
         res
       }
-      def bindType(scope : Scope, name : string) : TSymbol
+      def bindType(scope : Scope, name : string) : TopGenericTypeSymbol
       {
-        def res = Reference(Location.Default, name).Bind.[TSymbol](scope);
+        def res = Reference(Location.Default, name).Bind.[TopGenericTypeSymbol](scope);
         assert2(!res.IsUnresolved);
         assert2(!res.IsAmbiguous);
-        when (typeParamCount > 0)
-        {
-          foreach (symbol is GenericTypeSymbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
-            return (symbol : object) :> TSymbol;
-        }
-        assert2(res.Symbols.Length == 1);
-        res.Symbol
+        foreach (symbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
+          return symbol;
+        assert2(false);
+        assert(false);
       }
       def data  = context.Project.Data :> DotNetProjectData;
       def names = fullTypeName.SplitToList('.');
-      def loop(scope : Scope, names) : TSymbol
+      def loop(scope : Scope, names) : GenericTypeSymbol
       {
         match (names)
         {
@@ -1821,7 +1797,6 @@ namespace Tdl
       match (list)
       {
         | Expr.Reference(Symbol=Product.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
-        | Expr.Reference(Symbol=Platform.SetSymbol as set) => _ = Unify(set.Type, type); set.Type
         | _ => context.ConstructType("System.Collections.Generic.IEnumerable", type)
       }
     }
@@ -1894,7 +1869,7 @@ namespace Tdl
       {
         symbol is Tdl.VarSymbol || symbol is Tdl.ProductSymbol
       }
-      scope.FilterWith(filter)
+      FilteringScope(scope, filter)
     }
 
     public ScenarioMakeHint(symbolCache : ISymbolCache, symbol : Scenario.DefSymbol) : string
@@ -2076,90 +2051,6 @@ namespace Tdl
       | Integer
       | List
       | Tuple => EmptyScope.Instance
-    }
-
-    public ParseInt(context : DependentPropertyEvalContext, text : string) : int
-    {
-      mutable result;
-      unless (int.TryParse(text, out result))
-      {
-        //str.Error(context, $"Failed to process deployment file path ($(e.GetType())): $(e.Message)");
-      }
-      result
-    }
-
-    public MakeScenarioActions(context : DependentPropertyEvalContext, barrierExpr : DotNet.Expr) : ValueOption[ScenarioAction]
-    {
-      match (barrierExpr)
-      {
-        | Expr.SimpleName as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => VNone()
-        | Expr.SimpleName(Ref=Ref(IsSymbolEvaluated =true, Symbol=symbol)) =>
-          if (symbol is BarrierSymbol as b)
-            VSome(ScenarioAction.Barrier(barrierExpr.Location, b))
-          else
-          {
-            barrierExpr.Error(context, "Expected barrier.");
-            VSome(ScenarioAction.Error(barrierExpr.Location))
-          }
-
-        | Expr.Invocation as inv when !inv.IsMethodEvaluated => VNone()
-        | Expr.Invocation as inv when inv.Method.Name != "GetOrCreateBarrier" =>
-          barrierExpr.Error(context, "Expected call of GetOrCreateBarrier() method or barrier.");
-          VSome(ScenarioAction.Error(barrierExpr.Location))
-        | Expr.Invocation as inv when inv.Arguments.Count == 2 =>
-          def arg2 = inv.Arguments[1] :> Expr.Argument;
-          when (!(arg2.Expr is DotNet.Expr.String))
-          {
-            barrierExpr.Error(context, "Expected string with timeout.");
-            return VSome(ScenarioAction.Error(arg2.Location));
-          }
-          def timeoutStr = ConvertStringLiteralOrNull((arg2.Expr :> DotNet.Expr.String).Value);
-          mutable timeout;
-          when (timeoutStr == null || !TimeSpan.TryParse(timeoutStr, out timeout))
-          {
-            barrierExpr.Error(context, "Expected string with timeout. Format: ЧЧ:ММ:СС");
-            return VSome(ScenarioAction.Error(arg2.Location));
-          }
-          def arg1 = inv.Arguments[0] :> Expr.Argument;
-          if (arg1.Expr is Expr.Sum as sum)
-          {
-            mutable hasUnculculated;
-            {
-              def result = ImmutableArray.CreateBuilder();
-              def loop(expr : DotNet.Expr) : void
-              {
-                | Expr.Sum           as sum => loop(sum.Expr1); loop(sum.Expr2);
-                | DotNet.Expr.String as s   => result.Add(BarrierNamePart.String(ConvertStringLiteralOrNull(s.Value)));
-                | Expr.SimpleName    as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => hasUnculculated = true;
-                | Expr.SimpleName    as n   => result.Add(BarrierNamePart.Reference(n.Ref.Symbol));
-                | _ =>
-                  barrierExpr.Error(context, "Unsupported expression type " + expr.GetType().Name);
-                  hasUnculculated = true;
-              }
-              loop(sum);
-              def result = result;
-              if (hasUnculculated)
-                VNone()
-              else
-                VSome(ScenarioAction.BarrierGenerator(barrierExpr.Location, result.ToImmutable(), timeout))
-            }
-          }
-          else
-          {
-            _ = arg2;
-            arg1.Error(context, "Expected concatination of barrier name.");
-            VSome(ScenarioAction.Error(arg1.Location))
-          }
-
-        | _ => assert2(false); VNone()
-      }
-
-      //ScenarioAction.Barrier(BarrierExpr.Location, null)
-    }
-
-    private GetCaseInsensitiveId(symbol : DeclarationSymbol) : int
-    {
-      StringIndex.GetCaseInsensitivePart(symbol.NameId)
     }
   } // module
 } // namespace

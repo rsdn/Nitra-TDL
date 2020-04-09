@@ -1,0 +1,12 @@
+{
+  "$schema": "../schema.v3.json",
+
+  "Platforms": {
+    "w10rs4-x86": { },
+    "w10rs4-x64": { },
+    "win10": [ 
+      "w10rs4-x86", 
+      "w10rs4-x64"
+    ]
+  }
+}

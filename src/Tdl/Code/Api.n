@@ -25,8 +25,6 @@ namespace Tdl
 {
   public module Api
   {
-    public CaseElseValue      : string = "906868B7-634A-456D-9C89-331CC742650F";
-
     public TryResolveVar[T](variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
@@ -183,11 +181,10 @@ namespace Tdl
                 | (value, ResultKind.Value)   => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));
                 | (_,     ResultKind.NotSet)  => valueParts.Add(null);
                 | (value, ResultKind.ExternalParameter) => erroneousParameters.Add((p, ResultKind.ExternalParameter, value));
-                | (value, ResultKind.Error           as kind)
+                | (value, ResultKind.Error as kind)
                 | (value, ResultKind.GlobalParameter as kind)
-                | (value, ResultKind.Product         as kind)
-                | (value, ResultKind.VmCapability    as kind)
-                | (value, ResultKind.External        as kind) => erroneousParameters.Add((p, kind, value));
+                | (value, ResultKind.Product as kind)
+                | (value, ResultKind.External as kind) => erroneousParameters.Add((p, kind, value));
               }
             }
             else
@@ -307,11 +304,6 @@ namespace Tdl
         | MemberAccess(Expr=Reference   (Symbol=GenericTypeSymbol as t), Symbol=Member.MethodSymbol as m) => (t, m)
         | _ => assert(false, $"Unsupported method reference format '$expr' ($(expr.GetType().FullName))");
       }
-    }
-
-    public IncrementGuid(guid : Guid, value : uint) : Guid
-    {
-      TdlUtils.IncrementGuid(guid, value)
     }
   } // module
 } // namespace
