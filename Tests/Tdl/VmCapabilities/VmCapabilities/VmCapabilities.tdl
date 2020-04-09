@@ -42,6 +42,7 @@ product type ProductType
 
 product Product : ProductType
 {
+  Cap1 = VmCapability.Acceptable;
 }
 
 platform Platform;

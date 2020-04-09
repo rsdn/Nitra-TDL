@@ -40,7 +40,7 @@ namespace Tdl
       stage 4:
         out Stage4 : object = null;
 
-        Definitions.DefinitionScope = Symbol.ProductType.Scope;
+        Definitions.DefinitionScope = Symbol.ProductType.Scope.UnionWith(context.GetVmCapabilityScope());
         Definitions.Scope           = Scope.HideWith(context.GetExternalSymbolTable());
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef);
 

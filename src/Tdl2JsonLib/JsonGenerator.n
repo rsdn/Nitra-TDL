@@ -310,21 +310,26 @@ namespace Tdl2Json
 
     private MakeDefs(defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
     {
-      def defs2 = CollectDefs(defs, variables);
+      def (defs2, _) = CollectDefs(defs, variables);
       foreach (d when !defs2.ContainsKey(d.Name) in defaults)
         defs2.AddEx(d.Name, Tdl.Expr.NotSetValue, "defs2");
       defs2
     }
 
-    private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
+    private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object] * SortedDictionary[string, object]
     {
+      def vmCapabilities = SortedDictionary();
       def result = Hashtable();
       foreach(@def in defs)
       {
         def name = @def.Symbol.Name;
-        result.AddEx(name, @def.Expr.ToObject(variables=variables), "result");
+        def value = @def.Expr.ToObject(variables=variables);
+        if (@def.Symbol is VmCapabilitySymbol)
+          vmCapabilities.AddEx(name, value, "vmCapabilities");
+        else
+          result.AddEx(name, value, "result");
       }
-      result
+      (result, vmCapabilities)
     }
 
     private GenerateProduct(productSymbol : ProductSymbol, platformNameSet : HashSet[string]) : ProductValue
@@ -336,7 +341,7 @@ namespace Tdl2Json
           {
             x.Symbol.Name.Equals("Platforms", StringComparison.CurrentCultureIgnoreCase)
           }
-          def parameters = CollectDefs(Def.Defs.Where(x => !isPlatforms(x)));
+          def (parameters, vmCapabilities) = CollectDefs(Def.Defs.Where(x => !isPlatforms(x)));
           def useAsFixedParameter(name : string) : string
           {
             mutable value;
@@ -371,6 +376,7 @@ namespace Tdl2Json
               DumpServerProduct = useAsFixedParameter("DumpServerProduct");
               Parameters        = parameters;
               Platforms         = platforms;
+              Capabilities      = if (vmCapabilities.Count > 0) vmCapabilities else null;
             }
           }
         | Product.SetSymbol as Set => ProductValue() <- { StringArray = Set.AllProducts.Select(p => p.Name).ToArray(); }
@@ -987,7 +993,7 @@ namespace Tdl2Json
 
     private GenerateEntity(symbol : EntitySymbol) : TestEntity
     {
-      def parameters = CollectDefs(symbol.Defs);
+      def (parameters, _) = CollectDefs(symbol.Defs);
       TestEntity() <-
       {
         BranchName = parameters["BranchName"].ToString();
