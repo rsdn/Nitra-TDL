@@ -350,6 +350,7 @@ namespace QuickType
     ///
     /// Последовательность деплоев (для тестов compatibility)
     /// </summary>
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
     public enum TypeEnum { Script, Select, Sequence, Reboot, Empty };
 
     public partial struct PlatformValue
@@ -457,7 +458,6 @@ namespace QuickType
             DateParseHandling = DateParseHandling.None,
             Converters =
             {
-                TypeEnumConverter.Singleton,
                 PlatformValueConverter.Singleton,
                 ProductValueConverter.Singleton,
                 TestCaseConverter.Singleton,
@@ -465,58 +465,6 @@ namespace QuickType
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
         };
-    }
-
-    internal class TypeEnumConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(TypeEnum) || t == typeof(TypeEnum?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "Script":
-                    return TypeEnum.Script;
-                case "Select":
-                    return TypeEnum.Select;
-                case "Sequence":
-                    return TypeEnum.Sequence;
-            }
-            throw new Exception("Cannot unmarshal type TypeEnum");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (TypeEnum)untypedValue;
-            switch (value)
-            {
-                case TypeEnum.Script:
-                    serializer.Serialize(writer, "Script");
-                    return;
-                case TypeEnum.Select:
-                    serializer.Serialize(writer, "Select");
-                    return;
-                case TypeEnum.Sequence:
-                    serializer.Serialize(writer, "Sequence");
-                    return;
-                case TypeEnum.Reboot:
-                    serializer.Serialize(writer, "Reboot");
-                    return;
-                case TypeEnum.Empty:
-                    serializer.Serialize(writer, "Empty");
-                    return;
-            }
-            throw new Exception("Cannot marshal type TypeEnum");
-        }
-
-        public static readonly TypeEnumConverter Singleton = new TypeEnumConverter();
     }
 
     internal class PlatformValueConverter : JsonConverter

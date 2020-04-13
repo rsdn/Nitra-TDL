@@ -201,7 +201,9 @@
       | Login           = "login" sm User=DefExpr sm Password=DefExpr ";" nl;
       | Logoff          = "logoff" ";" nl;
       | LockWorkstation = "lock-workstation" ";" nl;
-      | Reboot          = "reboot" ";"
+      | Reboot              = Keyword="reboot" ";" nl;
+      | RebootEnterSafeMode = Keyword="reboot-enter-safe-mode" ";" nl;
+      | RebootExitSafeMode  = Keyword="reboot-exit-safe-mode" ";" nl;
       | WaitForReboot1  = "wait" sm  "for" sm "reboot" sm TimeSpan MaxRebootsCount? ";"
       | WaitForReboot2  = "wait-for-reboot"            sm TimeSpan MaxRebootsCount? ";"
       | Barrier         = "barrier" sm Expression ";"

@@ -199,7 +199,11 @@ namespace Tdl
 
     | Logoff          { ScenarioActions = ScenarioAction.Logoff(this.Location); }
     | LockWorkstation { ScenarioActions = ScenarioAction.LockWorkstation(this.Location); }
-    | Reboot          { ScenarioActions = ScenarioAction.Reboot(this.Location); }
+    | Reboot
+      {
+        ScenarioActions = ScenarioAction.Reboot(this.Location, Mode.ValueOrDefault);
+        Mode : ParsedValue[RebootMode];
+      }
     | WaitForReboot
       {
         ScenarioActions = ScenarioAction.WaitForReboot(this.Location, TimeSpan.Value, MaxRebootsCountOpt.Result);
