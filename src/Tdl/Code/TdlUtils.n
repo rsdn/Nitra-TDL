@@ -935,6 +935,84 @@ namespace Tdl
       result
     }
 
+    public ValidateRunnerParameters(this ast : IAst, parameters : ImmutableArray[FormalParameterSymbol], context : DependentPropertyEvalContext) : void
+    {
+      def e = parameters.GetEnumerator();
+
+      def loopOptionalParameters()
+      {
+        when (e.MoveNext())
+        {
+          if (e.Current.HasDefault())
+            loopOptionalParameters()
+          else
+            (e.Current.FirstParsedDeclarationOrDefault ?? ast).Error(context, $"Parameter '$(e.Current.Name)' must have default value.")
+        }
+      }
+
+      def loopRequiredParameters()
+      {
+        when (e.MoveNext())
+        {
+          if (e.Current.HasDefault())
+            loopOptionalParameters();
+          else
+            loopRequiredParameters()
+        }
+      }
+
+      loopRequiredParameters()
+    }
+
+    public ValidateRunnerArguments(this ast : IAst, parameters : ImmutableArray[FormalParameterSymbol], arguments : IAstList[RunnerArgument], context : DependentPropertyEvalContext) : void
+    {
+      def namedParametersUsed = HashSet();
+
+      def requiredParameters = Dictionary();
+      foreach (p when !p.HasDefault() in parameters)
+        requiredParameters[p.NameId] = p.Name;
+
+      def positionalArguments = List();
+      foreach (x in arguments)
+      {
+        | a is RunnerArgument.Named =>
+           _ = requiredParameters.Remove(a.ParameterName.Id);
+          unless (namedParametersUsed.Add(a.ParameterName.Id))
+            a.ParameterName.Error(context, $"Multiple runner argument specification '$(a.ParameterName.Text)'.");
+
+        | a is RunnerArgument.Positional =>
+          positionalArguments.Add(a);
+
+        | _ => ()
+      }
+
+      def positionalParameters = List();
+      foreach (p in parameters)
+        unless (namedParametersUsed.Contains(p.NameId))
+          positionalParameters.Add(p);
+
+      when (positionalArguments.Count > positionalParameters.Count)
+        ast.Error(context, $"Too many runner arguments, need $(parameters.Length) got $(arguments.Count).");
+
+      for (mutable i = Math.Min(positionalParameters.Count, positionalArguments.Count) - 1; i >= 0; --i)
+      {
+        def parameter = positionalParameters[i];
+        def argument = positionalArguments[i];
+        when (!argument.IsParameterEvaluated)
+          argument.Parameter = parameter;
+        when (parameter.IsTypeEvaluated && !argument.Value.IsExpectedTypeEvaluated)
+          argument.Value.ExpectedType = parameter.Type;
+        _ = requiredParameters.Remove(parameter.NameId);
+      }
+
+      match (requiredParameters.Count)
+      {
+        | 0 => ()
+        | 1 => ast.Error(context, $"Required runner parameter is not specified: $(requiredParameters.Values.First()).")
+        | _ => ast.Error(context, $"Required runner parameters are not specified: ..$(requiredParameters.Values).")
+      }
+    }
+
     public CheckUniquenessOfScenarios(this _ast : IAst, context : DependentPropertyEvalContext, set : Scenario.SetSymbol, _depend : object) : void
     {
       def duplicates = HashSet();
@@ -2075,7 +2153,8 @@ namespace Tdl
       | Real
       | Integer
       | List
-      | Tuple => EmptyScope.Instance
+      | Tuple
+      | ObjectInitializer => EmptyScope.Instance
     }
 
     public ParseInt(context : DependentPropertyEvalContext, text : string) : int

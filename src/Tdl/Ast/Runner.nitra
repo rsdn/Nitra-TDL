@@ -1,0 +1,33 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Immutable;
+
+namespace Tdl
+{
+  declaration Runner : NamespaceMember, Parameterizable
+  {
+    symbol
+    {
+    stage 3:
+      in Defs : ImmutableArray[UntypedDef];
+
+      Kind           = "runner";
+      SpanClass      = TdlLang.RunnerSpanClass;
+      IsSameIdentity = candidate is Tdl.Runner;
+      Scope          = ParameterScope;
+    }
+
+    Parameters.Scope  = Scope.UnionWith(context.GetExternalSymbolTable());
+    Definitions.Scope = Symbol.ParameterScope;
+    Symbol.Defs       = TdlUtils.MakeUntypedDefinitions(Definitions);
+
+    Name.ValidateRunnerParameters(Symbol.Parameters, context);
+
+    Definitions : Definition*;
+  }
+}

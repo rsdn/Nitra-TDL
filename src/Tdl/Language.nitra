@@ -21,6 +21,7 @@
   span class Var          { ForegroundColor=DodgerBlue; }
   span class Attribite    { ForegroundColor=Gray; }
   span class VmCapability { ForegroundColor=Fuchsia; }
+  span class Runner       { ForegroundColor=DarkCyan; }
 
   syntax module Tdl.Grammar start rule Module;
 }

@@ -90,6 +90,7 @@
       | Barrier           = "barrier"             sm Name "timeout" sm Timeout=StringLiteral ";" nl;
       | Entity            = "entity"              sm Name nl EntityBody;
       | VmCapability      = "vm" sm "capability"  sm Name DefExprOpt=(sm "=" sm DefExpr)? ";" nl;
+      | Runner            = "runner"              sm Name outline_begin_before Parameters outline_end_before nl RunnerBody;
     }
 
     syntax BaseType = sm ":" sm Type=Reference;
@@ -159,6 +160,10 @@
 
     syntax Environments            = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
     syntax Environment             = "(" Platform=Reference "," sm Product=Reference ")";
+    syntax RunnerCall              = Name=Reference sm "(" (RunnerArgument; "," sm)* ")" MaxRebootsCount? ";" nl
+    {
+      syntax RunnerArgument = NameOpt=(Reference ":" sm)? DefExpr;
+    }
     syntax Method                  = "method" sm Method=DefExpr MaxRebootsCount? BinariesFolder? ContinueOnError?";" nl;
     syntax Config                  = "config" sm Path=DefExpr MaxRebootsCount? ";" nl;
     syntax GTest                   = "gtest"  sm Name=DefExpr Arguments=DefExpr* MaxRebootsCount? ";" nl;
@@ -177,6 +182,7 @@
     }
     syntax Action
     {
+      | RunnerCall
       | Method
       | Config
       | Script
@@ -190,6 +196,7 @@
     regex TimeSpan = DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit ":" DecimalDigit DecimalDigit | "";
     syntax SequenceAction
     {
+      | RunnerCall
       | Method
       | Config
       | GTest
@@ -222,6 +229,8 @@
       syntax Deployment   = "deployment" sm Reference ";" nl;
       syntax Filter = "filter" Condition=Expression ";" nl;
     }
+
+    syntax RunnerBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
 
     syntax ProductBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
 
@@ -277,7 +286,10 @@
       //| InterpolatedVerbatimStringLiteral = Lit=InterpolatedVerbatimStringLiteral
     precedence MemberAccess:
       | MemberAccess = Expr=DefExpr "." Member=Reference
+      | ObjectInitializer = "new" sm "{" Properties=(PropertyInitializer; "," sm; ?)* sm "}"
     }
+
+    syntax PropertyInitializer = Name sm "=" sm DefExpr;
 
     syntax MaxRebootsCount = sm "max-reboots" sm Value=DefExpr;
 

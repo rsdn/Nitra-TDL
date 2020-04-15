@@ -1,0 +1,58 @@
+runner MyRunner1(string path, int param1 = 1)
+{
+  NodeJsScriptPath = path;
+  NodeJsBotParams = new { AdditionalParam = param1 };
+}
+
+runner MyRunner2(string path, object params)
+{
+  NodeJsScriptPath = path;
+  NodeJsBotParams = params;
+}
+
+product type ProductType
+{
+  string Name;
+  string Version = "1.0";
+}
+
+product Product : ProductType
+{
+  Name = "Product 1";
+  Version = "1.1";
+}
+
+platform Platform;
+
+scenario S1
+{
+  deployment Empty;
+  environments (Platform, Product);
+  sequence
+  {
+    MyRunner1("sample.exe");
+    MyRunner1("sample.exe", 2);
+    MyRunner2("sample.exe", new { A = "a", B = "b" });
+  }
+  UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
+
+scenario S2 = 
+  from x in ["sample1.exe", "sample2.exe"]
+  select
+  {
+    deployment Empty;
+    environments (Platform, Product);
+    MyRunner1(path: x, 3);
+    UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E72";
+    Timeout = "00:10";
+  };
+
+suite Suite
+{
+  platform Platform;
+  product Product;
+  S1();
+  S2();
+}
