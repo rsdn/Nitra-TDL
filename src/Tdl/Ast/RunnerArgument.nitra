@@ -18,6 +18,8 @@ namespace Tdl
   stage 2:
     out Result : string * Expr;
 
+    Value.Scope = Scope;
+
     Value : DefExpr;
 
     | Positional
@@ -25,7 +27,8 @@ namespace Tdl
       stage 1:
         in Parameter : FormalParameterSymbol;
 
-        Result = (Parameter.Name, Value.Result);
+        Value.ExpectedType = context.CreateFreeTypeVar();
+        Result             = (Parameter.Name, Value.Result);
       }
 
     | Named
@@ -34,7 +37,6 @@ namespace Tdl
         out ParameterRef   : Ref[FormalParameterSymbol] = ParameterName.Ref.Resolve();
 
         ParameterName.Scope = ParametersScope;
-        Value.Scope         = Scope;
         Value.ExpectedType  = ParameterRef.Symbol.Type;
         Result              = (ParameterName.Text, Value.Result);
 
