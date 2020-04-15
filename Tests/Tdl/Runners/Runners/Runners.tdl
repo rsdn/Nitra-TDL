@@ -31,7 +31,7 @@ scenario S1
   sequence
   {
     MyRunner1("sample.exe");
-    MyRunner1("sample.exe", 2);
+    MyRunner1(path: "sample.exe", 2);
     MyRunner2("sample.exe", new { A = "a", B = "b" });
   }
   UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
@@ -44,7 +44,7 @@ scenario S2 =
   {
     deployment Empty;
     environments (Platform, Product);
-    MyRunner1(path: x, 3);
+    MyRunner1(x, 3);
     UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E72";
     Timeout = "00:10";
   };
