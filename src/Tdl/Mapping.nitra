@@ -251,6 +251,103 @@ namespace Tdl
       }
   }
 
+  map syntax Grammar.Method -> Action.Method
+  {
+    Method -> Method;
+    match (BinariesFolderOpt)
+    {
+      | None    -> None()
+      | Some(x) -> Some(x)
+    } -> BinariesFolderOpt;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+    ContinueOnErrorOpt = ContinueOnErrorOpt.ToBool();
+  }
+
+  map syntax Grammar.Config -> Action.Config
+  {
+    Path -> Path;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+  }
+
+  map syntax Grammar.GTest -> Action.GTest
+  {
+    Name      -> Name;
+    Arguments -> Arguments;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+  }
+
+  map syntax Grammar.XCode -> Action.XCode
+  {
+    Container -> Container;
+    XcodePath -> XcodePath;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+  }
+
+  map syntax Grammar.Script -> Action.Script
+  {
+    Name      -> Name;
+    Arguments -> Arguments;
+    match (EnvironmentsOpt)
+    {
+      | None    -> []
+      | Some(x) -> x.Defs.Item1
+    } -> Definitions;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+  }
+
+  map syntax Grammar.VsTest -> Action.VsTest
+  {
+    Container -> Container;
+    match (VsTestRunCmdLineOpt)
+    {
+      | Some(x) -> Some(x.Value)
+      | None()  -> None()
+    } -> VsTestRunCmdLineOpt;
+    match (FilterOpt)
+    {
+      | Some(x) -> Some(x.Value)
+      | None()  -> None()
+    } -> FilterOpt;
+    match (VsTestPlatformOpt)
+    {
+      | Some(x) -> Some(x.Value)
+      | None()  -> None()
+    } -> VsTestPlatformOpt;
+    match (VsTestFrameworkOpt)
+    {
+      | Some(x) -> Some(x.Value)
+      | None()  -> None()
+    } -> VsTestFrameworkOpt;
+    match (VsTestAdditionalOptionsOpt)
+    {
+      | Some(x) -> Some(x.Value)
+      | None()  -> None()
+    } -> VsTestAdditionalOptionsOpt;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+  }
+
+  map syntax Grammar.Apk -> Action.Apk
+  {
+    Name      -> Name;
+    match (FilterOpt)
+    {
+      | Some(x) -> Some(x.Value)
+      | None()  -> None()
+    } -> FilterOpt;
+    RunnerPath -> RunnerPath;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+  }
+
+  map syntax Grammar.Marathon -> Action.Marathon
+  {
+    TestContainerApk   -> TestContainerApk;
+    AppApk             -> AppApk;
+    RunnerPath         -> RunnerPath;
+    Filter             -> Filter;
+    BinariesFolder     -> BinariesFolder;
+    MaxRebootsCountOpt -> MaxRebootsCountOpt;
+  }
+
   map syntax Grammar.RunnerCall -> Action.Runner
   {
     Name -> Name;
@@ -268,101 +365,16 @@ namespace Tdl
 
   map syntax Grammar.Action -> Action*
   {
-    | Script   -> [ Action.Script
-      {
-        Script.Name      -> Name;
-        Script.Arguments -> Arguments;
-        match (Script.EnvironmentsOpt)
-        {
-          | None    -> []
-          | Some(x) -> x.Defs.Item1
-        } -> Definitions;
-        Script.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      } ]
-    | Config   ->
-      [ Action.Config
-        {
-          Config.Path -> Path;
-          Config.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-        }
-      ]
-    | GTest    -> [ Action.GTest
-      {
-        GTest.Name      -> Name;
-        GTest.Arguments -> Arguments;
-        GTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      } ]
-    | XCode    -> [ Action.XCode
-      {
-        XCode.Container -> Container;
-        XCode.XcodePath -> XcodePath;
-        XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      } ]
-    | VsTest    -> [ Action.VsTest
-      {
-        VsTest.Container -> Container;
-        match (VsTest.VsTestRunCmdLineOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestRunCmdLineOpt;
-        match (VsTest.FilterOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> FilterOpt;
-        match (VsTest.VsTestPlatformOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestPlatformOpt;
-        match (VsTest.VsTestFrameworkOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestFrameworkOpt;
-        match (VsTest.VsTestAdditionalOptionsOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestAdditionalOptionsOpt;
-        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      } ]
-    | Apk      -> [ Action.Apk
-      {
-        Apk.Name      -> Name;
-        match (Apk.FilterOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> FilterOpt;
-        Apk.RunnerPath -> RunnerPath;
-        Apk.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      } ]
-    | Marathon -> [ Action.Marathon
-      {
-        Marathon.TestContainerApk   -> TestContainerApk;
-        Marathon.AppApk             -> AppApk;
-        Marathon.RunnerPath         -> RunnerPath;
-        Marathon.Filter             -> Filter;
-        Marathon.BinariesFolder     -> BinariesFolder;
-        Marathon.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      } ]
-    | Method   ->
-      [ Action.Method
-        {
-          Method.Method -> Method;
-          match (Method.BinariesFolderOpt)
-          {
-            | None    -> None()
-            | Some(x) -> Some(x)
-          } -> BinariesFolderOpt;
-          Method.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-          ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
-        }
-      ]
-    | Sequence -> SequenceActions
+    | Script     -> [ Script ]
+    | Config     -> [ Config ]
+    | GTest      -> [ GTest ]
+    | XCode      -> [ XCode ]
+    | VsTest     -> [ VsTest ]
+    | Apk        -> [ Apk ]
+    | Marathon   -> [ Marathon ]
+    | Method     -> [ Method ]
     | RunnerCall -> [ RunnerCall ]
+    | Sequence -> SequenceActions
   }
 
   map syntax Grammar.MaxRebootsCount -> DefExpr { Value }
@@ -371,105 +383,24 @@ namespace Tdl
 
   map syntax Grammar.SequenceAction -> Action
   {
-    | RunnerCall -> RunnerCall
-    | Method  -> Method
-      {
-        Method.Method -> Method;
-        match (Method.BinariesFolderOpt)
-        {
-          | None    -> None()
-          | Some(x) -> Some(x)
-        } -> BinariesFolderOpt;
-        Method.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-        ContinueOnErrorOpt = Method.ContinueOnErrorOpt.ToBool();
-      }
-    | Script ->  Action.Script
-      {
-        Script.Name -> Name;
-        Script.Arguments -> Arguments;
-        match (Script.EnvironmentsOpt)
-        {
-          | None -> []
-          | Some(x) -> x.Defs.Item1
-        } -> Definitions;
-        Script.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      }
-    | Config -> Action.Config
-        {
-          Config.Path -> Path;
-          Config.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-        }
-    | GTest -> Action.GTest
-      {
-        GTest.Name      -> Name;
-        GTest.Arguments -> Arguments;
-        GTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      }
-    | XCode    -> Action.XCode
-      {
-        XCode.Container          -> Container;
-        XCode.XcodePath          -> XcodePath;
-        XCode.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      }
-    | VsTest    -> Action.VsTest
-      {
-        VsTest.Container -> Container;
-        match (VsTest.VsTestRunCmdLineOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestRunCmdLineOpt;
-        match (VsTest.FilterOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> FilterOpt;
-        match (VsTest.VsTestPlatformOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestPlatformOpt;
-        match (VsTest.VsTestFrameworkOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestFrameworkOpt;
-        match (VsTest.VsTestAdditionalOptionsOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> VsTestAdditionalOptionsOpt;
-        VsTest.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      }
-    | Apk -> Action.Apk
-      {
-        Apk.Name      -> Name;
-        match (Apk.FilterOpt)
-        {
-          | Some(x) -> Some(x.Value)
-          | None()  -> None()
-        } -> FilterOpt;
-        Apk.RunnerPath -> RunnerPath;
-        Apk.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      }
-    | Marathon -> Action.Marathon
-      {
-        Marathon.TestContainerApk   -> TestContainerApk;
-        Marathon.AppApk             -> AppApk;
-        Marathon.RunnerPath         -> RunnerPath;
-        Marathon.Filter             -> Filter;
-        Marathon.BinariesFolder     -> BinariesFolder;
-        Marathon.MaxRebootsCountOpt -> MaxRebootsCountOpt;
-      }
-    | Login           -> Login           { User -> User; Password -> Password; }
-    | Logoff          -> Logoff          { }
-    | LockWorkstation -> LockWorkstation { }
-    | Reboot              -> Reboot      { Mode = ParsedValue(Keyword, RebootMode.Default); }
-    | RebootEnterSafeMode -> Reboot      { Mode = ParsedValue(Keyword, RebootMode.EnterSafeMode); }
-    | RebootExitSafeMode  -> Reboot      { Mode = ParsedValue(Keyword, RebootMode.ExitSafeMode); }
-    | WaitForReboot1  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
-    | WaitForReboot2  -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
-    | Barrier         -> Barrier         { Expression -> BarrierExpr; }
+    | RunnerCall          -> RunnerCall
+    | Method              -> Method
+    | Script              -> Script
+    | Config              -> Config
+    | GTest               -> GTest
+    | XCode               -> XCode
+    | VsTest              -> VsTest
+    | Apk                 -> Apk
+    | Marathon            -> Marathon
+    | Login               -> Login           { User -> User; Password -> Password; }
+    | Logoff              -> Logoff          { }
+    | LockWorkstation     -> LockWorkstation { }
+    | Reboot              -> Reboot          { Mode = ParsedValue(Keyword, RebootMode.Default); }
+    | RebootEnterSafeMode -> Reboot          { Mode = ParsedValue(Keyword, RebootMode.EnterSafeMode); }
+    | RebootExitSafeMode  -> Reboot          { Mode = ParsedValue(Keyword, RebootMode.ExitSafeMode); }
+    | WaitForReboot1      -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | WaitForReboot2      -> WaitForReboot   { TimeSpan -> TimeSpan; MaxRebootsCountOpt -> MaxRebootsCountOpt; }
+    | Barrier             -> Barrier         { Expression -> BarrierExpr; }
   }
 
   map syntax Grammar.DeploymentOption -> DeploymentOption
