@@ -1141,7 +1141,12 @@ namespace Tdl2Json
             | ExternalSymbol =>
               def type = fld.Type.FullName;
               def name = fld.Name;
-              $<#(($type)externals["$name"])#>
+              def getValue = $<#(($type)externals["$name"])#>;
+              match (type)
+              {
+                | "System.String" | "string" => $<#(externals.ContainsKey("$name") ? $getValue : "")#>
+                | _ => getValue
+              }
 
             | _ => GenerateScenarioFilter()
           }
