@@ -1,3 +1,5 @@
+external { string Tags; }
+
 platform Platform1;
 
 deployment A() script "a.ps1" {}
@@ -38,6 +40,16 @@ scenario Scenario2(string X)
   Timeout = "00:01";
 }
 
+scenario Scenario3()
+{
+  filter !Tags.Contains("My tag");
+  deployment S;
+  environments (Platform1, Product);
+  method UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount;
+  UniqueId = "21D09B4E-C988-4E33-AEC8-B3614452A61B";
+  Timeout = "00:01";
+}
+
 suite Suite1
 {
   platform Platform1;
@@ -59,4 +71,5 @@ suite Suite3
   product Product;
   X = "BBB";
   Scenario2();
+  Scenario3();
 }

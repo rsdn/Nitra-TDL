@@ -76,7 +76,8 @@
         "Product"
       ],
       "TestScenarios": [
-        "Scenario2"
+        "Scenario2",
+        "Scenario3"
       ]
     }
   },
@@ -126,6 +127,29 @@
       },
       "Timeout": "00:01",
       "UniqueId": "21d09b4e-c988-4e33-aec8-b3614452a61a"
+    },
+    "Scenario3": {
+      "FilterExpression": "!(externals.ContainsKey(\"Tags\") ? ((string)externals[\"Tags\"]) : \"\").Contains(\"My tag\")",
+      "Deployments": [
+        "S"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform1"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "UCPAutoTests.Tests.Pmc.AccountTests.CreateMasterAccount"
+      },
+      "Timeout": "00:01",
+      "UniqueId": "21d09b4e-c988-4e33-aec8-b3614452a61b"
     }
   },
   "TestEntities": {}
