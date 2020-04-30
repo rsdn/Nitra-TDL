@@ -21,23 +21,21 @@ namespace Tdl
     public this(backEnd : IDotNetBackEnd, context : DependentPropertyEvalContext, rootNamespace : NamespaceSymbol, scenarioParameterScope : TableScope, entityFieldsScope : TableScope, requiredScenarioParameters : ImmutableArray[FormalParameterSymbol], externalSymbol : ExternalSymbol, isTestMode : bool, baseProductType : ProductTypeSymbol, platformType : PlatformTypeSymbol, deploymentType : DeploymentTypeSymbol)
     {
       base(backEnd, context, rootNamespace);
-      VmCapabilityScope             = rootNamespace.MemberTable.FilterWith(_ is VmCapabilitySymbol);
-      ScenarioParameterScope        = VmCapabilityScope.HideWith(scenarioParameterScope);
+      ScenarioParameterScope        = scenarioParameterScope;
       EntityFieldsScope             = entityFieldsScope;
       RequiredScenarioParameters    = requiredScenarioParameters;
       ExternalSymbol                = externalSymbol;
       ExternalSymbolTable           = externalSymbol.MemberTable;
       MethodScopeFactory            = MethodScopeFactoryImpl;
       IsTestMode                    = isTestMode;
-      CommandScopeFactory           = fun (scope) { scope.FilterWith(symbol => GetCommandSymbolKind(symbol) == CommandSymbolKind.NamespaceOrCommand) }
-      CommandParametersScopeFactory = fun (scope) { scope.FilterWith(symbol => (GetCommandSymbolKind(symbol) & CommandSymbolKind.InputOrOutput) != 0) }
+      CommandScopeFactory           = fun (scope) { FilteringScope(scope, symbol => GetCommandSymbolKind(symbol) == CommandSymbolKind.NamespaceOrCommand) }
+      CommandParametersScopeFactory = fun (scope) { FilteringScope(scope, symbol => (GetCommandSymbolKind(symbol) & CommandSymbolKind.InputOrOutput) != 0) }
       BaseProductType               = baseProductType;
       PlatformType                  = platformType;
       DeploymentType                = deploymentType;
     }
 
-    public VmCapabilityScope             : Scope                                 { get; }
-    public ScenarioParameterScope        : Scope                                 { get; }
+    public ScenarioParameterScope        : TableScope                            { get; }
     public EntityFieldsScope             : TableScope                            { get; }
     public RequiredScenarioParameters    : ImmutableArray[FormalParameterSymbol] { get; }
     public ExternalSymbolTable           : TableScope                            { get; }
@@ -113,7 +111,8 @@ namespace Tdl
         result
       }
 
-      scope.FilterWith(filter)
+      def filteringScope = FilteringScope(scope, filter);
+      filteringScope
     }
 
     [Memoize]

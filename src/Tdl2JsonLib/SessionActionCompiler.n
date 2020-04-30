@@ -96,7 +96,6 @@ namespace Tdl2Json
               compiler = DeploymentCodeCompiler(deployment, args, callStack=[]);
             else unless (compiler.TryAdd(deployment, args, callStack=[]))
               finalizeCodeCompiler();
-          | Leaf(_, d) => assert(false, "Unsupported deployment type" + d.GetType().Name);
         }
       }
 
@@ -145,7 +144,6 @@ namespace Tdl2Json
           | (value, ResultKind.ExternalParameter) => "#(" + value + ")"
           | (value, ResultKind.GlobalParameter)   => "$(" + value + ")"
           | (value, ResultKind.Product)           => value
-          | (value, ResultKind.VmCapability)      => value
           | (value, ResultKind.Error)             => throw NotSupportedException("An error has occurred when calculating '$expression': " + value)
           | (_,     ResultKind.External)          => throw NotSupportedException("Reference to externals root symbol is not allowed.")
         }

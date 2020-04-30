@@ -69,7 +69,7 @@ namespace Tdl
         Symbol.SessionFinalizer     = Api.TryMakeSessionFinalizer  (Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
 
         SetUsed(Symbol.Statements);
-        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope, Symbol.DefaultDefs);
+        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
 
         decompose AllDefinitions
         {
@@ -174,7 +174,7 @@ namespace Tdl
         Platform.  CheckExpected(context, context.GetPlatformTypeSymbol(), PlatformRef.Symbol.Type);
         Product.   CheckExpected(context, context.GetProductTypeSymbol(),  ProductRef.Symbol.Type);
         SetUsed(Symbol.Statements);
-        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope, Symbol.DefaultDefs);
+        ValidateParameters(context, Symbol.Defs, Symbol.Statements, Symbol.Product.Type.Scope);
         Name.ValidateSessionInitializer(context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs, Symbol.Froms);
 
         decompose AllDefinitions

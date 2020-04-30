@@ -15,7 +15,6 @@ namespace Tdl
     | Scenario   { symbol { ToString = "Scenario"; } }
     | Method     { symbol { ToString = "Method"; } }
     | Entity     { symbol { ToString = "Entity"; } }
-    | Barrier    { symbol { ToString = "Barrier"; } }
     | Tuple
       {
         symbol
