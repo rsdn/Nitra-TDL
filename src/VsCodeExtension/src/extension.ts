@@ -46,7 +46,7 @@ function ApplySpanInfos(note: HighlightingNotification): void {
     let doc = editor.document;
     if (!doc) return;
 
-    if (doc.fileName !== note.uri) return;
+    if (decodeURIComponent(doc.uri.toString()) !== note.uri) return;
 
     let ranges = new Map<number, Range[]>();
 
