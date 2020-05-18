@@ -1,0 +1,46 @@
+﻿using DotNet;
+using DotNet.AstUtils;
+
+using Nitra;
+using Nitra.Declarations;
+
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+
+namespace Tdl
+{
+  abstract ast RunnerArgument : BindableAst
+  {
+  stage 1:
+    in ParametersScope : Scope;
+
+  stage 2:
+    out Result : string * Expr;
+
+    Value.Scope = Scope;
+
+    Value : DefExpr;
+
+    | Positional
+      {
+      stage 1:
+        in Parameter : FormalParameterSymbol;
+
+        Value.ExpectedType = context.CreateFreeTypeVar();
+        Result             = (Parameter.Name, Value.Result);
+      }
+
+    | Named
+      {
+      stage 1:
+        out ParameterRef   : Ref[FormalParameterSymbol] = ParameterName.Ref.Resolve();
+
+        ParameterName.Scope = ParametersScope;
+        Value.ExpectedType  = ParameterRef.Symbol.Type;
+        Result              = (ParameterName.Text, Value.Result);
+
+        ParameterName : Reference;
+      }
+  }
+}

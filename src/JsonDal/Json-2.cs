@@ -52,7 +52,18 @@ namespace QuickType
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Data ForceReboot { get; set; }
 
-        public sealed class Data { }
+        public sealed class Data
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public RebootMode? Mode { get; set; }
+        }
+    }
+
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    public enum RebootMode
+    {
+        EnterSafeMode,
+        ExitSafeMode
     }
 
     public sealed class WaitForRebootTestStep : TestSequenceItem
@@ -200,6 +211,10 @@ namespace QuickType
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public int? MaxRebootsCount { get; set; }
+    }
+
+    public sealed class RunnerTestStep : Dictionary<string, object>, TestMethod, TestSequenceItem
+    {
     }
 
     public sealed class LoginTestStep : TestMethod, TestSequenceItem

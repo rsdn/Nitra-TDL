@@ -222,19 +222,28 @@ namespace Tdl2Json
 
       foreach (symbol in symbols)
       {
-        | ProductSymbol         as s => products .AddEx(s.Name, GenerateProduct(s, platformNameSet), "products")
-        | EntitySymbol          as s => entities .AddEx(s.Name, GenerateEntity(s), "entities")
-        | Suite.DefSymbol       as s => suites   .AddEx(s.Name, GenerateSuite(s, scenarioTrigger,                      preSessionActionCompiler, postSessionActionCompiler), "suites")
-        | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
-        | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
-        | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
-          GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s))
+        try
+          match (symbol)
+          {
+            | ProductSymbol         as s => products .AddEx(s.Name, GenerateProduct(s, platformNameSet), "products")
+            | EntitySymbol          as s => entities .AddEx(s.Name, GenerateEntity(s), "entities")
+            | Suite.DefSymbol       as s => suites   .AddEx(s.Name, GenerateSuite(s, scenarioTrigger,                      preSessionActionCompiler, postSessionActionCompiler), "suites")
+            | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
+            | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
+            | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
+              GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s))
 
-        | VmCapabilitySymbol   as s when !(s.Value is Tdl.Expr.NotSet) =>
-          def value = s.Value.ToObject();
-          vmCapabilities.AddEx(s.Name, value, "vmCapabilities");
+            | VmCapabilitySymbol   as s when !(s.Value is Tdl.Expr.NotSet) =>
+              def value = s.Value.ToObject();
+              vmCapabilities.AddEx(s.Name, value, "vmCapabilities");
 
-        | _ => ()
+            | _ => ()
+          }
+        catch
+        {
+          | e is Exception =>
+            throw InvalidOperationException($"Failed to generate code for '$symbol' symbol.", e)
+        }
       }
 
       def defaultValues = SortedDictionary();
@@ -309,21 +318,26 @@ namespace Tdl2Json
 
     private MakeDefs(defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
     {
-      def defs2 = CollectDefs(defs, variables);
+      def (defs2, _) = CollectDefs(defs, variables);
       foreach (d when !defs2.ContainsKey(d.Name) in defaults)
         defs2.AddEx(d.Name, Tdl.Expr.NotSetValue, "defs2");
       defs2
     }
 
-    private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
+    private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object] * SortedDictionary[string, object]
     {
+      def vmCapabilities = SortedDictionary();
       def result = Hashtable();
       foreach(@def in defs)
       {
         def name = @def.Symbol.Name;
-        result.AddEx(name, @def.Expr.ToObject(variables=variables), "result");
+        def value = @def.Expr.ToObject(variables=variables);
+        if (@def.Symbol is VmCapabilitySymbol)
+          vmCapabilities.AddEx(name, value, "vmCapabilities");
+        else
+          result.AddEx(name, value, "result");
       }
-      result
+      (result, vmCapabilities)
     }
 
     private GenerateProduct(productSymbol : ProductSymbol, platformNameSet : HashSet[string]) : ProductValue
@@ -335,7 +349,7 @@ namespace Tdl2Json
           {
             x.Symbol.Name.Equals("Platforms", StringComparison.CurrentCultureIgnoreCase)
           }
-          def parameters = CollectDefs(Def.Defs.Where(x => !isPlatforms(x)));
+          def (parameters, vmCapabilities) = CollectDefs(Def.Defs.Where(x => !isPlatforms(x)));
           def useAsFixedParameter(name : string) : string
           {
             mutable value;
@@ -370,6 +384,7 @@ namespace Tdl2Json
               DumpServerProduct = useAsFixedParameter("DumpServerProduct");
               Parameters        = parameters;
               Platforms         = platforms;
+              Capabilities      = if (vmCapabilities.Count > 0) vmCapabilities else null;
             }
           }
         | Product.SetSymbol as Set => ProductValue() <- { StringArray = Set.AllProducts.Select(p => p.Name).ToArray(); }
@@ -580,7 +595,7 @@ namespace Tdl2Json
         }
         def makeAction(action : ScenarioAction) : TestSequenceItem
         {
-          | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
+          | Reboot        as r      => MakeRebootTestStep(r)
           | Method        as method => makeMethodAction(method)
           | WaitForReboot as wbr =>
             WaitForRebootTestStep() <-
@@ -601,6 +616,7 @@ namespace Tdl2Json
           | VsTest as x        => makeVsTestAction(x)
           | Apk    as a        => makeAndroidJavaAction(a)
           | Marathon as m      => makeMarathonAction(m)
+          | Runner as r        => MakeRunnerTestStep(r, dic)
           | Login  as login    => LoginTestStep() <-
             {
               Login = LoginTestStep.Data() <-
@@ -631,6 +647,8 @@ namespace Tdl2Json
           makeVsTestAction(action)
         else if (tryGetSingleElem() is VSome(action))
           makeAndroidJavaAction(action)
+        else if (tryGetSingleElem() is VSome(action))
+          MakeRunnerTestStep(action, dic)
         else
           TestMethodSequence() <-
           {
@@ -848,7 +866,7 @@ namespace Tdl2Json
             }
             def makeAction(action : ScenarioAction) : TestSequenceItem
             {
-              | Reboot             => RebootTestStep() <- { ForceReboot = RebootTestStep.Data() }
+              | Reboot        as r => MakeRebootTestStep(r)
               | Method        as m => makeMethodAction(m)
               | WaitForReboot as wbr =>
                 WaitForRebootTestStep() <-
@@ -869,6 +887,7 @@ namespace Tdl2Json
               | VsTest as x        => makeVsTestAction(x)
               | Apk    as a        => makeAndroidJavaAction(a)
               | Marathon as m      => makeMarathonAction(m)
+              | Runner   as r      => MakeRunnerTestStep(r, null)
               | Login  as login    => LoginTestStep() <-
                 {
                   Login = LoginTestStep.Data() <-
@@ -900,6 +919,8 @@ namespace Tdl2Json
               makeVsTestAction(action)
             else if (tryGetSingleElem() is VSome(action))
               makeAndroidJavaAction(action)
+            else if (tryGetSingleElem() is VSome(action))
+              MakeRunnerTestStep(action, null)
             else
               TestMethodSequence() <-
               {
@@ -964,6 +985,46 @@ namespace Tdl2Json
       }
     }
 
+    private MakeRebootTestStep(reboot : ScenarioAction.Reboot) : RebootTestStep
+    {
+      RebootTestStep() <-
+      {
+        ForceReboot = RebootTestStep.Data() <-
+        {
+          Mode =
+            match (reboot.Mode)
+            {
+              | Tdl.RebootMode.Default       => null
+              | Tdl.RebootMode.EnterSafeMode => QuickType.RebootMode.EnterSafeMode
+              | Tdl.RebootMode.ExitSafeMode  => QuickType.RebootMode.ExitSafeMode
+            }
+        }
+      }
+    }
+
+    private MakeRunnerTestStep(runner : ScenarioAction.Runner, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : RunnerTestStep
+    {
+      def step = RunnerTestStep();
+
+      def arguments = runner.Arguments.ToDictionary();
+      foreach (p in runner.Symbol.Parameters)
+      {
+        when (p.HasDefault() && !arguments.ContainsKey(p.Name))
+          arguments[p.Name] = ConvertDefaultValue(p.Default);
+      }
+
+      foreach (d in runner.Symbol.Defs)
+      {
+        match (d.Expr.Calc(values=arguments, variables=variables, getPropertyValue=(_) => ("unsupported expression", ResultKind.Error)))
+        {
+          | (value, ResultKind.Value) => step[d.Name] = value
+          | (data, ResultKind.Error) => throw NotSupportedException($"$data: $d.Expr")
+          | (_, kind) => throw NotSupportedException($"unsupported expression ($kind): $(d.Name) = $(d.Expr)")
+        }
+      }
+      step
+    }
+
     private GetTestGroupDeployments(initialDeployment  : DeploymentSymbol,
                                     finalDeployment    : DeploymentSymbol,
                                     scenarioDeployment : DeploymentSymbol,
@@ -987,7 +1048,7 @@ namespace Tdl2Json
 
     private GenerateEntity(symbol : EntitySymbol) : TestEntity
     {
-      def parameters = CollectDefs(symbol.Defs);
+      def (parameters, _) = CollectDefs(symbol.Defs);
       TestEntity() <-
       {
         BranchName = parameters["BranchName"].ToString();
@@ -1029,7 +1090,29 @@ namespace Tdl2Json
         | List(items, type) =>
           def args = items.Map(GenerateTdlExpr(_, dic));
           $<#new $(type.FullName)[] { ..$args }#>
+
+        | ObjectInitializer(properties) =>
+          def props = properties.Map((n, v) => $"$n = $(GenerateTdlExpr(v, dic))");
+          $<#new { ..$props }#>
       }
+    }
+
+    private ConvertDefaultValue(value : DotNet.DefaultValue) : Tdl.Expr
+    {
+      | Null                  => Tdl.Expr.NotSet()
+      | String(null)          => Tdl.Expr.String(null)
+      | String(s)             => Tdl.Expr.String(s)
+      | Bool(true)            => Tdl.Expr.True()
+      | Bool(false)           => Tdl.Expr.False()
+      | Number(num, false, false) => Tdl.Expr.Integer(unchecked(num :> int))
+      | Number(num, true, false)  => Tdl.Expr.Real(unchecked(num :> uint))
+      | Number(num, false, true)  => Tdl.Expr.Real(unchecked(num :> long))
+      | Number(num, true, true)   => Tdl.Expr.Real(num : ulong)
+      | Decimal(num)          => Tdl.Expr.Real(num :> double)
+      | Double(num)           => Tdl.Expr.Real(num)
+      | Single(num)           => Tdl.Expr.Real(num)
+      | Custom(x is Tdl.Expr) => x
+      | t                     => throw NotSupportedException($"$(t.GetType().Name) is not supported in scenario parameters")
     }
 
     private GenerateDefaultValue(value : DotNet.DefaultValue) : string
@@ -1058,7 +1141,12 @@ namespace Tdl2Json
             | ExternalSymbol =>
               def type = fld.Type.FullName;
               def name = fld.Name;
-              $<#(($type)externals["$name"])#>
+              def getValue = $<#(($type)externals["$name"])#>;
+              match (type)
+              {
+                | "System.String" | "string" => $<#(externals.ContainsKey("$name") ? $getValue : "")#>
+                | _ => getValue
+              }
 
             | _ => GenerateScenarioFilter()
           }

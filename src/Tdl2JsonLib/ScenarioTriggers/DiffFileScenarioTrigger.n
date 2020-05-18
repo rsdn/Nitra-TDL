@@ -37,10 +37,11 @@ namespace Tdl2Json
         foreach (trigger in symbol.TriggerPaths)
         {
           mutable list;
-          unless (_scenarioTable.TryGetValue(trigger.Path, out list))
+          def path = trigger.Path.TrimEnd('\\', '/');
+          unless (_scenarioTable.TryGetValue(path, out list))
           {
             list = List();
-            _scenarioTable.Add(trigger.Path, list);
+            _scenarioTable.Add(path, list);
           }
           def excludes : ISet[string] =
             if (trigger.Excludes.IsEmpty)

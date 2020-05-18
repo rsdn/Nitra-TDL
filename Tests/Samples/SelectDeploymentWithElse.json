@@ -1,12 +1,6 @@
 {
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
-  "DefaultValues": {
-    "CollectXPerfLog": "Disable",
-    "DeployerExePath": "C:\\AutotestBinaries\\Autotests.Deployer.exe",
-    "DumpServerProduct": "KAV.21.0.0.0",
-    "LocalTestBinariesFolder": "C:\\AutotestBinaries"
-  },
   "Deployments": {
     "Basic": {
       "Type": "Script",
@@ -27,16 +21,13 @@
           "Basic": {
             "UcpContextType": "predefined"
           }
-        },
-        "906868B7-634A-456D-9C89-331CC742650F": "Basic"
-      }
+        }
+      },
+      "Default": "Basic"
     }
   },
   "Platforms": {
     "all_pc": [
-      "w10rs5-x86"
-    ],
-    "all_pc_and_servers": [
       "w10rs5-x86"
     ],
     "w10rs5-x86": {}
@@ -48,25 +39,16 @@
     "KSOS": {
       "Name": "KSOS",
       "Parameters": {
-        "Name": "KSOS",
-        "AutotestBinariesExcludedFilesMasks": "ksm*.Product.Config;ksde*.Product.Config",
-        "ProductBinariesExcludedFilesMasks": "*_full.exe;*_reduced.exe",
-        "ConfigFilesFamily": "Kis.",
-        "TestAppPackName": "KasperskyLab.Kis.UI.TestApp.zip"
+        "Name": "KSOS"
       },
       "BranchName": "Main",
-      "Version": "#(ProductVersion)",
-      "DumpServerProduct": "#(DumpServerProduct)"
+      "Version": "KAV.21.0.0.0"
     }
   },
   "Suites": {
     "Ksos.BvtPvt.UCP-Beta-4": {
       "Parameters": {
-        "ExcludeMasks": "*.iso,*.vhd,*_full.exe",
-        "DistribFiles": "#(DistribFiles)",
-        "DistribTestModules": "#(DistribTestModules)",
-        "UcpContextType": "#(UcpContextType)",
-        "CollectXPerfLog": "#(CollectXPerfLog)"
+        "UcpContextType": "#(UcpContextType)"
       },
       "Platforms": [
         "all_pc"
@@ -88,7 +70,7 @@
       "Environments": [
         {
           "Platforms": [
-            "all_pc_and_servers"
+            "all_pc"
           ],
           "Products": [
             "KAV-KIS-PURE-KSOS-KSOSFS"

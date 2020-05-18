@@ -5,6 +5,7 @@ using Nitra;
 using Nitra.Declarations;
 
 using System.Globalization;
+using System.Collections.Immutable;
 
 namespace Tdl
 {
@@ -69,6 +70,15 @@ namespace Tdl
         Items : DefExpr*;
       }
 
+    | ObjectInitializer
+      {
+        Properties.Scope = Scope;
+        Type             = context.GetObjectType();
+        Result           = Expr.ObjectInitializer(Properties.Result.ToImmutableArray());
+
+        Properties : PropertyInitializer*;
+      }
+
     | String
       {
         Type = context.GetStringType();
@@ -81,5 +91,16 @@ namespace Tdl
     | RealLiteral               { Type = context.GetDoubleType();  Result = Expr.Real(double.Parse(Location.GetText())); }
     | DecimalIntegerLiteral     { Type = context.GetInt32Type();   Result = Expr.Integer(int.Parse(Location.GetText())); }
     | HexadecimalIntegerLiteral { Type = context.GetInt32Type();   Result = Expr.Integer(int.Parse(Location.GetText().Substring(2), NumberStyles.HexNumber)); }
+  }
+
+  ast PropertyInitializer : BindableAst
+  {
+  stage 2:
+    out Result : string * Expr = (Name.Text, Value.Result);
+
+    Value.Scope = Scope;
+
+    Name  : Name;
+    Value : DefExpr;
   }
 }

@@ -14,6 +14,11 @@ namespace Tdl
     public Location : Location { get; }
 
     | Error { }
+    | Runner
+      {
+        Symbol : RunnerSymbol;
+        Arguments : ImmutableArray[string * Expr];
+      }
     | Method
       {
         //TypeSymbol         : DeclarationSymbol;
@@ -76,7 +81,7 @@ namespace Tdl
       }
     | Logoff           { }
     | LockWorkstation  { }
-    | Reboot           { }
+    | Reboot           { Mode : RebootMode; }
     | WaitForReboot    { TimeSpan : string; MaxRebootsCountOpt : ValueOption[Expr]; }
     | Barrier          { barrier : BarrierSymbol; }
     | BarrierGenerator { BarrierName : ImmutableArray[BarrierNamePart]; Timeout : TimeSpan; }
@@ -87,6 +92,7 @@ namespace Tdl
       {
         match (this)
         {
+          | Runner
           | Method
           | Script
           | Config

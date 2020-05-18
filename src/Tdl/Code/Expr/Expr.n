@@ -3,6 +3,7 @@
 using Nemerle;
 using Nemerle.Collections;
 using Nemerle.Extensions;
+using Nemerle.Imperative;
 using Nemerle.Text;
 using Nemerle.Utility;
 
@@ -32,6 +33,7 @@ namespace Tdl
     | MemberAccess { Expr : Expr;  Symbol : DeclarationSymbol; Type : TypeSymbol; }
     | List         { Elems : ImmutableArray[Expr]; Type : TypeSymbol; }
     | Tuple        { Elems : ImmutableArray[Expr]; Type : TypeSymbol; }
+    | ObjectInitializer { Properties : ImmutableArray[string * Expr] }
 
     public GetExprListForVar(varIndex : int) : Seq[Expr]
     {
@@ -115,6 +117,16 @@ namespace Tdl
             | (_,     ResultKind.External) => (m.Symbol.Name, ResultKind.ExternalParameter)
             | _                            => throw NotSupportedException($"Invalid member access expression '$m'.")
           }
+        | ObjectInitializer(properties) =>
+          def result = SortedDictionary();
+          foreach ((name, value) in properties)
+          {
+            def (valueObj, valueKind) = value.Calc(values, variables, getPropertyValue);
+            when (valueKind == ResultKind.Error)
+              return (valueObj, valueKind);
+            result[name] = valueObj;
+          }
+          (result, ResultKind.Value)
       }
     }
 
@@ -133,6 +145,7 @@ namespace Tdl
         | MemberAccess as x  => $"$(x.Expr).$(x.Symbol.Name)"
         | List         as xs => def elems = xs.Elems.Select(_.ToString());  $<#[..$elems]#>
         | Tuple        as x  => def elems =  x.Elems.Select(_.ToString());  $<#(..$elems)#>
+        | ObjectInitializer as x => def elems = x.Properties.Select((n, v) => $<#$n = $v#>);  $<#new {..$elems}#>
       }
     }
   }

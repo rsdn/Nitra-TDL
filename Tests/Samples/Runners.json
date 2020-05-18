@@ -1,12 +1,6 @@
 {
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
-  "DefaultValues": {
-    "Capabilities": {
-      "Cap2": "Required",
-      "Cap3": "Acceptable"
-    }
-  },
   "Deployments": {
     "Empty": {
       "Type": "Empty"
@@ -22,10 +16,7 @@
         "Name": "Product 1"
       },
       "BranchName": null,
-      "Version": "1.0",
-      "Capabilities": {
-        "Cap1": "Acceptable"
-      }
+      "Version": "1.1"
     }
   },
   "Suites": {
@@ -38,13 +29,13 @@
         "Product"
       ],
       "TestScenarios": [
-        "Scenario1",
-        "Scenario2"
+        "S1",
+        "S2"
       ]
     }
   },
   "TestScenarios": {
-    "Scenario1": {
+    "S1": {
       "Deployments": [
         "Empty"
       ],
@@ -60,25 +51,38 @@
       ],
       "RevertAgentAfter": true,
       "TestMethod": {
-        "VsTestAssemblyName": "bin\\test.dll",
-        "TestCaseFilter": "Name~abc"
+        "TestSequence": [
+          {
+            "NodeJsScriptPath": "sample.exe",
+            "NodeJsBotParams": {
+              "AdditionalParam": 1
+            }
+          },
+          {
+            "NodeJsScriptPath": "sample.exe",
+            "NodeJsBotParams": {
+              "AdditionalParam": 2
+            }
+          },
+          {
+            "NodeJsScriptPath": "sample.exe",
+            "NodeJsBotParams": {
+              "A": "a",
+              "B": "b"
+            }
+          }
+        ]
       },
       "Timeout": "00:10",
-      "UniqueId": "e5ff1d95-5bd3-4dae-acda-abfcfcf1dfea",
-      "Capabilities": {
-        "Cap1": "Unacceptable",
-        "Cap2": "Required",
-        "Cap3": "Acceptable"
-      }
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e71"
     },
-    "Scenario2": {
+    "S2": {
       "TestScenarios": [
-        "Scenario2-1",
-        "Scenario2-2",
-        "Scenario2-3"
+        "S2-1",
+        "S2-2"
       ]
     },
-    "Scenario2-1": {
+    "S2-1": {
       "Deployments": [
         "Empty"
       ],
@@ -94,16 +98,15 @@
       ],
       "RevertAgentAfter": true,
       "TestMethod": {
-        "VsTestAssemblyName": "bin\\test.dll",
-        "TestCaseFilter": "Name~abc"
+        "NodeJsScriptPath": "sample1.exe",
+        "NodeJsBotParams": {
+          "AdditionalParam": 3
+        }
       },
       "Timeout": "00:10",
-      "UniqueId": "e5ff1d95-5bd3-4dae-acda-abfcfcf1dfeb",
-      "Capabilities": {
-        "Cap1": "Required"
-      }
+      "UniqueId": "20a84e6c-1028-48ed-b4e4-3dc8cb599e72"
     },
-    "Scenario2-2": {
+    "S2-2": {
       "Deployments": [
         "Empty"
       ],
@@ -119,39 +122,13 @@
       ],
       "RevertAgentAfter": true,
       "TestMethod": {
-        "VsTestAssemblyName": "bin\\test.dll",
-        "TestCaseFilter": "Name~abc"
-      },
-      "Timeout": "00:10",
-      "UniqueId": "e5ff1d96-5bd3-4dae-acda-abfcfcf1dfeb",
-      "Capabilities": {
-        "Cap1": "Unacceptable"
-      }
-    },
-    "Scenario2-3": {
-      "Deployments": [
-        "Empty"
-      ],
-      "Environments": [
-        {
-          "Platforms": [
-            "Platform"
-          ],
-          "Products": [
-            "Product"
-          ]
+        "NodeJsScriptPath": "sample2.exe",
+        "NodeJsBotParams": {
+          "AdditionalParam": 3
         }
-      ],
-      "RevertAgentAfter": true,
-      "TestMethod": {
-        "VsTestAssemblyName": "bin\\test.dll",
-        "TestCaseFilter": "Name~abc"
       },
       "Timeout": "00:10",
-      "UniqueId": "e5ff1d98-5bd3-4dae-acda-abfcfcf1dfeb",
-      "Capabilities": {
-        "Cap1": "Acceptable"
-      }
+      "UniqueId": "20a84e6d-1028-48ed-b4e4-3dc8cb599e72"
     }
   },
   "TestEntities": {}
