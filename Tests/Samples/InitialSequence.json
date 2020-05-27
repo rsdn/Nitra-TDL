@@ -2,14 +2,25 @@
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "DefaultValues": {
-    "External1": "defaulte for External1"
+    "External1": "default for External1"
   },
   "Deployments": {
     "Deploy2": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deploy2Impl": {
+            "SomeLongName": "$(Xxx)"
+          }
+        }
+      ]
+    },
+    "Deploy2Impl": {
       "Type": "Script",
       "ScriptArgs": {
         "Arg1": "$(Arg1)",
-        "Name": "$(Name)"
+        "Name": "$(Name)",
+        "SomeLongName": "$(SomeLongName)"
       },
       "DefaultValues": {
         "Arg1": "aa"
@@ -46,7 +57,7 @@
     "Suite1": {
       "Parameters": {
         "Arg1": "qqq",
-        "Xxx": 42,
+        "Xxx": 1111,
         "Name1": "C3EEBA2A-D830-4947-83B2-045529DCB327"
       },
       "Platforms": [
@@ -58,13 +69,13 @@
       "TestScenarios": [
         "S1"
       ],
-      "PreSessionAction": "Deploy1-Deploy1-Deploy2-1"
+      "PreSessionAction": "Deploy1-Deploy1-Deploy2Impl-1"
     },
     "Suite2": {
       "Parameters": {
         "Arg1": "#(External1)",
         "Name1": "$(Product:Product1.Name)",
-        "Xxx": 42
+        "Xxx": 0
       },
       "Platforms": [
         "Platform"
@@ -75,13 +86,13 @@
       "TestScenarios": [
         "S1"
       ],
-      "PreSessionAction": "Deploy2-2",
-      "PostSessionAction": "Deploy2-Deploy1-Deploy2-1"
+      "PreSessionAction": "Deploy2Impl-2",
+      "PostSessionAction": "Deploy2Impl-Deploy1-Deploy2Impl-1"
     },
-    "Suite-Product1-1-Deploy5": {
+    "Suite3": {
       "Parameters": {
         "Arg1": "qqq",
-        "Xxx": 42,
+        "Xxx": 3333,
         "Name1": "C3EEBA2A-D830-4947-83B2-045529DCB327"
       },
       "Platforms": [
@@ -93,13 +104,30 @@
       "TestScenarios": [
         "S1"
       ],
-      "PreSessionAction": "Deploy1-Deploy1-Deploy2-1",
+      "PreSessionAction": "Deploy1-Deploy1-Deploy2Impl-2"
+    },
+    "Suite-Product1-1-Deploy5": {
+      "Parameters": {
+        "Arg1": "qqq",
+        "Xxx": 0,
+        "Name1": "C3EEBA2A-D830-4947-83B2-045529DCB327"
+      },
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product1"
+      ],
+      "TestScenarios": [
+        "S1"
+      ],
+      "PreSessionAction": "Deploy1-Deploy1-Deploy2Impl-3",
       "PostSessionAction": "Deploy1-2"
     },
     "Suite-Product2-2-Deploy6": {
       "Parameters": {
         "Arg1": "qqq",
-        "Xxx": 42,
+        "Xxx": 0,
         "Name1": "C3EEBA2A-D830-4947-83B2-045529DCB327"
       },
       "Platforms": [
@@ -111,7 +139,7 @@
       "TestScenarios": [
         "S1"
       ],
-      "PreSessionAction": "Deploy1-Deploy1-Deploy2-2",
+      "PreSessionAction": "Deploy1-Deploy1-Deploy2Impl-4",
       "PostSessionAction": "Deploy1-2"
     }
   },
@@ -156,48 +184,82 @@
         "Arg2": "42"
       }
     },
-    "Deploy2-1": {
+    "Deploy2Impl-1": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
         "Arg1": "qqq",
-        "Name": "Product 1"
+        "Name": "Product 1",
+        "SomeLongName": 1111
       }
     },
-    "Deploy1-Deploy1-Deploy2-1": {
+    "Deploy1-Deploy1-Deploy2Impl-1": {
       "Scripts": [
         "Deploy1-1",
         "Deploy1-1",
-        "Deploy2-1"
+        "Deploy2Impl-1"
       ]
     },
-    "Deploy2-2": {
+    "Deploy2Impl-2": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
         "Arg1": "x",
-        "Name": "Product 1"
+        "Name": "Product 1",
+        "SomeLongName": 0
       }
     },
-    "Deploy2-3": {
+    "Deploy2Impl-3": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
         "Arg1": "qqq",
-        "Name": "Product 2"
+        "Name": "Product 1",
+        "SomeLongName": 3333
       }
     },
-    "Deploy1-Deploy1-Deploy2-2": {
+    "Deploy1-Deploy1-Deploy2Impl-2": {
       "Scripts": [
         "Deploy1-1",
         "Deploy1-1",
-        "Deploy2-3"
+        "Deploy2Impl-3"
+      ]
+    },
+    "Deploy2Impl-4": {
+      "ScriptPath": "Deploy2.ps1",
+      "ScriptArgs": {
+        "Arg1": "qqq",
+        "Name": "Product 1",
+        "SomeLongName": 0
+      }
+    },
+    "Deploy1-Deploy1-Deploy2Impl-3": {
+      "Scripts": [
+        "Deploy1-1",
+        "Deploy1-1",
+        "Deploy2Impl-4"
+      ]
+    },
+    "Deploy2Impl-5": {
+      "ScriptPath": "Deploy2.ps1",
+      "ScriptArgs": {
+        "Arg1": "qqq",
+        "Name": "Product 2",
+        "SomeLongName": 0
+      }
+    },
+    "Deploy1-Deploy1-Deploy2Impl-4": {
+      "Scripts": [
+        "Deploy1-1",
+        "Deploy1-1",
+        "Deploy2Impl-5"
       ]
     }
   },
   "PostSessionActions": {
-    "Deploy2-1": {
+    "Deploy2Impl-1": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
         "Arg1": "x",
-        "Name": "Product 1"
+        "Name": "Product 1",
+        "SomeLongName": 0
       }
     },
     "Deploy1-1": {
@@ -207,18 +269,19 @@
         "Arg2": "42"
       }
     },
-    "Deploy2-2": {
+    "Deploy2Impl-2": {
       "ScriptPath": "Deploy2.ps1",
       "ScriptArgs": {
         "Arg1": "#(External1)",
-        "Name": "Product 1"
+        "Name": "Product 1",
+        "SomeLongName": 0
       }
     },
-    "Deploy2-Deploy1-Deploy2-1": {
+    "Deploy2Impl-Deploy1-Deploy2Impl-1": {
       "Scripts": [
-        "Deploy2-1",
+        "Deploy2Impl-1",
         "Deploy1-1",
-        "Deploy2-2"
+        "Deploy2Impl-2"
       ]
     },
     "Deploy1-2": {

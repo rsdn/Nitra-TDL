@@ -138,6 +138,19 @@ namespace Tdl
           else
             DeploymentTreeNode.Nodes(reson, nodes.ToNList())
       }
+      def makeOverriddenValue(value : Tdl.Expr) : Tdl.Expr
+      {
+        // TODO: process symbols like Expressions.Convert method
+        | Tdl.Expr.Reference(s is FormalParameterSymbol)
+        | Tdl.Expr.Reference(s is VarSymbol) =>
+          mutable variableValue;
+          if (defs.TryGetValue(s.Name, out variableValue))
+            variableValue
+          else
+            value
+
+        | _ => value
+      }
       match (deployment)
       {
         | Deployment.EmptySymbol | Deployment.ScriptSymbol | Deployment.CodeSymbol => DeploymentTreeNode.Leaf(defs, deployment)
@@ -151,7 +164,7 @@ namespace Tdl
             return DeploymentTreeNode.Nodes(DeploymentTreeNode.Reson.Cycled(deployment), []);
           def overriddenDefs = Hashtable(defs);
           foreach (overridden in curry.ParameterValues)
-            overriddenDefs[overridden.Symbol.Name] = overridden.Expr;
+            overriddenDefs[overridden.Symbol.Name] = makeOverriddenValue(overridden.Expr);
           MakeDeploymentsTree(visited.Add(curry), curry.BaseDeployment, overriddenDefs, variables)
 
         | Deployment.SelectSymbol as sel =>
