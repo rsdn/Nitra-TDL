@@ -160,7 +160,7 @@ namespace Tdl2Json
       def tdlProjectData = data :> TdlProjectData;
       def evalContext    = tdlProjectData.Context :> TdlDependentPropertyEvalContext;
       TransformationContext(tdlProjectData.RootNamespace, commentBag, messages, evalContext.InitialDeployment, evalContext.FinalDeployment,
-        tdlProjectData.ExternalSymbolTable, transformatorOutput)
+        evalContext.ExportDeployments, tdlProjectData.ExternalSymbolTable, transformatorOutput)
     }
 
     internal ReportMessage(msg : string, importance : MessageImportance = MessageImportance.High) : void
@@ -245,6 +245,9 @@ namespace Tdl2Json
             throw InvalidOperationException($"Failed to generate code for '$symbol' symbol.", e)
         }
       }
+
+      foreach (symbol in context.ExportDeployments)
+        deploymentCompiler.CompileForExport(symbol);
 
       def defaultValues = SortedDictionary();
       when (vmCapabilities.Count > 0)

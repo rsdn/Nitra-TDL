@@ -20,11 +20,9 @@ namespace Tdl
     }
 
     Symbol.AllDeployments = TdlUtils.CheckForRecursionDeployment(Name, context, Symbol, Symbol.AggregateParametersScope);
+    Modifier.Symbol       = Symbol;
 
     Modifier : DeploymentModifier?;
-
-    when (Modifier.HasValue)
-      SetSpecialDeployment(Symbol, Modifier.Value, context);
 
     when (!Symbol.IsUsed && !Symbol.Name.StartsWith("_") && !(context.Project is Nitra.ProjectSystem.FsProject[IAst]))
       Name.Warning(context, "Unused deployment.");
@@ -58,7 +56,7 @@ namespace Tdl
         Content.Symbol                  = Symbol;
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
         Definitions.Scope               = Symbol.ParameterScope;
-        Symbol.Defs                     = TdlUtils.MakeUntypedDefinitions(Definitions);
+        Symbol.Defs                     = TdlUtils.MakeUntypedDefinitions(Definitions, context);
         Parameters.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
         Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
 
@@ -162,6 +160,27 @@ namespace Tdl
         CheckSelectDeployment(context, Cases, Parameters.Count);
 
         Cases      : Case*;
+      }
+    | ignore-case Import : Parameterizable
+      {
+        symbol
+        {
+        stage 3:
+          in Defs            : ImmutableArray[UntypedDef];
+
+          Kind           = "import deployment";
+          SpanClass      = TdlLang.DeploymentSpanClass;
+          IsSameIdentity = candidate is Tdl.Deployment;
+        }
+
+        Symbol.AggregateParametersScope = Symbol.ParameterScope;
+        Definitions.DefinitionScope     = context.GetDeploymentImportScope();
+        Definitions.Scope               = Symbol.ParameterScope;
+        Symbol.Defs                     = TdlUtils.MakeUntypedDefinitions(Definitions, context, ["Source"]);
+        Parameters.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
+        Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
+
+        Definitions     : Definition*;
       }
   } // Deployment
 }

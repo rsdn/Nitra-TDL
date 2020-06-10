@@ -73,6 +73,17 @@ namespace Tdl2Json
       (symbol.FirstDeclarationOrDefault :> Tdl.Deployment.Code).Commands
     }
 
+    public CompileForExport(deployment: DeploymentSymbol) : void
+    {
+      def name = deployment.Name;
+      def seq  = Compile([deployment], []);
+      unless (_deployments.ContainsKey(name))
+      {
+        def stub = QuickType.Deployment() <- { Type = QuickType.TypeEnum.Sequence; Deployments = seq };
+        _deployments.AddEx(name, stub, "_deployments");
+      }
+    }
+
     [Memoize]
     public Compile(seq : list[DeploymentSymbol], defs : list[string * object]) : array[QuickType.TestGroupDeployment]
     {
@@ -169,6 +180,11 @@ namespace Tdl2Json
 
             unless (_deployments.ContainsKey(s.Name))
               CompileSelect(s);
+            sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values, s.AggregateParametersScope)))
+
+          | Deployment.ImportSymbol as s =>
+            unless (_deployments.ContainsKey(s.Name))
+              CompileImport(s);
             sequence.Add(SequenceItem.Opaque(MakeDeploymentReference(s.Name, values, s.AggregateParametersScope)))
 
           | d => assert(false, $"Unknown deployment type $(d.GetType())")
@@ -366,6 +382,28 @@ namespace Tdl2Json
             Deployments   = CompileSequence(array[currying.BaseDeployment], values);
             DefaultValues = if (defaults.Count == 0) null else defaults;
         }, "_deployments")
+    }
+
+    private CompileImport(import : Deployment.ImportSymbol) : void
+    {
+      def deploymentModel = QuickType.Deployment() <-
+      {
+        Type = QuickType.TypeEnum.Import;
+        Name = import.Name;
+      };
+
+      foreach (d in import.Defs)
+      {
+        match (d.Name)
+        {
+          | "Name"       => deploymentModel.Name       = d.Expr.ToObject() :> string
+          | "Source"     => deploymentModel.Source     = d.Expr.ToObject() :> string
+          | "Parameters" => deploymentModel.Parameters = d.Expr.ToObject() :> IDictionary[string, object]
+          | n => assert(false, $"Unknown import deployment field '$n'");
+        }
+      }
+
+      _deployments.AddEx(import.Name, deploymentModel, "_deployments")
     }
 
     private static MakeDefaultValues(parameters : ImmutableArray[FormalParameterSymbol]) : Dictionary[string, object]

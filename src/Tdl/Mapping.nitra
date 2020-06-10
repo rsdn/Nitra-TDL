@@ -63,6 +63,13 @@ namespace Tdl
         ParameterCurryings.Item1 -> CurredParameters;
       }
     | DeploymentSelect -> Deployment.Select   { Name -> Name; Modifier -> Modifier; Parameters.Item1 -> Parameters; Cases -> Cases; }
+    | DeploymentImport -> Deployment.Import
+      {
+        Name -> Name;
+        Parameters.FormalParameters.Item1    -> Parameters;
+        DeploymentImportBody.DefDeclarations -> Definitions;
+        Modifier -> Modifier;
+      }
     | ProductType      -> ProductType         { Name -> Name; TypeBody.Fields -> Fields; [] -> TypeBase; TypeBody.DefDeclarations -> Definitions; }
     | Product          -> Product.Def         { Name -> Name; Type -> ProductType; ProductBody.DefDeclarations -> Definitions; }
     | ProductSet       -> Product.Set         { Name -> Name; Type -> ProductType; Products.Item1 -> Products; }
@@ -175,6 +182,10 @@ namespace Tdl
   {
     | Initial -> Initial {}
     | Final   -> Final {}
+    | Export  -> Export
+      {
+        match(ExportParametersOpt) { | Some(p) -> p.References.Item1 | None() -> [] } -> Parameters;
+      }
   }
 
   map syntax Grammar.MemberDeclaration.DeploymentSelect.Parameter -> FormalParameter

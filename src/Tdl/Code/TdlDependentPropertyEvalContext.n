@@ -15,14 +15,11 @@ namespace Tdl
   [Record]
   public class TdlDependentPropertyEvalContext : DependentPropertyEvalContext
   {
-    [RecordIgnore]
-    public PredefinedSuiteFields : HashSet[string] { get; set; default HashSet(["SessionInitializer", "SessionFinalizer"]); }
-    [RecordIgnore]
-    public TdlProjectData        : TdlProjectData { get; set; }
-    [RecordIgnore]
-    public InitialDeployment     : DeploymentSymbol { get; set; }
-    [RecordIgnore]
-    public FinalDeployment       : DeploymentSymbol { get; set; }
+    [RecordIgnore] public PredefinedSuiteFields : HashSet[string]  { get; set; default HashSet(["SessionInitializer", "SessionFinalizer"]); }
+    [RecordIgnore] public TdlProjectData        : TdlProjectData   { get; set; }
+    [RecordIgnore] public InitialDeployment     : DeploymentSymbol { get; set; }
+    [RecordIgnore] public FinalDeployment       : DeploymentSymbol { get; set; }
+    [RecordIgnore] public ExportDeployments     : HashSet[DeploymentSymbol] { get; set; default HashSet() }
     public EntityType            : TdlType.EntitySymbol;
     public BarrierType           : TdlType.BarrierSymbol;
     public MethodType            : FunctionTypeSymbol;
