@@ -1,0 +1,32 @@
+
+export import deployment ImportWithoutName(string a)
+{
+  Source = "x.json";
+  Parameters = new { a = a };
+}
+
+export import deployment ImportWithName(string b)
+{
+  Source = "x.json";
+  Name = "SampleDeployment";
+  Parameters = new { a = b };
+}
+
+export deployment LogData(string Message)
+{
+  KL.Autotests.Commands.LogMessage(Message);
+}
+
+export (a, b, Message)
+deployment Sequence = ImportWithName, ImportWithoutName, LogData;
+
+export (b)
+deployment Curry = Sequence(Message: "hi", a: "aaa");
+
+export (a, b, Message, Par)
+select deployment Select(Par)
+{
+  | "A" => Curry
+  | "B" => Sequence
+  | not-set => Empty
+}

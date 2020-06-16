@@ -154,6 +154,15 @@ namespace QuickType
 
         [JsonProperty("Deployments", NullValueHandling = NullValueHandling.Ignore)]
         public TestGroupDeployment[] Deployments { get; set; }
+
+        [JsonProperty("Name", NullValueHandling = NullValueHandling.Ignore)]
+        public string Name { get; set; }
+
+        [JsonProperty("Source", NullValueHandling = NullValueHandling.Ignore)]
+        public string Source { get; set; }
+
+        [JsonProperty("Parameters", NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> Parameters { get; set; }
     }
 
     /// <summary>
@@ -351,7 +360,7 @@ namespace QuickType
     /// Последовательность деплоев (для тестов compatibility)
     /// </summary>
     [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-    public enum TypeEnum { Script, Select, Sequence, Reboot, Empty };
+    public enum TypeEnum { Script, Select, Sequence, Reboot, Empty, Import };
 
     public partial struct PlatformValue
     {
