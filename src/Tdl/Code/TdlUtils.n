@@ -282,8 +282,6 @@ namespace Tdl
       def visited = HashSet();
       mutable builder = UnionScopeBuilder();
 
-      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-
       if (CollectScenarios(visited, ref builder, scenarios))
         VSome(builder.ToScope())
       else
@@ -1551,19 +1549,12 @@ namespace Tdl
       }
     }
 
-    public MakeDefinitionScopeForScenarioDef(deploymentScope : Scope, context : DependentPropertyEvalContext) : Scope
+    private AddDeploymentAggregateParametersScope(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, builder : ref UnionScopeBuilder) : bool
     {
-      GetScenarioParameterScope(context).HideWith(deploymentScope.UnionWith(GetVmCapabilityScope(context)))
-    }
-
-    public MakeDefinitionScopeForGeneratorScenario(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
-    {
-      mutable builder;
-
       match (deployment)
       {
-        | DeploymentSymbol as d when !d.IsAggregateParametersScopeEvaluated => return VNone();
-        | DeploymentSymbol as d => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
+        | DeploymentSymbol as d when !d.IsAggregateParametersScopeEvaluated => return false
+        | DeploymentSymbol as d => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder)
         | VarSymbol as v =>
           foreach (from in froms)
           foreach (var when v.Id == var.Id in from.Vars with i)
@@ -1571,64 +1562,58 @@ namespace Tdl
             def list = from.Elems.GetExprListForVar(i);
             foreach (x in list)
             {
-              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAggregateParametersScopeEvaluated => return VNone();
-              | Reference(Symbol=DeploymentSymbol as d) => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder);
+              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAggregateParametersScopeEvaluated => return false
+              | Reference(Symbol=DeploymentSymbol as d) => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder)
               | _ => ()
             }
             break;
           }
-        | _ => assert(false, $"Unsupported expressoin type $(deployment.GetType().FullName)");
+        | _ => assert(false, $"Unsupported expression type $(deployment.GetType().FullName)");
       }
 
-      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
+      def tdlContext = context.ToTdlContext();
+
+      def initialDeployment = tdlContext.InitialDeployment;
+      when (initialDeployment != null)
+      {
+        unless (initialDeployment.IsAggregateParametersScopeEvaluated)
+          return false;
+
+        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
+      }
+
+      def finalDeployment = tdlContext.FinalDeployment;
+      when (finalDeployment != null)
+      {
+        unless (finalDeployment.IsAggregateParametersScopeEvaluated)
+          return false;
+
+        UnionScopeBuilder.Add(finalDeployment.AggregateParametersScope, ref builder);
+      }
+
+      true
+    }
+
+    public MakeDefinitionScopeForScenario(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    {
+      mutable builder;
+
+      unless (AddDeploymentAggregateParametersScope(deployment, froms, context, ref builder))
+        return VNone();
+
       UnionScopeBuilder.Add(GetVmCapabilityScope(context), ref builder);
       VSome(GetScenarioParameterScope(context).HideWith(builder.ToScope()))
     }
 
-    public MakeAggregateParametersScopeForScenarioDef(parametersScope : Scope, deploymentScope : Scope, context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : Scope
+    public MakeAggregateParametersScopeForScenario(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
     {
       mutable builder;
+
+      unless (AddDeploymentAggregateParametersScope(deployment, froms, context, ref builder))
+        return VNone();
+
       UnionScopeBuilder.Add(parametersScope, ref builder);
-      UnionScopeBuilder.Add(deploymentScope, ref builder);
-      AddSpecialDeploymentsAggregateParameterScope(ref builder, context);
-      FilterOutAssignedParameters(builder.ToScope(), defs)
-    }
-
-    public MakeAggregateParametersScopeForScenarioGenerator(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
-    {
-      def deployments = List();
-      def tdlContext  = context.ToTdlContext();
-
-      def initialDeployment = tdlContext.InitialDeployment;
-      when (initialDeployment != null)
-        deployments.Add(initialDeployment);
-
-      def finalDeployment = tdlContext.FinalDeployment;
-      when (finalDeployment != null)
-        deployments.Add(finalDeployment);
-
-      match (deployment)
-      {
-        | DeploymentSymbol as d => deployments.Add(d);
-        | VarSymbol as v =>
-          foreach (from in froms)
-          foreach (var when v.Id == var.Id in from.Vars with i)
-          {
-            def list = from.Elems.GetExprListForVar(i);
-            foreach (x in list)
-            {
-              | Reference(Symbol=DeploymentSymbol as d) => deployments.Add(d);
-              | _ => ()
-            }
-            break;
-          }
-        | _ => assert(false, $"Unsupported expressoin type $(deployment.GetType().FullName)");
-      }
-      def result = MakeAggregateParametersScope(deployments, parametersScope);
-      if (result is VSome(scope))
-        VSome(FilterOutAssignedParameters(scope, defs))
-      else
-        result
+      VSome(FilterOutAssignedParameters(builder.ToScope(), defs))
     }
 
     private FilterOutAssignedParameters(scope : Scope, defs : ImmutableArray[Tdl.Def]) : Scope
@@ -2012,18 +1997,6 @@ namespace Tdl
     //  }
     //}
 
-    private AddSpecialDeploymentsAggregateParameterScope(builder : ref UnionScopeBuilder, context : DependentPropertyEvalContext) : void
-    {
-      def tdlContext = context.ToTdlContext();
-
-      def initialDeployment = tdlContext.InitialDeployment;
-      when (initialDeployment != null && initialDeployment.IsAggregateParametersScopeEvaluated)
-        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
-
-      def finalDeployment = tdlContext.FinalDeployment;
-      when (finalDeployment != null && finalDeployment.IsAggregateParametersScopeEvaluated)
-        UnionScopeBuilder.Add(finalDeployment.AggregateParametersScope, ref builder);
-    }
     public HasDashboardVisible(attributes : DotNet.CustomAttributeReference.IAstList) : bool
     {
       attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttribites.DashboardVisibleSymbol)

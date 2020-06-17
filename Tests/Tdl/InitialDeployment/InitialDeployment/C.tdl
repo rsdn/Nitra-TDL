@@ -1,11 +1,22 @@
-scenario Scenario1
+scenario Scenario11
 {
     deployment DeployP1;
     environments (win7-x64, P1);
-    gtest "foo.exe";
+    gtest "foo1.exe";
     UniqueId = "7E9EDB31-B4C7-431A-AD51-EAAA52498E6A";
     TfsId = 0;
     Timeout = "00:00:10";
+}
+
+scenario Scenario12
+{
+    deployment DeployP1;
+    environments (win7-x64, P1);
+    gtest "foo2.exe";
+    UniqueId = "7E9EDB31-B4C7-431A-AD51-EAAA52498E6B";
+    TfsId = 0;
+    Timeout = "00:00:10";
+    InitialDeploymentParameter = "B";
 }
 
 suite Suite1
@@ -16,10 +27,11 @@ suite Suite1
   DeploymentParameter = "value for normal deployment";
   FinalDeploymentParameter = "Z";
   // простой сценарий
-  Scenario1();
+  Scenario11();
+  Scenario12();
 }
 
-scenario Scenario2 = Scenario1;
+scenario Scenario2 = Scenario11, Scenario12;
 
 suite Suite2
 {

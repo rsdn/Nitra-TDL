@@ -51,7 +51,7 @@ namespace Tdl
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
-        Symbol.AggregateParametersScope = TdlUtils.MakeAggregateParametersScopeForScenarioDef(Symbol.ParameterScope, Symbol.Deployment.AggregateParametersScope, context, Symbol.Defs);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployment, ImmutableArray.Empty, context, Symbol.Defs);
 
         Actions.Scope                   = MethodConditionalScope.Value;
         Actions.InGenerator             = false;
@@ -66,7 +66,7 @@ namespace Tdl
         Symbol.Environments             = Environments.Environment;
 
         Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope));
-        Definitions.DefinitionScope     = TdlUtils.MakeDefinitionScopeForScenarioDef(Symbol.Deployment.AggregateParametersScope, context);
+        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForScenario(Symbol.Deployment, ImmutableArray.Empty, context);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
 
         FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
@@ -162,7 +162,7 @@ namespace Tdl
         Actions.InGenerator             = true;
         Symbol.Actions                  = Actions.ScenarioActions;
 
-        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForGeneratorScenario(Symbol.Deployment, Symbol.Froms, context);
+        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForScenario(Symbol.Deployment, Symbol.Froms, context);
         Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope));
 
         DeploymentRef                   = Deployment.Ref.Resolve();
@@ -174,7 +174,7 @@ namespace Tdl
         Symbol.Product                  = ProductRef   .Symbol;
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenarioGenerator(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context, Symbol.Defs);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context, Symbol.Defs);
 
         FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);

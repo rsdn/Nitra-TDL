@@ -63,7 +63,7 @@ namespace Tdl
         | Reference(Symbol=Platform.SetSymbol   as s) => s.Platforms     .Select(Expr.Reference)
         | Reference(Symbol=Deployment.SetSymbol as s) => s.AllDeployments.Select(Expr.Reference)
         | List as list                                => list.Elems
-        | _ => assert(false, $"Unsupporten expressoin type $(GetType().FullName)")
+        | _ => assert(false, $"Unsupported expression type $(GetType().FullName)")
       }
     }
 
