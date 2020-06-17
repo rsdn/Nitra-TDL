@@ -1,4 +1,4 @@
-﻿{
+{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
@@ -12,7 +12,7 @@
       "Type": "Script",
       "ScriptArgs": {},
       "DefaultValues": {},
-      "ScriptPath": "A.ps1"
+      "ScriptPath": "B.ps1"
     },
     "DeployP1": {
       "Type": "Script",
@@ -26,6 +26,14 @@
       "Type": "Sequence",
       "Deployments": [
         "Setup",
+        "DeployP1",
+        "Finalize"
+      ]
+    },
+    "DeployP1-2": {
+      "Type": "Sequence",
+      "Deployments": [
+        "B",
         "DeployP1",
         "Finalize"
       ]
@@ -93,7 +101,8 @@
         "P1"
       ],
       "TestScenarios": [
-        "Scenario1"
+        "Scenario11",
+        "Scenario12"
       ]
     },
     "Suite2": {
@@ -145,7 +154,7 @@
     }
   },
   "TestScenarios": {
-    "Scenario1": {
+    "Scenario11": {
       "Deployments": [
         "DeployP1-1"
       ],
@@ -161,16 +170,40 @@
       ],
       "RevertAgentAfter": true,
       "TestMethod": {
-        "ProgramName": "foo.exe",
+        "ProgramName": "foo1.exe",
         "Arguments": []
       },
       "TfsId": 0,
       "Timeout": "00:00:10",
       "UniqueId": "7e9edb31-b4c7-431a-ad51-eaaa52498e6a"
     },
+    "Scenario12": {
+      "Deployments": [
+        "DeployP1-2"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "win7-x64"
+          ],
+          "Products": [
+            "P1"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "ProgramName": "foo2.exe",
+        "Arguments": []
+      },
+      "TfsId": 0,
+      "Timeout": "00:00:10",
+      "UniqueId": "7e9edb31-b4c7-431a-ad51-eaaa52498e6b"
+    },
     "Scenario2": {
       "TestScenarios": [
-        "Scenario1"
+        "Scenario11",
+        "Scenario12"
       ]
     },
     "Scenario3": {
