@@ -1371,7 +1371,7 @@ namespace Tdl2Json
     {
       def result = SortedSet();
 
-      foreach(field is FieldSymbol when field.IsIsDashboardVisibleEvaluated && field.IsDashboardVisible in type.Scope.AllSymbols)
+      foreach(field is FieldSymbol when field.IsIsDashboardVisibleEvaluated && field.IsDashboardVisible in type.Scope.GetAllSymbols())
         _ = result.Add(field.Name);
 
       foreach (call is Tdl.SuiteStatement.CallScenario in statements)

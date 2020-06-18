@@ -180,6 +180,7 @@ namespace Tdl
         }
 
         Symbol.AggregateParametersScope = Symbol.ParameterScope;
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters);
         Definitions.DefinitionScope     = context.GetDeploymentImportScope();
         Definitions.Scope               = Symbol.ParameterScope;
         Symbol.Defs                     = TdlUtils.MakeUntypedDefinitions(Definitions, context, ["Source"]);
