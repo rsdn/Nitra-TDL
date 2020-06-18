@@ -1035,15 +1035,24 @@ namespace Tdl2Json
                                     assignedParams     : array[Def],
                                     dic                : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : array[TestGroupDeployment]
     {
-      mutable deployments = if (finalDeployment == null) [] else [finalDeployment];
+      mutable deployments = [];
+      def scope = HashSet(StringComparer.OrdinalIgnoreCase);
 
-      when (!NList.Contains(deployments, scenarioDeployment))
-        deployments ::= scenarioDeployment;
+      def addDeployment(deployment : DeploymentSymbol)
+      {
+        when (deployment != null && !NList.Contains(deployments, deployment))
+        {
+          deployments ::= deployment;
 
-      when (initialDeployment != null && !NList.Contains(deployments, initialDeployment))
-        deployments ::= initialDeployment;
+          foreach (symbol in deployment.AggregateParametersScope.GetAllSymbols())
+            _ = scope.Add(symbol.Name);
+        }
+      }
 
-      def scope                = HashSet(scenarioDeployment.AggregateParametersScope.GetAllSymbols().Select(s => s.Name), StringComparer.OrdinalIgnoreCase);
+      addDeployment(finalDeployment);
+      addDeployment(scenarioDeployment);
+      addDeployment(initialDeployment);
+
       def sortedAssignedParams = assignedParams.Where(x => scope.Contains(x.Symbol.Name)).Select(x => (x.Symbol.Name, x.Expr.ToObject(null, dic))).OrderBy((n, _) => n).NToList();
       def result               = compiler.Compile(deployments, sortedAssignedParams);
       compiler.GetCompositeDeployment(scenarioDeployment.Name, result)
