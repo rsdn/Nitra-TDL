@@ -187,17 +187,18 @@ namespace Tdl
 
       def emptyDeployment = ExternalDeclaration.[Tdl.Deployment.EmptySymbol](NoLocation, EmptyDeploymentName, ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       // TODO: эти свойства должны вычисляться в EvalProperties
-      emptyDeployment.Type                     = deploymentType;
-      emptyDeployment.Scope                    = EmptyScope.Instance;
-      emptyDeployment.AllDeployments           = ImmutableArray.Create();
-      emptyDeployment.AggregateParametersScope = EmptyScope.Instance;
+      emptyDeployment.Type                       = deploymentType;
+      emptyDeployment.Scope                      = EmptyScope.Instance;
+      emptyDeployment.AllDeployments             = ImmutableArray.Empty;
+      emptyDeployment.AggregateParametersScope   = EmptyScope.Instance;
+      emptyDeployment.DashboardVisibleParameters = ImmutableArray.Empty;
       emptyDeployment.EvalProperties(context);
       initTypeSymbol(emptyDeployment);
 
-      def dashboardVisible = ExternalDeclaration.[Tdl.PredefinedAttribites.DashboardVisibleSymbol](NoLocation, "DashboardVisible", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def dashboardVisible = ExternalDeclaration.[Tdl.PredefinedAttributes.DashboardVisibleSymbol](Location.Default, "DashboardVisible", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(dashboardVisible);
 
-      def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttribites.TriggerPathSymbol](NoLocation, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttributes.TriggerPathSymbol](Location.Default, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(triggerPath);
       data
     }

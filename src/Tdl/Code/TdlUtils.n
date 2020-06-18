@@ -524,6 +524,11 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
 
+    public Flatten[T](a : ImmutableArray[ImmutableArray[T]]) : Seq[T]
+    {
+      a.SelectMany(x => x)
+    }
+
     public Flatten(symbols : ImmutableArray[SuiteSymbol]) : ImmutableArray[SuiteSymbol]
     {
       def getChildren(symbol)
@@ -1549,12 +1554,17 @@ namespace Tdl
       }
     }
 
-    private AddDeploymentAggregateParametersScope(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, builder : ref UnionScopeBuilder) : bool
+    public GetScenarioDeployments(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : Seq[DeploymentSymbol]
     {
+      def tdlContext = context.ToTdlContext();
+
+      def initialDeployment = tdlContext.InitialDeployment;
+      when (initialDeployment != null)
+        yield initialDeployment;
+
       match (deployment)
       {
-        | DeploymentSymbol as d when !d.IsAggregateParametersScopeEvaluated => return false
-        | DeploymentSymbol as d => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder)
+        | DeploymentSymbol as d => yield d;
         | VarSymbol as v =>
           foreach (from in froms)
           foreach (var when v.Id == var.Id in from.Vars with i)
@@ -1562,8 +1572,7 @@ namespace Tdl
             def list = from.Elems.GetExprListForVar(i);
             foreach (x in list)
             {
-              | Reference(Symbol=DeploymentSymbol as d) when !d.IsAggregateParametersScopeEvaluated => return false
-              | Reference(Symbol=DeploymentSymbol as d) => UnionScopeBuilder.Add(d.AggregateParametersScope, ref builder)
+              | Reference(Symbol=DeploymentSymbol as d) => yield d;
               | _ => ()
             }
             break;
@@ -1571,49 +1580,27 @@ namespace Tdl
         | _ => assert(false, $"Unsupported expression type $(deployment.GetType().FullName)");
       }
 
-      def tdlContext = context.ToTdlContext();
-
-      def initialDeployment = tdlContext.InitialDeployment;
-      when (initialDeployment != null)
-      {
-        unless (initialDeployment.IsAggregateParametersScopeEvaluated)
-          return false;
-
-        UnionScopeBuilder.Add(initialDeployment.AggregateParametersScope, ref builder);
-      }
-
       def finalDeployment = tdlContext.FinalDeployment;
       when (finalDeployment != null)
-      {
-        unless (finalDeployment.IsAggregateParametersScopeEvaluated)
-          return false;
-
-        UnionScopeBuilder.Add(finalDeployment.AggregateParametersScope, ref builder);
-      }
-
-      true
+        yield finalDeployment;
     }
 
     public MakeDefinitionScopeForScenario(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
-      mutable builder;
-
-      unless (AddDeploymentAggregateParametersScope(deployment, froms, context, ref builder))
-        return VNone();
-
-      UnionScopeBuilder.Add(GetVmCapabilityScope(context), ref builder);
-      VSome(GetScenarioParameterScope(context).HideWith(builder.ToScope()))
+      match (MakeAggregateParametersScope(GetScenarioDeployments(deployment, froms, context), GetVmCapabilityScope(context)))
+      {
+        | VSome(scope) => VSome(GetScenarioParameterScope(context).HideWith(scope))
+        | VNone => VNone()
+      }
     }
 
     public MakeAggregateParametersScopeForScenario(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
     {
-      mutable builder;
-
-      unless (AddDeploymentAggregateParametersScope(deployment, froms, context, ref builder))
-        return VNone();
-
-      UnionScopeBuilder.Add(parametersScope, ref builder);
-      VSome(FilterOutAssignedParameters(builder.ToScope(), defs))
+      match (MakeAggregateParametersScope(GetScenarioDeployments(deployment, froms, context), parametersScope))
+      {
+        | VSome(scope) => VSome(FilterOutAssignedParameters(scope, defs))
+        | VNone => VNone()
+      }
     }
 
     private FilterOutAssignedParameters(scope : Scope, defs : ImmutableArray[Tdl.Def]) : Scope
@@ -1999,7 +1986,7 @@ namespace Tdl
 
     public HasDashboardVisible(attributes : DotNet.CustomAttributeReference.IAstList) : bool
     {
-      attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttribites.DashboardVisibleSymbol)
+      attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttributes.DashboardVisibleSymbol)
     }
 
     public ProductScopeFilter(scope : Scope) : Scope
@@ -2120,7 +2107,7 @@ namespace Tdl
           processArguments(other);
       }
 
-      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttribites.TriggerPathSymbol in ast)
+      foreach (r when r.IsSymbolEvaluated && r.Symbol is PredefinedAttributes.TriggerPathSymbol in ast)
         processArguments(NList.ToList(r.Arguments));
 
       builder.ToImmutable()
@@ -2152,6 +2139,57 @@ namespace Tdl
         }
       }
       VSome(false)
+    }
+
+    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[DeploymentSymbol] = null) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    {
+      GetDashboardVisibleParameters(parameters, baseSymbols,
+        fun (d) { if(d.IsDashboardVisibleParametersEvaluated) VSome(d.DashboardVisibleParameters) else VNone() })
+    }
+
+    public GetDashboardVisibleParameters(parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[ScenarioSymbol]) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    {
+      GetDashboardVisibleParameters(parameters, baseSymbols,
+        fun (d) { if(d.IsDashboardVisibleParametersEvaluated) VSome(d.DashboardVisibleParameters) else VNone() })
+    }
+
+    private GetDashboardVisibleParameters[T](parameters : ImmutableArray[DotNet.FormalParameterSymbol], baseSymbols : Seq[T],
+      getDashboardVisisbleSymbols : T -> ValueOption[ImmutableArray[DeclarationSymbol]]) : ValueOption[ImmutableArray[DeclarationSymbol]]
+    {
+      mutable hashSet;
+
+      foreach (p in parameters)
+      {
+        unless (p.IsCustomAttributesEvaluated)
+          return VNone();
+
+        when (p.CustomAttributes.Any(_ is PredefinedAttributes.DashboardVisibleSymbol))
+        {
+          when (hashSet == null)
+            hashSet = HashSet();
+
+          _ = hashSet.Add(p);
+        }
+      }
+
+      when (baseSymbols != null)
+      {
+        foreach (d in baseSymbols)
+        {
+          match (getDashboardVisisbleSymbols(d))
+          {
+            | VNone => return VNone()
+            | VSome(additionalParameters) when additionalParameters.IsDefaultOrEmpty => ()
+            | VSome(additionalParameters) =>
+              when (hashSet == null)
+                hashSet = HashSet();
+
+              hashSet.UnionWith(additionalParameters);
+          }
+        }
+      }
+
+      VSome(if (hashSet == null) ImmutableArray.Empty else hashSet.ToImmutableArray())
     }
 
     private ExpandPathRelativeToAst(ast : IAst, path : string) : string

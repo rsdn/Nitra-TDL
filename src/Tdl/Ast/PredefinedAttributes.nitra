@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Tdl
 {
-  abstract declaration PredefinedAttribites
+  abstract declaration PredefinedAttributes
   {
     symbol
     {

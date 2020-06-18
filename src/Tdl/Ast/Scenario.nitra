@@ -14,11 +14,12 @@ namespace Tdl
     symbol
     {
     stage 2:
-      in TriggerPaths             : ImmutableArray[TriggerPath];
-      in IsUnconditional          : bool;
+      in TriggerPaths               : ImmutableArray[TriggerPath];
+      in IsUnconditional            : bool;
     stage 3:
-      in AggregateParametersScope : Scope;
-      in AllScenarios             : ImmutableArray[ScenarioSymbol];
+      in AggregateParametersScope   : Scope;
+      in AllScenarios               : ImmutableArray[ScenarioSymbol];
+      in DashboardVisibleParameters : ImmutableArray[DeclarationSymbol];
 
       Type = context.ToTdlContext().ScenarioType;
     }
@@ -61,6 +62,7 @@ namespace Tdl
         DeploymentRef                   = Deployment.Ref.Resolve();
         Symbol.Deployment               = DeploymentRef.Symbol;
         Symbol.Deployment.IsUsed        = true;
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, array[Symbol.Deployment]);
 
         Environments.Scope              = Scope;
         Symbol.Environments             = Environments.Environment;
@@ -115,6 +117,7 @@ namespace Tdl
         ThisTriggerPaths                = TdlUtils.GetTriggerPaths(Attributes, context);
         Symbol.TriggerPaths             = await TdlUtils.GetTriggerPaths(ThisTriggerPaths, Symbol.Scenarios);
         Symbol.IsUnconditional          = await TdlUtils.GetIsUnconditional(ThisTriggerPaths, Symbol.Scenarios);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(ImmutableArray.Empty, Symbol.Scenarios);
 
         when (Symbol.IsMultiMachine)
           CheckMultiMachineScenario(context, Symbol.Scenarios, Symbol.AggregateParametersScope);
@@ -175,6 +178,7 @@ namespace Tdl
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context, Symbol.Defs);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, TdlUtils.GetScenarioDeployments(Symbol.Deployment, Symbol.Froms, context));
 
         FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);

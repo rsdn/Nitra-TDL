@@ -4,6 +4,8 @@ using DotNet.AstUtils;
 using Nitra;
 using Nitra.Declarations;
 
+using System.Collections.Immutable;
+
 namespace Tdl
 {
   abstract ast DeploymentExpr : BindableAst, ScopedAst
@@ -28,9 +30,11 @@ namespace Tdl
       CanMerge = candidate is DeploymentReboot;
     }
 
-    Ref                             = Ref.CreateBind(Location, Symbol);
-    Symbol.Timeout                  = TdlUtils.ConvertStringLiteral(Timeout);
-    Symbol.AggregateParametersScope = EmptyScope.Instance;
+    Ref                               = Ref.CreateBind(Location, Symbol);
+    Symbol.Timeout                    = TdlUtils.ConvertStringLiteral(Timeout);
+    Symbol.AggregateParametersScope   = EmptyScope.Instance;
+    Symbol.AllDeployments             = ImmutableArray.Empty;
+    Symbol.DashboardVisibleParameters = ImmutableArray.Empty;
 
     Timeout : CSharp.StringLiteral;
   }

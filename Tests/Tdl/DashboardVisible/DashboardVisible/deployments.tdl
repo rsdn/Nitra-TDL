@@ -4,6 +4,8 @@ deployment Deployment1([DashboardVisible] string Message, [DashboardVisible] boo
   expected 0;
 }
 
+deployment Deployment2([DashboardVisible] string AnotherMessage = "default another message") = Deployment1(Message: AnotherMessage);
+
 suite type SuiteType
 {
   [DashboardVisible]
@@ -15,7 +17,6 @@ suite Suite : SuiteType
 {
   platform Platform;
   product Product;
-  Message         = "C# deployment";
   SuiteTypeField1 = true;
   SuiteTypeField2 = true;
   ScenarioParam1  = 42;
@@ -30,7 +31,6 @@ select
 {
   platform Platform;
   product Product;
-  Message         = "C# deployment";
   SuiteTypeField1 = true;
   SuiteTypeField2 = true;
   ScenarioParam1  = 42;
@@ -55,7 +55,7 @@ platform Platform;
 
 scenario S1([DashboardVisible] int ScenarioParam1, int ScenarioParam2)
 {
-  deployment Deployment1;
+  deployment Deployment2;
   environments (Platform, Product);
   method Autotest.App2.Suites.GUI.GamingProfileTests.VideoPlayerWithGamingProfile;
   UniqueId = "20A84E6C-1028-48ED-B4E4-3DC8CB599E71";
