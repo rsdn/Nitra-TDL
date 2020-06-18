@@ -178,7 +178,7 @@ namespace Tdl
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context, Symbol.Defs);
-        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, TdlUtils.GetScenarioGeneratorDeployments(Symbol.Deployment, Symbol.Froms, context));
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, TdlUtils.GetScenarioDeployments(Symbol.Deployment, Symbol.Froms, context));
 
         FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);

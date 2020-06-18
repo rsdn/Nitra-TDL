@@ -103,6 +103,9 @@
       "TestScenarios": [
         "Scenario11",
         "Scenario12"
+      ],
+      "DashboardVisibleParameters": [
+        "DeploymentParameter"
       ]
     },
     "Suite2": {
@@ -119,6 +122,9 @@
       ],
       "TestScenarios": [
         "Scenario2"
+      ],
+      "DashboardVisibleParameters": [
+        "DeploymentParameter"
       ]
     },
     "Suite3": {
@@ -135,6 +141,10 @@
       ],
       "TestScenarios": [
         "Scenario3"
+      ],
+      "DashboardVisibleParameters": [
+        "DeploymentParameter",
+        "FinalDeploymentParameter"
       ]
     },
     "Suite4": {
