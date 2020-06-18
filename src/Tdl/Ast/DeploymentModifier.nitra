@@ -1,8 +1,23 @@
-﻿namespace Tdl
+﻿using Nitra;
+using Nitra.Declarations;
+
+namespace Tdl
 {
   abstract ast DeploymentModifier
   {
+    in Symbol : DeploymentSymbol;
+
+    SetSpecialDeployment(Symbol, context);
+
     | Initial {}
     | Final   {}
+    | Export
+      {
+        Parameters.Scope = Symbol.AggregateParametersScope;
+
+        ValidateExportParameters(Symbol, Symbol.AggregateParametersScope, Parameters.Ref, context);
+
+        Parameters: Reference*;
+      }
   }
 }

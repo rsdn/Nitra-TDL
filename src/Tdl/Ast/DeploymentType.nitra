@@ -10,6 +10,8 @@ namespace Tdl
   {
     symbol
     {
+      table DeploymentImportFields;
+
       Scope          = MemberTable;
       Kind           = "deployment type";
       IsSameIdentity = candidate is Tdl.DeploymentType;

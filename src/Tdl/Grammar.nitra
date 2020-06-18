@@ -44,6 +44,8 @@
 
     syntax Parameters = "(" (FormalParameter; ","sm)* ")";
 
+    syntax ExportParameters = "(" (Reference; ","sm)* ")"; 
+
     syntax DeploymentScriptContent
     {
       | FilePath   = "script" sm Path=StringLiteral
@@ -55,6 +57,7 @@
     {
       | Initial = "initial" sm
       | Final   = "final" sm
+      | Export  = "export" sm ExportParameters?
     }
 
     syntax MemberDeclaration
@@ -74,7 +77,7 @@
         {
           syntax Parameter = Name;
         }
-
+      | DeploymentImport  = Modifier=DeploymentModifier? "import" sm "deployment" sm Name outline_begin_before Parameters outline_end_before nl DeploymentImportBody;
       | ProductType       = "product" sm "type"   sm Name nl TypeBody;
       | Product           = "product"             sm Name sm ":" Type=Reference nl ProductBody;
       | ProductSet        = "product"             sm Name sm ":" Type=Reference sm "=" sm Products=(Reference; "," sm)+ ";" nl;
@@ -251,6 +254,8 @@
     }
 
     syntax DeploymentCodeBody = outline_begin_before "{" inl Commands=CommandCall* Options=DeploymentOption* d "}" nl outline_end_before;
+
+    syntax DeploymentImportBody = outline_begin_before "{" inl DefDeclaration* "}" nl outline_end_before;
 
     syntax CommandCall = Command=QualifiedIdentifier "(" Arguments=(CommandCallArgument; ","sm)* ")" ";" nl;
 

@@ -177,7 +177,7 @@ namespace Tdl
 
       def baseProductType            = MakeBaseProductTypeSymbol(context, rootNamespace);
       def platformType               = MakePlatformTypeSymbol(context, rootNamespace);
-      def deploymentType             = MakeDeploymentTypeSymbol(context, rootNamespace);
+      def deploymentType             = MakeDeploymentTypeSymbol(backEnd, context, rootNamespace);
       def externalSymbol             = MakeExternalSymbol(context, rootNamespace);
       def scenarioParameterScope     = TableScope("ScenarioParameterScope");
       def requiredScenarioParameters = MakeScenarioParametersScope(backEnd, context, scenarioParameterScope);
@@ -461,11 +461,26 @@ namespace Tdl
       symbol
     }
 
-    public MakeDeploymentTypeSymbol(context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : DeploymentTypeSymbol
+    public MakeDeploymentTypeSymbol(backEnd : IDotNetBackEnd, context : TdlDependentPropertyEvalContext, rootNamespace : NamespaceSymbol) : DeploymentTypeSymbol
     {
       def symbol = ExternalDeclaration.[DeploymentTypeSymbol](Name(NoLocation, "Deployment")).DefineSymbol(rootNamespace.MemberTable);
       symbol.BaseTypeSet = BaseTypeReferenceSet(null);
       symbol.EvalProperties(context);
+
+      mutable index;
+
+      def defineParameter(name : string, type : TypeSymbol, required : bool) : void
+      {
+        _ = DefineParameter(context, symbol.DeploymentImportFields, name, type, ref index);
+        _ = required;
+      }
+
+      def platformType = backEnd.PlatformType;
+
+      defineParameter("Source",     platformType.String, required=true);
+      defineParameter("Name",       platformType.String, required=false);
+      defineParameter("Parameters", platformType.Object, required=false);
+
       symbol
     }
 
@@ -491,37 +506,32 @@ namespace Tdl
 
       mutable index;
 
-      def defineParameter(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
+      def defineParameter(name : string, type : TypeSymbol, required : bool) : void
       {
-        def parameter      = ExternalDeclaration.[FormalParameterSymbol](NoLocation, name).DefineSymbol(scenarioParameterScope);
+        def parameter = DefineParameter(context, scenarioParameterScope, name, type, ref index);
         when (required)
-          _                = requiredScenarioParametersBuilder.Add(parameter);
-        parameter.Type     = type;
-        parameter.Modifier = ParameterModifier.None;
-        parameter.Index    = index;
-        index++;
-        parameter.EvalProperties(context);
+          _ = requiredScenarioParametersBuilder.Add(parameter);
       }
 
       def platformType = backEnd.PlatformType;
 
-      defineParameter(context, "Area",                            platformType.String,  required=false);
-      defineParameter(context, "ArtifactsCollectionTimeout",      platformType.String,  required=false);
-      defineParameter(context, "EnforceBinariesFolderUniqueness", platformType.Boolean, required=false);
-      defineParameter(context, "LocalTestBinariesFolder",         platformType.String,  required=false);
-      defineParameter(context, "MaxRebootsCount",                 platformType.Int32,   required=false);
-      defineParameter(context, "NeedUnsignedAgent",               platformType.Boolean, required=false);
-      defineParameter(context, "ProductGroupName",                platformType.String,  required=false);
-      defineParameter(context, "RequireInternet",                 platformType.Boolean, required=false);
-      defineParameter(context, "ExternalAutotestId",              platformType.Int32,   required=false);
-      defineParameter(context, "RerunCountOnTestFailure",         platformType.Int32,   required=false);
-      defineParameter(context, "RerunCountOnTestSuccess",         platformType.Int32,   required=false);
-      defineParameter(context, "Responsible",                     platformType.String,  required=false);
-      defineParameter(context, "RevertAgentAfter",                platformType.Boolean, required=false);
-      defineParameter(context, "RevertAgentBefore",               platformType.Boolean, required=false);
-      defineParameter(context, "TfsId",                           platformType.Int32,   required=false);
-      defineParameter(context, "Timeout",                         platformType.String,  required=true);
-      defineParameter(context, "UniqueId",                        platformType.String,  required=true);
+      defineParameter("Area",                            platformType.String,  required=false);
+      defineParameter("ArtifactsCollectionTimeout",      platformType.String,  required=false);
+      defineParameter("EnforceBinariesFolderUniqueness", platformType.Boolean, required=false);
+      defineParameter("LocalTestBinariesFolder",         platformType.String,  required=false);
+      defineParameter("MaxRebootsCount",                 platformType.Int32,   required=false);
+      defineParameter("NeedUnsignedAgent",               platformType.Boolean, required=false);
+      defineParameter("ProductGroupName",                platformType.String,  required=false);
+      defineParameter("RequireInternet",                 platformType.Boolean, required=false);
+      defineParameter("ExternalAutotestId",              platformType.Int32,   required=false);
+      defineParameter("RerunCountOnTestFailure",         platformType.Int32,   required=false);
+      defineParameter("RerunCountOnTestSuccess",         platformType.Int32,   required=false);
+      defineParameter("Responsible",                     platformType.String,  required=false);
+      defineParameter("RevertAgentAfter",                platformType.Boolean, required=false);
+      defineParameter("RevertAgentBefore",               platformType.Boolean, required=false);
+      defineParameter("TfsId",                           platformType.Int32,   required=false);
+      defineParameter("Timeout",                         platformType.String,  required=true);
+      defineParameter("UniqueId",                        platformType.String,  required=true);
 
       requiredScenarioParametersBuilder.ToImmutable();
     }
@@ -530,23 +540,18 @@ namespace Tdl
     {
       mutable index;
 
-      def defineField(context : TdlDependentPropertyEvalContext, name : string, type : TypeSymbol, required : bool) : void
+      def defineField(name : string, type : TypeSymbol, required : bool) : void
       {
         _ = required;
-        def parameter      = ExternalDeclaration.[FormalParameterSymbol](NoLocation, name).DefineSymbol(entityFieldsScope);
-        parameter.Type     = type;
-        parameter.Modifier = ParameterModifier.None;
-        parameter.Index    = index;
-        index++;
-        parameter.EvalProperties(context);
+        _ = DefineParameter(context, entityFieldsScope, name, type, ref index);
       }
 
       def platformType = backEnd.PlatformType;
 
-      defineField(context, "Name",       platformType.String, required=true);
-      defineField(context, "BranchName", platformType.String, required=true);
-      defineField(context, "Version",    platformType.String, required=true);
-      defineField(context, "Type",       platformType.String, required=true);
+      defineField("Name",       platformType.String, required=true);
+      defineField("BranchName", platformType.String, required=true);
+      defineField("Version",    platformType.String, required=true);
+      defineField("Type",       platformType.String, required=true);
 
       //requiredScenarioParametersBuilder.ToImmutable();
       entityFieldsScope
@@ -556,6 +561,17 @@ namespace Tdl
     {
       when (_backEnd != null)
         _backEnd.Dispose();
+    }
+
+    private DefineParameter(context : TdlDependentPropertyEvalContext, table : TableScope, name : string, type : TypeSymbol, index : ref uint) : FormalParameterSymbol
+    {
+      def parameter      = ExternalDeclaration.[FormalParameterSymbol](NoLocation, name).DefineSymbol(table);
+      parameter.Type     = type;
+      parameter.Modifier = ParameterModifier.None;
+      parameter.Index    = index;
+      parameter.EvalProperties(context);
+      ++index;
+      parameter
     }
   }
 }

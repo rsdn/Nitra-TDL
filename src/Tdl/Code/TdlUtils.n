@@ -78,6 +78,11 @@ namespace Tdl
       ToTdlContext(context).TdlProjectData.DeploymentType
     }
 
+    public GetDeploymentImportScope(this context : DependentPropertyEvalContext) : Scope
+    {
+      GetDeploymentTypeSymbol(context).DeploymentImportFields
+    }
+
     public GetProductTypeSymbol(this context : DependentPropertyEvalContext) : ProductTypeSymbol
     {
       ToTdlContext(context).TdlProjectData.BaseProductType
@@ -472,11 +477,32 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
 
-    public MakeUntypedDefinitions(definitions : Definition.IAstList) : ImmutableArray[UntypedDef]
+    public MakeUntypedDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, requiredNames : Seq[string] = null) : ImmutableArray[UntypedDef]
     {
-      def builder = ImmutableArray.CreateBuilder(definitions.Count);
+      def declaredNames = HashSet();
+      def builder       = ImmutableArray.CreateBuilder(definitions.Count);
+
       foreach (definition when definition.Expr.IsResultEvaluated in definitions)
-        builder.Add(UntypedDef(definition.Reference.Text, definition.Expr.Result));
+      {
+        def name = definition.Reference.Text;
+        if (!declaredNames.Add(name))
+          definition.Reference.Error(context, $"Redefinition of name '$name'.")
+        else
+          builder.Add(UntypedDef(name, definition.Expr.Result));
+      }
+
+      when (requiredNames : object != null)
+      {
+        foreach (n in requiredNames)
+        {
+          unless (declaredNames.Contains(n))
+          {
+            def msgs = context.GetFileData(definitions.Location.Source.File.Id).GetCompilerMessage();
+            msgs.Error(definitions.Location.FromStart(), $"Definition of '$n' is required.");
+          }
+        }
+      }
+
       builder.TryMoveToImmutable()
     }
 
@@ -1350,22 +1376,22 @@ namespace Tdl
       text
     }
 
-    public SetSpecialDeployment(this deployment : Deployment, symbol : DeploymentSymbol, modifier : DeploymentModifier, context : DependentPropertyEvalContext) : void
+    public SetSpecialDeployment(this modifier : DeploymentModifier, symbol : DeploymentSymbol, context : DependentPropertyEvalContext) : void
     {
       def context = context.ToTdlContext();
       match (modifier)
       {
         | DeploymentModifier.Initial with (get = context.get_InitialDeployment, set = context.set_InitialDeployment, specialType = "initial")
         | DeploymentModifier.Final   with (get = context.get_FinalDeployment,   set = context.set_FinalDeployment,   specialType = "final") =>
-          SetUsed(deployment, symbol, true);
+          SetUsed(modifier, symbol, true);
 
           def specialDeployment = get();
           if (specialDeployment == null)
             set(symbol)
           else
           {
-            def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, deployment);
-            using (root = msgs.RootError(deployment.Name, $"Redefinition of $specialType deployment, first is '$(specialDeployment)'."))
+            def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, modifier);
+            using (root = msgs.RootError(modifier, $"Redefinition of $specialType deployment, first is '$(specialDeployment)'."))
             {
               def firstDefinition = specialDeployment.FirstParsedDeclarationOrDefault;
               when (firstDefinition != null)
@@ -1373,7 +1399,43 @@ namespace Tdl
             }
           }
 
+        | DeploymentModifier.Export =>
+          SetUsed(modifier, symbol, true);
+          _ = context.ExportDeployments.Add(symbol);
+
         | _ => assert2(false, $"Unknown deployment mofidifier of type $(modifier.GetType())");
+      }
+    }
+
+    public ValidateExportParameters(this ast : DeploymentModifier.Export, symbol : DeploymentSymbol, parametersScope : Scope,
+      bindedParameters : ImmutableArray[Ref[DeclarationSymbol]], context : DependentPropertyEvalContext) : void
+    {
+      def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
+      match (symbol)
+      {
+        | Deployment.SetSymbol
+        | Deployment.SelectSymbol
+        | Deployment.CurryingSymbol =>
+          def referencedSymbols = HashSet();
+          foreach (r when (r.IsSymbolEvaluated) in bindedParameters)
+            unless (referencedSymbols.Add(r.Symbol))
+              msgs.Error(r, $"Duplicated reference of export parameter $(r.Name)");
+
+          def missedSymbols = SortedSet();
+          foreach (parameterSymbol when (!referencedSymbols.Contains(parameterSymbol)) in parametersScope.GetAllSymbols())
+            _ = missedSymbols.Add(parameterSymbol.Name);
+
+          when (missedSymbols.Count > 0)
+            msgs.Error(ast, $"Export parameters clause is missing following parameters: ..$(missedSymbols).");
+
+        | Deployment.ScriptSymbol
+        | Deployment.CodeSymbol
+        | Deployment.ImportSymbol
+        | Deployment.EmptySymbol =>
+          when (ast.Parameters.Count > 0)
+            msgs.Error(ast.Parameters, "Export parameters clause is redundant.");
+
+        | s => assert(false, $"Unknown deployment symbol $s");
       }
     }
 
@@ -1418,6 +1480,7 @@ namespace Tdl
       {
           | _ is Deployment.ScriptSymbol   => []
           | _ is Deployment.CodeSymbol     => []
+          | _ is Deployment.ImportSymbol   => []
           | s is Deployment.SetSymbol      => if (s.IsDeploymentsEvaluated)    s.Deployments      else []
           | s is Deployment.SelectSymbol   => if (s.IsDeploymentsEvaluated)    s.Deployments.SelectMany(x => x) else []
           | s is Deployment.CurryingSymbol => if (s.IsBaseDeploymentEvaluated) [s.BaseDeployment] else []

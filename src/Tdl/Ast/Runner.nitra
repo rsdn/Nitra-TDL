@@ -24,7 +24,7 @@ namespace Tdl
 
     Parameters.Scope  = Scope.UnionWith(context.GetExternalSymbolTable());
     Definitions.Scope = Symbol.ParameterScope;
-    Symbol.Defs       = TdlUtils.MakeUntypedDefinitions(Definitions);
+    Symbol.Defs       = TdlUtils.MakeUntypedDefinitions(Definitions, context);
 
     Name.ValidateRunnerParameters(Symbol.Parameters, context);
 
