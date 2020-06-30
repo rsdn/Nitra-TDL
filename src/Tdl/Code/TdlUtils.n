@@ -1845,22 +1845,22 @@ namespace Tdl
       {
         //assert2(false);
         def res = Reference(Location.Default, name).Bind.[NamespaceSymbol](scope);
-        assert2(!res.IsUnresolved);
-        assert2(!res.IsAmbiguous);
+        assert2(!res.IsUnresolved, $"Unresolved '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
+        assert2(!res.IsAmbiguous, $"Ambiguous '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
         assert2(res.Symbols.Length == 1);
         res
       }
       def bindType(scope : Scope, name : string) : TSymbol
       {
         def res = Reference(Location.Default, name).Bind.[TSymbol](scope);
-        assert2(!res.IsUnresolved);
-        assert2(!res.IsAmbiguous);
+        assert2(!res.IsUnresolved, $"Unresolved '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
+        assert2(!res.IsAmbiguous, $"Ambiguous '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
         when (typeParamCount > 0)
         {
           foreach (symbol is GenericTypeSymbol when symbol.TypeParametersCount == typeParamCount in res.Symbols)
             return (symbol : object) :> TSymbol;
         }
-        assert2(res.Symbols.Length == 1);
+        assert2(res.Symbols.Length == 1, $"Ambiguous '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
         res.Symbol
       }
       def data  = context.Project.Data :> DotNetProjectData;
@@ -1870,7 +1870,11 @@ namespace Tdl
         match (names)
         {
           | name :: []    => bindType(scope, name)
-          | name :: rest  => loop(bindNs(scope, name).Symbol.Scope, rest)
+          | name :: rest  =>
+            def r = bindNs(scope, name);
+            assert2(!r.IsUnresolved, $"Unresolved '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
+            assert2(!r.IsAmbiguous, $"Ambiguous '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.")
+            loop(r.Symbol.Scope, rest)
           | _             => assert(false);
         }
       }
