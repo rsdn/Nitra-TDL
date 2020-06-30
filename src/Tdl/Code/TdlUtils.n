@@ -1873,7 +1873,7 @@ namespace Tdl
           | name :: rest  =>
             def r = bindNs(scope, name);
             assert2(!r.IsUnresolved, $"Unresolved '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
-            assert2(!r.IsAmbiguous, $"Ambiguous '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.")
+            assert2(!r.IsAmbiguous, $"Ambiguous '$name' in '$fullTypeName'. Perhaps you have problems with reference to the assembly where this type is defined.");
             loop(r.Symbol.Scope, rest)
           | _             => assert(false);
         }
