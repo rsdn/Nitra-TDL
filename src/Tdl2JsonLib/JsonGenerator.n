@@ -1169,8 +1169,8 @@ namespace Tdl2Json
           def getValue =
             match (type)
             {
-              | "System.Boolean" | "bool" => $<#!new [] { "0", "false", null }.Contains(globals["$name"]?.ToString(), System.StringComparer.OrdinalIgnoreCase)#>
-              | _                         => $<#($type)globals["$name"]#>
+              | "System.Boolean" | "bool" => $<#(!System.Linq.Enumerable.Contains(new[] { "0", "false", null }, globals["$name"]?.ToString(), System.StringComparer.OrdinalIgnoreCase))#>
+              | _                         => $<#(($type)globals["$name"])#>
             };
 
           if (p.HasDefault())
@@ -1179,7 +1179,7 @@ namespace Tdl2Json
             $<#(globals.ContainsKey("$name") ? $getValue : $defaultValue)#>
           }
           else
-            $<#($getValue)#>
+            getValue
 
         | Member.MethodSymbol as m => m.Name
         | PlatformSymbol as p => $<#config.Platforms["$(p.Name)"]#>
