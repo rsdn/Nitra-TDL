@@ -287,6 +287,9 @@ namespace Tdl2Json
         PostSessionActions = postSessionActionCompiler.Compile();
       };
 
+      ReportElapsedTime(stopwatch);
+
+      ReportMessage("Writing output file...");
       def settings = ConverterSettings.Settings <- Formatting = Formatting.Indented;
       def serializer = JsonSerializer.Create(settings);
       serializer.Serialize(output.Value, config);
@@ -1175,7 +1178,7 @@ namespace Tdl2Json
           def getValue =
             match (type)
             {
-              | "System.Boolean" | "bool" => $<#System.Convert.ToBoolean(globals["$name"])#>
+              | "System.Boolean" | "bool" => $<#!new [] { "0", "false", null }.Contains(globals["$name"]?.ToString(), System.StringComparer.OrdinalIgnoreCase)#>
               | _                         => $<#($type)globals["$name"]#>
             };
 
