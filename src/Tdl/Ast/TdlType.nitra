@@ -16,7 +16,7 @@ namespace Tdl
     | Method     { symbol { ToString = "Method"; } }
     | Entity     { symbol { ToString = "Entity"; } }
     | Barrier    { symbol { ToString = "Barrier"; } }
-    | Tuple
+    | Tuple : SupportsInheritanceType
       {
         symbol
         {

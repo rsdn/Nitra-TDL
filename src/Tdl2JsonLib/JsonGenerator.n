@@ -207,10 +207,9 @@ namespace Tdl2Json
       foreach (s is PlatformSymbol in symbols)
         platforms.AddEx(s.Name, GeneratePlatform(s), "platforms");
 
-      def platformNameSet = HashSet(platforms.Keys, StringComparer.InvariantCultureIgnoreCase);
-
-
-      def barrierCompilerMap = PrepareBarrierCompilerMap(symbols);
+      def platformNameSet         = HashSet(platforms.Keys, StringComparer.InvariantCultureIgnoreCase);
+      def multiMachineIdGenerator = MultiMachineIdGenerator();
+      def barrierCompilerMap      = PrepareBarrierCompilerMap(symbols);
 
       foreach (symbol in symbols)
       {
@@ -223,7 +222,7 @@ namespace Tdl2Json
             | Suite.GeneratorSymbol as s => GenerateSuiteGenerator             (s, suites, suiteGroups, scenarioTrigger, preSessionActionCompiler, postSessionActionCompiler)
             | Suite.ListSymbol      as s => GenerateSuiteGroup(s, suiteGroups)
             | ScenarioSymbol        as s when scenarioTrigger.IsTriggered(s) =>
-              GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s))
+              GenerateScenario(s, context.InitialDeployment, context.FinalDeployment, deploymentCompiler, scenarioTrigger, scenarios, barrierCompilerMap.Get(s), multiMachineIdGenerator)
 
             | VmCapabilitySymbol   as s when !(s.Value is Tdl.Expr.NotSet) =>
               def value = s.Value.ToObject();
@@ -440,7 +439,7 @@ namespace Tdl2Json
     
     private GenerateTestGroup(g : Tdl.Scenario.GeneratorSymbol, uniqueId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
       initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler,
-      barrierCompilerOpt : option[BarrierCompiler]) : TestGroup
+      barrierCompilerOpt : option[BarrierCompiler], multiMachineIdGenerator : MultiMachineIdGenerator) : TestGroup
     {
       def (defs, vmCapabilities) = SplitScenarioDefs(g.Defs, dic);
 
@@ -653,6 +652,16 @@ namespace Tdl2Json
             ArtifactsCollectionTimeout = artifactsCollectionTimeout;
           }
       }
+      def getMultiMachineId() : Guid?
+      {
+        if (barrierCompilerOpt is Some(compiler))
+          compiler.MultiMachineId
+        else match (defs.Get("MultiMachineId"))
+        {
+          | Some(expr) => multiMachineIdGenerator.GetId(expr, dic)
+          | None => null
+        }
+      }
       def assignedParams = g.Defs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
 
       def testGroup =
@@ -676,7 +685,7 @@ namespace Tdl2Json
           UniqueId                = uniqueId;
           ProductGroupName        = getString("ProductGroupName");
           FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase, dic);
-          MultiMachineId          = if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
+          MultiMachineId          = getMultiMachineId();
           Capabilities            = if (vmCapabilities.Count > 0) vmCapabilities else null;
         };
 
@@ -717,7 +726,7 @@ namespace Tdl2Json
 
     private GenerateScenario(scenarioSymbol : ScenarioSymbol, initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol,
       compiler : DeploymentCompiler, scenarioTrigger : IScenarioTrigger, scenarios : IDictionary[string, TestCase],
-      barrierCompilerOpt : option[BarrierCompiler]) : void
+      barrierCompilerOpt : option[BarrierCompiler], multiMachineIdGenerator : MultiMachineIdGenerator) : void
     {
       def addTestCase(name, testGroup)
       {
@@ -925,6 +934,16 @@ namespace Tdl2Json
                 ArtifactsCollectionTimeout = artifactsCollectionTimeout;
               }
           }
+          def getMultiMachineId() : Guid?
+          {
+            if (barrierCompilerOpt is Some(compiler))
+              compiler.MultiMachineId
+            else match (defs.Get("MultiMachineId"))
+            {
+              | Some(expr) => multiMachineIdGenerator.GetId(expr, null)
+              | None => null
+            }
+          }
           def assignedParams = r.Defs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
           def testGroup =
             TestGroup() <-
@@ -947,7 +966,7 @@ namespace Tdl2Json
                 UniqueId                = getGuid  ("UniqueId");
                 ProductGroupName        = getString("ProductGroupName");
                 FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
-                MultiMachineId          = if (barrierCompilerOpt is Some(compiler)) compiler.MultiMachineId else null;
+                MultiMachineId          = getMultiMachineId();
                 Capabilities            = if (vmCapabilities.Count > 0) vmCapabilities else null;
             };
           addTestCase(scenarioSymbol.Name, testGroup);
@@ -972,7 +991,7 @@ namespace Tdl2Json
             counter++;
             def name = scenarioSymbol.Name + "-" + counter;
             names.Add(name);
-            addTestCase(name, GenerateTestGroup(g, uniqueId, dic, initialDeployment, finalDeployment, compiler, barrierCompilerOpt));
+            addTestCase(name, GenerateTestGroup(g, uniqueId, dic, initialDeployment, finalDeployment, compiler, barrierCompilerOpt, multiMachineIdGenerator));
             uniqueId = incGuid(uniqueId);
           }
           def testGroup = TestGroup() <- { TestScenarios = names.ToArray() };
