@@ -530,6 +530,7 @@ namespace Tdl
       defineParameter("RevertAgentAfter",                platformType.Boolean, required=false);
       defineParameter("RevertAgentBefore",               platformType.Boolean, required=false);
       defineParameter("TfsId",                           platformType.Int32,   required=false);
+      defineParameter("MultiMachineId",                  platformType.Object,  required=false);
       defineParameter("Timeout",                         platformType.String,  required=true);
       defineParameter("UniqueId",                        platformType.String,  required=true);
 

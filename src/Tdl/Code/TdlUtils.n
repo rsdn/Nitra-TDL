@@ -1101,7 +1101,7 @@ namespace Tdl
               item.Error(context, $"Expected '$(TypeToString(expectedType))' but got '$(TypeToString(type))'.", 0);
           }
 
-        | _ when TdlTypeUnifier.Instance.TryUnify(expectedType, type) => _ = TdlTypeUnifier.Instance.Unify(expectedType, type);
+        | _ when TdlTypeUnifier.Instance.TryRequire(type, expectedType) => _ = TdlTypeUnifier.Instance.Require(type, expectedType);
         | _ => ast.Error(context, $"Expected $(TypeToString(expectedType)) but got $(TypeToString(type)).", 0);
       }
     }
@@ -1109,6 +1109,8 @@ namespace Tdl
     public MakeTupleType(this context : DependentPropertyEvalContext, items : ImmutableArray[TypeSymbol]) : ValueOption[TypeSymbol]
     {
       def tuple  = TdlType.TupleSymbol();
+      tuple.BaseTypeSet = BaseTypeReferenceSet(null);
+      tuple.BaseTypeSet.AddParent(ToTdlContext(context).TdlProjectData.BackEnd.PlatformType.Object);
       tuple.Args = items;
       tuple.EvalProperties(context);
       VSome(tuple)
@@ -1127,6 +1129,8 @@ namespace Tdl
         return items[0];
 
       def tuple = TdlType.TupleSymbol();
+      tuple.BaseTypeSet = BaseTypeReferenceSet(null);
+      tuple.BaseTypeSet.AddParent(ToTdlContext(context).TdlProjectData.BackEnd.PlatformType.Object);
       tuple.Args = items;
       tuple.EvalProperties(context);
       tuple
@@ -2274,28 +2278,27 @@ namespace Tdl
           mutable timeout;
           when (timeoutStr == null || !TimeSpan.TryParse(timeoutStr, out timeout))
           {
-            barrierExpr.Error(context, "Expected string with timeout. Format: ЧЧ:ММ:СС");
+            barrierExpr.Error(context, "Expected string with timeout. Format: hh:mm:ss");
             return VSome(ScenarioAction.Error(arg2.Location));
           }
           def arg1 = inv.Arguments[0] :> Expr.Argument;
           if (arg1.Expr is Expr.Sum as sum)
           {
-            mutable hasUnculculated;
+            mutable hasUncalculated;
             {
               def result = ImmutableArray.CreateBuilder();
               def loop(expr : DotNet.Expr) : void
               {
                 | Expr.Sum           as sum => loop(sum.Expr1); loop(sum.Expr2);
                 | DotNet.Expr.String as s   => result.Add(BarrierNamePart.String(ConvertStringLiteralOrNull(s.Value)));
-                | Expr.SimpleName    as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => hasUnculculated = true;
+                | Expr.SimpleName    as n when !n.IsRefEvaluated || !n.Ref.IsSymbolEvaluated => hasUncalculated = true;
                 | Expr.SimpleName    as n   => result.Add(BarrierNamePart.Reference(n.Ref.Symbol));
                 | _ =>
                   barrierExpr.Error(context, "Unsupported expression type " + expr.GetType().Name);
-                  hasUnculculated = true;
+                  hasUncalculated = true;
               }
               loop(sum);
-              def result = result;
-              if (hasUnculculated)
+              if (hasUncalculated)
                 VNone()
               else
                 VSome(ScenarioAction.BarrierGenerator(barrierExpr.Location, result.ToImmutable(), timeout))
