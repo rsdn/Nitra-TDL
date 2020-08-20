@@ -146,9 +146,6 @@
     <Compile Include="JsonGenerator.n">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MultiMachineIdGenerator.n">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.n" />
     <Compile Include="ScenarioTriggers\DefaultScenarioTrigger.n">
       <SubType>Code</SubType>

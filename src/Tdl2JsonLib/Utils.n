@@ -127,5 +127,15 @@ namespace Tdl2Json
             $"An element with the same '$key' key already exists in the '$dictionaryName' dictionary. New value: '$value'. Old value: '$(dictionary[key])'.", e)
       }
     }
+
+    public GetNullable[K, V](this dictionary : IDictionary[K, V], key : K) : V?
+      where V : struct
+    {
+      mutable value;
+      if (dictionary.TryGetValue(key, out value))
+        value
+      else
+        null
+    }
   }
 }
