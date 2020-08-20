@@ -79,15 +79,11 @@
       "NeedUnsignedAgent": true,
       "RevertAgentAfter": true,
       "TestMethod": {
-        "TestSequence": [
-          {
-            "AndroidTestContainer": "artifacts\\App\\apk\\safekids-prod-internal-debug-$(SafeKids-VersionName)-$(VersionCode).apk",
-            "MarathonTestRunnerPath": "ci\\hive\\common\\pull_request_marathon_app_run.sh",
-            "TestFilter": "^.*$",
-            "LocalTestBinariesFolder": "\\\\asgard-storage\\temp_drop\\builds2\\KSK_Android\\test",
-            "MaxRebootsCount": 0
-          }
-        ]
+        "AndroidTestContainer": "artifacts\\App\\apk\\safekids-prod-internal-debug-$(SafeKids-VersionName)-$(VersionCode).apk",
+        "MarathonTestRunnerPath": "ci\\hive\\common\\pull_request_marathon_app_run.sh",
+        "TestFilter": "^.*$",
+        "LocalTestBinariesFolder": "\\\\asgard-storage\\temp_drop\\builds2\\KSK_Android\\test",
+        "MaxRebootsCount": 0
       },
       "Timeout": "00:10:00",
       "UniqueId": "6cceeaa0-a1a0-4c15-b705-0cb228ca02e6"
@@ -109,14 +105,10 @@
       "NeedUnsignedAgent": true,
       "RevertAgentAfter": true,
       "TestMethod": {
-        "TestSequence": [
-          {
-            "AndroidTestContainer": "Fake",
-            "MarathonTestRunnerPath": "ci\\hive\\common\\pull_request_marathon_common_run.sh",
-            "TestFilter": "^.*$",
-            "LocalTestBinariesFolder": "\\\\asgard-storage\\temp_drop\\builds2\\KSK_Android\\test"
-          }
-        ]
+        "AndroidTestContainer": "Fake",
+        "MarathonTestRunnerPath": "ci\\hive\\common\\pull_request_marathon_common_run.sh",
+        "TestFilter": "^.*$",
+        "LocalTestBinariesFolder": "\\\\asgard-storage\\temp_drop\\builds2\\KSK_Android\\test"
       },
       "Timeout": "00:10:00",
       "UniqueId": "41fcc6b0-8f9b-403e-a000-f725446fb705"
