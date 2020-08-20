@@ -15,14 +15,9 @@ namespace Tdl2Json
 {
   module Utils
   {
-    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement]) : Hashtable[TKey, TElement]
+    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement], comparer : IEqualityComparer[TKey] = null) : Hashtable[TKey, TElement]
     {
-      ToHashtable(immutableArray, keySelector, elementSelector, EqualityComparer[TKey].Default);
-    }
-
-    public ToHashtable[TKey, TElement, T](this immutableArray : ImmutableArray[T], keySelector : Func[T, TKey], elementSelector : Func[T, TElement], comparer : IEqualityComparer[TKey]) : Hashtable[TKey, TElement]
-    {
-      def result = Hashtable(immutableArray.Length, comparer);
+      def result = Hashtable(immutableArray.Length, comparer ?? EqualityComparer[TKey].Default);
       foreach (v in immutableArray)
           result.Add(keySelector(v), elementSelector(v));
 
@@ -126,6 +121,16 @@ namespace Tdl2Json
           throw ArgumentException(
             $"An element with the same '$key' key already exists in the '$dictionaryName' dictionary. New value: '$value'. Old value: '$(dictionary[key])'.", e)
       }
+    }
+
+    public GetNullable[K, V](this dictionary : IDictionary[K, V], key : K) : V?
+      where V : struct
+    {
+      mutable value;
+      if (dictionary.TryGetValue(key, out value))
+        value
+      else
+        null
     }
   }
 }

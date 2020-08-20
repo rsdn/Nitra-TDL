@@ -1,10 +1,13 @@
-﻿using Tdl.ScenarioAction;
+﻿using Tdl;
+using Tdl.ScenarioAction;
+
 using DotNet;
-using Tdl;
+
 using Nemerle;
 using Nemerle.Collections;
 using Nemerle.Text;
 using Nemerle.Utility;
+using Nemerle.Imperative;
 
 using System;
 using System.Collections.Generic;
@@ -17,87 +20,95 @@ namespace Tdl2Json
     static         _baseStableGuid : Guid = Guid.Parse("{BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB}");
     static mutable _counter        : uint;
 
-    _barrierMap : Hashtable[string, int * Guid] = Hashtable();
-    public MultiMachineId : Guid = Api.IncrementGuid(_baseStableGuid, { _counter++; _counter });
+    _idTable      : Dictionary[object, Guid] = Dictionary();
+    _barrierCount : Dictionary[Guid, int]    = Dictionary();
 
-    public ScanBarriers(scenarios : Seq[ScenarioSymbol]) : void
+    public GetMultiMachineId(key : object) : Guid?
     {
-        foreach (scenario in scenarios)
-        {
-          | Tdl.Scenario.DefSymbol       as s => FillBarrierMap(s);
-          | Tdl.Scenario.GeneratorSymbol as s => FillBarrierMap(s);
-          | _ =>()
-        }
-    }
-
-    FillBarrierMap(scenario : Tdl.Scenario.GeneratorSymbol) : void
-    {
-      foreach (action in scenario.Actions)
-      {
-        | Barrier          as b  => AddOrUpdateBarrierInfo(b.barrier.Name);
-        | BarrierGenerator as bg =>
-          foreach (dic in Api.SubstituteVariables(scenario.Froms, 0))
-            AddOrUpdateBarrierInfo(MakeName(dic, bg));
-        | _ => ()
-      }
-    }
-
-    FillBarrierMap(scenario : Tdl.Scenario.DefSymbol) : void
-    {
-      def dic = Dictionary();
-      foreach (action in scenario.Actions)
-      {
-        | Barrier          as b  => AddOrUpdateBarrierInfo(b.barrier.Name);
-        | BarrierGenerator as bg =>
-          def name = MakeName(dic, bg);
-          AddOrUpdateBarrierInfo(name);
-        | _ => ()
-      }
-    }
-
-    public GetBarrierInfo(name : string) : int * Guid
-    {
-      mutable result;
-      def ok = _barrierMap.TryGetValue(name, out result);
-      assert2(ok);
-      result
-    }
-
-    public GetBarrierInfo(dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], bg : BarrierGenerator) : int * Guid
-    {
-      GetBarrierInfo(MakeName(dic, bg))
-    }
-
-    public MakeName(dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], bg : BarrierGenerator) : string
-    {
-      def builder = Text.StringBuilder();
-      foreach (part in bg.BarrierName)
-      {
-        | BarrierNamePart.String as s => _ = builder.Append(s.text);
-        | BarrierNamePart.Reference as r =>
-          if (r.symbol is TypedDeclarationSymbol as tds)
-            _ = builder.Append(Api.TryResolveVar(dic, tds).Name);
-          else
-            _ = builder.Append(r.symbol.Name);
-        | _ => ()
-      }
-      builder.ToString()
-    }
-
-    AddOrUpdateBarrierInfo(barrierName : string) : void
-    {
-      when (barrierName.Contains("\""))
-      {
-        assert2(false);
-      }
-      mutable info;
-      if (_barrierMap.TryGetValue(barrierName, out info))
-        _barrierMap[barrierName] = (info[0] + 1, info[1]);
+      if (key == null)
+        null
       else
       {
-        _counter++;
-        _barrierMap[barrierName] = (1, Api.IncrementGuid(_baseStableGuid, _counter));
+        mutable id;
+        unless (_idTable.TryGetValue(key, out id))
+        {
+          _counter++;
+          id = Api.IncrementGuid(_baseStableGuid, _counter);
+          _idTable.Add(key, id);
+        }
+        id
       }
     }
+
+    public GetMultiMachineId(expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : Guid?
+    {
+      def getKey(expr : Tdl.Expr) : object
+      {
+        | NotSet            => null
+        | Error             => null
+        | String(value)     => value
+        | True              => true
+        | False             => false
+        | Real(value)       => value
+        | Integer(value)    => value
+        | Reference(symbol) =>
+          when (symbol is TypedDeclarationSymbol as typedSymbol)
+          {
+            mutable substitutedExpr;
+            when (variables : object != null && variables.TryGetValue(typedSymbol, out substitutedExpr))
+              return getKey(substitutedExpr);
+          }
+          symbol
+
+        | Tuple(elems, _)
+        | List(elems, _) =>
+          mutable acc = [expr.GetType() : object];
+          for (mutable i = elems.Length - 1; i >= 0; --i)
+            acc ::= getKey(elems[i]);
+          acc
+
+        | _ => throw NotSupportedException($"$expr ($(expr.GetType().Name))")
+      }
+
+      GetMultiMachineId(getKey(expr))
+    }
+
+    public UseBarrier(multiMachineId : Guid, name : string) : Guid
+    {
+      def key       = (multiMachineId, name);
+      def barrierId = GetMultiMachineId(key).GetValueOrDefault();
+
+      mutable count;
+      unless (_barrierCount.TryGetValue(barrierId, out count))
+        count = 0;
+
+      _barrierCount[barrierId] = count + 1;
+      barrierId
+    }
+
+    public UseBarrier(multiMachineId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], bg : BarrierGenerator) : Guid
+    {
+      def name = Text.StringBuilder();
+      foreach (part in bg.BarrierName)
+      {
+        | BarrierNamePart.String as s => _ = name.Append(s.text);
+        | BarrierNamePart.Reference as r =>
+          if (r.symbol is TypedDeclarationSymbol as tds)
+            _ = name.Append(Api.TryResolveVar(dic, tds).Name);
+          else
+            _ = name.Append(r.symbol.Name);
+        | _ => ()
+      }
+
+      UseBarrier(multiMachineId, name.ToString())
+    }
+
+    public GetBarrierCount(barrierId : Guid) : int
+    {
+      mutable count;
+      def _barrierFound = _barrierCount.TryGetValue(barrierId, out count);
+      assert2(_barrierFound);
+      count
+    }
   } // class
-} // namespace
+} //namespace

@@ -1,6 +1,6 @@
 barrier CreateUcpAccountBarrier timeout "00:10:00";
 
-parallel scenario ParallelScenarios = ParallelScenarioGenerator1, ParallelScenarioGenerator2;
+scenario ParallelScenarios = ParallelScenarioGenerator1, ParallelScenarioGenerator2;
 
 scenario ParallelScenarioGenerator1 =
     from Platform in [win7-x86, win7-x64]
@@ -20,6 +20,7 @@ scenario ParallelScenarioGenerator1 =
         UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
         Timeout = "02:30:00";
         ProductGroupName = "SbSFuncProductGroup";
+        MultiMachineId = ("Unique for each platform", Platform);
     };
 
 scenario ParallelScenarioGenerator2 =
@@ -40,6 +41,7 @@ scenario ParallelScenarioGenerator2 =
         UniqueId = "42DDCB73-5563-4882-9A33-86AFE07EB6B5";
         Timeout = "02:30:00";
         ProductGroupName = "SbSFuncProductGroup";
+        MultiMachineId = ("Unique for each platform", Platform);
     };
 
 platform win7-x86;

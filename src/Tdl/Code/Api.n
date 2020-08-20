@@ -31,7 +31,7 @@ namespace Tdl
       where T: DeclarationSymbol
     {
       mutable result;
-      if (variables.TryGetValue(varOrSymbol, out result))
+      if (variables?.TryGetValue(varOrSymbol, out result))
       {
         if (result is Tdl.Expr.Reference as r)
           r.Symbol :> T
