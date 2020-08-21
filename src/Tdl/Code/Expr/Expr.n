@@ -82,7 +82,7 @@ namespace Tdl
 
     public Calc(
       values     : IReadOnlyDictionary[string, Tdl.Expr],
-      variables  : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
+      variables  : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr],
       getPropertyValue : object * DeclarationSymbol -> object * ResultKind
     ) : object * ResultKind
     {

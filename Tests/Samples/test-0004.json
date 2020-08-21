@@ -442,7 +442,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S01_Installation"
       },
       "Timeout": "02:30:00",
-      "UniqueId": "bda24cb2-bf05-49ec-9884-129a48c42fff",
+      "UniqueId": "bda24cb1-bf05-49ec-9884-129a48c42fff",
       "ProductGroupName": "SbSProductGroup-1"
     },
     "SbSTestScenario1-4": {
@@ -465,7 +465,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
       },
       "Timeout": "02:30:00",
-      "UniqueId": "bda24cb5-bf05-49ec-9884-129a48c42fff",
+      "UniqueId": "bda24cb2-bf05-49ec-9884-129a48c42fff",
       "ProductGroupName": "SbSProductGroup-1"
     },
     "SbSTestScenario1-5": {
@@ -488,7 +488,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
       },
       "Timeout": "02:30:00",
-      "UniqueId": "bda24cb9-bf05-49ec-9884-129a48c42fff",
+      "UniqueId": "bda24cb3-bf05-49ec-9884-129a48c42fff",
       "ProductGroupName": "SbSProductGroup-1"
     },
     "SbSTestScenario1-6": {
@@ -511,7 +511,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S02_CheckFilesAndRegistry"
       },
       "Timeout": "02:30:00",
-      "UniqueId": "bda24cbe-bf05-49ec-9884-129a48c42fff",
+      "UniqueId": "bda24cb4-bf05-49ec-9884-129a48c42fff",
       "ProductGroupName": "SbSProductGroup-1"
     },
     "SbSTestScenario1-7": {
@@ -534,7 +534,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "02:30:00",
-      "UniqueId": "bda24cc4-bf05-49ec-9884-129a48c42fff",
+      "UniqueId": "bda24cb5-bf05-49ec-9884-129a48c42fff",
       "ProductGroupName": "SbSProductGroup-1"
     },
     "SbSTestScenario1-8": {
@@ -557,7 +557,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "02:30:00",
-      "UniqueId": "bda24ccb-bf05-49ec-9884-129a48c42fff",
+      "UniqueId": "bda24cb6-bf05-49ec-9884-129a48c42fff",
       "ProductGroupName": "SbSProductGroup-1"
     },
     "SbSTestScenario1-9": {
@@ -580,7 +580,7 @@
         "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
       },
       "Timeout": "02:30:00",
-      "UniqueId": "bda24cd3-bf05-49ec-9884-129a48c42fff",
+      "UniqueId": "bda24cb7-bf05-49ec-9884-129a48c42fff",
       "ProductGroupName": "SbSProductGroup-1"
     }
   },

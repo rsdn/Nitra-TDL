@@ -40,7 +40,7 @@ namespace Tdl2Json
       }
     }
 
-    public GetMultiMachineId(expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : Guid?
+    public GetMultiMachineId(expr : Tdl.Expr, variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : Guid?
     {
       def getKey(expr : Tdl.Expr) : object
       {
@@ -86,7 +86,7 @@ namespace Tdl2Json
       barrierId
     }
 
-    public UseBarrier(multiMachineId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], bg : BarrierGenerator) : Guid
+    public UseBarrier(multiMachineId : Guid, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr], bg : BarrierGenerator) : Guid
     {
       def name = Text.StringBuilder();
       foreach (part in bg.BarrierName)

@@ -16,8 +16,8 @@ namespace Tdl2Json
   module Expressions
   {
     public ToObject(this expression : Tdl.Expr,
-                    values    : IReadOnlyDictionary[string, object]          = null,
-                    variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : object
+                    values    : IReadOnlyDictionary[string, object]                   = null,
+                    variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : object
     {
       match (Convert(expression, values, variables))
       {
@@ -33,7 +33,7 @@ namespace Tdl2Json
       }
     }
 
-    public Convert(expression : Tdl.Expr, values : IReadOnlyDictionary[string, object], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : object * ResultKind
+    public Convert(expression : Tdl.Expr, values : IReadOnlyDictionary[string, object], variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : object * ResultKind
     {
       match (expression)
       {

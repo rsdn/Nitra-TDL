@@ -88,7 +88,7 @@ namespace Tdl2Json
       list.Sort((x, y) => selector(x).CompareTo(selector(y)))
     }
 
-    public ExprToInt(this exprOpt : ValueOption[Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : int?
+    public ExprToInt(this exprOpt : ValueOption[Tdl.Expr], variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : int?
     {
       if (exprOpt is VSome(expr))
         expr.ToObject(values=null, variables=variables) :> int
@@ -96,7 +96,7 @@ namespace Tdl2Json
         null
     }
 
-    public ExprToString(this exprOpt : ValueOption[Tdl.Expr], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
+    public ExprToString(this exprOpt : ValueOption[Tdl.Expr], variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
     {
       if (exprOpt is VSome(expr))
         ExprToString(expr, variables)
@@ -104,7 +104,7 @@ namespace Tdl2Json
         null
     }
 
-    public ExprToString(this expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
+    public ExprToString(this expr : Tdl.Expr, variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string
     {
       expr.ToObject(values=null, variables=variables) :> string
     }
@@ -123,7 +123,7 @@ namespace Tdl2Json
       }
     }
 
-    public GetNullable[K, V](this dictionary : IDictionary[K, V], key : K) : V?
+    public GetNullable[K, V](this dictionary : IReadOnlyDictionary[K, V], key : K) : V?
       where V : struct
     {
       mutable value;

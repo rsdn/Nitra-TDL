@@ -389,7 +389,7 @@ namespace Tdl2Json
       }
     }
 
-    private GetAssemblyAndMethodName(expr : Tdl.Expr, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string * string
+    private GetAssemblyAndMethodName(expr : Tdl.Expr, variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : string * string
     {
       when (expr is Reference(Symbol=VarSymbol as v))
         return GetAssemblyAndMethodName(variables[v], variables);
@@ -414,12 +414,7 @@ namespace Tdl2Json
       (assemblyName, methodName)
     }
 
-    GetFixedString(g : Tdl.Scenario.GeneratorSymbol, name : string) : string
-    {
-      g.Defs.Find(d => d.Symbol.Name == name).Map(_.Expr).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
-    }
-
-    private SplitScenarioDefs(defs : ImmutableArray[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : Hashtable[string, Tdl.Expr] * SortedDictionary[string, object]
+    private SplitScenarioDefs(defs : ImmutableArray[Def], variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : Hashtable[string, Tdl.Expr] * SortedDictionary[string, object]
     {
       def defTable       = Hashtable();
       def vmCapabilities = SortedDictionary();
@@ -436,12 +431,14 @@ namespace Tdl2Json
       }
       (defTable, vmCapabilities)
     }
-    
-    private GenerateTestGroup(g : Tdl.Scenario.GeneratorSymbol, uniqueId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr],
+
+    private GenerateTestGroup(index : uint, allDefs : ImmutableArray[Def], actions : ImmutableArray[ScenarioAction],
+      deployment : DeploymentSymbol, environments : Seq[Tdl.Environment],
+      filter : DotNet.ExprBase, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr],
       initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler,
       barrierCompiler : BarrierCompiler, multiMachineIdOpt : Guid?) : TestGroup
     {
-      def (defs, vmCapabilities) = SplitScenarioDefs(g.Defs, dic);
+      def (defs, vmCapabilities) = SplitScenarioDefs(allDefs, dic);
 
       def multiMachineId =
         match (defs.Get("MultiMachineId"))
@@ -492,18 +489,27 @@ namespace Tdl2Json
           }
           defs.Get(name).Map(getValue).WithDefault(null);
       }
-      def deployment = Api.TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
-      def platform   = Api.TryResolveVar(dic, g.Platform)   : PlatformSymbol;
-      def product    = Api.TryResolveVar(dic, g.Product)    : ProductSymbol;
+      def getGuid(name : string) : Guid?
+      {
+        def str = getString(name);
+        if (string.IsNullOrWhiteSpace(str))
+          null
+        else
+          Guid.Parse(str)
+      }
+
+      mutable uniqueId = getGuid("UniqueId");
+      when (index > 0)
+        uniqueId = Api.IncrementGuid(uniqueId.Value, index);
       def artifactsCollectionTimeout = getString("ArtifactsCollectionTimeout");
-      def assignedParams = g.Defs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
+      def assignedParams = allDefs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
 
       def testGroup =
         TestGroup() <-
         {
           Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployment, compiler, assignedParams, dic);
-          Environments            = array[EnvironmentElement() <- { Platforms= array[platform.Name]; Products=array[product.Name]; }];
-          TestMethod              = MakeTestMethod(g.Actions, artifactsCollectionTimeout, barrierCompiler, multiMachineId, dic);
+          Environments            = environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
+          TestMethod              = MakeTestMethod(actions, artifactsCollectionTimeout, barrierCompiler, multiMachineId, dic);
           Area                    = getString("Area");
           ExternalAutotestId      = getInt   ("ExternalAutotestId");
           LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
@@ -518,7 +524,7 @@ namespace Tdl2Json
           Timeout                 = getString("Timeout");
           UniqueId                = uniqueId;
           ProductGroupName        = getString("ProductGroupName");
-          FilterExpression        = GenerateScenarioFilter(g.Filter :> DotNet.ExprBase, dic);
+          FilterExpression        = GenerateScenarioFilter(filter, dic);
           MultiMachineId          = multiMachineId;
           Capabilities            = if (vmCapabilities.Count > 0) vmCapabilities else null;
         };
@@ -539,7 +545,7 @@ namespace Tdl2Json
       }
     }
 
-    private MakeBarrier(barrierCompiler : BarrierCompiler, multiMachineId : Guid, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr], bg : ScenarioAction.BarrierGenerator) : WaitForBarrierTestStep
+    private MakeBarrier(barrierCompiler : BarrierCompiler, multiMachineId : Guid, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr], bg : ScenarioAction.BarrierGenerator) : WaitForBarrierTestStep
     {
       WaitForBarrierTestStep() <-
       {
@@ -581,95 +587,23 @@ namespace Tdl2Json
       {
         | Tdl.Scenario.SetSymbol as s => addTestCase(scenarioSymbol.Name, TestGroup() <- { TestScenarios = GetScenarioList(s.Scenarios, scenarioTrigger) });
         | Tdl.Scenario.DefSymbol as r =>
-          def (defs, vmCapabilities) = SplitScenarioDefs(r.Defs, null);
-
-          def multiMachineId =
-            match (defs.Get("MultiMachineId"))
-            {
-              | Some(expr) => barrierCompiler.GetMultiMachineId(expr, null)
-              | None => multiMachineIdOpt
-            };
-
-          def getString(name : string) : string
-          {
-            defs.Get(name).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
-          }
-          def getGuid(name : string) : Guid?
-          {
-            def str = defs.Get(name).Map(expr => (expr :> Tdl.Expr.String).Value).WithDefault(null);
-            if (string.IsNullOrWhiteSpace(str))
-              null
-            else
-              Guid.Parse(str)
-          }
-          def getBool(name : string) : bool?
-          {
-            def toNullable(expr)
-            {
-              | Tdl.Expr.True  => Nullable(true)
-              | Tdl.Expr.False => Nullable(false)
-              | _              => throw NotSupportedException($"Supported expression '$expr' (Tdl.Expr.$(expr.GetType().Name))")
-            }
-            defs.Get(name).Map(toNullable).WithDefault(null);
-          }
-          def getLong(name : string) : long?
-          {
-              defs.Get(name).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
-          }
-          def getInt(name : string) : int?
-          {
-              defs.Get(name).Map(expr => Nullable((expr :> Tdl.Expr.Integer).Value)).WithDefault(null);
-          }
-          def artifactsCollectionTimeout = getString("ArtifactsCollectionTimeout");
-          def assignedParams = r.Defs.FilterToArray(d => d.Symbol.IsDeclaredInOptEvaluated && d.Symbol.DeclaredInOpt.HasValue && d.Symbol.DeclaredInOpt.Value is DeploymentSymbol);
-          def testGroup =
-            TestGroup() <-
-            {
-                Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, r.Deployment, compiler, assignedParams, null);
-                Environments            = r.Environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
-                TestMethod              = MakeTestMethod(r.Actions, artifactsCollectionTimeout, barrierCompiler, multiMachineId, null);
-                Area                    = getString("Area");
-                LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
-                ExternalAutotestId      = getInt   ("ExternalAutotestId");
-                NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
-                RequireInternet         = getBool  ("RequireInternet");
-                RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
-                RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
-                Responsible             = getString("Responsible");
-                RevertAgentAfter        = getBool  ("RevertAgentAfter") ?? true;
-                RevertAgentBefore       = getBool  ("RevertAgentBefore");
-                TfsId                   = getLong  ("TfsId");
-                Timeout                 = getString("Timeout");
-                UniqueId                = getGuid  ("UniqueId");
-                ProductGroupName        = getString("ProductGroupName");
-                FilterExpression        = GenerateScenarioFilter(r.Filter :> DotNet.ExprBase, ImmutableDictionary.Empty);
-                MultiMachineId          = multiMachineId;
-                Capabilities            = if (vmCapabilities.Count > 0) vmCapabilities else null;
-            };
+          def testGroup = GenerateTestGroup(0, r.Defs, r.Actions, r.Deployment, r.Environments, r.Filter :> DotNet.ExprBase,
+            ImmutableDictionary.Empty, initialDeployment, finalDeployment, compiler, barrierCompiler, multiMachineIdOpt);
           addTestCase(scenarioSymbol.Name, testGroup);
 
         | Tdl.Scenario.GeneratorSymbol as g =>
-          mutable counter : uint = 0;
-          def incGuid(guid : Guid) : Guid
-          {
-            def bytes1   = guid.ToByteArray();
-            def version  = BitConverter.ToUInt32(bytes1, 0) + counter;
-            def bytes2   = BitConverter.GetBytes(version);
-            bytes1[0] = bytes2[0];
-            bytes1[1] = bytes2[1];
-            bytes1[2] = bytes2[2];
-            bytes1[3] = bytes2[3];
-            Guid(bytes1)
-          }
-          mutable uniqueId = Guid.Parse(GetFixedString(g, "UniqueId"));
           def names = List();
           foreach (dic in Api.SubstituteVariables(g.Froms, 0))
           {
-            counter++;
-            def name = scenarioSymbol.Name + "-" + counter;
+            def deployment = Api.TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
+            def environments = array[Tdl.Environment(
+              Api.TryResolveVar(dic, g.Platform) : PlatformSymbol,
+              Api.TryResolveVar(dic, g.Product) : ProductSymbol)];
+            def testGroup = GenerateTestGroup(names.Count :> uint, g.Defs, g.Actions, deployment, environments, g.Filter :> DotNet.ExprBase,
+              dic, initialDeployment, finalDeployment, compiler, barrierCompiler, multiMachineIdOpt);
+            def name = scenarioSymbol.Name + "-" + (names.Count + 1);
             names.Add(name);
-            addTestCase(name, GenerateTestGroup(g, uniqueId, dic, initialDeployment, finalDeployment, compiler, barrierCompiler, multiMachineIdOpt));
-            uniqueId = incGuid(uniqueId);
+            addTestCase(name, testGroup);
           }
           def testGroup = TestGroup() <- { TestScenarios = names.ToArray() };
           addTestCase(scenarioSymbol.Name, testGroup);
@@ -679,7 +613,7 @@ namespace Tdl2Json
     }
 
     private MakeTestMethod(actions : ImmutableArray[ScenarioAction], artifactsCollectionTimeout : string, barrierCompiler : BarrierCompiler,
-      multiMachineId : Guid?, dic : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : TestMethod
+      multiMachineId : Guid?, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : TestMethod
     {
       def makeMethodAction(method : ScenarioAction.Method) : TestMethodQualifier
       {
@@ -839,7 +773,7 @@ namespace Tdl2Json
       }
     }
 
-    private MakeRunnerTestStep(runner : ScenarioAction.Runner, variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : RunnerTestStep
+    private MakeRunnerTestStep(runner : ScenarioAction.Runner, variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : RunnerTestStep
     {
       def step = RunnerTestStep();
 
@@ -867,7 +801,7 @@ namespace Tdl2Json
                                     scenarioDeployment : DeploymentSymbol,
                                     compiler           : DeploymentCompiler,
                                     assignedParams     : array[Def],
-                                    dic                : Dictionary[TypedDeclarationSymbol, Tdl.Expr]) : array[TestGroupDeployment]
+                                    dic                : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : array[TestGroupDeployment]
     {
       mutable deployments = [];
       def scope = HashSet(StringComparer.OrdinalIgnoreCase);

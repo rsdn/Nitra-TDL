@@ -27,7 +27,7 @@ namespace Tdl
   {
     public CaseElseValue      : string = "906868B7-634A-456D-9C89-331CC742650F";
 
-    public TryResolveVar[T](variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
+    public TryResolveVar[T](variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
       mutable result;
@@ -44,7 +44,7 @@ namespace Tdl
         varOrSymbol :> T
     }
 
-    public TryResolveVarOrNull[T](variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
+    public TryResolveVarOrNull[T](variables : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr], varOrSymbol : TypedDeclarationSymbol) :  T
       where T: DeclarationSymbol
     {
       mutable result;
