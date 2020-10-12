@@ -1,6 +1,7 @@
 vm capability Cap1;
 vm capability Cap2 = VmCapability.Required;
 vm capability Cap3 = VmCapability.Acceptable;
+vm capability Cap4;
 
 scenario Scenario1
 {
@@ -26,13 +27,25 @@ scenario Scenario2 =
     Cap1 = x;
   };
 
-suite Suite
+suite Suite1
 {
   platform Platform;
   product Product;
+  Cap4 = VmCapability.Acceptable;
   Scenario1();
   Scenario2();
 }
+
+suite Suite2 =
+  from x in [VmCapability.Unacceptable, VmCapability.Required]
+  select
+  {
+    platform Platform;
+    product Product;
+    Cap4 = x;
+    Scenario1();
+    Scenario2();
+  };
 
 product type ProductType
 {

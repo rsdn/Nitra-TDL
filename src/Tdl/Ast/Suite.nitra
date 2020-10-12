@@ -52,7 +52,7 @@ namespace Tdl
         Predefineds.Scope           = ContainingTable;
         Symbol.Predefineds          = TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, context.GetIsNotPredefinedSuiteField());
 
-        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope), Symbol.Predefineds);
+        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope).UnionWith(context.GetVmCapabilityScope()), Symbol.Predefineds);
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, context.GetIsPredefinedSuiteField());
 
@@ -157,7 +157,7 @@ namespace Tdl
         Predefineds.Scope           = ContainingTable.HideWith(Symbol.MemberTable);
         Symbol.Predefineds          = TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, context.GetIsNotPredefinedSuiteField());
 
-        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope), Symbol.Predefineds);
+        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope).UnionWith(context.GetVmCapabilityScope()), Symbol.Predefineds);
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable).HideWith(Symbol.MemberTable);
 
         Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, context.GetIsPredefinedSuiteField());

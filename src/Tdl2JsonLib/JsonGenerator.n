@@ -313,12 +313,12 @@ namespace Tdl2Json
       | _                         => ThrowNotSupportedSymbol(platformSymbol)
     }
 
-    private MakeDefs(defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]
+    private MakeSuiteDefs(defs : Seq[Def], defaults : ImmutableArray[FormalParameterSymbol], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object]  * SortedDictionary[string, object]
     {
-      def (defs2, _) = CollectDefs(defs, variables);
+      def (defs2, vmCapabilities) = CollectDefs(defs, variables);
       foreach (d when !defs2.ContainsKey(d.Name) in defaults)
         defs2.AddEx(d.Name, Tdl.Expr.NotSetValue, "defs2");
-      defs2
+      (defs2, vmCapabilities)
     }
 
     private CollectDefs(defs : Seq[Def], variables : Dictionary[TypedDeclarationSymbol, Tdl.Expr] = null) : Hashtable[string, object] * SortedDictionary[string, object]
@@ -1098,14 +1098,14 @@ namespace Tdl2Json
           | String as s => s.Value
           | _ => e.ToString()
         }
-        def name               = $<#$nameBase-..$(dic.Values; "-"; toString)#>;
+        def name                   = $<#$nameBase-..$(dic.Values; "-"; toString)#>;
         names.Add(name);
-        def platform           = Api.TryResolveVar(dic, gen.Platform) : PlatformSymbol;
-        def product            = Api.TryResolveVar(dic, gen.Product)  : ProductSymbol;
-        def entityOpt          = if (gen.EntityOpt.HasValue) (Api.TryResolveVar(dic, gen.EntityOpt.Value) : EntitySymbol).Name else null;
-        def defs               = MakeDefs(gen.Defs, gen.DefaultDefs, dic);
-        def sessionInitializer = TryGenerateAction("SessionInitializer", gen, product, dic, preSessionActionCompiler);
-        def sessionFinalizer   = TryGenerateAction("SessionFinalizer",   gen, product, dic, postSessionActionCompiler);
+        def platform               = Api.TryResolveVar(dic, gen.Platform) : PlatformSymbol;
+        def product                = Api.TryResolveVar(dic, gen.Product)  : ProductSymbol;
+        def entityOpt              = if (gen.EntityOpt.HasValue) (Api.TryResolveVar(dic, gen.EntityOpt.Value) : EntitySymbol).Name else null;
+        def (defs, vmCapabilities) = MakeSuiteDefs(gen.Defs, gen.DefaultDefs, dic);
+        def sessionInitializer     = TryGenerateAction("SessionInitializer", gen, product, dic, preSessionActionCompiler);
+        def sessionFinalizer       = TryGenerateAction("SessionFinalizer",   gen, product, dic, postSessionActionCompiler);
 
         def suite = TestSuite() <-
         {
@@ -1117,6 +1117,7 @@ namespace Tdl2Json
           DashboardVisibleParameters = GetDashboardVisibleParameters(gen.Type, gen.Statements);
           PreSessionAction           = sessionInitializer;
           PostSessionAction          = sessionFinalizer;
+          Capabilities               = if (vmCapabilities.Count > 0) vmCapabilities else null;
         };
 
         suites.AddEx(name, suite, "suites");
@@ -1127,10 +1128,10 @@ namespace Tdl2Json
 
     private GenerateSuite(suiteSymbol : Suite.DefSymbol, scenarioTrigger : IScenarioTrigger, preSessionActionCompiler : SessionActionCompiler, postSessionActionCompiler : SessionActionCompiler) : TestSuite
     {
-      def defs                  = MakeDefs(suiteSymbol.Defs, suiteSymbol.DefaultDefs);
-      def sessionInitializerOpt = if (suiteSymbol.SessionInitializer is VSome(init)) preSessionActionCompiler .GetSessionActionName(init, variables=null) else null;
-      def sessionFinalizerOpt   = if (suiteSymbol.SessionFinalizer   is VSome(init)) postSessionActionCompiler.GetSessionActionName(init, variables=null) else null;
-      def entityOpt             = suiteSymbol.EntityOpt;
+      def (defs, vmCapabilities) = MakeSuiteDefs(suiteSymbol.Defs, suiteSymbol.DefaultDefs);
+      def sessionInitializerOpt  = if (suiteSymbol.SessionInitializer is VSome(init)) preSessionActionCompiler .GetSessionActionName(init, variables=null) else null;
+      def sessionFinalizerOpt    = if (suiteSymbol.SessionFinalizer   is VSome(init)) postSessionActionCompiler.GetSessionActionName(init, variables=null) else null;
+      def entityOpt              = suiteSymbol.EntityOpt;
       TestSuite() <-
       {
         Platforms                  = array[suiteSymbol.Platform.Name];
@@ -1141,6 +1142,7 @@ namespace Tdl2Json
         DashboardVisibleParameters = GetDashboardVisibleParameters(suiteSymbol.Type, suiteSymbol.Statements);
         PreSessionAction           = sessionInitializerOpt;
         PostSessionAction          = sessionFinalizerOpt;
+        Capabilities               = if (vmCapabilities.Count > 0) vmCapabilities else null;
       }
     }
 

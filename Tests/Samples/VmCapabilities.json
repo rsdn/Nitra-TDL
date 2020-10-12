@@ -29,7 +29,7 @@
     }
   },
   "Suites": {
-    "Suite": {
+    "Suite1": {
       "Parameters": {},
       "Platforms": [
         "Platform"
@@ -40,6 +40,49 @@
       "TestScenarios": [
         "Scenario1",
         "Scenario2"
+      ],
+      "Capabilities": {
+        "Cap4": "Acceptable"
+      }
+    },
+    "Suite2-VmCapability.Required": {
+      "Parameters": {},
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario1",
+        "Scenario2"
+      ],
+      "Capabilities": {
+        "Cap4": "Required"
+      }
+    },
+    "Suite2-VmCapability.Unacceptable": {
+      "Parameters": {},
+      "Platforms": [
+        "Platform"
+      ],
+      "Products": [
+        "Product"
+      ],
+      "TestScenarios": [
+        "Scenario1",
+        "Scenario2"
+      ],
+      "Capabilities": {
+        "Cap4": "Unacceptable"
+      }
+    }
+  },
+  "SuiteGroups": {
+    "Suite2": {
+      "Suites": [
+        "Suite2-VmCapability.Unacceptable",
+        "Suite2-VmCapability.Required"
       ]
     }
   },
