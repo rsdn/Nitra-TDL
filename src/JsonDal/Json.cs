@@ -234,6 +234,9 @@ namespace QuickType
 
         [JsonProperty(Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string PostSessionAction { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public IDictionary<string, object> Capabilities { get; set; }
     }
 
     public partial class TestGroup
