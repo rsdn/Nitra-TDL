@@ -353,7 +353,7 @@ namespace Tdl2Json
             MakeDeploymentReference(name, null, null)
           };
 
-        if (cases[i].Any(_ == Api.CaseElseValue))
+        if (cases[i].Contains(Api.CaseElseValue))
           defaultBranch = handler;
         else
           values.AddEx(selector, handler, "values")

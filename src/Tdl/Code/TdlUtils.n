@@ -435,35 +435,6 @@ namespace Tdl
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
       {
         def sym = definition.SymbolRef.Symbol;
-        when (sym is FormalParameterSymbol as p when p.IsDeclaredInEvaluated)
-        {
-          when (p.DeclaredIn is Deployment.SelectSymbol as sel)
-          {
-            mutable found;
-            def index = sel.Parameters.IndexOf(p);
-            assert2(index >= 0);
-            def value = definition.Expr.Result;
-            when (value is Tdl.Expr.String as str)
-            {
-              foreach (case when index < case.Length in sel.Cases)
-              {
-                def val = case[index];
-                when (string.Equals(val, str.Value, StringComparison.Ordinal))
-                {
-                  found = true;
-                  break;
-                }
-              }
-              unless (found)
-              {
-                def msgs = context.GetFileData(definitions.Location.Source.File.Id).GetCompilerMessage();
-                using (root = msgs.ReportRootMessage(CompilerMessageType.Error, definition.Expr.Location, $"The \"$(sel.Name)\" select statement does not contain a \"$(str.Value)\" value.", 0))
-                  root.ReportMessage(CompilerMessageType.Hint, sel.FirstDeclarationOrDefault.Name.Location, "The related select statement.", 0);
-              }
-            }
-          }
-        }
-
         builder.Add(Def(sym, definition.Expr.Result));
         _ = existsDefsNames.Add(GetCaseInsensitiveId(sym));
       }
@@ -1253,6 +1224,13 @@ namespace Tdl
       MakeDefaultDefs(ast, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope, product, getAllProducts)
     }
 
+    variant SelectDeploymentParameterOption
+    {
+      | NotSet
+      | SetViaReference
+      | Value { v : string }
+    }
+
     MakeDefaultDefs(ast : IAst, context : DependentPropertyEvalContext, defs : ImmutableArray[Def], definitionScope : Scope, product : TypedDeclarationSymbol, getAllProducts : TypedDeclarationSymbol -> Seq[Product.DefSymbol]) : ValueOption[ImmutableArray[FormalParameterSymbol]]
     {
       try
@@ -1266,15 +1244,15 @@ namespace Tdl
           return VSome(ImmutableArray.Empty);
 
         def selectDeployments = HashSet(selectParams.Select(p => p.DeclaredIn :> Deployment.SelectSymbol));
-        def paramMap          = Dictionary(ParameterComparer.Instance);
+        def paramMap          = Dictionary.[DeclarationSymbol, SelectDeploymentParameterOption](ParameterComparer.Instance);
 
         // We fill the values explicitly specified.
         foreach (d in defs)
             match (d.Expr)
             {
-              | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-              | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
-              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
+              | Tdl.Expr.String as str => paramMap[d.Symbol] = SelectDeploymentParameterOption.Value(str.Value);
+              | Tdl.Expr.Reference     => paramMap[d.Symbol] = SelectDeploymentParameterOption.SetViaReference();
+              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = SelectDeploymentParameterOption.SetViaReference();
               | _ => ()
             }
 
@@ -1286,9 +1264,9 @@ namespace Tdl
           foreach (d in ds.Defs)
             match (d.Expr)
             {
-              | Tdl.Expr.String as str => paramMap[d.Symbol] = str.Value;
-              | Tdl.Expr.Reference     => paramMap[d.Symbol] = null;
-              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = null;
+              | Tdl.Expr.String as str => paramMap[d.Symbol] = SelectDeploymentParameterOption.Value(str.Value);
+              | Tdl.Expr.Reference     => paramMap[d.Symbol] = SelectDeploymentParameterOption.SetViaReference();
+              | Tdl.Expr.MemberAccess  => paramMap[d.Symbol] = SelectDeploymentParameterOption.SetViaReference();
               | _ => ()
             }
         }
@@ -1298,56 +1276,58 @@ namespace Tdl
           unless (selectDeployment.IsParametersEvaluated)
             return VNone();
 
-          def len        = selectDeployment.Parameters.Length;
-          def names      = array(len);
-          def isUsedVars = array(len);
-          def values     = array(len);
+          def len    = selectDeployment.Parameters.Length;
+          def names  = array(len);
+          def values = array(len);
+
           foreach (p in selectDeployment.Parameters with k)
           {
             names[k] = p.Name;
-            mutable value;
-            when (paramMap.TryGetValue(p, out value))
-            {
-              if (value == null)
-                isUsedVars[k] = true;
-              else
-                values[k] = value;
-            }
+            unless (paramMap.TryGetValue(p, out values[k]))
+              values[k] = SelectDeploymentParameterOption.NotSet();
           }
 
           unless (selectDeployment.IsCasesEvaluated)
             return VNone();
 
-          mutable isEntryPresent;
+          mutable isEntryMatch;
           foreach (entry in selectDeployment.Cases)
           {
             when (entry.Length != values.Length)
               return VSome(ImmutableArray.Empty); // An error message has already been reported.
 
-            mutable isEntryMatch = true;
-            for (mutable i = 0; i < values.Length; i++)
+            isEntryMatch = true;
+            for (mutable i = 0; i < values.Length && isEntryMatch; i++)
             {
-              isEntryMatch &= entry[i] == values[i];
-              unless (isEntryMatch)
-                break;
+              isEntryMatch &=
+                match (values[i])
+                {
+                  | NotSet          => entry[i] == Tdl.Expr.NotSetValue
+                  | SetViaReference => true
+                  | Value(text)     => entry[i] == text || entry[i] == Api.CaseElseValue
+                };
             }
-            isEntryPresent |= isEntryMatch;
+            when (isEntryMatch)
+              break;
           }
-          when (!isEntryPresent && isUsedVars.All(x => !x))
+
+          unless (isEntryMatch)
           {
             def notSetVar = List();
+            def entryStr = List();
             for (mutable i = 0; i < names.Length; i++)
             {
-              def name  = names[i];
-              def value = values[i];
-              when (value == null)
-                notSetVar.Add("\"" + name + "\"");
+              match (values[i])
+              {
+                | NotSet          => entryStr.Add("not-set"); notSetVar.Add("\"" + names[i] + "\"");
+                | SetViaReference => entryStr.Add("_");
+                | Value(text)     => entryStr.Add("\"" + text + "\"");
+              }
             }
 
-            def entryStr      = values.Select(v => if (v == null) "_" else "\"" + v + "\"");
             def msgs          = context.GetFileData(ast.Location.Source.File.Id).GetCompilerMessage();
             def suffix        = if (notSetVar.Count > 1) "s" else "";
-            def notSetVarText = if (notSetVar.Count > 0) $"Valiable$suffix: ..$notSetVar not set. And the" else "The";
+            def notSetVarText = if (notSetVar.Count > 0) $"Variable$suffix: ..$notSetVar not set. And the" else "The";
             using (root = msgs.ReportRootMessage(CompilerMessageType.Error, ast.Location, $"$notSetVarText \"$(selectDeployment.Name)\" select deployment has no ..$entryStr entry.", 0))
               root.ReportMessage(CompilerMessageType.Hint, selectDeployment.FirstDeclarationOrDefault.Name.Location, "The related select deployment.", 0);
             return VSome(ImmutableArray.Empty);

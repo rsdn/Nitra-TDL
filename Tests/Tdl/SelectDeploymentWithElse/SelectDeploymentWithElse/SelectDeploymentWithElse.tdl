@@ -2,7 +2,7 @@ suite "Ksos.BvtPvt.UCP-Beta-4"
 {
     platform all_pc;
     product KSOS;
-    UcpContextType = UcpContextType;
+    UcpContextType = "any";
     SelectDeploymentWithElseScenario();
 }
 scenario SelectDeploymentWithElseScenario
@@ -49,7 +49,3 @@ product type Kavkis
 platform w10rs5-x86;
 platform all_pc = w10rs5-x86;
 
-external
-{
-  string UcpContextType;
-}

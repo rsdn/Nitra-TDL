@@ -48,7 +48,7 @@
   "Suites": {
     "Ksos.BvtPvt.UCP-Beta-4": {
       "Parameters": {
-        "UcpContextType": "#(UcpContextType)"
+        "UcpContextType": "any"
       },
       "Platforms": [
         "all_pc"
