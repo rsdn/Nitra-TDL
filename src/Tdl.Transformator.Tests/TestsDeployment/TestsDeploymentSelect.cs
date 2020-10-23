@@ -62,7 +62,7 @@ namespace Tdl.Transformator.Tests.TestsDeployment
             var container = BuildContainer("deployment_select.tdl");
             var deployment = container.GetAll<DeploymentSelectModel>().Single();
 
-            deployment.Cases.RemoveAll(c => c.DeploymentCase == null);
+            deployment.Cases.RemoveAll(c => c.DeploymentCase == Expr.NotSetValue);
 
             var expectedTdl = GetExpectedTdl("deployment_select_remove_case.tdl");
             var actualTdl = deployment.Print();
