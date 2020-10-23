@@ -25,12 +25,17 @@ namespace Tdl.Transformator.Models.Deployments
         [NotNull]
         public string DeploymentCase { get; set; }
 
+        public bool IsNotSet => DeploymentCase == Expr.NotSetValue;
+
+        public bool IsElse => DeploymentCase == Api.CaseElseValue;
+
         [NotNull]
         public string Print()
         {
-            var caseDescription = string.IsNullOrWhiteSpace(DeploymentCase)
-                    ? "_" 
-                    : $"\"{DeploymentCase}\"";
+            var caseDescription = IsNotSet ? "not-set"
+                : IsElse ? "else"
+                : string.IsNullOrEmpty(DeploymentCase) ? "_"
+                : $"\"{DeploymentCase}\"";
             return $"{caseDescription} => \"{string.Join("; ", Deployments.Select(x => x.Name))}\"";
         }
 

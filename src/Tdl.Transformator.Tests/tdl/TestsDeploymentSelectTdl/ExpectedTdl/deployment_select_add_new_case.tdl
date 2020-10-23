@@ -2,6 +2,6 @@
 {
     | "KAV" => "Install KAVKIS"
     | "SAAS" => "Install SAAS"
-    | _      => "_Install product"
+    | not-set => "_Install product"
 	| "PURE" => "Install PURE"
 }
