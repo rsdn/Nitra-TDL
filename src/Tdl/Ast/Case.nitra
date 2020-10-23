@@ -45,7 +45,7 @@ namespace Tdl
 
     | NotSet
       {
-        Text = null;
+        Text = Tdl.Expr.NotSetValue;
       }
 
     | Else

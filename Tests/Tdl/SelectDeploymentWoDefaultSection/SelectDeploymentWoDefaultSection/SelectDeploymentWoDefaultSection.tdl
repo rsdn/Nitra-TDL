@@ -12,7 +12,7 @@ scenario UpgradeProductWithSaveSettingsAndDownloaderIni // E: Scenario must have
     TfsId = 739871;
 }
 
-suite "Ksos.BvtPvt.UCP-Beta-1" : SessionParameters // E: Valiable: "BaseProductType" not set. And the "Copy New Product Version" select deployment has no _ entry.
+suite "Ksos.BvtPvt.UCP-Beta-1" : SessionParameters // E: Variable: "BaseProductType" not set. And the "Copy New Product Version" select deployment has no not-set entry.
 {
     platform all_pc;
     product KSOS;

@@ -194,7 +194,7 @@ namespace Tdl
               {
                 | (_,     ResultKind.Missing) => assert(false)
                 | (value, ResultKind.Value)   => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));
-                | (_,     ResultKind.NotSet)  => valueParts.Add(null);
+                | (_,     ResultKind.NotSet)  => valueParts.Add(Tdl.Expr.NotSetValue);
                 | (value, ResultKind.ExternalParameter) => erroneousParameters.Add((p, ResultKind.ExternalParameter, value));
                 | (value, ResultKind.Error           as kind)
                 | (value, ResultKind.GlobalParameter as kind)
