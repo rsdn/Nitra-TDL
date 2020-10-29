@@ -524,6 +524,7 @@ namespace Tdl2Json
           LocalTestBinariesFolder = getString("LocalTestBinariesFolder");
           NeedUnsignedAgent       = getBool  ("NeedUnsignedAgent");
           RequireInternet         = getBool  ("RequireInternet");
+          MayDropNetwork          = getBool  ("MayDropNetwork");
           RerunCountOnTestFailure = getLong  ("RerunCountOnTestFailure");
           RerunCountOnTestSuccess = getLong  ("RerunCountOnTestSuccess");
           Responsible             = getString("Responsible");
