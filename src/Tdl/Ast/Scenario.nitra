@@ -52,6 +52,7 @@ namespace Tdl
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
+        Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployment, ImmutableArray.Empty, context, Symbol.Defs);
 
         Actions.Scope                   = MethodConditionalScope.Value;
@@ -155,6 +156,7 @@ namespace Tdl
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
+        Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
         Froms.Scope                     = Scope;
         Froms.ContainingTable           = Symbol.MemberTable;
         Deployment.Scope                = Scope.HideWith(Symbol.MemberTable);
