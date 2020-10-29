@@ -23,6 +23,7 @@ namespace Tdl
     }
 
     Parameters.Scope  = Scope.UnionWith(context.GetExternalSymbolTable());
+    Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
     Definitions.Scope = Symbol.ParameterScope;
     Symbol.Defs       = TdlUtils.MakeUntypedDefinitions(Definitions, context);
 

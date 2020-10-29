@@ -79,6 +79,7 @@ namespace Tdl
         }
 
         Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
+        Parameters.BuildInvocationScope   = context.BuildInvocationScope(Scope);
         Commands.StepNumberIn             = 0;
         Commands.Variables                = Symbol.Variables;
         Commands.OuterScope               = Scope;
@@ -139,6 +140,7 @@ namespace Tdl
         Symbol.ParameterValues            = TdlUtils.MakeDefinitions(CurredParameters, context, Symbol.Type, CurredParameters.SymbolRef);
         Symbol.BaseDeployment.IsUsed      = true;
         Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
+        Parameters.BuildInvocationScope   = context.BuildInvocationScope(Scope);
 
         BaseDeployment   : Reference;
         CurredParameters : Definition*;
@@ -159,6 +161,7 @@ namespace Tdl
         Symbol.AggregateParametersScope   = await TdlUtils.MakeSelectAggregateParametersScope(Symbol.ParameterScope, Symbol.Deployments);
         Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, TdlUtils.Flatten(Symbol.Deployments));
         Parameters.Scope                  = Scope;
+        Parameters.BuildInvocationScope   = context.BuildInvocationScope(Scope);
         Cases.Scope                       = TdlUtils.MakeDeploymentScope(Scope);
         Cases.ContainingTable             = ContainingTable;
         Symbol.Cases                      = Cases.Cases;

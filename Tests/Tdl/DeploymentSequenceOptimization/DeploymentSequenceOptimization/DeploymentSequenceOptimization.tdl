@@ -1,6 +1,6 @@
-﻿external { string Foo; }
+external { string Foo; }
 
-deployment Basic(string Message = Foo, bool Flag, int Value)
+deployment Basic(string Message = external.Foo, bool Flag, int Value)
 {
   KL.Autotests.Commands.LogMessage(Message);
   KL.Autotests.Commands.ComplexOperation(IsVerbose: Flag);
