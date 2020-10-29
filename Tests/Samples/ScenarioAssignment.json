@@ -103,6 +103,7 @@
           ]
         }
       ],
+      "MayDropNetwork": true,
       "RevertAgentAfter": true,
       "TestMethod": {
         "ProgramName": "cmd",

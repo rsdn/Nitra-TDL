@@ -523,6 +523,7 @@ namespace Tdl
       defineParameter("NeedUnsignedAgent",               platformType.Boolean, required=false);
       defineParameter("ProductGroupName",                platformType.String,  required=false);
       defineParameter("RequireInternet",                 platformType.Boolean, required=false);
+      defineParameter("MayDropNetwork",                  platformType.Boolean, required=false);
       defineParameter("ExternalAutotestId",              platformType.Int32,   required=false);
       defineParameter("RerunCountOnTestFailure",         platformType.Int32,   required=false);
       defineParameter("RerunCountOnTestSuccess",         platformType.Int32,   required=false);

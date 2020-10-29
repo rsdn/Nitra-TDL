@@ -12,6 +12,7 @@ scenario Scenario1
     Area = "Dnt";
     CustomParameter = "test1";
     TfsId = 1075083;
+    MayDropNetwork = true;
 }
 
 scenario Scenario2 =

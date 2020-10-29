@@ -284,6 +284,12 @@ namespace QuickType
         public bool? RequireInternet { get; set; }
 
         /// <summary>
+        /// Флаг, указывающий, что тест может отключать подключение к сети
+        /// </summary>
+        [JsonProperty("MayDropNetwork", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? MayDropNetwork { get; set; }
+
+        /// <summary>
         /// Сколько раз перезапускать красный тест
         /// </summary>
         [JsonProperty("RerunCountOnTestFailure", NullValueHandling = NullValueHandling.Ignore)]
