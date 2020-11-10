@@ -71,7 +71,6 @@
   "Suites": {
     "GeneratedSuiteList-Excel-win_10_rs3-2": {
       "Parameters": {
-        "Version": "#(ProductVersion)",
         "IntValue": 2,
         "ProductA": "Excel",
         "ProductB": "Word",
@@ -90,7 +89,6 @@
     },
     "GeneratedSuiteList-Word-w10rs4-x86-1": {
       "Parameters": {
-        "Version": "#(ProductVersion)",
         "IntValue": 1,
         "ProductA": "Word",
         "ProductB": "Word",
@@ -109,7 +107,6 @@
     },
     "Suite1": {
       "Parameters": {
-        "Version": "#(ProductVersion)",
         "ProductA": "Excel",
         "ProductB": "Word",
         "ProductC": "MonorepoHelloWorld"
@@ -126,7 +123,6 @@
     },
     "Suite2": {
       "Parameters": {
-        "Version": "#(ProductVersion)",
         "ProductA": "Excel",
         "ProductB": "Word",
         "ProductC": "MonorepoHelloWorld"
@@ -143,7 +139,6 @@
     },
     "Suite3": {
       "Parameters": {
-        "Version": "#(ProductVersion)",
         "ProductA": "Excel",
         "ProductB": "Word",
         "ProductC": "MonorepoHelloWorld"

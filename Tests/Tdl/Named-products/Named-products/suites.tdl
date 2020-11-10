@@ -20,7 +20,6 @@ suite NamedProduct : SuiteType
 {
     platform w10rs5-x64;
     product OfficeProduct;
-    Version = ProductVersion;
     ProductA = Excel;
     ProductB = Word;
     ProductC = MonorepoHelloWorld;

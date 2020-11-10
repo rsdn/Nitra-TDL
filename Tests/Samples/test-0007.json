@@ -62,7 +62,6 @@
   "Suites": {
     "BuildAcceptance": {
       "Parameters": {
-        "Version": "#(ProductVersion)",
         "BuildPath": "#(BuildPath)",
         "BuildDir": "distrib\\linux-x86_64",
         "ProductInstall": "install_product.sh",

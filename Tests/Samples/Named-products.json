@@ -58,7 +58,6 @@
   "Suites": {
     "NamedProduct": {
       "Parameters": {
-        "Version": "#(ProductVersion)",
         "ProductA": "Excel",
         "ProductB": "Word",
         "ProductC": "MonorepoHelloWorld"

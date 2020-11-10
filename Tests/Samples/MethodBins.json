@@ -27,9 +27,7 @@
   },
   "Suites": {
     "Suite1": {
-      "Parameters": {
-        "Version": "#(ProductVersion)"
-      },
+      "Parameters": {},
       "Platforms": [
         "w10rs5-x64"
       ],
