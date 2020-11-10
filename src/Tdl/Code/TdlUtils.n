@@ -423,7 +423,7 @@ namespace Tdl
             definition.Expr.Error(context, <#Invalid GUID.#>);
         }
 
-        builder.Add(Def(sym, result));
+        builder.Add(Def(definition.SymbolRef.Location, sym, result));
       }
       builder.TryMoveToImmutable()
     }
@@ -435,13 +435,17 @@ namespace Tdl
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
       {
         def sym = definition.SymbolRef.Symbol;
-        builder.Add(Def(sym, definition.Expr.Result));
+        builder.Add(Def(definition.SymbolRef.Location, sym, definition.Expr.Result));
         _ = existsDefsNames.Add(GetCaseInsensitiveId(sym));
       }
 
       foreach(FieldSymbol(IsValueEvaluated=true, Value=VSome(expr)) as field when !existsDefsNames.Contains(GetCaseInsensitiveId(field)) in type.Scope.GetAllSymbols())
         when (isIgnore == null || !isIgnore(field.Name))
-          builder.Add(Def(field, expr));
+        {
+          def definition = field.FirstParsedDeclarationOrDefault;
+          def location = if (definition != null) definition.Name.Location else Location.NoLocation;
+          builder.Add(Def(location, field, expr));
+        }
 
       builder.TryMoveToImmutable()
     }
@@ -657,11 +661,28 @@ namespace Tdl
     {
       try
       {
-        def definedParameters = HashSet();
+        def definedParameters = Dictionary();
         foreach (s in productScope.GetAllSymbols())
-          _ = definedParameters.Add(s.NameId);
+        {
+          def declaration = s.FirstParsedDeclarationOrDefault;
+          definedParameters[s.NameId] = if (declaration != null) declaration.Name.Location else Location.NoLocation;
+        }
+
         foreach (d in suiteDefs)
-          _ = definedParameters.Add(d.Symbol.NameId);
+        {
+          mutable firstDefinition;
+          if (definedParameters.TryGetValue(d.Symbol.NameId, out firstDefinition))
+          {
+            def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast);
+            using (root = msgs.RootError(d.Location, $"Redefinition of parameter '$(d.Symbol.Name)'."))
+            {
+              unless (firstDefinition.IsEmpty)
+                root.Hint(firstDefinition, "First definition.");
+            }
+          }
+          else
+            definedParameters[d.Symbol.NameId] = d.Location;
+        }
 
         mutable hasUnconditionalScenario;
         def undefinedParameters = HashSet();
@@ -676,7 +697,7 @@ namespace Tdl
               def scenarioScope = scenaro.AggregateParametersScope;
               foreach (parameter is FormalParameterSymbol when parameter.IsTypeEvaluated && parameter.IsDeclaredInEvaluated in scenarioScope.GetAllSymbols())
               {
-                when (definedParameters.Contains(parameter.NameId)
+                when (definedParameters.ContainsKey(parameter.NameId)
                    || parameter.HasDefault()
                    || parameter.DeclaredIn is Deployment.SelectSymbol
                    || parameter.Type is SuiteTypeSymbol)

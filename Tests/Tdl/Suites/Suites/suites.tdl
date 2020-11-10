@@ -7,7 +7,6 @@ suite GeneratedSuiteList : SuiteType1 =
     {
       platform Platform;
       product Product;
-      Version = ProductVersion;
       IntValue = Value;
       ProductA = Product;
       ProductB = Word;
@@ -30,7 +29,6 @@ suite Suite1 : SuiteType1
     platform w10rs5-x64;
     product MonorepoHelloWorld;
     //List = [1, 2];
-    Version = ProductVersion;
     ProductA = Excel;
     ProductB = Word;
     ProductC = MonorepoHelloWorld;
@@ -42,7 +40,6 @@ suite Suite2
     platform w10rs5-x64;
     product MonorepoHelloWorld;
     //List = [1, 2];
-    Version = ProductVersion;
     ProductA = Excel;
     ProductB = Word;
     ProductC = MonorepoHelloWorld;
@@ -54,7 +51,6 @@ suite Suite3
     platform w10rs5-x64;
     product MonorepoHelloWorld;
     //List = [1, 2];
-    Version = ProductVersion;
     ProductA = Excel;
     ProductB = Word;
     ProductC = MonorepoHelloWorld;
