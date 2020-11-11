@@ -5,7 +5,6 @@ suite Suite1
 {
     platform w10rs5-x64;
     product MonorepoHelloWorld;
-    Version = ProductVersion;
     Test1();
 }
 
