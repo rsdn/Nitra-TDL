@@ -428,8 +428,11 @@ namespace Tdl
       builder.TryMoveToImmutable()
     }
 
-    public MakeDefinitions(definitions : IAstList[Definition], context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]], isIgnore : string -> bool = null) : ImmutableArray[Def]
+    public MakeDefinitions(definitions : IAstList[Definition], context : DependentPropertyEvalContext, type : TypeSymbol, _dependence : ImmutableArray[Ref[TypedDeclarationSymbol]], baseSuiteOpt : ValueOption[Suite.DefSymbol], isIgnore : string -> bool = null) : ValueOption[ImmutableArray[Def]]
     {
+      when (baseSuiteOpt is VSome(x) when !x.IsDefsEvaluated)
+        return VNone();
+
       def builder         = ImmutableArray.CreateBuilder(definitions.Count);
       def existsDefsNames = HashSet();
       foreach (definition when definition.IsSymbolRefEvaluated && definition.SymbolRef.IsSymbolEvaluated && definition.Expr.IsResultEvaluated in definitions)
@@ -443,7 +446,11 @@ namespace Tdl
         when (isIgnore == null || !isIgnore(field.Name))
           builder.Add(Def(field, expr));
 
-      builder.TryMoveToImmutable()
+      when (baseSuiteOpt is VSome(x))
+        foreach (d when !existsDefsNames.Contains(GetCaseInsensitiveId(d.Symbol)) in x.Defs)
+          builder.Add(d);
+
+      VSome(builder.TryMoveToImmutable())
     }
 
     public MakeUntypedDefinitions(definitions : Definition.IAstList, context : DependentPropertyEvalContext, requiredNames : Seq[string] = null) : ImmutableArray[UntypedDef]
@@ -599,14 +606,19 @@ namespace Tdl
     //  deployments
     //}
 
-    public MakeParameterScope(scope : Scope, predefineds : ImmutableArray[Def]) : ValueOption[Scope]
+    public MakeParameterScope(scope : Scope, predefineds : ImmutableArray[Def], baseSuiteOpt : ValueOption[Suite.DefSymbol]) : ValueOption[Scope]
     {
+      when (baseSuiteOpt is VSome(x) when !x.IsDefaultDefsEvaluated || !x.IsDefinitionScopeEvaluated || !x.IsDefsEvaluated)
+        return VNone();
+
       def deployments = FilterDeployment(predefineds);
 
       def scopeOpt = MakeAggregateParametersScope(deployments, scope);
 
       if (scopeOpt is VSome(scope))
       {
+        def scope2 = if (baseSuiteOpt is VSome(x)) x.DefinitionScope.HideWith(scope) else scope;
+
         def internTable = Dictionary(ParameterComparer());
         def isInternedSymbol(symbol)
         {
@@ -619,7 +631,7 @@ namespace Tdl
             true
           }
         }
-        VSome(scope.Memoize().FilterWith(isInternedSymbol))
+        VSome(scope2.Memoize().FilterWith(isInternedSymbol))
       }
       else
         VNone()
@@ -702,27 +714,6 @@ namespace Tdl
           ast.Name.Error(context, "Suite must contain at least one scenario without TriggerPath attribute.", 0);
       }
       catch { | e => ast.Name.Error(context, $"Internal Compiler Error: Exception: $e.", 0); }
-    }
-
-    public ResolveSuiteTypeSymbol(this context : DependentPropertyEvalContext, typeRef : Ref[DeclarationSymbol]) : SuiteTypeSymbol
-    {
-      def makeDefaulteSuiteTypeSymbol()
-      {
-        def symbol = SuiteTypeSymbol();
-        symbol.EvalProperties(context);
-        symbol
-      }
-
-      if (typeRef == null)
-        makeDefaulteSuiteTypeSymbol()
-      else
-      {
-        def result = typeRef.Resolve();
-        if (result.IsUnresolved || result.IsAmbiguous)
-          makeDefaulteSuiteTypeSymbol()
-        else
-          result.Symbol
-      }
     }
 
     public ReportProductTypeFields(this ast : IAst, context : DependentPropertyEvalContext, fields : ImmutableArray[Tdl.FieldSymbol]) : void
@@ -2300,6 +2291,131 @@ namespace Tdl
     private GetCaseInsensitiveId(symbol : DeclarationSymbol) : int
     {
       StringIndex.GetCaseInsensitivePart(symbol.NameId)
+    }
+
+    public MakeSuitePlatform(this context : DependentPropertyEvalContext, name : IAst, platformSymbolOpt : ValueOption[PlatformSymbol], baseSuiteOpt : ValueOption[Suite.DefSymbol]) : ValueOption[PlatformSymbol]
+    {
+      match (platformSymbolOpt, baseSuiteOpt)
+      {
+        | (VSome(platform), _)                                            => VSome(platform)
+        | (VNone(), VSome(baseSuite)) when !baseSuite.IsPlatformEvaluated => VNone()
+        | (VNone(), VSome(baseSuite))                                     => VSome(baseSuite.Platform)
+        | (VNone(), VNone())                                              => name.Error(context, "The platform must be specified.", 0); def p = Platform.DefSymbol(); p.EvalProperties(context); VSome(p)
+        | _                                                               => VNone()
+      }
+    }
+
+    public MakeSuiteProduct(this context : DependentPropertyEvalContext, name : IAst, productSymbolOpt : ValueOption[ProductSymbol], baseSuiteOpt : ValueOption[Suite.DefSymbol]) : ValueOption[ProductSymbol]
+    {
+      match (productSymbolOpt, baseSuiteOpt)
+      {
+        | (VSome(product), _)                                            => VSome(product)
+        | (VNone(), VSome(baseSuite)) when !baseSuite.IsProductEvaluated => VNone()
+        | (VNone(), VSome(baseSuite))                                    => VSome(baseSuite.Product)
+        | (VNone(), VNone())                                             => name.Error(context, "The product must be specified.", 0); def p = Product.DefSymbol(); p.EvalProperties(context); VSome(p)
+        | _                                                              => VNone()
+      }
+    }
+
+    public ResolveSuiteTypeSymbol(this context : DependentPropertyEvalContext, typeAst : IAst, typeRef : Ref[DeclarationSymbol]) : ValueOption[SuiteTypeSymbol]
+    {
+      def makeDefaulteSuiteTypeSymbol()
+      {
+        def symbol = SuiteTypeSymbol();
+        symbol.EvalProperties(context);
+        VSome(symbol)
+      }
+
+      if (typeRef == null)
+        makeDefaulteSuiteTypeSymbol()
+      else
+      {
+          def bindResult = typeRef.Result.Filter.[Suite.DefSymbol](null);
+          if (bindResult.HasResult)
+          {
+            def result = typeRef.CreateRevole(bindResult);
+            if (result.IsAmbiguous)
+            {
+              typeAst.Error(context, "Suite is ambiguous.", 0);
+              makeDefaulteSuiteTypeSymbol()
+            }
+            else
+            {
+              if (result.Symbol.IsTypeEvaluated)
+                VSome(result.Symbol.Type :> SuiteTypeSymbol)
+              else
+                VNone()
+            }
+          }
+          else
+          {
+            def result = typeRef.Resolve();
+            if (result.IsUnresolved || result.IsAmbiguous)
+              makeDefaulteSuiteTypeSymbol()
+            else
+              VSome(result.Symbol)
+          }
+      }
+    }
+
+    public MakeBaseSuite(this context : DependentPropertyEvalContext, typeRefOpt : ValueOption[Ref[DeclarationSymbol]]) : ValueOption[ValueOption[Ref[Suite.DefSymbol]]]
+    {
+      match (typeRefOpt)
+      {
+        | VSome(r) =>
+          def bindResult = r.Result.Filter.[Suite.DefSymbol](null);
+          if (bindResult.HasResult)
+          {
+            def result = r.CreateRevole(bindResult);
+            VSome(VSome(result))
+          }
+          else
+            VSome(VNone())
+
+        | VNone() => VSome(VNone())
+      }
+    }
+
+    public MakeSuiteType(this context : DependentPropertyEvalContext, typeRefOpt : ValueOption[Ref[DeclarationSymbol]], baseSuiteRefOpt : ValueOption[Ref[Suite.DefSymbol]]) : ValueOption[TypeSymbol]
+    {
+      def makeDefaulteSuiteTypeSymbol()
+      {
+        def symbol = SuiteTypeSymbol();
+        symbol.EvalProperties(context);
+        VSome(symbol)
+      }
+
+      match (baseSuiteRefOpt)
+      {
+        | VSome(r) =>
+          if (r.IsSymbolEvaluated && r.Symbol.IsTypeEvaluated)
+            VSome(r.Symbol.Type)
+          else
+            VNone()
+
+        | VNone() =>
+          match (typeRefOpt)
+          {
+            | VSome(r) =>
+              def result = r.Resolve();
+              if (result.IsUnresolved || result.IsAmbiguous)
+                makeDefaulteSuiteTypeSymbol()
+              else
+                VSome(result.Symbol)
+
+            | VNone() => makeDefaulteSuiteTypeSymbol()
+          }
+      }
+    }
+
+    public MakeStatements(statements : ImmutableArray[SuiteStatement], baseSuiteOpt : ValueOption[Suite.DefSymbol]) : ValueOption[ImmutableArray[SuiteStatement]]
+    {
+      match (baseSuiteOpt)
+      {
+        | VSome(baseSuite) when !baseSuite.IsStatementsEvaluated => VNone()
+        | VSome(baseSuite) => VSome(baseSuite.Statements)
+        | VNone() => VSome(statements)
+      }
     }
   } // module
 } // namespace

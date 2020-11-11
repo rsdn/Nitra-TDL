@@ -44,7 +44,7 @@
 
     syntax Parameters = "(" (FormalParameter; ","sm)* ")";
 
-    syntax ExportParameters = "(" (Reference; ","sm)* ")"; 
+    syntax ExportParameters = "(" (Reference; ","sm)* ")";
 
     syntax DeploymentScriptContent
     {
@@ -112,7 +112,7 @@
       syntax Product  = "product"  sm Reference ";" nl;
     }
 
-    syntax SuiteBody = outline_begin_before "{" inl Entity? Platform Product DefDeclaration* SuiteStatement+ d "}" nl outline_end_before
+    syntax SuiteBody = outline_begin_before "{" inl Entity? Platform? Product? DefDeclaration* SuiteStatement* d "}" nl outline_end_before
     {
       syntax Entity   = "entity" sm Reference ";" nl;
       syntax Platform = "platform" sm Reference ";" nl;

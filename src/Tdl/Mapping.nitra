@@ -123,14 +123,26 @@ namespace Tdl
         {
           | Some(x) -> Some(x.Type)
           | None    -> None()
-        }-> TypeOpt;
+        } -> TypeOpt;
+
         match (SuiteBody.EntityOpt)
         {
           | Some(x) -> Some(x.Reference)
           | None    -> None()
-        }-> EntityOpt;
-        SuiteBody.Platform.Reference -> Platform;
-        SuiteBody.Product.Reference  -> Product;
+        } -> EntityOpt;
+
+        match (SuiteBody.PlatformOpt)
+        {
+          | Some(x) -> Some(x.Reference)
+          | None    -> None()
+        } -> PlatformOpt;
+
+        match (SuiteBody.ProductOpt)
+        {
+          | Some(x) -> Some(x.Reference)
+          | None    -> None()
+        } -> ProductOpt;
+
         SuiteBody.DefDeclarations    -> AllDefinitions;
         SuiteBody.SuiteStatements    -> Statements;
       }

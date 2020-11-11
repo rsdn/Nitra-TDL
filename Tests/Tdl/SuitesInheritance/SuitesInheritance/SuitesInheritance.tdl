@@ -1,0 +1,93 @@
+using System.Collections.Generic;
+using System.Linq;
+
+suite type SuiteType1
+{
+  Deployment SessionInitializer = Deploy6;
+  Deployment SessionFinalizer = Deploy6;
+  string AutotestAssemblies;
+}
+
+suite Suite1 : SuiteType1
+{
+    platform w10rs5-x64;
+    product MonorepoHelloWorld;
+    InstallationType = "Normal";
+    SessionFinalizer = Deploy5;
+    Test1();
+}
+
+suite Suite2 : Suite1
+{
+    platform w10rs5-x86;
+    InstallationType = "Patch";
+}
+
+scenario Test1(string InstallationType)
+{
+    deployment InstallProduct;
+    environments (w10rs5, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+deployment InstallProduct(
+
+    int IntValue = 7,
+    string ParameterFromProduct
+)
+    script @"\\sdfs\autotests\KIS\DeploymentScripts\TdlTests\null-deployment.ps1"
+{
+    expected 42;
+}
+
+deployment Deploy5()
+ script "Deploy1.ps1"
+{
+}
+
+deployment Deploy6()
+ script "Deploy1.ps1"
+{
+}
+
+product type TheProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+    string ParameterFromProduct;
+}
+
+product type MsOfficeProducts
+{
+    string Name;
+    string BranchName;
+    string Version;
+    int Size;
+    string ParameterFromProduct;
+}
+
+product MonorepoHelloWorld : TheProductType
+{
+    Name = "MonorepoHelloWorld";
+    BranchName = "MonorepoHelloWorld";
+    Version = ProductVersion;
+    ParameterFromProduct = "C";
+}
+
+external
+{
+    string ProductVersion;
+    bool IsSome;
+}
+
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs5 =
+    w10rs5-x64,
+    w10rs5-x86;

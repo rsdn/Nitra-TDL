@@ -131,13 +131,13 @@ namespace Tdl
         BaseDeployment.Scope              = Scope;
         BaseDeploymentRef                 = BaseDeployment.Ref.Resolve();
         Symbol.BaseDeployment             = BaseDeploymentRef.Symbol;
-                                          
+
         CurredParameters.Scope            = Scope.UnionWith(context.GetExternalSymbolTable()).HideWith(Symbol.ParameterScope);
-        CurredParameters.DefinitionScope  = await TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope, ImmutableArray.Empty);
+        CurredParameters.DefinitionScope  = await TdlUtils.MakeParameterScope(BaseDeploymentRef.Symbol.AggregateParametersScope, ImmutableArray.Empty, VNone());
         Symbol.ExcludedParams             = TdlUtils.MakeExcludedParams(CurredParameters.SymbolRef);
         Symbol.AggregateParametersScope   = TdlUtils.MakeCurryingScope(CurredParameters.DefinitionScope, Symbol.ExcludedParams).HideWith(Symbol.ParameterScope);
         Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, array[Symbol.BaseDeployment]);
-        Symbol.ParameterValues            = TdlUtils.MakeDefinitions(CurredParameters, context, Symbol.Type, CurredParameters.SymbolRef);
+        Symbol.ParameterValues            = await TdlUtils.MakeDefinitions(CurredParameters, context, Symbol.Type, CurredParameters.SymbolRef, VNone());
         Symbol.BaseDeployment.IsUsed      = true;
         Parameters.Scope                  = Scope.UnionWith(context.GetExternalSymbolTable());
         Parameters.BuildInvocationScope   = context.BuildInvocationScope(Scope);
