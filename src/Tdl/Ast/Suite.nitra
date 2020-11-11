@@ -18,6 +18,8 @@ namespace Tdl
           in Product            : ProductSymbol;
           in Statements         : ImmutableArray[SuiteStatement];
           in EntityOpt          : ValueOption[EntitySymbol];
+          in BaseSuiteOpt       : ValueOption[Suite.DefSymbol];
+          in DefinitionScope    : Scope;
         stage 3                 :
           in Predefineds        : ImmutableArray[Def];
           in Defs               : ImmutableArray[Def];
@@ -31,39 +33,49 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Suite;
         }
 
-        out PlatformRef  : Ref[PlatformSymbol];
-        out ProductRef   : Ref[ProductSymbol];
-        out TypeRef      : Ref[DeclarationSymbol];
-        out EntityRefOpt : ValueOption[Ref[EntitySymbol]];
+        out PlatformRefOpt    : ValueOption[Ref[PlatformSymbol]];
+        out PlatformSymbolOpt : ValueOption[PlatformSymbol];
 
-        Platform.Scope              = Scope;
-        PlatformRef                 = Platform.Ref.Resolve();
-        Symbol.Platform             = PlatformRef.Symbol;
+        out ProductRefOpt     : ValueOption[Ref[ProductSymbol]];
+        out ProductSymbolOpt  : ValueOption[ProductSymbol];
 
-        Product.Scope               = Scope;
-        ProductRef                  = Product.Ref.Resolve();
-        Symbol.Product              = ProductRef.Symbol;
+        out EntityRefOpt      : ValueOption[Ref[EntitySymbol]];
+        out BaseSuiteRefOpt   : ValueOption[Ref[Suite.DefSymbol]];
+
+        PlatformOpt.Scope           = Scope;
+        PlatformRefOpt              = PlatformOpt.Ref.ResolveOpt();
+        PlatformSymbolOpt           = PlatformRefOpt.GetSymbolOpt();
+        Symbol.Platform             = await context.MakeSuitePlatform(Name, PlatformSymbolOpt, Symbol.BaseSuiteOpt);
+
+        ProductOpt.Scope            = Scope;
+        ProductRefOpt               = ProductOpt.Ref.ResolveOpt();
+        ProductSymbolOpt            = ProductRefOpt.GetSymbolOpt();
+        Symbol.Product              = await context.MakeSuiteProduct(Name, ProductSymbolOpt, Symbol.BaseSuiteOpt);
 
         Statements.Scope            = Scope;
         Statements.ScopeIn          = EmptyScope.Instance;
-        Symbol.Statements           = Statements.Statement;
+        Symbol.Statements           = await TdlUtils.MakeStatements(Statements.Statement, Symbol.BaseSuiteOpt);
 
         Predefineds.DefinitionScope = Symbol.Type.Scope;
         Predefineds.Scope           = ContainingTable;
-        Symbol.Predefineds          = TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, context.GetIsNotPredefinedSuiteField());
+        Symbol.Predefineds          = await TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, VNone(), context.GetIsNotPredefinedSuiteField());
 
-        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope).UnionWith(context.GetVmCapabilityScope()), Symbol.Predefineds);
+        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope).UnionWith(context.GetVmCapabilityScope()), Symbol.Predefineds, Symbol.BaseSuiteOpt);
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable);
-        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, context.GetIsPredefinedSuiteField());
+        Symbol.Defs                 = await TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, Symbol.BaseSuiteOpt, context.GetIsPredefinedSuiteField());
+        Symbol.DefinitionScope      = Definitions.DefinitionScope;
 
         TypeOpt.Scope               = Scope;
-        TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
-        Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
+        //TypeRef                     = await context.MakeSuiteType(TypeOpt.Ref, BaseSuiteRefOpt);//TypeOpt.Ref.GetValueOrDefault();
+        Symbol.Type                 = await context.MakeSuiteType(TypeOpt.Ref, BaseSuiteRefOpt);//await context.ResolveSuiteTypeSymbol(TypeOpt, TypeRef);
         Symbol.DefaultDefs          = await Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product);
 
         EntityOpt.Scope             = Scope;
         EntityRefOpt                = EntityOpt.Ref.ResolveOpt();
         Symbol.EntityOpt            = EntityRefOpt.GetSymbolOpt();
+
+        BaseSuiteRefOpt             = await context.MakeBaseSuite(TypeOpt.Ref);
+        Symbol.BaseSuiteOpt         = BaseSuiteRefOpt.GetSymbolOpt();
 
         Symbol.SessionInitializer   = Api.TryMakeSessionInitializer(Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
         Symbol.SessionFinalizer     = Api.TryMakeSessionFinalizer  (Name, context, Symbol.Product, Symbol.Defs, Symbol.Predefineds, Symbol.DefaultDefs);
@@ -79,8 +91,8 @@ namespace Tdl
 
         EntityOpt      : Reference?;
         TypeOpt        : Reference?;
-        Platform       : Reference;
-        Product        : Reference;
+        PlatformOpt    : Reference?;
+        ProductOpt     : Reference?;
         AllDefinitions : Definition*;
         Statements     : SuiteStatementAst*;
       }
@@ -155,16 +167,16 @@ namespace Tdl
 
         Predefineds.DefinitionScope = Symbol.Type.Scope;
         Predefineds.Scope           = ContainingTable.HideWith(Symbol.MemberTable);
-        Symbol.Predefineds          = TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, context.GetIsNotPredefinedSuiteField());
+        Symbol.Predefineds          = await TdlUtils.MakeDefinitions(Predefineds, context, Symbol.Type, Predefineds.SymbolRef, VNone(), context.GetIsNotPredefinedSuiteField());
 
-        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope).UnionWith(context.GetVmCapabilityScope()), Symbol.Predefineds);
+        Definitions.DefinitionScope = await TdlUtils.MakeParameterScope(Statements.ScopeOut.UnionWith(Symbol.Type.Scope).UnionWith(context.GetVmCapabilityScope()), Symbol.Predefineds, VNone());
         Definitions.Scope           = context.GetExternalSymbolTable().UnionWith(ContainingTable).HideWith(Symbol.MemberTable);
 
-        Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, context.GetIsPredefinedSuiteField());
+        Symbol.Defs                 = await TdlUtils.MakeDefinitions(Definitions, context, Symbol.Type, Definitions.SymbolRef, VNone(), context.GetIsPredefinedSuiteField());
 
         TypeOpt.Scope               = Scope;
         TypeRef                     = TypeOpt.Ref.GetValueOrDefault();
-        Symbol.Type                 = context.ResolveSuiteTypeSymbol(TypeRef);
+        Symbol.Type                 = await context.ResolveSuiteTypeSymbol(TypeOpt, TypeRef);
         Symbol.DefaultDefs          = await Name.MakeDefaultDefs(context, Symbol.Defs, Definitions.DefinitionScope, Symbol.Product, Symbol.Froms);
 
         EntityOpt.Scope             = Platform.Scope;
@@ -179,7 +191,7 @@ namespace Tdl
 
         decompose AllDefinitions
         {
-          Definitions           : Definition.Ordinary*;
+          Definitions : Definition.Ordinary*;
           Predefineds : Definition.Predefined*;
         }
 

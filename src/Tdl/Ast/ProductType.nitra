@@ -29,7 +29,7 @@ namespace Tdl
     Fields.Scope                = Scope.UnionWith(context.GetExternalSymbolTable());
     Definitions.DefinitionScope = Symbol.Scope;
     Definitions.Scope           = Scope.HideWith(context.GetExternalSymbolTable());
-    Symbol.Defs                 = TdlUtils.MakeDefinitions(Definitions, context, Symbol, Definitions.SymbolRef);
+    Symbol.Defs                 = await TdlUtils.MakeDefinitions(Definitions, context, Symbol, Definitions.SymbolRef, VNone());
 
     DefinePredefinedFields(context, Symbol.MemberTable);
     UpdateDefaultValues(context, Symbol.Defs, Symbol.MemberTable, Scope);

@@ -1,0 +1,115 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "InstallProduct": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "IntValue": "$(IntValue)",
+        "ParameterFromProduct": "$(ParameterFromProduct)"
+      },
+      "DefaultValues": {
+        "IntValue": 7
+      },
+      "ScriptPath": "\\\\sdfs\\autotests\\KIS\\DeploymentScripts\\TdlTests\\null-deployment.ps1"
+    }
+  },
+  "Platforms": {
+    "w10rs5": [
+      "w10rs5-x64",
+      "w10rs5-x86"
+    ],
+    "w10rs5-x64": {},
+    "w10rs5-x86": {}
+  },
+  "Products": {
+    "MonorepoHelloWorld": {
+      "Name": "MonorepoHelloWorld",
+      "Parameters": {
+        "Name": "MonorepoHelloWorld",
+        "ParameterFromProduct": "C"
+      },
+      "BranchName": "MonorepoHelloWorld",
+      "Version": "#(ProductVersion)"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {
+        "InstallationType": "Normal"
+      },
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ],
+      "PreSessionAction": "Deploy6-1",
+      "PostSessionAction": "Deploy5-1"
+    },
+    "Suite2": {
+      "Parameters": {
+        "InstallationType": "Patch"
+      },
+      "Platforms": [
+        "w10rs5-x86"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ],
+      "PreSessionAction": "Deploy6-1",
+      "PostSessionAction": "Deploy6-1"
+    }
+  },
+  "TestScenarios": {
+    "Test1": {
+      "Deployments": [
+        "InstallProduct"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    }
+  },
+  "TestEntities": {},
+  "PreSessionActions": {
+    "Deploy6-1": {
+      "ScriptPath": "Deploy1.ps1",
+      "ScriptArgs": {}
+    }
+  },
+  "PostSessionActions": {
+    "Deploy5-1": {
+      "ScriptPath": "Deploy1.ps1",
+      "ScriptArgs": {}
+    },
+    "Deploy6-1": {
+      "ScriptPath": "Deploy1.ps1",
+      "ScriptArgs": {}
+    }
+  }
+}
