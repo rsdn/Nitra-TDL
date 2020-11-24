@@ -1,0 +1,102 @@
+using System.Collections.Generic;
+using System.Linq;
+
+suite Suite1
+{
+    platform w10rs5-x64;
+    product MonorepoHelloWorld;
+    Test1();
+    Test2();
+    Test3();
+}
+
+scenario Test1()
+{
+    deployment Deployment1, Deployment2, Deployment3;
+    environments (w10rs5, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    DeploymentStringParameter = "from Test1 scenario";
+    UniqueId = "A4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+scenario Test2()
+{
+    deployment Deployment1, Deployment2, Deployment3;
+    environments (w10rs5, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    DeploymentStringParameter = "shared scenario";
+    UniqueId = "B4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+scenario Test3()
+{
+    deployment Deployment1, Deployment2, Deployment3;
+    environments (w10rs5, MonorepoHelloWorld);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    DeploymentStringParameter = "shared scenario";
+    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+deployment Deployment1(
+
+    int IntValue1 = 7,
+    string DeploymentStringParameter
+)
+    script @"Deploy1.ps1"
+{
+    expected 42;
+}
+
+deployment Deployment2(
+
+    int IntValue2 = 7,
+    string DeploymentStringParameter
+)
+    script @"Deploy2.ps1"
+{
+    expected 42;
+}
+
+deployment Deployment3()
+ script "Deploy3.ps1"
+{
+}
+
+product type TheProductType
+{
+    string Name;
+    string BranchName;
+    string Version;
+    string ParameterFromProduct;
+}
+
+product MonorepoHelloWorld : TheProductType
+{
+    Name = "MonorepoHelloWorld";
+    BranchName = "MonorepoHelloWorld";
+    Version = ProductVersion;
+    ParameterFromProduct = "C";
+}
+
+external
+{
+    string ProductVersion;
+}
+
+platform w10rs5-x86;
+platform w10rs5-x64;
+platform w10rs5 =
+    w10rs5-x64,
+    w10rs5-x86;

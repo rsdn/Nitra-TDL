@@ -20,7 +20,8 @@ namespace Tdl.Transformator.Models.Scenario
             Definitions = DefinitionGenerator.GetDefinitions(symbol.Defs,
                 ((Tdl.Scenario.Def)symbol.FirstDeclarationOrDefault).Definitions);
 
-            var reference = ((Tdl.Scenario.Def)symbol.FirstDeclarationOrDefault).DeploymentRef;
+            // TODO: Поддержать множественные деплойменты
+            var reference = ((Tdl.Scenario.Def)symbol.FirstDeclarationOrDefault).DeploymentRefs.First();
             Deployment = new ReferenceModel<DeploymentBaseModel>(reference.Symbol.Id, reference.Location);
 
             Environments = new List<ScenarioEnvironmentModel>();
@@ -47,7 +48,7 @@ namespace Tdl.Transformator.Models.Scenario
             Deployment = deployments;
             Environments = environments;
             Actions = actions;
-        } 
+        }
 
         [NotNull, ItemNotNull]
         public List<DefinitionModel> Definitions { get; set; }
@@ -178,6 +179,6 @@ namespace Tdl.Transformator.Models.Scenario
                         break;
                 }
             }
-        }        
+        }
     }
 }

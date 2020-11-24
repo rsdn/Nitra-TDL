@@ -171,7 +171,7 @@ namespace Tdl
         def scenarios = rootNs.MemberTable
           .GetAllSymbols()
           .OfType.[Scenario.DefSymbol]()
-          .Where(s => s.Deployment.Id == symbol.Id || s.Deployment.AllDeployments.Contains(symbol))
+          .Where(s => s.Deployments.Any(d => d.Id == symbol.Id) || s.Deployments.Any(d => d.AllDeployments.Contains(symbol)))
           .ToList();
 
         if (scenarios.Count == 0)
@@ -622,20 +622,7 @@ namespace Tdl
       if (scopeOpt is VSome(scope))
       {
         def scope2 = if (baseSuiteOpt is VSome(x)) x.DefinitionScope.HideWith(scope) else scope;
-
-        def internTable = Dictionary(ParameterComparer());
-        def isInternedSymbol(symbol)
-        {
-          mutable internedSymbol;
-          if (internTable.TryGetValue(symbol, out internedSymbol))
-            symbol : object == internedSymbol
-          else
-          {
-            internTable.Add(symbol, symbol);
-            true
-          }
-        }
-        VSome(scope2.Memoize().FilterWith(isInternedSymbol))
+        VSome(MakeParameterScope(scope2))
       }
       else
         VNone()
@@ -1047,6 +1034,17 @@ namespace Tdl
           }
         }
       }
+    }
+
+    public CheckExpecteds(this ast : Reference.IAstList, context : DependentPropertyEvalContext, type1 : TypeSymbol, deployments : ImmutableArray[TypedDeclarationSymbol]) : void
+    {
+      if (ast.Count == deployments.Length)
+        for (mutable i = 0; i < deployments.Length; i++)
+          when (deployments[i].IsTypeEvaluated)
+            CheckExpected(ast[i], context, type1, deployments[i].Type);
+      else
+        foreach (deployment when deployment.IsTypeEvaluated in deployments)
+          CheckExpected(ast, context, type1, deployment.Type);
     }
 
     public CheckExpected(this ast : IAst, context : DependentPropertyEvalContext, type1 : TypeSymbol, type2 : TypeSymbol) : void
@@ -1550,7 +1548,7 @@ namespace Tdl
       }
     }
 
-    public GetScenarioDeployments(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : Seq[DeploymentSymbol]
+    public GetScenarioDeployments(deployments : Seq[TypedDeclarationSymbol], froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : Seq[DeploymentSymbol]
     {
       def tdlContext = context.ToTdlContext();
 
@@ -1558,7 +1556,7 @@ namespace Tdl
       when (initialDeployment != null)
         yield initialDeployment;
 
-      match (deployment)
+      foreach (deployment in deployments)
       {
         | DeploymentSymbol as d => yield d;
         | VarSymbol as v =>
@@ -1581,21 +1579,38 @@ namespace Tdl
         yield finalDeployment;
     }
 
-    public MakeDefinitionScopeForScenario(deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
+    MakeParameterScope(scope : Scope) : Scope
+    {
+      def internTable = Dictionary(ParameterComparer());
+      def isInternedSymbol(symbol)
+      {
+        mutable internedSymbol;
+        if (internTable.TryGetValue(symbol, out internedSymbol))
+          symbol : object == internedSymbol
+        else
+        {
+          internTable.Add(symbol, symbol);
+          true
+        }
+      }
+      scope.Memoize().FilterWith(isInternedSymbol)
+    }
+
+    public MakeDefinitionScopeForScenario(deployment : Seq[TypedDeclarationSymbol], froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext) : ValueOption[Scope]
     {
       match (MakeAggregateParametersScope(GetScenarioDeployments(deployment, froms, context), GetVmCapabilityScope(context)))
       {
-        | VSome(scope) => VSome(GetScenarioParameterScope(context).HideWith(scope))
-        | VNone => VNone()
+        | VSome(scope) => VSome(GetScenarioParameterScope(context).HideWith(MakeParameterScope(scope)))
+        | VNone        => VNone()
       }
     }
 
-    public MakeAggregateParametersScopeForScenario(parametersScope : Scope, deployment : TypedDeclarationSymbol, froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
+    public MakeAggregateParametersScopeForScenario(parametersScope : Scope, deployments : Seq[TypedDeclarationSymbol], froms : ImmutableArray[Code.From], context : DependentPropertyEvalContext, defs : ImmutableArray[Tdl.Def]) : ValueOption[Scope]
     {
-      match (MakeAggregateParametersScope(GetScenarioDeployments(deployment, froms, context), parametersScope))
+      match (MakeAggregateParametersScope(GetScenarioDeployments(deployments, froms, context), parametersScope))
       {
         | VSome(scope) => VSome(FilterOutAssignedParameters(scope, defs))
-        | VNone => VNone()
+        | VNone        => VNone()
       }
     }
 

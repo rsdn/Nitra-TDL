@@ -1,0 +1,181 @@
+﻿{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "Deployments": {
+    "Deployment1": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "IntValue1": "$(IntValue1)",
+        "DeploymentStringParameter": "$(DeploymentStringParameter)"
+      },
+      "DefaultValues": {
+        "IntValue1": 7
+      },
+      "ScriptPath": "Deploy1.ps1"
+    },
+    "Deployment1―Deployment2―Deployment3": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deployment1": {
+            "DeploymentStringParameter": "from Test1 scenario"
+          }
+        },
+        {
+          "Deployment2": {
+            "DeploymentStringParameter": "from Test1 scenario"
+          }
+        },
+        "Deployment3"
+      ]
+    },
+    "Deployment1―Deployment2―Deployment3-1": {
+      "Type": "Sequence",
+      "Deployments": [
+        {
+          "Deployment1": {
+            "DeploymentStringParameter": "shared scenario"
+          }
+        },
+        {
+          "Deployment2": {
+            "DeploymentStringParameter": "shared scenario"
+          }
+        },
+        "Deployment3"
+      ]
+    },
+    "Deployment2": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "IntValue2": "$(IntValue2)",
+        "DeploymentStringParameter": "$(DeploymentStringParameter)"
+      },
+      "DefaultValues": {
+        "IntValue2": 7
+      },
+      "ScriptPath": "Deploy2.ps1"
+    },
+    "Deployment3": {
+      "Type": "Script",
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "Deploy3.ps1"
+    }
+  },
+  "Platforms": {
+    "w10rs5": [
+      "w10rs5-x64",
+      "w10rs5-x86"
+    ],
+    "w10rs5-x64": {},
+    "w10rs5-x86": {}
+  },
+  "Products": {
+    "MonorepoHelloWorld": {
+      "Name": "MonorepoHelloWorld",
+      "Parameters": {
+        "Name": "MonorepoHelloWorld",
+        "ParameterFromProduct": "C"
+      },
+      "BranchName": "MonorepoHelloWorld",
+      "Version": "#(ProductVersion)"
+    }
+  },
+  "Suites": {
+    "Suite1": {
+      "Parameters": {},
+      "Platforms": [
+        "w10rs5-x64"
+      ],
+      "Products": [
+        "MonorepoHelloWorld"
+      ],
+      "TestScenarios": [
+        "Test1",
+        "Test2",
+        "Test3"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Test1": {
+      "Deployments": [
+        "Deployment1―Deployment2―Deployment3"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "a4b36f0e-820e-4af3-bc95-9c552ecb04e8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    },
+    "Test2": {
+      "Deployments": [
+        "Deployment1―Deployment2―Deployment3-1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "b4b36f0e-820e-4af3-bc95-9c552ecb04e8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    },
+    "Test3": {
+      "Deployments": [
+        "Deployment1―Deployment2―Deployment3-1"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "w10rs5"
+          ],
+          "Products": [
+            "MonorepoHelloWorld"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    }
+  },
+  "TestEntities": {}
+}

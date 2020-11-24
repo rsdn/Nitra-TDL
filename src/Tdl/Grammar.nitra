@@ -157,8 +157,8 @@
                                 DefDeclaration*
                           d "}" nl outline_end_before
     {
-      syntax Deployment   = "deployment" sm Reference ";" nl;
-      syntax Filter = "filter" Condition=Expression ";" nl;
+      syntax Deployment = "deployment" sm (Reference; "," sm)* ";" nl;
+      syntax Filter     = "filter" Condition=Expression ";" nl;
     }
 
     syntax Environments            = "environments" sm Elems=(Environment; "," sm; ?)+ ";" nl;
@@ -229,8 +229,8 @@
 
     syntax ScenarioBody = outline_begin_before "{" inl Filter? Deployment Environments Action DefDeclaration* d "}" nl outline_end_before
     {
-      syntax Deployment   = "deployment" sm Reference ";" nl;
-      syntax Filter = "filter" Condition=Expression ";" nl;
+      syntax Deployment = "deployment" sm (Reference; "," sm)* ";" nl;
+      syntax Filter     = "filter" Condition=Expression ";" nl;
     }
 
     syntax RunnerBody = outline_begin_before "{" inl DefDeclaration* d "}" nl outline_end_before;
