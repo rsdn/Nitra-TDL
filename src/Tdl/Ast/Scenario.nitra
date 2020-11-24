@@ -35,7 +35,7 @@ namespace Tdl
         {
         stage 1:
           in Actions        : ImmutableArray[ScenarioAction];
-          in Deployment     : DeploymentSymbol;
+          in Deployments    : ImmutableArray[DeploymentSymbol];
           in Environments   : ImmutableArray[Environment];
         stage 3:
           in Defs           : ImmutableArray[Def];
@@ -47,29 +47,29 @@ namespace Tdl
           IsSameIdentity = candidate is Tdl.Scenario;
         }
       stage 1:
-        out DeploymentRef          : Ref[DeploymentSymbol];
+        out DeploymentRefs         : ImmutableArray[Ref[DeploymentSymbol]];
         out MethodConditionalScope : ValueOption[Scope] = if (TdlTypingSettings.IsMethodTypingEnabled) VSome(Scope) else VNone();
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
         Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployment, ImmutableArray.Empty, context, Symbol.Defs);
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployments, ImmutableArray.Empty, context, Symbol.Defs);
 
         Actions.Scope                   = MethodConditionalScope.Value;
         Actions.InGenerator             = false;
         Symbol.Actions                  = Actions.ScenarioActions;
 
-        Deployment.Scope                = Scope;
-        DeploymentRef                   = Deployment.Ref.Resolve();
-        Symbol.Deployment               = DeploymentRef.Symbol;
-        Symbol.Deployment.IsUsed        = true;
-        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, array[Symbol.Deployment]);
+        Deployments.Scope                = Scope;
+        DeploymentRefs                   = TdlUtils.Resolve(Deployments.Ref);
+        Symbol.Deployments               = TdlUtils.ToSymbol(DeploymentRefs);
+        SetUsed(Symbol.Deployments, true);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, Symbol.Deployments);
 
         Environments.Scope              = Scope;
         Symbol.Environments             = Environments.Environment;
 
         Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope));
-        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForScenario(Symbol.Deployment, ImmutableArray.Empty, context);
+        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForScenario(Symbol.Deployments, ImmutableArray.Empty, context);
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
 
         FilterOpt.ScopeIn               = Definitions.Scope.UnionWith(Scope);
@@ -88,7 +88,7 @@ namespace Tdl
 
         CheckOptionForDuplicates(context, Definitions.SymbolRef);
 
-        Deployment   : Reference;
+        Deployments  : Reference*;
         Environments : EnvironmentAst*;
         Definitions  : Definition*;
         Actions      : Action*;
@@ -134,14 +134,14 @@ namespace Tdl
         symbol
         {
         stage 1:
-          in Actions    : ImmutableArray[ScenarioAction];
-          in Deployment : TypedDeclarationSymbol;
-          in Platform   : TypedDeclarationSymbol;
-          in Product    : TypedDeclarationSymbol;
+          in Actions     : ImmutableArray[ScenarioAction];
+          in Deployments : ImmutableArray[TypedDeclarationSymbol];
+          in Platform    : TypedDeclarationSymbol;
+          in Product     : TypedDeclarationSymbol;
         stage 3:
-          in Defs       : ImmutableArray[Def];
-          in Froms      : ImmutableArray[Code.From];
-          in Filter     : object;
+          in Defs        : ImmutableArray[Def];
+          in Froms       : ImmutableArray[Code.From];
+          in Filter      : object;
 
           Scope          = MemberTable;
           Kind           = "scenario generator";
@@ -150,37 +150,37 @@ namespace Tdl
         }
 
       stage 1:
-        out DeploymentRef : Ref[TypedDeclarationSymbol];
-        out PlatformRef   : Ref[TypedDeclarationSymbol];
-        out ProductRef    : Ref[TypedDeclarationSymbol];
+        out DeploymentRefs : ImmutableArray[Ref[TypedDeclarationSymbol]];
+        out PlatformRef    : Ref[TypedDeclarationSymbol];
+        out ProductRef     : Ref[TypedDeclarationSymbol];
 
         Parameters.DeclaredIn           = Symbol;
         Parameters.Scope                = Scope;
         Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
         Froms.Scope                     = Scope;
         Froms.ContainingTable           = Symbol.MemberTable;
-        Deployment.Scope                = Scope.HideWith(Symbol.MemberTable);
-        Platform.Scope                  = Deployment.Scope;
-        Product.Scope                   = TdlUtils.ProductScopeFilter(Deployment.Scope);
+        Deployments.Scope                = Scope.HideWith(Symbol.MemberTable);
+        Platform.Scope                  = Deployments.Scope;
+        Product.Scope                   = TdlUtils.ProductScopeFilter(Deployments.Scope);
 
-        Actions.Scope                   = Scope.UnionWith(Deployment.Scope);
+        Actions.Scope                   = Scope.UnionWith(Deployments.Scope);
         Actions.InGenerator             = true;
         Symbol.Actions                  = Actions.ScenarioActions;
 
-        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForScenario(Symbol.Deployment, Symbol.Froms, context);
-        Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployment.Scope));
+        Definitions.DefinitionScope     = await TdlUtils.MakeDefinitionScopeForScenario(Symbol.Deployments, Symbol.Froms, context);
+        Definitions.Scope               = Scope.HideWith(context.GetExternalSymbolTable().UnionWith(Symbol.ParameterScope).UnionWith(Deployments.Scope));
 
-        DeploymentRef                   = Deployment.Ref.Resolve();
         PlatformRef                     = Platform.Ref.Resolve();
         ProductRef                      = Product.Ref.Resolve();
 
-        Symbol.Deployment               = DeploymentRef.Symbol;
+        DeploymentRefs                  = TdlUtils.Resolve(Deployments.Ref);
+        Symbol.Deployments              = TdlUtils.ToSymbol(DeploymentRefs);
         Symbol.Platform                 = PlatformRef  .Symbol;
         Symbol.Product                  = ProductRef   .Symbol;
         Symbol.Defs                     = TdlUtils.MakeDefinitions(context, Definitions, Definitions.SymbolRef);
         Symbol.Froms                    = await TdlUtils.MakeFroms(Froms);
-        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployment, Symbol.Froms, context, Symbol.Defs);
-        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, TdlUtils.GetScenarioDeployments(Symbol.Deployment, Symbol.Froms, context));
+        Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployments, Symbol.Froms, context, Symbol.Defs);
+        Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters, TdlUtils.GetScenarioDeployments(Symbol.Deployments, Symbol.Froms, context));
 
         FilterOpt.ScopeIn               = Definitions.Scope;
         FilterOpt.BuildInvocationScope  = context.BuildInvocationScope(Scope);
@@ -190,15 +190,15 @@ namespace Tdl
         Symbol.TriggerPaths             = TdlUtils.GetTriggerPaths(Attributes, context).ToImmutableArray();
         Symbol.IsUnconditional          = Symbol.TriggerPaths.IsEmpty;
 
-        Deployment.CheckExpected(context, context.GetDeploymentTypeSymbol(), DeploymentRef.Symbol.Type);
+        Deployments.CheckExpecteds(context, context.GetDeploymentTypeSymbol(), Symbol.Deployments);
         //Method.    CheckExpected(context, context.ToTdlContext().MethodType, MethodRef.Symbol.Type);
         Platform.  CheckExpected(context, context.GetPlatformTypeSymbol(),   PlatformRef.Symbol.Type);
         Product.   CheckExpected(context, context.GetProductTypeSymbol(),    ProductRef.Symbol.Type);
 
-        SetUsed(Symbol.Deployment, true);
+        //SetUsed(Symbol.Deployments, true);
 
         Froms        : From*;
-        Deployment   : Reference;
+        Deployments  : Reference*;
         Platform     : Reference;
         Product      : Reference;
         Definitions  : Definition*;

@@ -81,11 +81,11 @@ namespace Tdl
           | Some(x) -> x.FormalParameters.Item1
           | None()  -> []
         } -> Parameters;
-        ScenarioBody.Deployment.Reference       -> Deployment;
-        ScenarioBody.Action                     -> Actions;
-        ScenarioBody.Environments.Elems.Item1   -> Environments;
-        ScenarioBody.DefDeclarations            -> Definitions;
-        Attributes                              -> Attributes;
+        ScenarioBody.Deployment.References.Item1 -> Deployments;
+        ScenarioBody.Action                      -> Actions;
+        ScenarioBody.Environments.Elems.Item1    -> Environments;
+        ScenarioBody.DefDeclarations             -> Definitions;
+        Attributes                               -> Attributes;
         match (ScenarioBody.FilterOpt)
         {
           | Some(x) -> Some(x.Condition)
@@ -100,13 +100,13 @@ namespace Tdl
           | Some(x) -> x.FormalParameters.Item1
           | None()  -> []
         } -> Parameters;
-        Froms                                     -> Froms;
-        SelectScenario.Deployment.Reference       -> Deployment;
-        SelectScenario.Action                     -> Actions;
-        SelectScenario.Platform                   -> Platform;
-        SelectScenario.Product                    -> Product;
-        SelectScenario.DefDeclarations            -> Definitions;
-        Attributes                                -> Attributes;
+        Froms                                      -> Froms;
+        SelectScenario.Deployment.References.Item1 -> Deployments;
+        SelectScenario.Action                      -> Actions;
+        SelectScenario.Platform                    -> Platform;
+        SelectScenario.Product                     -> Product;
+        SelectScenario.DefDeclarations             -> Definitions;
+        Attributes                                 -> Attributes;
         match (SelectScenario.FilterOpt)
         {
           | Some(x) -> Some(x.Condition)

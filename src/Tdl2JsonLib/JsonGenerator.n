@@ -433,7 +433,7 @@ namespace Tdl2Json
     }
 
     private GenerateTestGroup(index : uint, allDefs : ImmutableArray[Def], actions : ImmutableArray[ScenarioAction],
-      deployment : DeploymentSymbol, environments : Seq[Tdl.Environment],
+      deployments : ImmutableArray[DeploymentSymbol], environments : Seq[Tdl.Environment],
       filter : DotNet.ExprBase, dic : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr],
       initialDeployment : DeploymentSymbol, finalDeployment : DeploymentSymbol, compiler : DeploymentCompiler,
       barrierCompiler : BarrierCompiler, multiMachineIdOpt : Guid?) : TestGroup
@@ -507,7 +507,7 @@ namespace Tdl2Json
       def testGroup =
         TestGroup() <-
         {
-          Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployment, compiler, assignedParams, dic);
+          Deployments             = GetTestGroupDeployments(initialDeployment, finalDeployment, deployments, compiler, assignedParams, dic);
           Environments            = environments.MapToArray(env => EnvironmentElement() <- { Platforms= array[env.Platform.Name]; Products=array[env.Product.Name]; });
           TestMethod              = MakeTestMethod(actions, artifactsCollectionTimeout, barrierCompiler, multiMachineId, dic);
           Area                    = getString("Area");
@@ -588,7 +588,7 @@ namespace Tdl2Json
       {
         | Tdl.Scenario.SetSymbol as s => addTestCase(scenarioSymbol.Name, TestGroup() <- { TestScenarios = GetScenarioList(s.Scenarios, scenarioTrigger) });
         | Tdl.Scenario.DefSymbol as r =>
-          def testGroup = GenerateTestGroup(0, r.Defs, r.Actions, r.Deployment, r.Environments, r.Filter :> DotNet.ExprBase,
+          def testGroup = GenerateTestGroup(0, r.Defs, r.Actions, r.Deployments, r.Environments, r.Filter :> DotNet.ExprBase,
             ImmutableDictionary.Empty, initialDeployment, finalDeployment, compiler, barrierCompiler, multiMachineIdOpt);
           addTestCase(scenarioSymbol.Name, testGroup);
 
@@ -596,7 +596,7 @@ namespace Tdl2Json
           def names = List();
           foreach (dic in Api.SubstituteVariables(g.Froms, 0))
           {
-            def deployment = Api.TryResolveVar(dic, g.Deployment) : DeploymentSymbol;
+            def deployment = g.Deployments.Select(d => Api.TryResolveVar(dic, d) : DeploymentSymbol).ToImmutableArray();
             def environments = array[Tdl.Environment(
               Api.TryResolveVar(dic, g.Platform) : PlatformSymbol,
               Api.TryResolveVar(dic, g.Product) : ProductSymbol)];
@@ -797,12 +797,12 @@ namespace Tdl2Json
       step
     }
 
-    private GetTestGroupDeployments(initialDeployment  : DeploymentSymbol,
-                                    finalDeployment    : DeploymentSymbol,
-                                    scenarioDeployment : DeploymentSymbol,
-                                    compiler           : DeploymentCompiler,
-                                    assignedParams     : array[Def],
-                                    dic                : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : array[TestGroupDeployment]
+    private GetTestGroupDeployments(initialDeployment   : DeploymentSymbol,
+                                    finalDeployment     : DeploymentSymbol,
+                                    scenarioDeployments : ImmutableArray[DeploymentSymbol],
+                                    compiler            : DeploymentCompiler,
+                                    assignedParams      : array[Def],
+                                    dic                 : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr]) : array[TestGroupDeployment]
     {
       mutable deployments = [];
       def scope = HashSet(StringComparer.OrdinalIgnoreCase);
@@ -819,12 +819,14 @@ namespace Tdl2Json
       }
 
       addDeployment(finalDeployment);
-      addDeployment(scenarioDeployment);
+      foreach (scenarioDeployment in scenarioDeployments.Reverse())
+        addDeployment(scenarioDeployment);
       addDeployment(initialDeployment);
 
       def sortedAssignedParams = assignedParams.Where(x => scope.Contains(x.Symbol.Name)).Select(x => (x.Symbol.Name, x.Expr.ToObject(null, dic))).OrderBy((n, _) => n).NToList();
       def result               = compiler.Compile(deployments, sortedAssignedParams);
-      compiler.GetCompositeDeployment(scenarioDeployment.Name, result)
+      def name                 = if (scenarioDeployments.IsDefaultOrEmpty) "<no name>" else $<#..$(scenarioDeployments; "―"; _.Name)#>;
+      compiler.GetCompositeDeployment(name, result)
     }
 
     private GenerateEntity(symbol : EntitySymbol) : TestEntity
