@@ -1,3 +1,13 @@
+external
+{
+  int VhdSize;
+}
+
+runner Vhd(int slot, int size)
+{
+  Vhds = [ new { Slot = slot, Size = size } ];
+}
+
 runner MyRunner1(string path, int param1 = 1)
 {
   NodeJsScriptPath = path;
@@ -49,10 +59,31 @@ scenario S2 =
     Timeout = "00:10";
   };
 
+scenario S3(int vhdSize)
+{
+  deployment Empty;
+  environments (Platform, Product);
+  Vhd(0, vhdSize);
+  UniqueId = "40A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
+
+scenario S4()
+{
+  deployment Empty;
+  environments (Platform, Product);
+  Vhd(0, VhdSize);
+  UniqueId = "50A84E6C-1028-48ED-B4E4-3DC8CB599E71";
+  Timeout = "00:10";
+}
+
 suite Suite
 {
   platform Platform;
   product Product;
+  vhdSize = 123;
   S1();
   S2();
+  S3();
+  S4();
 }

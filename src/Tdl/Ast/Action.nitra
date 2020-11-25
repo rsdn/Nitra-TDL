@@ -24,7 +24,7 @@ namespace Tdl
         ScenarioActions = ScenarioAction.Runner(Location, RunnerRef.Symbol, Arguments.Result.ToImmutableArray());
 
         Name.Scope                = Scope;
-        Arguments.Scope           = Scope;
+        Arguments.Scope           = context.GetExternalSymbolTable().HideWith(Scope);
         Arguments.ParametersScope = RunnerRef.Symbol.Scope;
         RunnerRef                 = Name.Ref.Resolve();
 

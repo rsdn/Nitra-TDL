@@ -83,7 +83,8 @@ namespace Tdl
     public Calc(
       values     : IReadOnlyDictionary[string, Tdl.Expr],
       variables  : IReadOnlyDictionary[TypedDeclarationSymbol, Tdl.Expr],
-      getPropertyValue : object * DeclarationSymbol -> object * ResultKind
+      getPropertyValue : object * DeclarationSymbol -> object * ResultKind,
+      getValue : string * ResultKind -> object
     ) : object * ResultKind
     {
       match (this)
@@ -96,22 +97,34 @@ namespace Tdl
         | Integer      as i  => (i.Value, ResultKind.Value)
         | Real         as r  => (r.Value, ResultKind.Value)
         | String       as s  => (s.Value, ResultKind.Value)
-        | Reference(Symbol=VarSymbol      as s)                                       => variables[s].Calc(values, variables, getPropertyValue)
-        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol => (s.Name, ResultKind.ExternalParameter)
-        | Reference(Symbol=ExternalSymbol as s)                                       => (s.Name, ResultKind.External)
-        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s)       => (s,      ResultKind.Product)
+        | Reference(Symbol=VarSymbol      as s) => variables[s].Calc(values, variables, getPropertyValue, getValue)
+        | Reference(Symbol=FieldSymbol    as s) when s.Owner?.Owner is ExternalSymbol =>
+          if (getValue == null)
+            (s.Name, ResultKind.ExternalParameter);
+          else
+            (getValue(s.Name, ResultKind.ExternalParameter), ResultKind.Value);
+
+        | Reference(Symbol=ExternalSymbol as s) =>
+          if (getValue == null)
+            (s.Name, ResultKind.External);
+          else
+            (getValue(s.Name, ResultKind.External), ResultKind.Value);
+
+        | Reference(Symbol=TypedDeclarationSymbol(Type=ProductTypeSymbol) as s) => (s,      ResultKind.Product)
         | Reference(Symbol=s) =>
           mutable referenceValue;
           if (values != null && values.TryGetValue(s.Name, out referenceValue))
-            referenceValue.Calc(values, variables, getPropertyValue)
+            referenceValue.Calc(values, variables, getPropertyValue, getValue)
+          else if (getValue != null)
+            (getValue(s.Name, ResultKind.GlobalParameter), ResultKind.Value)
           else
             (s.Name, ResultKind.GlobalParameter)
 
         | List         as xs =>
-          def elems = xs.Elems.Select(e => e.Calc(values, variables, getPropertyValue)).ToArray();
+          def elems = xs.Elems.Select(e => e.Calc(values, variables, getPropertyValue, getValue)[0]).ToArray();
           (elems, ResultKind.Value)
         | MemberAccess as m =>
-          match (m.Expr.Calc(values, variables, getPropertyValue))
+          match (m.Expr.Calc(values, variables, getPropertyValue, getValue))
           {
             | (value, ResultKind.Product)  => getPropertyValue(value, m.Symbol)
             | (_,     ResultKind.External) => (m.Symbol.Name, ResultKind.ExternalParameter)
@@ -121,7 +134,7 @@ namespace Tdl
           def result = SortedDictionary();
           foreach ((name, value) in properties)
           {
-            def (valueObj, valueKind) = value.Calc(values, variables, getPropertyValue);
+            def (valueObj, valueKind) = value.Calc(values, variables, getPropertyValue, getValue);
             when (valueKind == ResultKind.Error)
               return (valueObj, valueKind);
             result[name] = valueObj;

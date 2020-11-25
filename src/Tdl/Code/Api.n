@@ -177,7 +177,7 @@ namespace Tdl
             | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
               def res = prod.Defs
                             .Find(d => d.Symbol.Id == field.Id)
-                            .Map(d => d.Expr.Calc(defs, variables, getPropertyValue))
+                            .Map(d => d.Expr.Calc(defs, variables, getPropertyValue, getValue=null))
                             .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
               res
 
@@ -190,7 +190,7 @@ namespace Tdl
             mutable expr;
             if (defs.TryGetValue(p.Name, out expr))
             {
-              match (expr.Calc(defs, variables, getPropertyValue))
+              match (expr.Calc(defs, variables, getPropertyValue, getValue=null))
               {
                 | (_,     ResultKind.Missing) => assert(false)
                 | (value, ResultKind.Value)   => valueParts.Add(Convert.ToString(value, CultureInfo.InvariantCulture));

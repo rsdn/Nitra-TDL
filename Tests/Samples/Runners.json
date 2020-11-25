@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 7,
   "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
   "Deployments": {
@@ -21,7 +21,9 @@
   },
   "Suites": {
     "Suite": {
-      "Parameters": {},
+      "Parameters": {
+        "vhdSize": 123
+      },
       "Platforms": [
         "Platform"
       ],
@@ -30,7 +32,9 @@
       ],
       "TestScenarios": [
         "S1",
-        "S2"
+        "S2",
+        "S3",
+        "S4"
       ]
     }
   },
@@ -129,6 +133,58 @@
       },
       "Timeout": "00:10",
       "UniqueId": "20a84e6d-1028-48ed-b4e4-3dc8cb599e72"
+    },
+    "S3": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "Vhds": [
+          {
+            "Size": "$(vhdSize)",
+            "Slot": 0
+          }
+        ]
+      },
+      "Timeout": "00:10",
+      "UniqueId": "40a84e6c-1028-48ed-b4e4-3dc8cb599e71"
+    },
+    "S4": {
+      "Deployments": [
+        "Empty"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "Platform"
+          ],
+          "Products": [
+            "Product"
+          ]
+        }
+      ],
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "Vhds": [
+          {
+            "Size": "#(VhdSize)",
+            "Slot": 0
+          }
+        ]
+      },
+      "Timeout": "00:10",
+      "UniqueId": "50a84e6c-1028-48ed-b4e4-3dc8cb599e71"
     }
   },
   "TestEntities": {}
