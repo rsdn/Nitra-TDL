@@ -128,7 +128,7 @@ namespace Tdl2Json
         | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
           def res = prod.Defs
                         .Find(d => d.Symbol.Id == field.Id)
-                        .Map(d => d.Expr.Calc(values, variables, getPropertyValue))
+                        .Map(d => d.Expr.Calc(values, variables, getPropertyValue, getValue=Utils.GetWardenValue))
                         .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
           res
 
@@ -137,7 +137,7 @@ namespace Tdl2Json
       mutable expr;
       def calc(expr : Tdl.Expr) : object
       {
-        match (expr.Calc(values, variables, getPropertyValue))
+        match (expr.Calc(values, variables, getPropertyValue, Utils.GetWardenValue))
         {
           | (_,     ResultKind.Missing)           => assert(false)
           | (_,     ResultKind.NotSet)            => Tdl.Expr.NotSetValue

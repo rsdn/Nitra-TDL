@@ -774,7 +774,7 @@ namespace Tdl
         | (prod is Product.DefSymbol, field is Tdl.FieldSymbol) =>
           def res = prod.Defs
                         .Find(d => d.Symbol.Id == field.Id)
-                        .Map(d => d.Expr.Calc(values, variables, getPropertyValue))
+                        .Map(d => d.Expr.Calc(values, variables, getPropertyValue, getValue=null))
                         .WithDefault(($"No field $(field.Name) in $(prod.Name) product.", ResultKind.Error));
           res
 
@@ -799,7 +799,7 @@ namespace Tdl
             | ScenarioAction.Apk          (MaxRebootsCountOpt = VSome(maxReboots))
             | ScenarioAction.Marathon     (MaxRebootsCountOpt = VSome(maxReboots))
             | ScenarioAction.Method       (MaxRebootsCountOpt = VSome(maxReboots)) =>
-              match (maxReboots.Calc(values, variables, getPropertyValue))
+              match (maxReboots.Calc(values, variables, getPropertyValue, getValue=null))
               {
                 | (_,     ResultKind.Missing)           => assert(false)
                 | (_,     ResultKind.NotSet)            => assert(false)
@@ -1624,19 +1624,6 @@ namespace Tdl
         .FilterWith(symbol => !assignedParams.Contains(GetCaseInsensitiveId(symbol)))
         .Memoize()
     }
-
-    //public ToInt(this maxRebootsCountOpt : OptionParseTree[GrammarParseTree.MaxRebootsCount]) : ParsedValue[int]
-    //{
-    //  unless (maxRebootsCountOpt.HasValue)
-    //    return ParsedValue(maxRebootsCountOpt.Span.StartPos);
-    //
-    //  def lit = maxRebootsCountOpt.Value.Value;
-    //
-    //  when (lit.IsMissing || lit.IsAmbiguous)
-    //    return ParsedValue(lit.Span.StartPos);
-    //
-    //  ParsedValue(lit.Span, int.Parse(lit.GetText()))
-    //}
 
     public ToBool(this continueOnErrorOpt : OptionParseTree[GrammarParseTree.ContinueOnError]) : ParsedValue[bool]
     {

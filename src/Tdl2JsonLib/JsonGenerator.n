@@ -787,7 +787,7 @@ namespace Tdl2Json
 
       foreach (d in runner.Symbol.Defs)
       {
-        match (d.Expr.Calc(values=arguments, variables=variables, getPropertyValue=(_) => ("unsupported expression", ResultKind.Error)))
+        match (d.Expr.Calc(values=arguments, variables=variables, getPropertyValue=(_) => ("unsupported expression", ResultKind.Error), getValue=Utils.GetWardenValue))
         {
           | (value, ResultKind.Value) => step[d.Name] = value
           | (data, ResultKind.Error) => throw NotSupportedException($"$data: $d.Expr")

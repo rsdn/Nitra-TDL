@@ -132,5 +132,15 @@ namespace Tdl2Json
       else
         null
     }
+
+    public static GetWardenValue(name : string, kind : Tdl.ResultKind) : object
+    {
+      match (kind)
+      {
+        | ExternalParameter | External        => "#(" + name + ")"
+        | GlobalParameter                     => "$(" + name + ")"
+        | _                                   => name
+      }
+    }
   }
 }

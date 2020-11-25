@@ -55,7 +55,7 @@ namespace Tdl
         Parameters.BuildInvocationScope = context.BuildInvocationScope(Scope);
         Symbol.AggregateParametersScope = await TdlUtils.MakeAggregateParametersScopeForScenario(Symbol.ParameterScope, Symbol.Deployments, ImmutableArray.Empty, context, Symbol.Defs);
 
-        Actions.Scope                   = MethodConditionalScope.Value;
+        Actions.Scope                   = MethodConditionalScope.Value.HideWith(Symbol.AggregateParametersScope);
         Actions.InGenerator             = false;
         Symbol.Actions                  = Actions.ScenarioActions;
 
