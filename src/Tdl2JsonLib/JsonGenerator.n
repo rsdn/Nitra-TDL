@@ -834,7 +834,7 @@ namespace Tdl2Json
 
       def sortedAssignedParams = assignedParams.Where(x => scope.Contains(x.Symbol.Name)).Select(x => (x.Symbol.Name, x.Expr.ToObject(null, dic))).OrderBy((n, _) => n).NToList();
       def result               = compiler.Compile(deployments, sortedAssignedParams);
-      def name                 = if (scenarioDeployments.IsDefaultOrEmpty) "<no name>" else $<#..$(scenarioDeployments; "―"; _.Name)#>;
+      def name                 = if (scenarioDeployments.IsDefaultOrEmpty) "<no name>" else $<#..$(scenarioDeployments; "__"; _.Name)#>;
       compiler.GetCompositeDeployment(name, result)
     }
 
