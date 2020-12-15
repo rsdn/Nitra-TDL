@@ -962,7 +962,7 @@ namespace Tdl2Json
           if (p.HasDefault())
           {
             def defaultValue = GenerateDefaultValue(p.Default);
-            $<#(globals.ContainsKey("$name") ? $getValue : $defaultValue)#>
+            $<#(globals.ContainsKey("$name") && !"$(Tdl.Expr.NotSetValue)".Equals(globals["$name"]) ? $getValue : $defaultValue)#>
           }
           else
             getValue

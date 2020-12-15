@@ -83,7 +83,7 @@
   },
   "TestScenarios": {
     "Scenario1": {
-      "FilterExpression": "((globals.ContainsKey(\"X\") ? ((string)globals[\"X\"]) : @\"\") != \"BBB\")",
+      "FilterExpression": "((globals.ContainsKey(\"X\") && !\"C3EEBA2A-D830-4947-83B2-045529DCB327\".Equals(globals[\"X\"]) ? ((string)globals[\"X\"]) : @\"\") != \"BBB\")",
       "Deployments": [
         "S"
       ],

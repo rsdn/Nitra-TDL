@@ -14,7 +14,7 @@
       },
       "ScriptPath": "Deploy1.ps1"
     },
-    "Deployment1―Deployment2―Deployment3": {
+    "Deployment1__Deployment2__Deployment3": {
       "Type": "Sequence",
       "Deployments": [
         {
@@ -30,7 +30,7 @@
         "Deployment3"
       ]
     },
-    "Deployment1―Deployment2―Deployment3-1": {
+    "Deployment1__Deployment2__Deployment3-1": {
       "Type": "Sequence",
       "Deployments": [
         {
@@ -103,7 +103,7 @@
   "TestScenarios": {
     "Test1": {
       "Deployments": [
-        "Deployment1―Deployment2―Deployment3"
+        "Deployment1__Deployment2__Deployment3"
       ],
       "Environments": [
         {
@@ -128,7 +128,7 @@
     },
     "Test2": {
       "Deployments": [
-        "Deployment1―Deployment2―Deployment3-1"
+        "Deployment1__Deployment2__Deployment3-1"
       ],
       "Environments": [
         {
@@ -153,7 +153,7 @@
     },
     "Test3": {
       "Deployments": [
-        "Deployment1―Deployment2―Deployment3-1"
+        "Deployment1__Deployment2__Deployment3-1"
       ],
       "Environments": [
         {
