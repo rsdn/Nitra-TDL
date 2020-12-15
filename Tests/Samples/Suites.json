@@ -179,7 +179,7 @@
   },
   "TestScenarios": {
     "Test1": {
-      "FilterExpression": "(globals.ContainsKey(\"List\") ? ((System.Collections.Generic.List<int>)globals[\"List\"]) : null).Any()",
+      "FilterExpression": "(globals.ContainsKey(\"List\") && !\"C3EEBA2A-D830-4947-83B2-045529DCB327\".Equals(globals[\"List\"]) ? ((System.Collections.Generic.List<int>)globals[\"List\"]) : null).Any()",
       "Deployments": [
         "InstallProduct"
       ],
