@@ -1,3 +1,4 @@
+﻿external { [DeployerPath]string DeployerPath; }
 
 export import deployment ImportWithoutName(string a)
 {

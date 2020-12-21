@@ -17,6 +17,8 @@ namespace Tdl
   {
     [RecordIgnore] public PredefinedSuiteFields : HashSet[string]  { get; set; default HashSet(["SessionInitializer", "SessionFinalizer"]); }
     [RecordIgnore] public TdlProjectData        : TdlProjectData   { get; set; }
+    [RecordIgnore] public DeployerPath          : FieldSymbol      { get; set; }
+    [RecordIgnore] public IsDeployerPathErrorReported : bool       { get; set; }
     [RecordIgnore] public InitialDeployment     : DeploymentSymbol { get; set; }
     [RecordIgnore] public FinalDeployment       : DeploymentSymbol { get; set; }
     [RecordIgnore] public ExportDeployments     : HashSet[DeploymentSymbol] { get; set; default HashSet() }

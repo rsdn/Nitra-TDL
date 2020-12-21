@@ -200,6 +200,10 @@ namespace Tdl
 
       def triggerPath = ExternalDeclaration.[Tdl.PredefinedAttributes.TriggerPathSymbol](Location.Default, "TriggerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
       initTypeSymbol(triggerPath);
+
+      def deployerPath = ExternalDeclaration.[Tdl.PredefinedAttributes.DeployerPathSymbol](Location.Default, "DeployerPath", ignoreCase = true).DefineSymbol(rootNamespace.MemberTable);
+      initTypeSymbol(deployerPath);
+
       data
     }
 
@@ -293,6 +297,8 @@ namespace Tdl
       backEnd.CancellationToken = cancellationToken;
       context.InitialDeployment = null;
       context.FinalDeployment   = null;
+      context.DeployerPath      = null;
+      context.IsDeployerPathErrorReported = false;
 
       def removeParsedSymbols(tableScope : TableScope)
       {

@@ -35,16 +35,16 @@ namespace Tdl2Json
     private _compiledDeployments     : Dictionary[string * int, string * QuickType.Deployment] = Dictionary();
     private _deployments             : SortedDictionary[string, QuickType.Deployment]          = SortedDictionary();
     private _deploymentScriptHeader  : string;
-    private _deploymentToolPath      : string;
+    private _deployerPath            : FieldSymbol;
     private mutable _emptyDeployment : QuickType.TestGroupDeployment;
     private mutable _implCount       : int;
     private mutable _thunkCount      : int;
     private _compositeDeployments    : Dictionary[list[QuickType.TestGroupDeployment], string] = Dictionary();
 
-    public this(deploymentScriptHeader : string, deploymentToolPath : string)
+    public this(deploymentScriptHeader : string, deployerPath : FieldSymbol)
     {
       _deploymentScriptHeader = deploymentScriptHeader;
-      _deploymentToolPath     = deploymentToolPath;
+      _deployerPath           = deployerPath;
     }
 
     public GetResult() : IDictionary[string, QuickType.Deployment]
@@ -200,7 +200,7 @@ namespace Tdl2Json
 
       def finalizeCompiler()
       {
-        def (deployment, values) = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
+        def (deployment, values) = compiler.Compile(_deploymentScriptHeader, _deployerPath);
         def saveImpl(index)
         {
           def compiledKey = (compiler.Name, index);

@@ -62,7 +62,6 @@ namespace Tdl2Json
       [NotNull]        sourceFiles                 : array[string],
       [NotNull]        references                  : array[string],
                        deploymentScriptHeader      : string,
-               mutable deploymentToolPath          : string,
                        isMethodTypingEnabled       : bool,
                        output                      : Lazy[TextWriter],
                        transformatorOutput         : string,
@@ -105,13 +104,8 @@ namespace Tdl2Json
         if (mode == CompilerMode.Transform)
           transformatorOpt(context);
         else
-        {
-          when (string.IsNullOrEmpty(deploymentToolPath))
-            deploymentToolPath = <#.\KL.Autotests.Deployer.exe#>;
-
-          GenerateJson(context, output, deploymentScriptHeader, deploymentToolPath, jsonSchemaType, diffFile, repositoryRoot,
+          GenerateJson(context, output, deploymentScriptHeader, context.DeployerPath, jsonSchemaType, diffFile, repositoryRoot,
             excludeTriggerPathScenarios, isSampleGeneration);
-        }
       }
 
       context
@@ -159,7 +153,7 @@ namespace Tdl2Json
 
       def tdlProjectData = data :> TdlProjectData;
       def evalContext    = tdlProjectData.Context :> TdlDependentPropertyEvalContext;
-      TransformationContext(tdlProjectData.RootNamespace, commentBag, messages, evalContext.InitialDeployment, evalContext.FinalDeployment,
+      TransformationContext(tdlProjectData.RootNamespace, commentBag, messages, evalContext.DeployerPath, evalContext.InitialDeployment, evalContext.FinalDeployment,
         evalContext.ExportDeployments, tdlProjectData.ExternalSymbolTable, transformatorOutput)
     }
 
@@ -174,7 +168,7 @@ namespace Tdl2Json
       stopwatch.Restart();
     }
 
-    private GenerateJson(context : TransformationContext, output : Lazy[TextWriter], deploymentScriptHeader : string, deploymentToolPath : string,
+    private GenerateJson(context : TransformationContext, output : Lazy[TextWriter], deploymentScriptHeader : string, deployerPath : FieldSymbol,
       mutable jsonSchemaType : string, diffFile : string, repositoryRoot : string, excludeTriggerPathScenarios : bool, isSampleGeneration : bool) : void
     {
       def stopwatch = Stopwatch.StartNew();
@@ -183,9 +177,9 @@ namespace Tdl2Json
       when (string.IsNullOrEmpty(jsonSchemaType))
         jsonSchemaType = if (IsExperimental) "dev" else "prod";
 
-      def preSessionActionCompiler  = SessionActionCompiler(deploymentScriptHeader, deploymentToolPath);
-      def postSessionActionCompiler = SessionActionCompiler(deploymentScriptHeader, deploymentToolPath);
-      def deploymentCompiler        = DeploymentCompiler(deploymentScriptHeader, deploymentToolPath);
+      def preSessionActionCompiler  = SessionActionCompiler(deploymentScriptHeader, deployerPath);
+      def postSessionActionCompiler = SessionActionCompiler(deploymentScriptHeader, deployerPath);
+      def deploymentCompiler        = DeploymentCompiler(deploymentScriptHeader, deployerPath);
       def symbols                   = context.RootNamespace.MemberTable.GetAllSymbols().ToList();
 
       def scenarioTrigger =

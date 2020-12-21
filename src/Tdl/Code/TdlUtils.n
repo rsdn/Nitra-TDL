@@ -1991,6 +1991,42 @@ namespace Tdl
       attributes.Any(x => x.Name.IsRefEvaluated && x.Name.Ref.IsSymbolEvaluated && x.Name.Ref.Symbol is PredefinedAttributes.DashboardVisibleSymbol)
     }
 
+    public SetDeployerPath(this ast : Field, fieldSymbol : FieldSymbol, declaredIn : DeclarationSymbol, typedAttributes : ImmutableArray[DeclarationSymbol], context : DependentPropertyEvalContext) : void
+    {
+      match (declaredIn, typedAttributes.Any(x => x is PredefinedAttributes.DeployerPathSymbol))
+      {
+         | (_ is ExternalSymbol, true) =>
+          def context = context.ToTdlContext();
+          if (context.DeployerPath == null)
+            context.DeployerPath = fieldSymbol;
+          else
+          {
+            def msgs = CompilerMessagesExtensions.GetCompilerMessage(context, ast.Attributes);
+            using (root = msgs.RootError(ast.Attributes.Location, "Redefinition of external parameter marked with 'DeployerPath' attribute."))
+            {
+              def firstDefinition = context.DeployerPath.FirstParsedDeclarationOrDefault;
+              when (firstDefinition != null)
+                root.Hint(firstDefinition, "First definition.");
+            }
+          }
+
+        | (_, true) =>
+          ast.Attributes.Error(context, "Attribute 'DeployerPath' supported only for external parameters");
+
+        | _ => ()
+      }
+    }
+
+    public CheckDeployerPathSet(this ast : Deployment.Code, context : DependentPropertyEvalContext, _stageDependency : object) : void
+    {
+      def context = context.ToTdlContext();
+      when (context.DeployerPath == null && !context.IsDeployerPathErrorReported)
+      {
+        context.IsDeployerPathErrorReported = true;
+        ast.Name.Error(context, "External parameter marked with 'DeployerPath' attribute is required to use code deployments");
+      }
+    }
+
     public ProductScopeFilter(scope : Scope) : Scope
     {
       def filter(symbol : DeclarationSymbol) : bool

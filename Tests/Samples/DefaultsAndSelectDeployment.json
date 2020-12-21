@@ -5,13 +5,20 @@
     "Empty": {
       "Type": "Empty"
     },
+    "PrepareEnvironmentForXPerfLogsCollection": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {},
+      "DefaultValues": {},
+      "ScriptPath": "A.ps1"
+    },
     "TakePrepareStepsForXPerfLogsCollection": {
       "Type": "Select",
       "Condition": "$(XPerf)",
       "Values": {
         "C3EEBA2A-D830-4947-83B2-045529DCB327": "Empty",
         "false": "Empty",
-        "true": "Empty"
+        "true": "PrepareEnvironmentForXPerfLogsCollection"
       }
     }
   },

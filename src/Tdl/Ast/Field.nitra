@@ -30,5 +30,7 @@ namespace Tdl
 
     Type  : QualifiedReference;
     Value : DefExpr?;
+
+    SetDeployerPath(Symbol, Symbol.DeclaredIn, Attributes.Symbol, context);
   }
 }

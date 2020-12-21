@@ -19,7 +19,6 @@
       <ToolPath                     ParameterType="System.String" Required="false" />
       <WorkingDirectory             ParameterType="System.String" Required="false" />
       <DeploymentScriptHeader       ParameterType="System.String" Required="false" />
-      <DeploymentToolPath           ParameterType="System.String" Required="false" />
       <BooleanMarshalMode           ParameterType="System.String" Required="false" />
       <DiffFile                     ParameterType="System.String" Required="false" />
       <RepositoryPath               ParameterType="System.String" Required="false" />
@@ -82,7 +81,6 @@
             ToolPath                     = "$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\tools'))"
             WorkingDirectory             = "$(MSBuildProjectDirectory)"
             DeploymentScriptHeader       = "$(TdlDeploymentScriptHeader)"
-            DeploymentToolPath           = "$(TdlDeploymentToolPath)"
             BooleanMarshalMode           = "$(TdlBooleanMarshalMode)"
             RepositoryPath               = "$(TdlRepositoryPath)"
             ExcludeTriggerPathScenarios  = "$(TdlExcludeTriggerPathScenarios)"

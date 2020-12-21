@@ -50,8 +50,6 @@ namespace Tdl2Json
 
         public string DeploymentScriptHeader { get; private set; }
 
-        public string DeploymentToolPath { get; private set; }
-
         public BooleanMarshalMode BooleanMarshalMode { get; private set; }
 
         public string DiffFile { get; private set; }
@@ -70,7 +68,6 @@ namespace Tdl2Json
                 { "o|out=",                   "Output file path.",                                       v => OutputFile = v },
                 { "w|working-directory=",     "Working directory.",                                      v => WorkingDirectory = v },
                 { "deployment-header=",       "Deployment script header.",                               v => DeploymentScriptHeader = v },
-                { "deployment-tool=",         "Deployment tool file path.",                              v => DeploymentToolPath = v },
                 { "l|log-level=",            $"Logging verbosity: {string.Join(", ", LogLevels.Keys)}.", SetLogLevel },
                 { "t|transformator=",         "Transformer: path-to.dll|Qualified.Function.Name",        AddTransformer },
                 { "m|compiler-messages-test", "Test compiler messages by samples.",                      _ => ComilerMessagesTest = true },

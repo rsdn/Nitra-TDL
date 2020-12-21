@@ -54,12 +54,6 @@ public class TdlTask : ToolTask
         set;
     }
 
-    public string DeploymentToolPath
-    {
-        get;
-        set;
-    }
-
     public string BooleanMarshalMode
     {
         get;
@@ -109,10 +103,6 @@ public class TdlTask : ToolTask
         if (!string.IsNullOrEmpty(DeploymentScriptHeader))
         {
             buffer.Add("-deployment-header:" + EscapeFilePath(DeploymentScriptHeader));
-        }
-        if (!string.IsNullOrEmpty(DeploymentToolPath))
-        {
-            buffer.Add("-deployment-tool:" + EscapeFilePath(DeploymentToolPath));
         }
         if (!string.IsNullOrEmpty(BooleanMarshalMode))
         {

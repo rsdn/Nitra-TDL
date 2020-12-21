@@ -88,6 +88,8 @@ namespace Tdl
         Symbol.DashboardVisibleParameters = await TdlUtils.GetDashboardVisibleParameters(Symbol.Parameters);
 
         Commands : CommandCall*;
+
+        CheckDeployerPathSet(context, Symbol.DashboardVisibleParameters);
       }
     | ignore-case Set
       {

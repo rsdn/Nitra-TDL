@@ -27,7 +27,7 @@ namespace Tdl2Json
   internal class SessionActionCompiler
   {
     _deploymentScriptHeader  : string;
-    _deploymentToolPath      : string;
+    _deployerPath            : FieldSymbol;
 
     [RecordIgnore] _leafsToNameMap       : Hashtable[list[DeploymentTreeNode.Leaf], string]            = Hashtable();
     [RecordIgnore] _leafsToActionMap     : Hashtable[list[DeploymentTreeNode.Leaf], SessionActionBase] = Hashtable();
@@ -58,7 +58,7 @@ namespace Tdl2Json
           return;
         }
 
-        def (deployment, values) = compiler.Compile(_deploymentScriptHeader, _deploymentToolPath);
+        def (deployment, values) = compiler.Compile(_deploymentScriptHeader, _deployerPath);
         def action =
           SessionScriptAction() <-
           {
