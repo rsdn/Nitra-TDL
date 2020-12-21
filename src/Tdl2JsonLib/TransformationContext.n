@@ -21,6 +21,8 @@ namespace Tdl2Json
 
     public Messages : CompilerMessageBag { get; }
 
+    public DeployerPath : Tdl.FieldSymbol { get; }
+
     public InitialDeployment : Tdl.DeploymentSymbol { get; }
 
     public FinalDeployment : Tdl.DeploymentSymbol { get; }

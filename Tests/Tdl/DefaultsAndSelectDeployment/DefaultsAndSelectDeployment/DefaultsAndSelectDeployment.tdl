@@ -23,6 +23,7 @@ select deployment TakePrepareStepsForXPerfLogsCollection(XPerf)
 }
 
 deployment PrepareEnvironmentForXPerfLogsCollection()
+    script "A.ps1"
 {
     expected 42;
 }

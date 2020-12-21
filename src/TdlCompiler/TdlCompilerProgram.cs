@@ -73,7 +73,7 @@ namespace Tdl2Json
                     foreach (var t in options.Transformers)
                     {
                         var transformatorFunc = LoadTransformator(t.assembly, t.type, t.method);
-                        var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, options.DeploymentScriptHeader, options.DeploymentToolPath,
+                        var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, options.DeploymentScriptHeader,
                             isMethodTypingEnabled: true, output: null, transformatorOutput: options.OutputFile, transformatorOpt: transformatorFunc, isTestMode: isTestMode,
                             booleanMarshalMode: options.BooleanMarshalMode, jsonSchemaType: options.JsonSchemaType, diffFile : options.DiffFile,
                             repositoryRoot: options.RepositoryPath, excludeTriggerPathScenarios: options.ExcludeTriggerPathScenarios,
@@ -86,7 +86,7 @@ namespace Tdl2Json
                 }
                 else
                 {
-                    var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, options.DeploymentScriptHeader, options.DeploymentToolPath,
+                    var transformationContext = JsonGenerator.Generate(options.WorkingDirectory, tdls, refs, options.DeploymentScriptHeader,
                         isMethodTypingEnabled: true, output: output, transformatorOutput: null, transformatorOpt: null, isTestMode: isTestMode,
                         booleanMarshalMode: options.BooleanMarshalMode, jsonSchemaType: options.JsonSchemaType, diffFile: options.DiffFile,
                         repositoryRoot: options.RepositoryPath, excludeTriggerPathScenarios: options.ExcludeTriggerPathScenarios,

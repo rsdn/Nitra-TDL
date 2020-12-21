@@ -15,13 +15,12 @@ namespace Tdl.Transformator.Tests.CommonServices
             var references = new[] { Path.Combine(Directory.GetCurrentDirectory(), "TestDll.dll") };
             //Generate(
             //string workingDirectory, string[] sourceFiles, string[] references,
-            // string deploymentScriptHeader, string deploymentToolPath, bool isMethodTypingEnabled, Lazy< TextWriter > output, string transformatorOutput, TransfomationFunc transformatorOpt, bool isTestMode, BooleanMarshalMode booleanMarshalMode, string jsonSchemaType);
+            // string deploymentScriptHeader, bool isMethodTypingEnabled, Lazy< TextWriter > output, string transformatorOutput, TransfomationFunc transformatorOpt, bool isTestMode, BooleanMarshalMode booleanMarshalMode, string jsonSchemaType);
             var compilerMessages = JsonGenerator.Generate(
                 path,
                 files.ToArray(),
                 references: references,
                 deploymentScriptHeader: "",
-                deploymentToolPath: "", 
                 isMethodTypingEnabled: true,
                 output: null,
                 transformatorOutput: null,

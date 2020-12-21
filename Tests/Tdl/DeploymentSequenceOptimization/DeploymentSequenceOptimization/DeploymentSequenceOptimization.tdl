@@ -1,4 +1,4 @@
-external { string Foo; }
+﻿external { string Foo; [DeployerPath]string DeployerPath; }
 
 deployment Basic(string Message = external.Foo, bool Flag, int Value)
 {

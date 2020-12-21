@@ -1,11 +1,10 @@
 ﻿external
 {
-  string DeployerPath = @"C:\AutotestBinaries\Autotests.Deployer.exe";
+  [DeployerPath]string DeployerPath = @"C:\AutotestBinaries\Autotests.Deployer.exe";
 }
 
 deployment "Install Windows Language Pack"(
-    string LanguagePacksRootPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Windows Langpacks\ru-RU",
-    string DeployerPath = DeployerPath )
+    string LanguagePacksRootPath = @"\\tis-dfs.avp.ru\Autotests\KIS\Windows Langpacks\ru-RU")
 {
     KL.Autotests.Commands.LogMessage(Message: "Message 1");
     timeout "00:45:00";
@@ -13,8 +12,7 @@ deployment "Install Windows Language Pack"(
 }
 
 deployment "Save session parameters to deploy context"(
-     string SessionType = "Debug",
-     string DeployerPath = DeployerPath)
+     string SessionType = "Debug")
 {
     KL.Autotests.Commands.LogMessage(Message: "Message 2");
     expected 42;

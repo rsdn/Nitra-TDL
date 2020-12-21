@@ -1,22 +1,22 @@
-external
+﻿external
 {
-  string DeployerPath = @"C:\AutotestBinaries\Autotests.Deployer.exe";
+  [DeployerPath]string DeployerPath = @"C:\AutotestBinaries\Autotests.Deployer.exe";
 }
 
-deployment First(string DeployerPath = DeployerPath)
+deployment First()
 {
     KL.Autotests.Commands.LogMessage(Message: "1");
     expected 42;
 }
 
-deployment "Unmergable deployment"(string DeployerPath = DeployerPath)
+deployment "Unmergable deployment"()
 {
     KL.Autotests.Commands.LogMessage(Message: "2");
     expected for reboot 101;
     expected 42;
 }
 
-deployment Last(string DeployerPath = DeployerPath)
+deployment Last()
 {
     KL.Autotests.Commands.LogMessage(Message: "3");
     expected 42;

@@ -118,7 +118,7 @@ namespace Tdl2Json
       loop(a, b)
     }
 
-    public Compile(deploymentScriptHeader : string, deploymentToolPath : string) : QuickType.Deployment * IDictionary[string, object]
+    public Compile(deploymentScriptHeader : string, deployerPath : FieldSymbol) : QuickType.Deployment * IDictionary[string, object]
     {
       def scriptArgs = SortedDictionary();
       def defaults   = SortedDictionary();
@@ -131,9 +131,9 @@ namespace Tdl2Json
 
       def getParameterReference(p) { "$_csharp_" + p }
 
-      def declareScriptParameter(name : string, type : TypeSymbol)
+      def declareScriptParameter(name : string, type : TypeSymbol, isExternal : bool = false)
       {
-        scriptArgs.Add(name, "$(" + name + ")");
+        scriptArgs.Add(name, (if (isExternal) "#(" else "$(") + name + ")");
         when (scriptArgs.Count > 1)
           _ = deploymentParameters.AppendLine(",");
 
@@ -184,6 +184,14 @@ namespace Tdl2Json
           declareScriptParameter(parameterInfo.Name, parameterInfo.Type);
         }
       }
+
+      assert2(deployerPath != null);
+
+      mutable deployerPathParameter = deployerPath.Name;
+      for (mutable index = 1; scriptArgs.ContainsKey(deployerPathParameter); ++index)
+        deployerPathParameter = deployerPath.Name + index.ToString();
+
+      declareScriptParameter(deployerPathParameter, deployerPath.Type, isExternal = true);
 
       foreach (symbol in _symbols with symbolIndex)
       {
@@ -242,7 +250,7 @@ namespace Tdl2Json
         .Replace("{{Prologue}}",   deploymentPrologue.ToString())
         .Replace("{{Name}}",       Name)
         .Replace("{{Source}}",     deploymentCode.ToString())
-        .Replace("{{Tool}}",       deploymentToolPath)
+        .Replace("{{Tool}}",       "& $" + deployerPathParameter)
         .ToString();
 
       (QuickType.Deployment() <-
