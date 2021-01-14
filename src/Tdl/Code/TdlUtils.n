@@ -448,6 +448,7 @@ namespace Tdl
           def definition = field.FirstParsedDeclarationOrDefault;
           def location = if (definition != null) definition.Name.Location else Location.NoLocation;
           builder.Add(Def(location, field, expr));
+        _ = existsDefsNames.Add(GetCaseInsensitiveId(field));
         }
 
       when (baseSuiteOpt is VSome(x))
