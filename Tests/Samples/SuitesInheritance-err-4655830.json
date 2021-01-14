@@ -1,0 +1,120 @@
+{
+  "version": 7,
+  "$schema": "http://auto-reports.avp.ru/starter-schema/v7/prod/schema.json",
+  "DefaultValues": {
+    "UpdateSource": "11"
+  },
+  "Deployments": {
+    "Base Product selector": {
+      "Type": "Select",
+      "Condition": "$(InstallationType)",
+      "Values": {
+        "Upgrade": "InstallProduct",
+        "Patch": "Empty",
+        "C3EEBA2A-D830-4947-83B2-045529DCB327": "Empty"
+      }
+    },
+    "Empty": {
+      "Type": "Empty"
+    },
+    "InstallProduct": {
+      "Type": "Script",
+      "ReturnValue": 42,
+      "ScriptArgs": {
+        "IntValue": "$(IntValue)"
+      },
+      "DefaultValues": {
+        "IntValue": 7
+      },
+      "ScriptPath": "\\\\autotests\\null-deployment.ps1"
+    }
+  },
+  "Platforms": {
+    "all_pc": {}
+  },
+  "Products": {
+    "Product1": {
+      "Name": "Product1",
+      "Parameters": {
+        "Name": "Product1"
+      },
+      "BranchName": null,
+      "Version": "Main"
+    }
+  },
+  "Suites": {
+    "Base suite": {
+      "Parameters": {
+        "UpdateSource": "#(UpdateSource)",
+        "InstallationType": "C3EEBA2A-D830-4947-83B2-045529DCB327"
+      },
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "Product1"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
+    "Derived suite 1": {
+      "Parameters": {
+        "InstallationType": "Patch",
+        "UpdateSource": "#(UpdateSource)"
+      },
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "Product1"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    },
+    "Derived suite 2": {
+      "Parameters": {
+        "InstallationType": "Upgrade",
+        "UpdateSource": "sss"
+      },
+      "Platforms": [
+        "all_pc"
+      ],
+      "Products": [
+        "Product1"
+      ],
+      "TestScenarios": [
+        "Test1"
+      ]
+    }
+  },
+  "TestScenarios": {
+    "Test1": {
+      "Deployments": [
+        "Base Product selector"
+      ],
+      "Environments": [
+        {
+          "Platforms": [
+            "all_pc"
+          ],
+          "Products": [
+            "Product1"
+          ]
+        }
+      ],
+      "RerunCountOnTestFailure": 0,
+      "ExternalAutotestId": 24,
+      "RevertAgentAfter": true,
+      "TestMethod": {
+        "AssemblyName": "TestDll.dll",
+        "MethodName": "Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers"
+      },
+      "Timeout": "00:05:00",
+      "UniqueId": "c4b36f0e-820e-4af3-bc95-9c552ecb04e8",
+      "LocalTestBinariesFolder": "C:\\Tests"
+    }
+  },
+  "TestEntities": {}
+}

@@ -1,0 +1,65 @@
+suite "Base suite" : SessionParameters
+{
+    platform all_pc;
+    product Product1;
+    Test1();
+}
+
+suite "Derived suite 1" : "Base suite"
+{
+    InstallationType = "Patch";
+}
+
+suite "Derived suite 2" : "Base suite"
+{
+    InstallationType = "Upgrade";
+    UpdateSource     = "sss";
+}
+
+scenario Test1
+{
+    deployment "Base Product selector";
+    environments (all_pc, Product1);
+    method Autotest.Products.App4_Dev.Suites.Common.GatedChain1.GatedTestsChain1.Gated1_S03_CheckDrivers;
+    UniqueId = "C4B36F0E-820E-4AF3-BC95-9C552ECB04E8";
+    RerunCountOnTestFailure = 0;
+    LocalTestBinariesFolder = @"C:\Tests";
+    ExternalAutotestId = 24;
+    Timeout = "00:05:00";
+}
+
+select deployment "Base Product selector"(InstallationType)
+{
+    | "Upgrade" => "InstallProduct"
+    | "Patch" | not-set => Empty
+}
+
+deployment InstallProduct(int IntValue = 7)
+    script @"\\autotests\null-deployment.ps1"
+{
+    expected 42;
+}
+
+platform all_pc;
+
+suite type SessionParameters
+{
+    string UpdateSource = UpdateSource;
+}
+
+external
+{
+  string UpdateSource = "11";
+}
+
+product Product1 : ProductType1
+{
+    Name = "Product1";
+    Version = "Main";
+}
+
+product type ProductType1
+{
+    string Name;
+    string Version;
+}
